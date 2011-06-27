@@ -66,6 +66,9 @@ namespace SoftwareBotany.Sunlight
         [TestMethod]
         public void Pack()
         {
+            if (!Word.PositionListEnabled)
+                return;
+
             Word word = new Word(true, 1);
 
             Assert.IsTrue(word.IsCompressed);
