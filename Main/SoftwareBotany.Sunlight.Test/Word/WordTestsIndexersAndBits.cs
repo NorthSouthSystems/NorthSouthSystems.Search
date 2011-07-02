@@ -28,6 +28,29 @@ namespace SoftwareBotany.Sunlight
         }
 
         [TestMethod]
+        public void BitsSimple()
+        {
+            int[] bitPositions = new int[] { 0, 3, 8, 12, 19, 24, 30 };
+            BitsBase(bitPositions, true);
+            BitsBase(bitPositions, false);
+        }
+
+        private void BitsBase(int[] bitPositions, bool value)
+        {
+            Word word = new Word();
+
+            for (int i = 0; i < Word.SIZE - 1; i++)
+                word[i] = bitPositions.Contains(i) ? value : !value;
+
+            bool[] bits = word.Bits;
+
+            Assert.AreEqual(bitPositions.Length, bits.Count(bit => value ? bit : !bit));
+
+            for (int i = 0; i < Word.SIZE - 1; i++)
+                Assert.AreEqual(bitPositions.Contains(i), value ? bits[i] : !bits[i]);
+        }
+
+        [TestMethod]
         public void GetBitPositionsSimple()
         {
             int[] bitPositions = new int[] { 0, 3, 8, 12, 19, 24, 30 };

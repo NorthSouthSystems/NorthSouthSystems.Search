@@ -149,12 +149,7 @@ namespace SoftwareBotany.Sunlight
 
         #region Packing
 
-        #if POSITIONLISTENABLED
-        internal static readonly bool PositionListEnabled = true;
-        #else
-        internal static readonly bool PositionListEnabled = false;
-        #endif
-
+#if POSITIONLISTENABLED
         private const uint PACKEDPOSITIONMASK = 0x3E000000u;
 
         public bool HasPackedWord { get { return (Raw & PACKEDPOSITIONMASK) > 0u; } }
@@ -174,9 +169,6 @@ namespace SoftwareBotany.Sunlight
 
         internal void Pack(Word wahWord)
         {
-            if (!PositionListEnabled)
-                throw new NotSupportedException("Position-List features of Word-Aligned Hybrid Bit Vectors have been disabled in this build.");
-
             if (!IsCompressed)
                 throw new NotSupportedException("Cannot Pack a Word into an Uncompessed Word.");
 
@@ -188,6 +180,11 @@ namespace SoftwareBotany.Sunlight
             uint packedPosition = (uint)wahWord.GetBitPositions(true)[0];
             Raw |= (packedPosition + 1) << (SIZE - 7);
         }
+
+        internal static readonly bool PositionListEnabled = true;
+#else
+        internal static readonly bool PositionListEnabled = false;
+#endif
 
         #endregion
 
@@ -207,8 +204,10 @@ namespace SoftwareBotany.Sunlight
                     if (FillBit)
                         population = FillCount * (SIZE - 1);
 
+#if POSITIONLISTENABLED
                     if (HasPackedWord)
                         population++;
+#endif
                 }
                 else
                     population = Census.ComputePopulation(Raw);

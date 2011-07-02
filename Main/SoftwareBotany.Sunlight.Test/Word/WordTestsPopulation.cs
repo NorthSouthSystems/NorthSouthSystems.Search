@@ -57,12 +57,10 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
+#if POSITIONLISTENABLED
         [TestMethod]
         public void Packed()
         {
-            if (!Word.PositionListEnabled)
-                return;
-
             Word word = new Word(false, 1);
             Assert.AreEqual(0, word.Population);
             word.Pack(new Word(1));
@@ -73,5 +71,6 @@ namespace SoftwareBotany.Sunlight
             word.Pack(new Word(1));
             Assert.AreEqual(Word.SIZE, word.Population);
         }
+#endif
     }
 }
