@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;POSITIONLISTDISABLED</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;POSITIONLISTDISABLED</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -59,12 +59,16 @@
     <Compile Include="Engine\EngineAssert.cs" />
     <Compile Include="Engine\EngineItem.cs" />
     <Compile Include="Engine\EngineItemExtensions.cs" />
+    <Compile Include="Vector\VectorTestsStatistics.cs" />
+    <Compile Include="Vector\VectorTestsOr.cs" />
     <Compile Include="Vector\VectorTestExtensions.cs" />
+    <Compile Include="Vector\VectorTestsAnd.cs" />
     <Compile Include="Vector\VectorTestsConstruction.cs" />
-    <Compile Include="Vector\VectorTestsIndexers.cs" />
-    <Compile Include="Vector\VectorTestsSetWord.cs" />
+    <Compile Include="Vector\VectorTestsGetSetBits.cs" />
+    <Compile Include="Vector\VectorTestsGetSetWord.cs" />
     <Compile Include="Catalog\CatalogTests.cs" />
     <Compile Include="Engine\EngineTestsBroad.cs" />
+    <Compile Include="Vector\VectorTestsStatics.cs" />
     <Compile Include="Word\WordTestsConstruction.cs" />
     <Compile Include="Word\WordTests.cs" />
     <Compile Include="Word\WordTestsCompress.cs" />

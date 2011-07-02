@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace SoftwareBotany.Sunlight
 {
     [TestClass]
-    public class VectorTestsSetWord
+    public class VectorTestsGetSetWord
     {
         [TestMethod]
         public void Uncompressed()
@@ -109,5 +109,50 @@ namespace SoftwareBotany.Sunlight
             vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 1, 0, 1);
             vector.AssertWordCounts(Word.PositionListEnabled ? 4 : 6, 10);
         }
+
+        #region Exceptions
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void GetWordLogicalArgumentOutOfRange()
+        {
+            Vector vector = new Vector(true);
+            vector.GetWordLogical(-1);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void SetWordArgumentOutOfRange()
+        {
+            Vector vector = new Vector(true);
+            vector.Set(-1, new Word(0x11111111));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void SetWordNotSupportedCompressed()
+        {
+            Vector vector = new Vector(true);
+            vector.Set(0, new Word(true, 1));
+        }
+
+        [TestMethod]
+        public void SetWordSupportedForwardOnly()
+        {
+            Vector vector = new Vector(true);
+            vector[30] = true;
+            vector.Set(0, new Word(0x00000001u));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void SetWordNotSupportedForwardOnly()
+        {
+            Vector vector = new Vector(true);
+            vector[31] = true;
+            vector.Set(0, new Word(0x00000001u));
+        }
+
+        #endregion
     }
 }

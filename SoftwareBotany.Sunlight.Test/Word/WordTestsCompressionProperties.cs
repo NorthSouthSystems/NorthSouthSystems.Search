@@ -15,7 +15,7 @@ namespace SoftwareBotany.Sunlight
             Assert.AreEqual(false, word.CompressibleFillBit);
             Assert.AreEqual(false, word.IsCompressed);
 
-            word = new Word(0x7FFFFFFFu);
+            word = new Word(Word.COMPRESSIBLEMASK);
             Assert.AreEqual(true, word.IsCompressible);
             Assert.AreEqual(true, word.CompressibleFillBit);
             Assert.AreEqual(false, word.IsCompressed);

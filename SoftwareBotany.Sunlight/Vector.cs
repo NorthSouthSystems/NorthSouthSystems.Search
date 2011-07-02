@@ -16,7 +16,7 @@ namespace SoftwareBotany.Sunlight
     {
         public static Vector CreateUnion(params Vector[] vectors)
         {
-            if (vectors == null)
+            if (vectors == null || vectors.Any(v => v == null))
                 throw new ArgumentNullException("vectors");
 
             Contract.EndContractBlock();
@@ -175,6 +175,11 @@ namespace SoftwareBotany.Sunlight
             }
             set
             {
+                if (bitPosition < 0)
+                    throw new ArgumentOutOfRangeException("bitPosition", bitPosition, "Must be > 0.");
+
+                Contract.EndContractBlock();
+
                 Set(bitPosition, value);
             }
         }
@@ -195,10 +200,12 @@ namespace SoftwareBotany.Sunlight
 
             if (word.IsCompressed)
             {
+#if POSITIONLISTENABLED
                 if (isPacked)
                     return word.PackedWord;
                 else
-                    return new Word((word.FillBit && word.FillCount > 0) ? Word.COMPRESSIBLEMASK : 0);
+#endif
+                return new Word((word.FillBit && word.FillCount > 0) ? Word.COMPRESSIBLEMASK : 0);
             }
             else
                 return word;
@@ -240,6 +247,7 @@ namespace SoftwareBotany.Sunlight
                     if (logical > wordPositionLogical)
                         return i;
 
+#if POSITIONLISTENABLED
                     if (word.HasPackedWord)
                     {
                         isPacked = true;
@@ -248,6 +256,7 @@ namespace SoftwareBotany.Sunlight
                         if (logical > wordPositionLogical)
                             return i;
                     }
+#endif
                 }
                 else
                 {
@@ -327,7 +336,7 @@ namespace SoftwareBotany.Sunlight
             if (IsCompressed)
             {
                 ZeroFillWhenCompressedAndSingleWord(wordPositionLogical);
-                ZeroFillWhenCompressedAndTailIsCompressible(wordPositionLogical);
+                ZeroFillWhenCompressedAndTailIsCompressedAndCompressible(wordPositionLogical);
 #if POSITIONLISTENABLED
                 ZeroFillWhenCompressedAndTailIsPackable(wordPositionLogical);
 #endif
@@ -353,13 +362,15 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
-        private void ZeroFillWhenCompressedAndTailIsCompressible(int wordPositionLogical)
+        private void ZeroFillWhenCompressedAndTailIsCompressedAndCompressible(int wordPositionLogical)
         {
             int zeroFillCount = ZeroFillCount(wordPositionLogical);
 
             if (zeroFillCount > 0
               && _words[_wordCountPhysical - 2].IsCompressed
+#if POSITIONLISTENABLED
               && !_words[_wordCountPhysical - 2].HasPackedWord
+#endif
               && _words[_wordCountPhysical - 1].IsCompressible
               && _words[_wordCountPhysical - 2].FillBit == _words[_wordCountPhysical - 1].CompressibleFillBit)
             {
@@ -380,6 +391,7 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
+#if POSITIONLISTENABLED
         private void ZeroFillWhenCompressedAndTailIsPackable(int wordPositionLogical)
         {
             int zeroFillCount = ZeroFillCount(wordPositionLogical);
@@ -395,6 +407,7 @@ namespace SoftwareBotany.Sunlight
                 _words[_wordCountPhysical - 1].Raw = 0;
             }
         }
+#endif
 
         private void ZeroFillWhenCompressedAndTailIsZero(int wordPositionLogical)
         {
@@ -418,6 +431,8 @@ namespace SoftwareBotany.Sunlight
 
             if (zeroFillCount > 1)
             {
+                _words[_wordCountPhysical - 1].Compress();
+
                 WordsGrow(_wordCountPhysical + 2);
                 _wordCountPhysical += 2;
                 _wordCountLogical += zeroFillCount;
@@ -434,6 +449,9 @@ namespace SoftwareBotany.Sunlight
 
             if (zeroFillCount > 0)
             {
+                if (IsCompressed)
+                    _words[_wordCountPhysical - 1].Compress();
+
                 WordsGrow(_wordCountPhysical + zeroFillCount);
                 _wordCountPhysical += zeroFillCount;
                 _wordCountLogical += zeroFillCount;

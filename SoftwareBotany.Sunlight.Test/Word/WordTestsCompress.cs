@@ -11,13 +11,15 @@ namespace SoftwareBotany.Sunlight
         public void Compressible()
         {
             Word word = new Word(0);
+            Assert.AreEqual(true, word.IsCompressible);
             word.Compress();
             Assert.AreEqual(0x80000001, word.Raw);
             Assert.AreEqual(true, word.IsCompressed);
             Assert.AreEqual(false, word.FillBit);
             Assert.AreEqual(1, word.FillCount);
 
-            word = new Word(0x7FFFFFFF);
+            word = new Word(Word.COMPRESSIBLEMASK);
+            Assert.AreEqual(true, word.IsCompressible);
             word.Compress();
             Assert.AreEqual(0xC0000001, word.Raw);
             Assert.AreEqual(true, word.IsCompressed);
@@ -63,12 +65,10 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
+#if POSITIONLISTENABLED
         [TestMethod]
         public void Pack()
         {
-            if (!Word.PositionListEnabled)
-                return;
-
             Word word = new Word(true, 1);
 
             Assert.IsTrue(word.IsCompressed);
@@ -101,9 +101,11 @@ namespace SoftwareBotany.Sunlight
             Assert.AreEqual(0, word.PackedPosition);
             Assert.AreEqual((uint)1 << 30, word.PackedWord.Raw);
         }
+#endif
 
         #region Exceptions
 
+#if POSITIONLISTENABLED
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
         public void PackNotSupported1()
@@ -119,6 +121,7 @@ namespace SoftwareBotany.Sunlight
             Word word = new Word(true, 1);
             word.Pack(new Word(true, 1));
         }
+#endif
 
         #endregion
     }
