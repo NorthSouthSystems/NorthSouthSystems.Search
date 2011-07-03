@@ -51,6 +51,9 @@ namespace SoftwareBotany.Sunlight
                     case "SomeString":
                         source = source.Where(item => SourceSearch(item.SomeString, closedParam));
                         break;
+                    case "SomeTags":
+                        source = source.Where(item => SourceSearchTags(item.SomeTags, closedParam));
+                        break;
                     default:
                         throw new NotImplementedException(param.Catalog.Name);
                 }
@@ -72,6 +75,21 @@ namespace SoftwareBotany.Sunlight
                         return column.CompareTo(param.DynamicRangeMin) >= 0 && column.CompareTo(param.DynamicRangeMax) <= 0;
                     else
                         return column >= param.DynamicRangeMin && column <= param.DynamicRangeMax;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private static bool SourceSearchTags(string[] tags, ISearchParameter param)
+        {
+            switch (param.ParameterType)
+            {
+                case SearchParameterType.Exact:
+                    return tags.Any(tag => tag == param.DynamicExact);
+                case SearchParameterType.Enumerable:
+                    return tags.Any(tag => Enumerable.Contains(param.DynamicEnumerable, tag));
+                case SearchParameterType.Range:
+                    return tags.Any(tag => tag.CompareTo(param.DynamicRangeMin) >= 0 && tag.CompareTo(param.DynamicRangeMax) <= 0);
                 default:
                     throw new NotImplementedException();
             }
@@ -114,6 +132,8 @@ namespace SoftwareBotany.Sunlight
                             return param.Ascending ? source.OrderBy(item => item.SomeDateTime) : source.OrderByDescending(item => item.SomeDateTime);
                         case "SomeString":
                             return param.Ascending ? source.OrderBy(item => item.SomeString) : source.OrderByDescending(item => item.SomeString);
+                        case "SomeTags":
+                            return param.Ascending ? source.OrderBy(item => item.SomeTags.Min()) : source.OrderByDescending(item => item.SomeTags.Max());
                         default:
                             throw new NotImplementedException(param.Catalog.Name);
                     }
@@ -135,6 +155,8 @@ namespace SoftwareBotany.Sunlight
                             return param.Ascending ? source.ThenBy(item => item.SomeDateTime) : source.ThenByDescending(item => item.SomeDateTime);
                         case "SomeString":
                             return param.Ascending ? source.ThenBy(item => item.SomeString) : source.ThenByDescending(item => item.SomeString);
+                        case "SomeTags":
+                            return param.Ascending ? source.ThenBy(item => item.SomeTags.Min()) : source.ThenByDescending(item => item.SomeTags.Max());
                         default:
                             throw new NotImplementedException(param.Catalog.Name);
                     }
@@ -161,7 +183,7 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(projection => projection.Key)
                         .ToArray();
 
-                    CollectionAssert.AreEqual(sourceSomeIntProjection, paramSomeIntProjection);
+                    sourceSomeIntProjection.AssertProjections(paramSomeIntProjection);
                     break;
                 case "SomeDateTime":
                     Projection<DateTime>[] sourceSomeDateTimeProjection = sourceResults.GroupBy(item => item.SomeDateTime)
@@ -173,7 +195,7 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(projection => projection.Key)
                         .ToArray();
 
-                    CollectionAssert.AreEqual(sourceSomeDateTimeProjection, paramSomeDateTimeProjection);
+                    sourceSomeDateTimeProjection.AssertProjections(paramSomeDateTimeProjection);
                     break;
                 case "SomeString":
                     Projection<string>[] sourceSomeStringProjection = sourceResults.GroupBy(item => item.SomeString)
@@ -185,10 +207,35 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(projection => projection.Key)
                         .ToArray();
 
-                    CollectionAssert.AreEqual(sourceSomeStringProjection, paramSomeStringProjection);
+                    sourceSomeStringProjection.AssertProjections(paramSomeStringProjection);
+                    break;
+                case "SomeTags":
+                    Projection<string>[] sourceSomeTagsProjection = sourceResults.SelectMany(item => item.SomeTags)
+                        .GroupBy(tag => tag)
+                        .Select(group => new Projection<string>(group.Key, group.Count()))
+                        .OrderBy(projection => projection.Key)
+                        .ToArray();
+
+                    Projection<string>[] paramSomeTagsProjection = ((IEnumerable<Projection<string>>)param.DynamicProjections)
+                        .OrderBy(projection => projection.Key)
+                        .ToArray();
+
+                    sourceSomeTagsProjection.AssertProjections(paramSomeTagsProjection);
                     break;
                 default:
                     throw new NotImplementedException(param.Catalog.Name);
+            }
+        }
+
+        private static void AssertProjections<T>(this Projection<T>[] projections, Projection<T>[] compare)
+            where T : IEquatable<T>, IComparable<T>
+        {
+            Assert.AreEqual(projections.Length, compare.Length);
+
+            for (int i = 0; i < projections.Length; i++)
+            {
+                Assert.AreEqual(projections[i].Key, compare[i].Key);
+                Assert.AreEqual(projections[i].Count, compare[i].Count);
             }
         }
 

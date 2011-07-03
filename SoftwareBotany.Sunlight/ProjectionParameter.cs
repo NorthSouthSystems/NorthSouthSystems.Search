@@ -19,6 +19,11 @@ namespace SoftwareBotany.Sunlight
 
                 return _projections;
             }
+            private set
+            {
+                _projections = value;
+                _projectionsSet = true;
+            }
         }
 
         private IEnumerable<Projection<TKey>> _projections;
@@ -28,12 +33,8 @@ namespace SoftwareBotany.Sunlight
 
         dynamic IProjectionParameter.DynamicProjections
         {
-            get { return _projections; }
-            set
-            {
-                _projections = value;
-                _projectionsSet = true;
-            }
+            get { return Projections; }
+            set { Projections = value; }
         }
 
         #endregion

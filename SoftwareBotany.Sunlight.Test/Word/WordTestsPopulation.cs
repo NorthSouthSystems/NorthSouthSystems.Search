@@ -18,6 +18,9 @@ namespace SoftwareBotany.Sunlight
             Assert.AreEqual(30, (new Word(0x3FFFFFFFu)).Population);
             Assert.AreEqual(13, (new Word(0x12345678u)).Population);
             Assert.AreEqual(22, (new Word(0x7FEDCBA9u)).Population);
+
+            for (int i = 0; i < Word.SIZE - 1; i++)
+                Assert.AreEqual(1, (new Word(1u << i)).Population);
         }
 
         [TestMethod]

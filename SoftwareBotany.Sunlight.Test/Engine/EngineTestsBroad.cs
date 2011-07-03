@@ -36,8 +36,9 @@ namespace SoftwareBotany.Sunlight
             var someIntFactory = engine.CreateCatalog("SomeInt", item => item.SomeInt, isCompressed);
             var someDateTimeFactory = engine.CreateCatalog("SomeDateTime", item => item.SomeDateTime, isCompressed);
             var someStringFactory = engine.CreateCatalog("SomeString", item => item.SomeString, isCompressed);
+            var someTagsFactory = engine.CreateCatalog<string>("SomeTags", item => item.SomeTags, isCompressed);
 
-            EngineItem[] items = EngineItem.CreateItems(id => id / 5, id => new DateTime(2011, 1, 1).AddDays(id / 7), id => id.ToString(), size);
+            EngineItem[] items = EngineItem.CreateItems(id => id / 5, id => new DateTime(2011, 1, 1).AddDays(id / 7), id => id.ToString(), id => new[] { id, id / 2, id / 3, id / 5 }.Distinct().Select(i => i.ToString()).ToArray(), size);
 
             foreach (EngineItem item in items)
                 engine.Add(item);
@@ -126,6 +127,40 @@ namespace SoftwareBotany.Sunlight
                     .AddSortDirectionalParameter(someIntFactory, false)
                     .AddProjectionParameter(someDateTimeFactory)
                     .AddProjectionParameter(someIntFactory);
+
+                EngineAssert.ExecuteAndAssert(items, search, 0, 5);
+
+                search = engine.CreateSearch()
+                    .AddSearchExactParameter(someTagsFactory, "2")
+                    .AddSortDirectionalParameter(someIntFactory, false)
+                    .AddProjectionParameter(someDateTimeFactory)
+                    .AddProjectionParameter(someIntFactory);
+
+                EngineAssert.ExecuteAndAssert(items, search, 0, 5);
+
+                search = engine.CreateSearch()
+                    .AddSearchExactParameter(someStringFactory, "2")
+                    .AddSortDirectionalParameter(someTagsFactory, true)
+                    .AddProjectionParameter(someDateTimeFactory)
+                    .AddProjectionParameter(someIntFactory);
+
+                EngineAssert.ExecuteAndAssert(items, search, 0, 5);
+
+                search = engine.CreateSearch()
+                    .AddSearchExactParameter(someStringFactory, "2")
+                    .AddSortDirectionalParameter(someTagsFactory, false)
+                    .AddProjectionParameter(someDateTimeFactory)
+                    .AddProjectionParameter(someIntFactory);
+
+                EngineAssert.ExecuteAndAssert(items, search, 0, 5);
+
+                search = engine.CreateSearch()
+                    .AddSearchExactParameter(someTagsFactory, "2")
+                    .AddSearchExactParameter(someTagsFactory, "3")
+                    .AddSortDirectionalParameter(someIntFactory, false)
+                    .AddProjectionParameter(someDateTimeFactory)
+                    .AddProjectionParameter(someIntFactory)
+                    .AddProjectionParameter(someTagsFactory);
 
                 EngineAssert.ExecuteAndAssert(items, search, 0, 5);
 

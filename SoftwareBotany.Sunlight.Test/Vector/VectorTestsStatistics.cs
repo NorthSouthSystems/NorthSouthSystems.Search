@@ -26,7 +26,7 @@ namespace SoftwareBotany.Sunlight
             Assert.AreEqual(1, stats.OneBitPackableWordCount);
             Assert.AreEqual(0, stats.TwoBitPackableWordCount);
 
-            vector.Fill(Enumerable.Range(62, 32).ToArray(), true);
+            vector.Fill(Enumerable.Range(63, 31).ToArray(), true);
             vector[124] = true;
 
             stats = vector.GetStatistics();
@@ -34,7 +34,7 @@ namespace SoftwareBotany.Sunlight
             Assert.AreEqual(2, stats.OneBitPackableWordCount);
             Assert.AreEqual(0, stats.TwoBitPackableWordCount);
 
-            vector.Fill(Enumerable.Range(124, 33).ToArray(), true);
+            vector.Fill(Enumerable.Range(125, 32).ToArray(), true);
             vector[186] = true;
 
             stats = vector.GetStatistics();
@@ -42,7 +42,7 @@ namespace SoftwareBotany.Sunlight
             Assert.AreEqual(2, stats.OneBitPackableWordCount);
             Assert.AreEqual(1, stats.TwoBitPackableWordCount);
 
-            vector.Fill(Enumerable.Range(186, 33).ToArray(), true);
+            vector.Fill(Enumerable.Range(187, 32).ToArray(), true);
             vector[248] = true;
 
             stats = vector.GetStatistics();
