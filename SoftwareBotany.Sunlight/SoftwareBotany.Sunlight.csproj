@@ -31,6 +31,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <NoWarn>1591</NoWarn>
+    <DocumentationFile>bin\Debug\SoftwareBotany.Sunlight.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -65,6 +67,8 @@
     <CodeContractsRuntimeCheckingLevel>None</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <NoWarn>1591</NoWarn>
+    <DocumentationFile>bin\Release\SoftwareBotany.Sunlight.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
