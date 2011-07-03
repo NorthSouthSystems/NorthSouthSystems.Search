@@ -46,10 +46,10 @@ namespace SoftwareBotany.Sunlight
 
         #region ISearchParameter
 
-        dynamic ISearchParameter.DynamicExact { get { return _exact; } }
-        dynamic ISearchParameter.DynamicEnumerable { get { return _enumerable; } }
-        dynamic ISearchParameter.DynamicRangeMin { get { return _rangeMin; } }
-        dynamic ISearchParameter.DynamicRangeMax { get { return _rangeMax; } }
+        dynamic ISearchParameter.DynamicExact { get { return Exact; } }
+        dynamic ISearchParameter.DynamicEnumerable { get { return Enumerable; } }
+        dynamic ISearchParameter.DynamicRangeMin { get { return RangeMin; } }
+        dynamic ISearchParameter.DynamicRangeMax { get { return RangeMax; } }
 
         #endregion
     }

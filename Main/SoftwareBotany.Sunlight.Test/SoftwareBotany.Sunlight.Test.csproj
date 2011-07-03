@@ -52,8 +52,14 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Catalog\CatalogTestsStatistics.cs" />
+    <Compile Include="Catalog\CatalogTestExtensions.cs" />
     <Compile Include="CensusTests.cs" />
     <Compile Include="Dependencies\SoftwareBotany.Soil.Collections.ListExtensionsTests.cs" />
+    <Compile Include="Engine\EngineTests.cs" />
+    <Compile Include="Engine\EngineTestsStatistics.cs" />
+    <Compile Include="Engine\SearchTests.cs" />
+    <Compile Include="Engine\ProjectionsParamterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Engine\EngineTestsRandom.cs" />
     <Compile Include="Engine\EngineAssert.cs" />
@@ -66,7 +72,7 @@
     <Compile Include="Vector\VectorTestsConstruction.cs" />
     <Compile Include="Vector\VectorTestsGetSetBits.cs" />
     <Compile Include="Vector\VectorTestsGetSetWord.cs" />
-    <Compile Include="Catalog\CatalogTests.cs" />
+    <Compile Include="Catalog\CatalogTestsConstruction.cs" />
     <Compile Include="Engine\EngineTestsBroad.cs" />
     <Compile Include="Vector\VectorTestsStatics.cs" />
     <Compile Include="Word\WordTestsConstruction.cs" />

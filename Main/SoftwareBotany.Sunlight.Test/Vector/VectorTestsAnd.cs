@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -41,6 +42,23 @@ namespace SoftwareBotany.Sunlight
             Vector vector = new Vector(true);
             Vector input = new Vector(false);
             vector.AndPopulation(input);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void AndFilterArgumentNull()
+        {
+            Vector vector = new Vector(false);
+            vector.AndFilterBitPositions(null, true).ToArray();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void AndFilterNotSupported()
+        {
+            Vector vector = new Vector(true);
+            Vector input = new Vector(false);
+            vector.AndFilterBitPositions(input, true).ToArray();
         }
 
         #endregion
