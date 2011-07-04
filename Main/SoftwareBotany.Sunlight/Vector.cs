@@ -759,7 +759,7 @@ namespace SoftwareBotany.Sunlight
                     uint word = i->Raw & j->Raw;
 
                     if (word > 0)
-                        population += Census.ComputePopulation(word);
+                        population += word.Population();
 
                     i++;
                 }
@@ -779,7 +779,7 @@ namespace SoftwareBotany.Sunlight
                 uint word = i->Raw & j->Raw;
 
                 if (word > 0)
-                    population += Census.ComputePopulation(word);
+                    population += word.Population();
 
                 i++;
                 j++;
