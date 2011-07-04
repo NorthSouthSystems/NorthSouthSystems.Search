@@ -12,7 +12,7 @@ namespace SoftwareBotany.Sunlight
     /// The implementation REQUIRES that <c>_words[WordCount - 1].IsCompressed == false</c> at all times and only allows
     /// <c>Set</c>ting bits on that Word and forward. In code comments will refer to this as the LAW.
     /// </remarks>
-    public unsafe partial class Vector
+    public partial class Vector
     {
         public static Vector CreateUnion(params Vector[] vectors)
         {
@@ -73,11 +73,7 @@ namespace SoftwareBotany.Sunlight
                 _wordCountPhysical = vector._wordCountLogical;
                 _wordCountLogical = vector._wordCountLogical;
 
-                fixed (Word* iFixed = _words, jFixed = vector._words)
-                {
-                    Word* jMax = jFixed + vector._wordCountPhysical;
-                    Decompress(iFixed, jFixed, jMax);
-                }
+                Decompress(vector);
             }
             else
             {
@@ -86,6 +82,50 @@ namespace SoftwareBotany.Sunlight
                 _wordCountLogical = vector._wordCountLogical;
 
                 Array.Copy(vector._words, _words, vector._wordCountPhysical);
+            }
+        }
+
+        private unsafe void Decompress(Vector vector)
+        {
+            fixed (Word* iFixed = _words, jFixed = vector._words)
+            {
+                Word* i = iFixed;
+                Word* j = jFixed;
+                Word* jMax = jFixed + vector._wordCountPhysical;
+
+                while (j < jMax)
+                {
+                    if (j->IsCompressed)
+                    {
+                        if (j->FillBit)
+                        {
+                            Word* k = i + j->FillCount;
+
+                            while (i < k)
+                            {
+                                i->Raw = 0x7FFFFFFF;
+                                i++;
+                            }
+                        }
+                        else
+                            i += j->FillCount;
+
+#if POSITIONLIST
+                        if (j->HasPackedWord)
+                        {
+                            i->Raw = j->PackedWord.Raw;
+                            i++;
+                        }
+#endif
+                    }
+                    else
+                    {
+                        i->Raw = j->Raw;
+                        i++;
+                    }
+
+                    j++;
+                }
             }
         }
 
@@ -371,7 +411,7 @@ namespace SoftwareBotany.Sunlight
 #if POSITIONLIST
               && !_words[_wordCountPhysical - 2].HasPackedWord
 #endif
-              && _words[_wordCountPhysical - 1].IsCompressible
+ && _words[_wordCountPhysical - 1].IsCompressible
               && _words[_wordCountPhysical - 2].FillBit == _words[_wordCountPhysical - 1].CompressibleFillBit)
             {
                 if (_words[_wordCountPhysical - 2].FillBit)
@@ -616,31 +656,37 @@ namespace SoftwareBotany.Sunlight
 
             Contract.EndContractBlock();
 
-            fixed (Word* iFixed = _words, jFixed = vector._words)
+#if UNSAFE
+            unsafe
             {
-                Word* i = iFixed;
-                Word* iMax = iFixed + _wordCountPhysical;
-
-                Word* j = jFixed;
-                Word* jMax = jFixed + vector._wordCountPhysical;
-
-                i = vector.IsCompressed ? AndCompressed(i, iMax, j, jMax) : AndUncompressed(i, iMax, j, jMax);
-
-                if (i < iMax)
+                fixed (Word* iFixed = _words, jFixed = vector._words)
                 {
-                    _wordCountPhysical = (int)(i - iFixed);
-                    _wordCountLogical = (int)(i - iFixed);
+                    Word* i = iFixed;
+                    Word* iMax = iFixed + _wordCountPhysical;
 
-                    while (i < iMax)
+                    Word* j = jFixed;
+                    Word* jMax = jFixed + vector._wordCountPhysical;
+
+                    i = vector.IsCompressed ? AndCompressed(i, iMax, j, jMax) : AndUncompressed(i, iMax, j, jMax);
+
+                    if (i < iMax)
                     {
-                        i->Raw = 0;
-                        i++;
+                        _wordCountPhysical = (int)(i - iFixed);
+                        _wordCountLogical = (int)(i - iFixed);
+
+                        while (i < iMax)
+                        {
+                            i->Raw = 0;
+                            i++;
+                        }
                     }
                 }
             }
+#else
+#endif
         }
 
-        private static Word* AndCompressed(Word* i, Word* iMax, Word* j, Word* jMax)
+        private unsafe static Word* AndCompressed(Word* i, Word* iMax, Word* j, Word* jMax)
         {
             while (i < iMax && j < jMax)
             {
@@ -682,7 +728,7 @@ namespace SoftwareBotany.Sunlight
             return i;
         }
 
-        private static Word* AndUncompressed(Word* i, Word* iMax, Word* j, Word* jMax)
+        private unsafe static Word* AndUncompressed(Word* i, Word* iMax, Word* j, Word* jMax)
         {
             while (i < iMax && j < jMax)
             {
@@ -708,19 +754,25 @@ namespace SoftwareBotany.Sunlight
 
             Contract.EndContractBlock();
 
-            fixed (Word* iFixed = _words, jFixed = vector._words)
+#if UNSAFE
+            unsafe
             {
-                Word* i = iFixed;
-                Word* iMax = iFixed + _wordCountPhysical;
+                fixed (Word* iFixed = _words, jFixed = vector._words)
+                {
+                    Word* i = iFixed;
+                    Word* iMax = iFixed + _wordCountPhysical;
 
-                Word* j = jFixed;
-                Word* jMax = jFixed + vector._wordCountPhysical;
+                    Word* j = jFixed;
+                    Word* jMax = jFixed + vector._wordCountPhysical;
 
-                return vector.IsCompressed ? AndPopulationCompressed(i, iMax, j, jMax) : AndPopulationUncompressed(i, iMax, j, jMax);
+                    return vector.IsCompressed ? AndPopulationCompressed(i, iMax, j, jMax) : AndPopulationUncompressed(i, iMax, j, jMax);
+                }
             }
+#else
+#endif
         }
 
-        private static int AndPopulationCompressed(Word* i, Word* iMax, Word* j, Word* jMax)
+        private unsafe static int AndPopulationCompressed(Word* i, Word* iMax, Word* j, Word* jMax)
         {
             int population = 0;
 
@@ -770,7 +822,7 @@ namespace SoftwareBotany.Sunlight
             return population;
         }
 
-        private static int AndPopulationUncompressed(Word* i, Word* iMax, Word* j, Word* jMax)
+        private unsafe static int AndPopulationUncompressed(Word* i, Word* iMax, Word* j, Word* jMax)
         {
             int population = 0;
 
@@ -806,22 +858,28 @@ namespace SoftwareBotany.Sunlight
             _wordCountPhysical = Math.Max(_wordCountPhysical, vector._wordCountLogical);
             _wordCountLogical = Math.Max(_wordCountLogical, vector._wordCountLogical);
 
-            fixed (Word* iFixed = _words, jFixed = vector._words)
+#if UNSAFE
+            unsafe
             {
-                Word* i = iFixed;
-                Word* iMax = iFixed + _wordCountPhysical;
+                fixed (Word* iFixed = _words, jFixed = vector._words)
+                {
+                    Word* i = iFixed;
+                    Word* iMax = iFixed + _wordCountPhysical;
 
-                Word* j = jFixed;
-                Word* jMax = jFixed + vector._wordCountPhysical;
+                    Word* j = jFixed;
+                    Word* jMax = jFixed + vector._wordCountPhysical;
 
-                if (vector.IsCompressed)
-                    OrCompressed(i, iMax, j, jMax);
-                else
-                    OrUncompressed(i, iMax, j, jMax);
+                    if (vector.IsCompressed)
+                        OrCompressed(i, iMax, j, jMax);
+                    else
+                        OrUncompressed(i, iMax, j, jMax);
+                }
             }
+#else
+#endif
         }
 
-        private static void OrCompressed(Word* i, Word* iMax, Word* j, Word* jMax)
+        private unsafe static void OrCompressed(Word* i, Word* iMax, Word* j, Word* jMax)
         {
             while (i < iMax && j < jMax)
             {
@@ -858,53 +916,12 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
-        private static void OrUncompressed(Word* i, Word* iMax, Word* j, Word* jMax)
+        private unsafe static void OrUncompressed(Word* i, Word* iMax, Word* j, Word* jMax)
         {
             while (i < iMax && j < jMax)
             {
                 i->Raw |= j->Raw;
                 i++;
-                j++;
-            }
-        }
-
-        #endregion
-
-        #region Helpers
-
-        private static void Decompress(Word* i, Word* j, Word* jMax)
-        {
-            while (j < jMax)
-            {
-                if (j->IsCompressed)
-                {
-                    if (j->FillBit)
-                    {
-                        Word* k = i + j->FillCount;
-
-                        while (i < k)
-                        {
-                            i->Raw = 0x7FFFFFFF;
-                            i++;
-                        }
-                    }
-                    else
-                        i += j->FillCount;
-
-#if POSITIONLIST
-                    if (j->HasPackedWord)
-                    {
-                        i->Raw = j->PackedWord.Raw;
-                        i++;
-                    }
-#endif
-                }
-                else
-                {
-                    i->Raw = j->Raw;
-                    i++;
-                }
-
                 j++;
             }
         }
