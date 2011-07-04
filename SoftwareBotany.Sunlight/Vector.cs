@@ -639,6 +639,19 @@ namespace SoftwareBotany.Sunlight
                 }
             }
 #else
+            int i = vector.IsCompressed ? AndCompressed(vector) : AndUncompressed(vector);
+
+            if (i < _wordCountPhysical)
+            {
+                _wordCountPhysical = i;
+                _wordCountLogical = i;
+
+                while (i < _wordCountPhysical)
+                {
+                    _words[i].Raw = 0;
+                    i++;
+                }
+            }
 #endif
         }
 
@@ -667,6 +680,7 @@ namespace SoftwareBotany.Sunlight
                 }
             }
 #else
+            return vector.IsCompressed ? AndPopulationCompressed(vector) : AndPopulationUncompressed(vector);
 #endif
         }
 
@@ -702,6 +716,10 @@ namespace SoftwareBotany.Sunlight
                 }
             }
 #else
+            if (vector.IsCompressed)
+                OrCompressed(vector);
+            else
+                OrUncompressed(vector);
 #endif
 
         #endregion
