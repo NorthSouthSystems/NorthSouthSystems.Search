@@ -60,7 +60,7 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
-#if POSITIONLISTENABLED
+#if POSITIONLIST
         [TestMethod]
         public void Packed()
         {

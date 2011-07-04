@@ -15,7 +15,7 @@
           <Configuration>
             <CodeCoverage xmlns="">
               <Regular>
-                <CodeCoverageItem binaryFile="SoftwareBotany.Sunlight\bin\Debug\SoftwareBotany.Sunlight.dll" pdbFile="SoftwareBotany.Sunlight\bin\Debug\SoftwareBotany.Sunlight.pdb" instrumentInPlace="true" />
+                <CodeCoverageItem binaryFile="SoftwareBotany.Sunlight\bin\DebugUnsafe\SoftwareBotany.Sunlight.dll" pdbFile="SoftwareBotany.Sunlight\bin\DebugUnsafe\SoftwareBotany.Sunlight.pdb" instrumentInPlace="true" />
               </Regular>
             </CodeCoverage>
           </Configuration>

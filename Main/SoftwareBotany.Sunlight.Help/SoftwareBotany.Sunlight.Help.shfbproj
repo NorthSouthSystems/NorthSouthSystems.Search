@@ -20,7 +20,7 @@
     <Language>en-US</Language>
     <HelpFileFormat>Website</HelpFileFormat>
     <DocumentationSources>
-      <DocumentationSource sourceFile="..\SoftwareBotany.Sunlight\SoftwareBotany.Sunlight.csproj" xmlns="" />
+      <DocumentationSource sourceFile="..\SoftwareBotany.Sunlight\SoftwareBotany.Sunlight.csproj" configuration="DebugUnsafe" />
     </DocumentationSources>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in

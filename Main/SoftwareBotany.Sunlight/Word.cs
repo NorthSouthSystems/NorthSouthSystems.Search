@@ -149,7 +149,7 @@ namespace SoftwareBotany.Sunlight
 
         #region Packing
 
-#if POSITIONLISTENABLED
+#if POSITIONLIST
         private const uint PACKEDPOSITIONMASK = 0x3E000000u;
 
         public bool HasPackedWord { get { return (Raw & PACKEDPOSITIONMASK) > 0u; } }
@@ -204,7 +204,7 @@ namespace SoftwareBotany.Sunlight
                     if (FillBit)
                         population = FillCount * (SIZE - 1);
 
-#if POSITIONLISTENABLED
+#if POSITIONLIST
                     if (HasPackedWord)
                         population++;
 #endif
