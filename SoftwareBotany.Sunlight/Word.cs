@@ -210,7 +210,7 @@ namespace SoftwareBotany.Sunlight
 #endif
                 }
                 else
-                    population = Census.ComputePopulation(Raw);
+                    population = Raw.Population();
 
                 return population;
             }

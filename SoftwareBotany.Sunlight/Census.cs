@@ -6,25 +6,22 @@ namespace SoftwareBotany.Sunlight
     /// Provides a method for computing the population (number of bits set to 1) of an
     /// unsigned integer.
     /// </summary>
-    public unsafe static class Census
+    public static class Census
     {
-        static Census()
-        {
-            _bytePopulations[0] = 0;
-
-            for (int i = 0; i < 256; i++)
-                _bytePopulations[i] = (byte)((i & 1) + _bytePopulations[i / 2]);
-        }
-
         /// <summary>
         /// Compute the number of bits set to 1 for an unsigned integer value.
         /// </summary>
-        public static int ComputePopulation(uint word)
+        /// <remarks>
+        /// Originally found at <a href="http://www.hackersdelight.org/HDcode/newCode/pop_arrayHS.c.txt">Hacker's Delight</a>.
+        /// </remarks>
+        public static int Population(this uint word)
         {
-            byte* w = (byte*)&word;
-            return _bytePopulations[w[0]] + _bytePopulations[w[1]] + _bytePopulations[w[2]] + _bytePopulations[w[3]];
+            word = word - ((word >> 1) & 0x55555555u);
+            word = (word & 0x33333333u) + ((word >> 2) & 0x33333333u);
+            word = (word + (word >> 4)) & 0x0F0F0F0Fu;
+            word = word + (word >> 8);
+            word = word + (word >> 16);
+            return (int)(word & 0x0000003Fu);
         }
-
-        private static readonly byte[] _bytePopulations = new byte[256];
     }
 }
