@@ -29,18 +29,28 @@ Global
 		CategoryFile = SoftwareBotany.Sunlight.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+		DebugUnsafe|Any CPU = DebugUnsafe|Any CPU
+		DebugUnsafePositionList|Any CPU = DebugUnsafePositionList|Any CPU
+		ReleaseUnsafe|Any CPU = ReleaseUnsafe|Any CPU
+		ReleaseUnsafePositionList|Any CPU = ReleaseUnsafePositionList|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.DebugUnsafe|Any CPU.ActiveCfg = DebugUnsafe|Any CPU
+		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.DebugUnsafe|Any CPU.Build.0 = DebugUnsafe|Any CPU
+		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.DebugUnsafePositionList|Any CPU.ActiveCfg = DebugUnsafePositionList|Any CPU
+		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.DebugUnsafePositionList|Any CPU.Build.0 = DebugUnsafePositionList|Any CPU
+		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.ReleaseUnsafe|Any CPU.ActiveCfg = ReleaseUnsafe|Any CPU
+		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.ReleaseUnsafe|Any CPU.Build.0 = ReleaseUnsafe|Any CPU
+		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.ReleaseUnsafePositionList|Any CPU.ActiveCfg = ReleaseUnsafePositionList|Any CPU
+		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.ReleaseUnsafePositionList|Any CPU.Build.0 = ReleaseUnsafePositionList|Any CPU
+		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.DebugUnsafe|Any CPU.ActiveCfg = Debug|Any CPU
+		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.DebugUnsafe|Any CPU.Build.0 = Debug|Any CPU
+		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.DebugUnsafePositionList|Any CPU.ActiveCfg = DebugPositionList|Any CPU
+		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.DebugUnsafePositionList|Any CPU.Build.0 = DebugPositionList|Any CPU
+		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.ReleaseUnsafe|Any CPU.ActiveCfg = Release|Any CPU
+		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.ReleaseUnsafe|Any CPU.Build.0 = Release|Any CPU
+		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.ReleaseUnsafePositionList|Any CPU.ActiveCfg = ReleasePositionList|Any CPU
+		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.ReleaseUnsafePositionList|Any CPU.Build.0 = ReleasePositionList|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

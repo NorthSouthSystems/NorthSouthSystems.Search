@@ -200,7 +200,7 @@ namespace SoftwareBotany.Sunlight
 
             if (word.IsCompressed)
             {
-#if POSITIONLISTENABLED
+#if POSITIONLIST
                 if (isPacked)
                     return word.PackedWord;
                 else
@@ -247,7 +247,7 @@ namespace SoftwareBotany.Sunlight
                     if (logical > wordPositionLogical)
                         return i;
 
-#if POSITIONLISTENABLED
+#if POSITIONLIST
                     if (word.HasPackedWord)
                     {
                         isPacked = true;
@@ -337,7 +337,7 @@ namespace SoftwareBotany.Sunlight
             {
                 ZeroFillWhenCompressedAndSingleWord(wordPositionLogical);
                 ZeroFillWhenCompressedAndTailIsCompressedAndCompressible(wordPositionLogical);
-#if POSITIONLISTENABLED
+#if POSITIONLIST
                 ZeroFillWhenCompressedAndTailIsPackable(wordPositionLogical);
 #endif
                 ZeroFillWhenCompressedAndTailIsZero(wordPositionLogical);
@@ -368,7 +368,7 @@ namespace SoftwareBotany.Sunlight
 
             if (zeroFillCount > 0
               && _words[_wordCountPhysical - 2].IsCompressed
-#if POSITIONLISTENABLED
+#if POSITIONLIST
               && !_words[_wordCountPhysical - 2].HasPackedWord
 #endif
               && _words[_wordCountPhysical - 1].IsCompressible
@@ -391,7 +391,7 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
-#if POSITIONLISTENABLED
+#if POSITIONLIST
         private void ZeroFillWhenCompressedAndTailIsPackable(int wordPositionLogical)
         {
             int zeroFillCount = ZeroFillCount(wordPositionLogical);
@@ -508,7 +508,7 @@ namespace SoftwareBotany.Sunlight
                     else
                         bitPositionOffset += word.FillCount * (Word.SIZE - 1);
 
-#if POSITIONLISTENABLED
+#if POSITIONLIST
                     if (word.HasPackedWord)
                     {
                         yield return word.PackedPosition + bitPositionOffset;
@@ -569,7 +569,7 @@ namespace SoftwareBotany.Sunlight
 
                     i += jWord.FillCount;
 
-#if POSITIONLISTENABLED
+#if POSITIONLIST
                     if (jWord.HasPackedWord && i < iMax)
                     {
                         if (_words[i].Raw > 0 && _words[i][jWord.PackedPosition])
@@ -662,7 +662,7 @@ namespace SoftwareBotany.Sunlight
                     else
                         i += j->FillCount;
 
-#if POSITIONLISTENABLED
+#if POSITIONLIST
                     if (j->HasPackedWord && i < iMax)
                     {
                         i->Raw &= j->PackedWord.Raw;
@@ -744,7 +744,7 @@ namespace SoftwareBotany.Sunlight
                     else
                         i += j->FillCount;
 
-#if POSITIONLISTENABLED
+#if POSITIONLIST
                     if (j->HasPackedWord && i < iMax)
                     {
                         if (i->Raw > 0 && (i->Raw & j->PackedWord.Raw) > 0)
@@ -840,7 +840,7 @@ namespace SoftwareBotany.Sunlight
                     else
                         i += j->FillCount;
 
-#if POSITIONLISTENABLED
+#if POSITIONLIST
                     if (j->HasPackedWord && i < iMax)
                     {
                         i->Raw |= j->PackedWord.Raw;
@@ -891,7 +891,7 @@ namespace SoftwareBotany.Sunlight
                     else
                         i += j->FillCount;
 
-#if POSITIONLISTENABLED
+#if POSITIONLIST
                     if (j->HasPackedWord)
                     {
                         i->Raw = j->PackedWord.Raw;

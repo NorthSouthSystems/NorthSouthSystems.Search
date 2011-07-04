@@ -65,7 +65,7 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
-#if POSITIONLISTENABLED
+#if POSITIONLIST
         [TestMethod]
         public void Pack()
         {
@@ -105,7 +105,7 @@ namespace SoftwareBotany.Sunlight
 
         #region Exceptions
 
-#if POSITIONLISTENABLED
+#if POSITIONLIST
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
         public void PackNotSupported1()
