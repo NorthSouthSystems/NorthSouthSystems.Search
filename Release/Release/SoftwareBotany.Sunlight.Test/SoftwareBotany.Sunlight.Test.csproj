@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SoftwareBotany.Sunlight</RootNamespace>
+    <AssemblyName>SoftwareBotany.Sunlight.Test</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugPositionList|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DebugPositionList\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;POSITIONLIST</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleasePositionList|AnyCPU'">
+    <OutputPath>bin\ReleasePositionList\</OutputPath>
+    <DefineConstants>POSITIONLIST</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
+      <Visible>False</Visible>
+    </CodeAnalysisDependentAssemblyPaths>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\AssemblyInfoShared.cs">
+      <Link>Properties\AssemblyInfoShared.cs</Link>
+    </Compile>
+    <Compile Include="Catalog\CatalogTestsStatistics.cs" />
+    <Compile Include="Catalog\CatalogTestExtensions.cs" />
+    <Compile Include="CensusTests.cs" />
+    <Compile Include="Dependencies\SoftwareBotany.Soil.Collections.ListExtensionsTests.cs" />
+    <Compile Include="Engine\EngineTests.cs" />
+    <Compile Include="Engine\EngineTestsStatistics.cs" />
+    <Compile Include="Engine\SearchTests.cs" />
+    <Compile Include="Engine\ProjectionsParamterTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Engine\EngineTestsRandom.cs" />
+    <Compile Include="Engine\EngineAssert.cs" />
+    <Compile Include="Engine\EngineItem.cs" />
+    <Compile Include="Engine\EngineItemExtensions.cs" />
+    <Compile Include="Vector\VectorTestsStatistics.cs" />
+    <Compile Include="Vector\VectorTestsOr.cs" />
+    <Compile Include="Vector\VectorTestExtensions.cs" />
+    <Compile Include="Vector\VectorTestsAnd.cs" />
+    <Compile Include="Vector\VectorTestsConstruction.cs" />
+    <Compile Include="Vector\VectorTestsGetSetBits.cs" />
+    <Compile Include="Vector\VectorTestsGetSetWord.cs" />
+    <Compile Include="Catalog\CatalogTestsConstruction.cs" />
+    <Compile Include="Engine\EngineTestsBroad.cs" />
+    <Compile Include="Vector\VectorTestsStatics.cs" />
+    <Compile Include="Word\WordTestsConstruction.cs" />
+    <Compile Include="Word\WordTests.cs" />
+    <Compile Include="Word\WordTestsCompress.cs" />
+    <Compile Include="Word\WordTestsCompressionProperties.cs" />
+    <Compile Include="Word\WordTestsIndexersAndBits.cs" />
+    <Compile Include="Word\WordTestsPopulation.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SoftwareBotany.Sunlight\SoftwareBotany.Sunlight.csproj">
+      <Project>{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}</Project>
+      <Name>SoftwareBotany.Sunlight</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
