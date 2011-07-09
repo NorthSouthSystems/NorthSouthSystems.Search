@@ -106,22 +106,12 @@ namespace SoftwareBotany.Sunlight
 
         #region Projection
 
-        public List<Projection<TKey>> Projection(Vector vector)
+        public ProjectionCollection<TKey> Projection(Vector vector)
         {
-            List<Projection<TKey>> projections = new List<Projection<TKey>>();
+            var projections = _vectorSortedList
+                .Select(keyAndVector => new Projection<TKey>(keyAndVector.Key, vector.AndPopulation(keyAndVector.Value)));
 
-            IList<TKey> keys = _vectorSortedList.Keys;
-            IList<Vector> values = _vectorSortedList.Values;
-
-            for (int i = 0; i < values.Count; i++)
-            {
-                int population = vector.AndPopulation(values[i]);
-
-                if (population > 0)
-                    projections.Add(new Projection<TKey>(keys[i], population));
-            }
-
-            return projections;
+            return new ProjectionCollection<TKey>(projections);
         }
 
         #endregion
