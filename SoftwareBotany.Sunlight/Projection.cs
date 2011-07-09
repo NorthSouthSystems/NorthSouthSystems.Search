@@ -5,7 +5,7 @@ namespace SoftwareBotany.Sunlight
     public struct Projection<TKey>
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
-        public Projection(TKey key, int count)
+        internal Projection(TKey key, int count)
         {
             _key = key;
             _count = count;
@@ -16,8 +16,5 @@ namespace SoftwareBotany.Sunlight
 
         public int Count { get { return _count; } }
         private readonly int _count;
-
-        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-        public override string ToString() { return string.Format("{0}, {1}", _key, _count); }
     }
 }

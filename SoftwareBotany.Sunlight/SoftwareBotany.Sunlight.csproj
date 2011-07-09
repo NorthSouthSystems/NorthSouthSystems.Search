@@ -239,6 +239,7 @@
       <Link>Properties\AssemblyInfoShared.cs</Link>
     </Compile>
     <Compile Include="Census.cs" />
+    <Compile Include="ProjectionCollection.cs" />
     <Compile Include="VectorLogicUnsafe.cs" />
     <Compile Include="VectorLogicSafe.cs" />
     <Compile Include="Projection.cs" />

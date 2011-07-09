@@ -10,7 +10,7 @@ namespace SoftwareBotany.Sunlight
             : base(catalog)
         { }
 
-        public IEnumerable<Projection<TKey>> Projections
+        public ProjectionCollection<TKey> Projections
         {
             get
             {
@@ -26,7 +26,7 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
-        private IEnumerable<Projection<TKey>> _projections;
+        private ProjectionCollection<TKey> _projections;
         private bool _projectionsSet = false;
 
         #region IProjectionParameter
