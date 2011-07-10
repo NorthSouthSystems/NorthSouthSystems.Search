@@ -10,13 +10,8 @@ namespace SoftwareBotany.Sunlight
         [TestMethod]
         public void Public()
         {
-            Catalog<int> catalog = new Catalog<int>("SomeInt", true);
+            Catalog<int> catalog = new Catalog<int>("SomeInt");
             Assert.AreEqual("SomeInt", catalog.Name);
-            Assert.AreEqual(true, catalog.IsCompressed);
-
-            catalog = new Catalog<int>("SomeInt", false);
-            Assert.AreEqual("SomeInt", catalog.Name);
-            Assert.AreEqual(false, catalog.IsCompressed);
         }
     }
 }

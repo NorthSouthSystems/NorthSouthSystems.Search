@@ -17,73 +17,107 @@ namespace SoftwareBotany.Sunlight
         [TestMethod]
         public void AmongstPrimaryKeyOutOfRange()
         {
-            Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id);
-            var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt, true);
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id))
+            {
+                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
-            engine1.Add(new SimpleItem { Id = 43, SomeInt = 0 });
-            
-            int totalCount;
-            int[] primaryKeys = engine1.CreateSearch().AddAmongstPrimaryKeys(new[] { 43, 44 }).Execute(0, 10, out totalCount);
+                engine1.Add(new SimpleItem { Id = 43, SomeInt = 0 });
 
-            Assert.AreEqual(1, totalCount);
-            Assert.AreEqual(1, primaryKeys.Length);
-            Assert.AreEqual(43, primaryKeys[0]);
+                int totalCount;
+                int[] primaryKeys = engine1.CreateSearch().AddAmongstPrimaryKeys(new[] { 43, 44 }).Execute(0, 10, out totalCount);
+
+                Assert.AreEqual(1, totalCount);
+                Assert.AreEqual(1, primaryKeys.Length);
+                Assert.AreEqual(43, primaryKeys[0]);
+            }
         }
 
         #region Exceptions
 
         [TestMethod]
-        [ExpectedException(typeof(ApplicationException))]
+        [ExpectedException(typeof(NotSupportedException))]
         public void CreateCatalogNotInitializing()
         {
-            Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(item => item.Id);
-            var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt, true);
+            using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(item => item.Id))
+            {
+                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
-            engine1.Add(EngineItem.CreateItems(id => id, id => DateTime.Now, id => id.ToString(), id => new string[0], 1).Single());
+                engine1.Add(EngineItem.CreateItems(id => id, id => DateTime.Now, id => id.ToString(), id => new string[0], 1).Single());
 
-            var factory2 = engine1.CreateCatalog("SomeString", item => item.SomeString, true);
+                var factory2 = engine1.CreateCatalog("SomeString", item => item.SomeString);
+            }
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void CreateCatalogDuplicateName()
         {
-            Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(item => item.Id);
-            var factory1 = engine1.CreateCatalog("Name", item => item.SomeInt, true);
-            var factory2 = engine1.CreateCatalog("Name", item => item.SomeString, true);           
+            using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(item => item.Id))
+            {
+                var factory1 = engine1.CreateCatalog("Name", item => item.SomeInt);
+                var factory2 = engine1.CreateCatalog("Name", item => item.SomeString);
+            }
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void AddDuplicatePrimaryKey()
         {
-            Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id);
-            var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt, true);
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id))
+            {
+                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
-            engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
-            engine1.Add(new SimpleItem { Id = 0, SomeInt = 1 });
+                engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
+                engine1.Add(new SimpleItem { Id = 0, SomeInt = 1 });
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void AddRangeNull()
+        {
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id))
+            {
+                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
+                engine1.Add((SimpleItem[])null);
+            }
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateNoPrimaryKey()
         {
-            Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id);
-            var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt, true);
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id))
+            {
+                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
-            engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
-            engine1.Update(new SimpleItem { Id = 1, SomeInt = 1 });
+                engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
+                engine1.Update(new SimpleItem { Id = 1, SomeInt = 1 });
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void UpdateRangeNull()
+        {
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id))
+            {
+                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
+                engine1.Update((SimpleItem[])null);
+            }
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void RemoveNoPrimaryKey()
         {
-            Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id);
-            var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt, true);
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id))
+            {
+                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
-            engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
-            engine1.Remove(new SimpleItem { Id = 1, SomeInt = 1 });
+                engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
+                engine1.Remove(new SimpleItem { Id = 1, SomeInt = 1 });
+            }
         }
 
         #endregion

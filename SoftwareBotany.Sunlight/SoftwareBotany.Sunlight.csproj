@@ -238,7 +238,10 @@
     <Compile Include="..\AssemblyInfoShared.cs">
       <Link>Properties\AssemblyInfoShared.cs</Link>
     </Compile>
+    <Compile Include="CatalogSortResult.cs" />
     <Compile Include="Census.cs" />
+    <Compile Include="CatalogPartialSortResult.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ProjectionCollection.cs" />
     <Compile Include="VectorLogicUnsafe.cs" />
     <Compile Include="VectorLogicSafe.cs" />
@@ -259,7 +262,6 @@
     <Compile Include="VectorStatistics.cs" />
     <Compile Include="Word.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

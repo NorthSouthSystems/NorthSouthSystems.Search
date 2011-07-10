@@ -11,53 +11,55 @@ namespace SoftwareBotany.Sunlight
         [TestMethod]
         public void Full()
         {
-            Engine<EngineItem, int> engine = new Engine<EngineItem, int>(item => item.Id);
-            engine.CreateCatalog("SomeInt", item => item.SomeInt);
-            engine.CreateCatalog("SomeString", item => item.SomeString);
+            using (Engine<EngineItem, int> engine = new Engine<EngineItem, int>(item => item.Id))
+            {
+                engine.CreateCatalog("SomeInt", item => item.SomeInt);
+                engine.CreateCatalog("SomeString", item => item.SomeString);
 
-            IEngineStatistics stats = engine.GetStatistics();
-            Assert.AreEqual(2, stats.CatalogCount);
-            Assert.AreEqual(0, stats.VectorCount);
-            Assert.AreEqual(0, stats.WordCount);
-            Assert.AreEqual(0, stats.OneBitPackableWordCount);
-            Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+                IEngineStatistics stats = engine.GenerateStatistics();
+                Assert.AreEqual(2, stats.CatalogCount);
+                Assert.AreEqual(0, stats.VectorCount);
+                Assert.AreEqual(0, stats.WordCount);
+                Assert.AreEqual(0, stats.OneBitPackableWordCount);
+                Assert.AreEqual(0, stats.TwoBitPackableWordCount);
 
-            EngineItem[] items = EngineItem.CreateItems(id => IsIdZero(id) ? 0 : 1, id => DateTime.Now, id => IsIdZero(id) ? "0" : "1", id => new string[0], 249);
-            engine.Add(items.Take(63));
+                EngineItem[] items = EngineItem.CreateItems(id => IsIdZero(id) ? 0 : 1, id => DateTime.Now, id => IsIdZero(id) ? "0" : "1", id => new string[0], 249);
+                engine.Add(items.Take(63));
 
-            stats = engine.GetStatistics();
-            Assert.AreEqual(2, stats.CatalogCount);
-            Assert.AreEqual(4, stats.VectorCount);
-            Assert.AreEqual(10, stats.WordCount);
-            Assert.AreEqual(2, stats.OneBitPackableWordCount);
-            Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+                stats = engine.GenerateStatistics();
+                Assert.AreEqual(2, stats.CatalogCount);
+                Assert.AreEqual(4, stats.VectorCount);
+                Assert.AreEqual(10, stats.WordCount);
+                Assert.AreEqual(2, stats.OneBitPackableWordCount);
+                Assert.AreEqual(0, stats.TwoBitPackableWordCount);
 
-            engine.Add(items.Skip(63).Take(62));
+                engine.Add(items.Skip(63).Take(62));
 
-            stats = engine.GetStatistics();
-            Assert.AreEqual(2, stats.CatalogCount);
-            Assert.AreEqual(4, stats.VectorCount);
-            Assert.AreEqual(18, stats.WordCount);
-            Assert.AreEqual(4, stats.OneBitPackableWordCount);
-            Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+                stats = engine.GenerateStatistics();
+                Assert.AreEqual(2, stats.CatalogCount);
+                Assert.AreEqual(4, stats.VectorCount);
+                Assert.AreEqual(18, stats.WordCount);
+                Assert.AreEqual(4, stats.OneBitPackableWordCount);
+                Assert.AreEqual(0, stats.TwoBitPackableWordCount);
 
-            engine.Add(items.Skip(125).Take(62));
+                engine.Add(items.Skip(125).Take(62));
 
-            stats = engine.GetStatistics();
-            Assert.AreEqual(2, stats.CatalogCount);
-            Assert.AreEqual(4, stats.VectorCount);
-            Assert.AreEqual(26, stats.WordCount);
-            Assert.AreEqual(4, stats.OneBitPackableWordCount);
-            Assert.AreEqual(2, stats.TwoBitPackableWordCount);
+                stats = engine.GenerateStatistics();
+                Assert.AreEqual(2, stats.CatalogCount);
+                Assert.AreEqual(4, stats.VectorCount);
+                Assert.AreEqual(26, stats.WordCount);
+                Assert.AreEqual(4, stats.OneBitPackableWordCount);
+                Assert.AreEqual(2, stats.TwoBitPackableWordCount);
 
-            engine.Add(items.Skip(187).Take(62));
+                engine.Add(items.Skip(187).Take(62));
 
-            stats = engine.GetStatistics();
-            Assert.AreEqual(2, stats.CatalogCount);
-            Assert.AreEqual(4, stats.VectorCount);
-            Assert.AreEqual(34, stats.WordCount);
-            Assert.AreEqual(4, stats.OneBitPackableWordCount);
-            Assert.AreEqual(4, stats.TwoBitPackableWordCount);
+                stats = engine.GenerateStatistics();
+                Assert.AreEqual(2, stats.CatalogCount);
+                Assert.AreEqual(4, stats.VectorCount);
+                Assert.AreEqual(34, stats.WordCount);
+                Assert.AreEqual(4, stats.OneBitPackableWordCount);
+                Assert.AreEqual(4, stats.TwoBitPackableWordCount);
+            }
         }
 
         private static bool IsIdZero(int id)

@@ -11,11 +11,11 @@ namespace SoftwareBotany.Sunlight
         #region Exceptions
 
         [TestMethod]
-        [ExpectedException(typeof(ApplicationException))]
+        [ExpectedException(typeof(NotSupportedException))]
         public void ProjectionSearchNotExecuted()
         {
             Engine<EngineItem, int> engine = new Engine<EngineItem, int>(item => item.Id);
-            var someIntFactory = engine.CreateCatalog("SomeInt", item => item.SomeInt, true);
+            var someIntFactory = engine.CreateCatalog("SomeInt", item => item.SomeInt);
 
             ProjectionParameter<int> someIntProjection;
 

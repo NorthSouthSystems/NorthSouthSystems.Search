@@ -4,13 +4,13 @@ namespace SoftwareBotany.Sunlight
 {
     public partial class Catalog<TKey>
     {
-        public ICatalogStatistics GetStatistics() { return new Statistics(this); }
+        public ICatalogStatistics GenerateStatistics() { return new Statistics(this); }
 
         private class Statistics : ICatalogStatistics
         {
             internal Statistics(Catalog<TKey> catalog)
             {
-                foreach (IVectorStatistics vectorStats in catalog._vectorSortedList.Values.Select(vector => vector.GetStatistics()))
+                foreach (IVectorStatistics vectorStats in catalog._vectorSortedList.Values.Select(vector => vector.GenerateStatistics()))
                 {
                     _vectorCount++;
                     _wordCount += vectorStats.WordCount;

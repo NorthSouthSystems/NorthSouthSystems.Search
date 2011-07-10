@@ -58,7 +58,7 @@ namespace SoftwareBotany.Sunlight
         public void GetBitsCompressedNotSupported()
         {
             Vector vector = new Vector(true);
-            vector.GetBits().ToArray();
+            vector.Bits.ToArray();
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 
 namespace SoftwareBotany.Sunlight
 {
@@ -12,7 +13,7 @@ namespace SoftwareBotany.Sunlight
         public Word(uint raw)
         {
             if (raw >= COMPRESSEDMASK)
-                throw new ArgumentOutOfRangeException(string.Format("value must be less than COMPRESSEDMASK : 0x{0:X}.", COMPRESSEDMASK), "value");
+                throw new ArgumentOutOfRangeException("raw", raw, string.Format(CultureInfo.InvariantCulture, "Must be < COMPRESSEDMASK : 0x{0:X}.", COMPRESSEDMASK));
 
             Contract.EndContractBlock();
 
@@ -22,10 +23,10 @@ namespace SoftwareBotany.Sunlight
         public Word(bool fillBit, int fillCount)
         {
             if (fillCount < 0)
-                throw new ArgumentOutOfRangeException("fillCount must be greater than or equal to 0.", "fillCount");
+                throw new ArgumentOutOfRangeException("fillCount", fillCount, "Must be >= 0.");
 
             if (fillCount > FILLCOUNTMASK)
-                throw new ArgumentOutOfRangeException(string.Format("fillCount must be less than or equal to COMPRESSEDFILLCOUNTMASK : 0x{0:X}.", FILLCOUNTMASK), "fillCount");
+                throw new ArgumentOutOfRangeException("fillCount", fillCount, string.Format(CultureInfo.InvariantCulture, "Must be <= FILLCOUNTMASK : 0x{0:X}.", FILLCOUNTMASK));
 
             Contract.EndContractBlock();
 
@@ -58,13 +59,13 @@ namespace SoftwareBotany.Sunlight
         private uint ComputeIndexerMask(int position)
         {
             if (IsCompressed)
-                throw new NotSupportedException("Indexer bit get/set not supported for Compressed Words.");
+                throw new NotSupportedException("Not supported for compressed Words.");
 
             if (position < 0)
-                throw new ArgumentOutOfRangeException("position must be greater than or equal to 0.", "position");
+                throw new ArgumentOutOfRangeException("position", position, "Must be >= 0.");
 
             if (position >= SIZE - 1)
-                throw new ArgumentOutOfRangeException(string.Format("position must be less than SIZE - 1 : {0}.", SIZE - 1), "position");
+                throw new ArgumentOutOfRangeException("position", position, string.Format(CultureInfo.InvariantCulture, "Must be < SIZE - 1 : {0}.", SIZE - 1));
 
             Contract.EndContractBlock();
 
@@ -76,7 +77,7 @@ namespace SoftwareBotany.Sunlight
             get
             {
                 if (IsCompressed)
-                    throw new NotSupportedException("Bits not supported for Compressed Words.");
+                    throw new NotSupportedException("Not supported for compressed Words.");
 
                 Contract.EndContractBlock();
 
@@ -98,7 +99,7 @@ namespace SoftwareBotany.Sunlight
         public int[] GetBitPositions(bool value)
         {
             if (IsCompressed)
-                throw new NotSupportedException("GetBitPositions not supported for Compressed Words.");
+                throw new NotSupportedException("Not supported for compressed Words.");
 
             Contract.EndContractBlock();
 
@@ -170,10 +171,10 @@ namespace SoftwareBotany.Sunlight
         internal void Pack(Word wahWord)
         {
             if (!IsCompressed)
-                throw new NotSupportedException("Cannot Pack a Word into an Uncompessed Word.");
+                throw new NotSupportedException("Cannot pack a Word into an uncompessed Word.");
 
             if (wahWord.IsCompressed)
-                throw new NotSupportedException("Cannot Pack a Compressed Word.");
+                throw new NotSupportedException("Cannot pack a compressed Word.");
 
             Contract.EndContractBlock();
 
@@ -220,7 +221,7 @@ namespace SoftwareBotany.Sunlight
 
         public override string ToString()
         {
-            return string.Format("0x{0:X}", Raw);
+            return string.Format(CultureInfo.InvariantCulture, "0x{0:X}", Raw);
         }
     }
 }
