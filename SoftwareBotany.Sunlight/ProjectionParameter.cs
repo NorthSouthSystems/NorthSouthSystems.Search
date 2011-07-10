@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace SoftwareBotany.Sunlight
 {
-    public class ProjectionParameter<TKey> : Parameter, IProjectionParameter
+    public sealed class ProjectionParameter<TKey> : Parameter, IProjectionParameter
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal ProjectionParameter(ICatalog catalog)

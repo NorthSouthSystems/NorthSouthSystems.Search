@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SoftwareBotany.Sunlight
 {
-    public class CatalogSortResult<TKey> : IEnumerable<CatalogPartialSortResult<TKey>>, ICatalogSortResult
+    public sealed class CatalogSortResult<TKey> : IEnumerable<CatalogPartialSortResult<TKey>>, ICatalogSortResult
     {
         internal CatalogSortResult(IEnumerable<CatalogPartialSortResult<TKey>> partialSortResults)
         {

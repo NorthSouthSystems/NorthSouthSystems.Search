@@ -2,7 +2,7 @@
 
 namespace SoftwareBotany.Sunlight
 {
-    public partial class Engine<TItem, TPrimaryKey>
+    public sealed partial class Engine<TItem, TPrimaryKey>
     {
         public IEngineStatistics GenerateStatistics()
         {
@@ -17,7 +17,7 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
-        private class Statistics : IEngineStatistics
+        private sealed class Statistics : IEngineStatistics
         {
             internal Statistics(Engine<TItem, TPrimaryKey> engine)
             {

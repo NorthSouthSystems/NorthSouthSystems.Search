@@ -2,11 +2,11 @@
 
 namespace SoftwareBotany.Sunlight
 {
-    public partial class Catalog<TKey>
+    public sealed partial class Catalog<TKey>
     {
         public ICatalogStatistics GenerateStatistics() { return new Statistics(this); }
 
-        private class Statistics : ICatalogStatistics
+        private sealed class Statistics : ICatalogStatistics
         {
             internal Statistics(Catalog<TKey> catalog)
             {

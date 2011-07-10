@@ -1,10 +1,10 @@
 ﻿namespace SoftwareBotany.Sunlight
 {
-    public partial class Vector
+    public sealed partial class Vector
     {
         public IVectorStatistics GenerateStatistics() { return new Statistics(this); }
 
-        private class Statistics : IVectorStatistics
+        private sealed class Statistics : IVectorStatistics
         {
             internal Statistics(Vector vector)
             {
