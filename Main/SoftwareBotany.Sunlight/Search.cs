@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace SoftwareBotany.Sunlight
 {
-    public class Search<TPrimaryKey>
+    public sealed class Search<TPrimaryKey>
     {
         internal Search(IEngine<TPrimaryKey> engine)
         {

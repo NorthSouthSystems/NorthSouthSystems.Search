@@ -12,7 +12,7 @@ namespace SoftwareBotany.Sunlight
     /// The implementation REQUIRES that <c>_words[WordCount - 1].IsCompressed == false</c> at all times and only allows
     /// <c>Set</c>ting bits on that Word and forward. In code comments will refer to this as the LAW.
     /// </remarks>
-    public partial class Vector
+    public sealed partial class Vector
     {
         public static Vector CreateUnion(params Vector[] vectors)
         {

@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SoftwareBotany.Sunlight
 {
-    public class CatalogPartialSortResult<TKey> : IEnumerable<int>
+    public sealed class CatalogPartialSortResult<TKey> : IEnumerable<int>
     {
         internal CatalogPartialSortResult(TKey key, IEnumerable<int> sortedBitPositions)
         {

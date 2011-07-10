@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SoftwareBotany.Sunlight
 {
-    internal class SearchParameter<TKey> : Parameter, ISearchParameter
+    internal sealed class SearchParameter<TKey> : Parameter, ISearchParameter
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal SearchParameter(ICatalog catalog, TKey exact)

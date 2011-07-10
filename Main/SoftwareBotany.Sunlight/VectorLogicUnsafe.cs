@@ -1,12 +1,7 @@
 ﻿#if UNSAFE
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-
 namespace SoftwareBotany.Sunlight
 {
-    public partial class Vector
+    public sealed partial class Vector
     {
         #region Construction
 

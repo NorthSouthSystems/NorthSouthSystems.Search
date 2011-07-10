@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace SoftwareBotany.Sunlight
 {
-    internal class SortParameter<TKey> : Parameter, ISortParameter
+    internal sealed class SortParameter<TKey> : Parameter, ISortParameter
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal SortParameter(ICatalog catalog, bool ascending)

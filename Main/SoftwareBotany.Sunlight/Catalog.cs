@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SoftwareBotany.Sunlight
 {
-    public partial class Catalog<TKey> : ICatalog
+    public sealed partial class Catalog<TKey> : ICatalog
       where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal Catalog(IEngine engine, string name)
@@ -184,7 +184,7 @@ namespace SoftwareBotany.Sunlight
     {
         IEngine Engine { get; }
         string Name { get; }
-        
+
         void RebuildHotReadPhase(int[] bitPositionShifts);
         void RebuildHotWritePhase();
 

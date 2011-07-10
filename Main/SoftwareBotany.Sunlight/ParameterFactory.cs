@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SoftwareBotany.Sunlight
 {
-    public class ParameterFactory<TKey>
+    public sealed class ParameterFactory<TKey>
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal ParameterFactory(ICatalog catalog, bool isCatalogOneToOne)
