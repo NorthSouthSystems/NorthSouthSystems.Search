@@ -4,13 +4,24 @@ namespace SoftwareBotany.Sunlight
 {
     public partial class Engine<TItem, TPrimaryKey>
     {
-        public IEngineStatistics GetStatistics() { return new Statistics(this); }
+        public IEngineStatistics GenerateStatistics()
+        {
+            try
+            {
+                _rwLock.EnterReadLock();
+                return new Statistics(this);
+            }
+            finally
+            {
+                _rwLock.ExitReadLock();
+            }
+        }
 
         private class Statistics : IEngineStatistics
         {
             internal Statistics(Engine<TItem, TPrimaryKey> engine)
             {
-                foreach (ICatalogStatistics catalogStats in engine._catalogsPlusExtractors.Select(cpe => cpe.Catalog.GetStatistics()))
+                foreach (ICatalogStatistics catalogStats in engine._catalogsPlusExtractors.Select(cpe => cpe.Catalog.GenerateStatistics()))
                 {
                     _catalogCount++;
                     _vectorCount += catalogStats.VectorCount;

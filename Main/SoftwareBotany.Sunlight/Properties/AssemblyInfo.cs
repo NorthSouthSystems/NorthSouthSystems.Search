@@ -1,5 +1,8 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
+[assembly:CLSCompliant(true)]
 
 [assembly: ComVisible(false)]
 [assembly: Guid("5c88b028-17b4-40f9-9d91-732cc764a1b1")]

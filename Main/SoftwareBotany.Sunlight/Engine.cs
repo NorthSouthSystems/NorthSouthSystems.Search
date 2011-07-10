@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SoftwareBotany.Sunlight
 {
-    public partial class Engine<TItem, TPrimaryKey> : IEngine<TPrimaryKey>
+    public sealed partial class Engine<TItem, TPrimaryKey> : IEngine<TPrimaryKey>, IDisposable
     {
         public Engine(Func<TItem, TPrimaryKey> primaryKeyExtractor)
         {
@@ -36,22 +39,24 @@ namespace SoftwareBotany.Sunlight
             public readonly Func<TItem, object> KeysOrKeyExtractor;
         }
 
+        public void Dispose() { _rwLock.Dispose(); }
+
         #region Catalog Management
 
-        public ParameterFactory<TKey> CreateCatalog<TKey>(string name, Func<TItem, IEnumerable<TKey>> keysExtractor, bool isCompressed = true)
+        public ParameterFactory<TKey> CreateCatalog<TKey>(string name, Func<TItem, IEnumerable<TKey>> keysExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            return CreateCatalogImpl<TKey>(name, false, item => (object)keysExtractor(item), isCompressed);
+            return CreateCatalogImpl<TKey>(name, false, item => (object)keysExtractor(item));
         }
 
-        public ParameterFactory<TKey> CreateCatalog<TKey>(string name, Func<TItem, TKey> keyExtractor, bool isCompressed = true)
+        public ParameterFactory<TKey> CreateCatalog<TKey>(string name, Func<TItem, TKey> keyExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             // Intentionally box the result of the keyExtractor because it is cheaper than a dynamic resolution.
-            return CreateCatalogImpl<TKey>(name, true, item => (object)keyExtractor(item), isCompressed);
+            return CreateCatalogImpl<TKey>(name, true, item => (object)keyExtractor(item));
         }
 
-        private ParameterFactory<TKey> CreateCatalogImpl<TKey>(string name, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor, bool isCompressed)
+        private ParameterFactory<TKey> CreateCatalogImpl<TKey>(string name, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             Catalog<TKey> catalog;
@@ -61,12 +66,12 @@ namespace SoftwareBotany.Sunlight
                 _rwLock.EnterWriteLock();
 
                 if (!_initializing)
-                    throw new ApplicationException("Cannot CreateCatalog after AddItem has been called.");
+                    throw new NotSupportedException("Cannot create a Catalog after an item has been added to the Engine.");
 
                 if (_catalogsPlusExtractors.Any(cpe => cpe.Catalog.Name == name))
-                    throw new ArgumentException(string.Format("Catalog already exists with name : {0}.", name), "name");
+                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "A Catalog already exists with the name : {0}.", name));
 
-                catalog = new Catalog<TKey>(this, name, isCompressed);
+                catalog = new Catalog<TKey>(this, name);
                 _catalogsPlusExtractors.Add(new CatalogPlusExtractor(catalog, keyOrKeysExtractor));
             }
             finally
@@ -91,7 +96,7 @@ namespace SoftwareBotany.Sunlight
                 int i = 0;
                 int exclusionCount = 0;
 
-                foreach (bool bit in _activeItems.GetBits())
+                foreach (bool bit in _activeItems.Bits)
                 {
                     if (bit)
                         bitPositionShifts[i] = exclusionCount;
@@ -171,6 +176,11 @@ namespace SoftwareBotany.Sunlight
 
         public void Add(IEnumerable<TItem> items)
         {
+            if (items == null)
+                throw new ArgumentNullException("items");
+
+            Contract.EndContractBlock();
+
             try
             {
                 _rwLock.EnterWriteLock();
@@ -191,7 +201,7 @@ namespace SoftwareBotany.Sunlight
             TPrimaryKey primaryKey = _primaryKeyExtractor(item);
 
             if (_primaryKeyToBitPositionMap.ContainsKey(primaryKey))
-                throw new ArgumentException(string.Format("An item already exists in this Engine with the PrimaryKey : {0}.", primaryKey));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "An item already exists in this Engine with the primary key : {0}.", primaryKey));
 
             int bitPosition = _primaryKeys.Count;
             _primaryKeys.Add(primaryKey);
@@ -228,6 +238,11 @@ namespace SoftwareBotany.Sunlight
 
         public void Update(IEnumerable<TItem> items)
         {
+            if (items == null)
+                throw new ArgumentNullException("items");
+
+            Contract.EndContractBlock();
+
             try
             {
                 _rwLock.EnterWriteLock();
@@ -246,7 +261,7 @@ namespace SoftwareBotany.Sunlight
             TPrimaryKey primaryKey = _primaryKeyExtractor(item);
 
             if (!_primaryKeyToBitPositionMap.ContainsKey(primaryKey))
-                throw new ArgumentException(string.Format("No item exists in this Engine with the PrimaryKey : {0}.", primaryKey));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "No item exists in this Engine with the primary key : {0}.", primaryKey));
 
             int fromBitPosition = _primaryKeyToBitPositionMap[primaryKey];
             _activeItems[fromBitPosition] = false;
@@ -279,7 +294,7 @@ namespace SoftwareBotany.Sunlight
                 _rwLock.EnterWriteLock();
 
                 if (!_primaryKeyToBitPositionMap.ContainsKey(primaryKey))
-                    throw new ArgumentException(string.Format("No item exists in this Engine with the PrimaryKey : {0}.", primaryKey));
+                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "No item exists in this Engine with the primary key : {0}.", primaryKey));
 
                 _activeItems[_primaryKeyToBitPositionMap[primaryKey]] = false;
             }
@@ -327,7 +342,7 @@ namespace SoftwareBotany.Sunlight
 
         private Vector InitializeSearch(IEnumerable<TPrimaryKey> amongstPrimaryKeys)
         {
-            Vector result = new Vector(_activeItems);
+            Vector result = new Vector(false, _activeItems);
 
             if (amongstPrimaryKeys.Any())
             {
@@ -355,7 +370,7 @@ namespace SoftwareBotany.Sunlight
             return result;
         }
 
-        private void SearchCatalogs(Vector result, IEnumerable<ISearchParameter> searchParameters)
+        private static void SearchCatalogs(Vector result, IEnumerable<ISearchParameter> searchParameters)
         {
             foreach (ISearchParameter searchParameter in searchParameters)
             {
@@ -373,7 +388,7 @@ namespace SoftwareBotany.Sunlight
                         catalog.Search(result, searchParameter.DynamicRangeMin, searchParameter.DynamicRangeMax);
                         break;
                     default:
-                        throw new NotImplementedException(string.Format("Unrecognized SearchParameterType : {0}.", searchParameter.ParameterType));
+                        throw new NotImplementedException(string.Format(CultureInfo.InvariantCulture, "Unrecognized search parameter type : {0}.", searchParameter.ParameterType));
                 }
             }
         }
@@ -402,24 +417,24 @@ namespace SoftwareBotany.Sunlight
                 return SortBitPositionsByPrimaryKey(result.GetBitPositions(true), sortPrimaryKeyAscending.Value);
         }
 
-        private IEnumerable<IEnumerable<int>> SortBitPositionsByParameter(Vector result, ISortParameter sortParameter)
+        private static IEnumerable<IEnumerable<int>> SortBitPositionsByParameter(Vector result, ISortParameter sortParameter)
         {
             dynamic catalog = sortParameter.Catalog;
-            IEnumerable<KeyValuePair<dynamic, IEnumerable<int>>> sorted;
+            ICatalogSortResult sortResult;
 
             switch (sortParameter.ParameterType)
             {
                 case SortParameterType.Directional:
-                    sorted = catalog.SortBitPositionsDynamic(result, true, sortParameter.Ascending);
+                    sortResult = catalog.SortBitPositions(result, true, sortParameter.Ascending);
                     break;
                 default:
-                    throw new NotImplementedException(string.Format("Unrecognized SortParameterType : {0}.", sortParameter.ParameterType));
+                    throw new NotImplementedException(string.Format(CultureInfo.InvariantCulture, "Unrecognized sort parameter type : {0}.", sortParameter.ParameterType));
             }
 
-            return sorted.Select(kvp => kvp.Value);
+            return sortResult.PartialSortResultsBitPositions;
         }
 
-        private IEnumerable<IEnumerable<int>> SortBitPositionsThenByParameter(IEnumerable<IEnumerable<int>> partialResults, ISortParameter sortParameter)
+        private static IEnumerable<IEnumerable<int>> SortBitPositionsThenByParameter(IEnumerable<IEnumerable<int>> partialResults, ISortParameter sortParameter)
         {
             return partialResults.SelectMany(partialResult =>
             {

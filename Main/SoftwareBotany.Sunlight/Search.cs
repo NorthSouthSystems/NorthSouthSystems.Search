@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
 
@@ -22,7 +23,7 @@ namespace SoftwareBotany.Sunlight
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (_engine != factory.Catalog.Engine)
-                throw new ApplicationException("ParameterFactory belongs to a different Engine.");
+                throw new ArgumentException("factory belongs to a different Engine.", "factory");
         }
 
         #region Amongst
@@ -32,6 +33,11 @@ namespace SoftwareBotany.Sunlight
 
         public Search<TPrimaryKey> AddAmongstPrimaryKeys(IEnumerable<TPrimaryKey> primaryKeys)
         {
+            if (primaryKeys == null)
+                throw new ArgumentNullException("primaryKeys");
+
+            Contract.EndContractBlock();
+
             _amongstPrimaryKeys.UnionWith(primaryKeys);
 
             return this;
@@ -47,6 +53,11 @@ namespace SoftwareBotany.Sunlight
         public Search<TPrimaryKey> AddSearchExactParameter<TKey>(ParameterFactory<TKey> factory, TKey exact)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
+            if (factory == null)
+                throw new ArgumentNullException("factory");
+
+            Contract.EndContractBlock();
+
             ThrowEngineMismatchException(factory);
             ThrowDuplicateSearchException(factory);
 
@@ -58,6 +69,11 @@ namespace SoftwareBotany.Sunlight
         public Search<TPrimaryKey> AddSearchEnumerableParameter<TKey>(ParameterFactory<TKey> factory, IEnumerable<TKey> enumerable)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
+            if (factory == null)
+                throw new ArgumentNullException("factory");
+
+            Contract.EndContractBlock();
+
             ThrowEngineMismatchException(factory);
             ThrowDuplicateSearchException(factory);
 
@@ -69,6 +85,11 @@ namespace SoftwareBotany.Sunlight
         public Search<TPrimaryKey> AddSearchRangeParameter<TKey>(ParameterFactory<TKey> factory, TKey rangeMin, TKey rangeMax)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
+            if (factory == null)
+                throw new ArgumentNullException("factory");
+
+            Contract.EndContractBlock();
+
             ThrowEngineMismatchException(factory);
             ThrowDuplicateSearchException(factory);
 
@@ -81,7 +102,7 @@ namespace SoftwareBotany.Sunlight
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (factory.IsCatalogOneToOne && _searchParameters.Any(parameter => parameter.Catalog == factory.Catalog))
-                throw new ApplicationException("Can only add 1 SearchParameter per One-to-One Catalog.");
+                throw new NotSupportedException("Can only add 1 Search Parameter per one-to-one Catalog.");
         }
 
         #endregion
@@ -94,6 +115,11 @@ namespace SoftwareBotany.Sunlight
         public Search<TPrimaryKey> AddSortDirectionalParameter<TKey>(ParameterFactory<TKey> factory, bool ascending)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
+            if (factory == null)
+                throw new ArgumentNullException("factory");
+
+            Contract.EndContractBlock();
+
             ThrowEngineMismatchException(factory);
             ThrowPrimaryKeySortExistsException();
             ThrowDuplicateSortException(factory);
@@ -117,14 +143,14 @@ namespace SoftwareBotany.Sunlight
         private void ThrowPrimaryKeySortExistsException()
         {
             if (SortPrimaryKeyAscending.HasValue)
-                throw new ApplicationException("Cannot add any SortParameters after a SortPrimaryKey has been added.");
+                throw new NotSupportedException("Cannot add a Sort Parameter after a Sort Primary Key has been added.");
         }
 
         private void ThrowDuplicateSortException<TKey>(ParameterFactory<TKey> factory)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (_sortParameters.Any(parameter => parameter.Catalog == factory.Catalog))
-                throw new ApplicationException("Can only add 1 SortParameter per Catalog.");
+                throw new NotSupportedException("Can only add 1 Sort Parameter per Catalog.");
         }
 
         #endregion
@@ -144,6 +170,11 @@ namespace SoftwareBotany.Sunlight
         public Search<TPrimaryKey> AddProjectionParameter<TKey>(ParameterFactory<TKey> factory, out ProjectionParameter<TKey> projectionParameter)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
+            if (factory == null)
+                throw new ArgumentNullException("factory");
+
+            Contract.EndContractBlock();
+
             ThrowEngineMismatchException(factory);
             ThrowDuplicateProjectionException(factory);
 
@@ -157,7 +188,7 @@ namespace SoftwareBotany.Sunlight
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (_projectionParameters.Any(parameter => parameter.Catalog == factory.Catalog))
-                throw new ApplicationException("Can only add 1 ProjectionParameter per Catalog.");
+                throw new NotSupportedException("Can only add 1 Projection Parameter per Catalog.");
         }
 
         #endregion
@@ -165,7 +196,7 @@ namespace SoftwareBotany.Sunlight
         public TPrimaryKey[] Execute(int skip, int take, out int totalCount)
         {
             if (Interlocked.CompareExchange(ref _executed, 1, 0) > 0)
-                throw new ApplicationException("Search already executed.");
+                throw new NotSupportedException("Search already executed.");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();

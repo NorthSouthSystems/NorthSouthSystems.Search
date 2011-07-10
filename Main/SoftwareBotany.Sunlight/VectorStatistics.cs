@@ -2,7 +2,7 @@
 {
     public partial class Vector
     {
-        public IVectorStatistics GetStatistics() { return new Statistics(this); }
+        public IVectorStatistics GenerateStatistics() { return new Statistics(this); }
 
         private class Statistics : IVectorStatistics
         {

@@ -15,7 +15,7 @@ namespace SoftwareBotany.Sunlight
             get
             {
                 if (!_projectionsSet)
-                    throw new ApplicationException("Search must be Executed before Projections are available.");
+                    throw new NotSupportedException("Search must be executed before Projections are available.");
 
                 return _projections;
             }

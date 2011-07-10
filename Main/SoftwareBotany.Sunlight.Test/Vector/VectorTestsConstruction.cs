@@ -35,7 +35,7 @@ namespace SoftwareBotany.Sunlight
         {
             Vector source = new Vector(compressedSource);
             int[] bitPositions = source.RandomFill(randomFillMaxBitPosition, randomFillCount);
-            Vector result = compressedSource == compressedResult ? new Vector(source) : new Vector(compressedResult, source);
+            Vector result = new Vector(compressedResult, source);
             result.AssertBitPositions(bitPositions);
 
             source.WordsClear();

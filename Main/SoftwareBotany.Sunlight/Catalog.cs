@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace SoftwareBotany.Sunlight
@@ -7,15 +8,14 @@ namespace SoftwareBotany.Sunlight
     public partial class Catalog<TKey> : ICatalog
       where TKey : IEquatable<TKey>, IComparable<TKey>
     {
-        internal Catalog(IEngine engine, string name, bool isCompressed)
+        internal Catalog(IEngine engine, string name)
         {
             _engine = engine;
             _name = name;
-            _isCompressed = isCompressed;
         }
 
-        public Catalog(string name, bool isCompressed)
-            : this(null, name, isCompressed)
+        public Catalog(string name)
+            : this(null, name)
         { }
 
         #region Rebuild
@@ -52,9 +52,6 @@ namespace SoftwareBotany.Sunlight
         public string Name { get { return _name; } }
         private readonly string _name;
 
-        public bool IsCompressed { get { return _isCompressed; } }
-        private readonly bool _isCompressed;
-
         private Dictionary<TKey, Vector> _vectorDictionary = new Dictionary<TKey, Vector>();
         private SortedList<TKey, Vector> _vectorSortedList = new SortedList<TKey, Vector>();
 
@@ -66,7 +63,7 @@ namespace SoftwareBotany.Sunlight
 
             if (!_vectorDictionary.TryGetValue(key, out vector))
             {
-                vector = new Vector(_isCompressed);
+                vector = new Vector(true);
                 _vectorDictionary.Add(key, vector);
                 _vectorSortedList.Add(key, vector);
             }
@@ -76,6 +73,11 @@ namespace SoftwareBotany.Sunlight
 
         public void Set(IEnumerable<TKey> keys, int bitPosition, bool value)
         {
+            if (keys == null)
+                throw new ArgumentNullException("keys");
+
+            Contract.EndContractBlock();
+
             foreach (TKey key in keys)
                 Set(key, bitPosition, value);
         }
@@ -118,12 +120,12 @@ namespace SoftwareBotany.Sunlight
 
         #region Sort
 
-        internal IEnumerable<KeyValuePair<dynamic, IEnumerable<int>>> SortBitPositionsDynamic(Vector vector, bool value, bool ascending)
+        public CatalogSortResult<TKey> SortBitPositions(Vector vector, bool value, bool ascending)
         {
-            return SortBitPositions(vector, value, ascending).Select(kvp => new KeyValuePair<dynamic, IEnumerable<int>>(kvp.Key, kvp.Value));
+            return new CatalogSortResult<TKey>(SortBitPositionsImpl(vector, value, ascending));
         }
 
-        public IEnumerable<KeyValuePair<TKey, IEnumerable<int>>> SortBitPositions(Vector vector, bool value, bool ascending)
+        private IEnumerable<CatalogPartialSortResult<TKey>> SortBitPositionsImpl(Vector vector, bool value, bool ascending)
         {
             // Enumerable.Reverse buffers the entire sequence, regardless of runtime type (in this case an IList).
             // Using the indexer behavior on _vectorSortedList should offer a performance improvement; however,
@@ -131,12 +133,12 @@ namespace SoftwareBotany.Sunlight
             if (ascending)
             {
                 for (int i = 0; i < _vectorSortedList.Count; i++)
-                    yield return new KeyValuePair<TKey, IEnumerable<int>>(_vectorSortedList.Keys[i], vector.AndFilterBitPositions(_vectorSortedList.Values[i], value));
+                    yield return new CatalogPartialSortResult<TKey>(_vectorSortedList.Keys[i], vector.AndFilterBitPositions(_vectorSortedList.Values[i], value));
             }
             else
             {
                 for (int i = _vectorSortedList.Count - 1; i >= 0; i--)
-                    yield return new KeyValuePair<TKey, IEnumerable<int>>(_vectorSortedList.Keys[i], vector.AndFilterBitPositions(_vectorSortedList.Values[i], value));
+                    yield return new CatalogPartialSortResult<TKey>(_vectorSortedList.Keys[i], vector.AndFilterBitPositions(_vectorSortedList.Values[i], value));
             }
         }
 
@@ -182,11 +184,10 @@ namespace SoftwareBotany.Sunlight
     {
         IEngine Engine { get; }
         string Name { get; }
-        bool IsCompressed { get; }
         
         void RebuildHotReadPhase(int[] bitPositionShifts);
         void RebuildHotWritePhase();
 
-        ICatalogStatistics GetStatistics();
+        ICatalogStatistics GenerateStatistics();
     }
 }

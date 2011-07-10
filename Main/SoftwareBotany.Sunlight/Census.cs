@@ -14,6 +14,7 @@ namespace SoftwareBotany.Sunlight
         /// <remarks>
         /// Originally found at <a href="http://www.hackersdelight.org/HDcode/newCode/pop_arrayHS.c.txt">Hacker's Delight</a>.
         /// </remarks>
+        [CLSCompliant(false)]
         public static int Population(this uint word)
         {
             word = word - ((word >> 1) & 0x55555555u);

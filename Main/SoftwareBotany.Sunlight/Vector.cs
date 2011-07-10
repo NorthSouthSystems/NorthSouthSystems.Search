@@ -25,7 +25,7 @@ namespace SoftwareBotany.Sunlight
                 return new Vector(false);
 
             if (vectors.Length == 1)
-                return new Vector(vectors[0]);
+                return new Vector(vectors[0]._isCompressed, vectors[0]);
 
             int maxWordCountLogical = vectors.Max(v => v._wordCountLogical);
 
@@ -39,9 +39,6 @@ namespace SoftwareBotany.Sunlight
 
         #region Construction
 
-        public Vector(Vector vector)
-            : this(vector.IsCompressed, vector) { }
-
         public Vector(bool isCompressed)
             : this(isCompressed, null) { }
 
@@ -50,7 +47,7 @@ namespace SoftwareBotany.Sunlight
 
         public Vector(bool isCompressed, Vector vector, int wordsLength)
         {
-            IsCompressed = isCompressed;
+            _isCompressed = isCompressed;
 
             if (vector == null)
             {
@@ -58,7 +55,7 @@ namespace SoftwareBotany.Sunlight
                 _wordCountPhysical = 1;
                 _wordCountLogical = 1;
             }
-            else if (IsCompressed && !vector.IsCompressed)
+            else if (_isCompressed && !vector._isCompressed)
             {
                 WordsGrow(wordsLength);
                 _wordCountPhysical = 1;
@@ -67,7 +64,7 @@ namespace SoftwareBotany.Sunlight
                 for (int i = 0; i < vector._wordCountPhysical; i++)
                     Set(i, vector._words[i]);
             }
-            else if (!IsCompressed && vector.IsCompressed)
+            else if (!_isCompressed && vector._isCompressed)
             {
                 WordsGrow(Math.Max(vector._wordCountLogical, wordsLength));
                 _wordCountPhysical = vector._wordCountLogical;
@@ -93,7 +90,7 @@ namespace SoftwareBotany.Sunlight
 
         internal void RebuildHotReadPhase(int[] bitPositionShifts)
         {
-            _rebuilt = new Vector(IsCompressed);
+            _rebuilt = new Vector(_isCompressed);
 
             foreach (int bitPosition in GetBitPositions(true))
             {
@@ -119,7 +116,8 @@ namespace SoftwareBotany.Sunlight
 
         #region Words
 
-        public readonly bool IsCompressed;
+        public bool IsCompressed { get { return _isCompressed; } }
+        private readonly bool _isCompressed;
 
         private Word[] _words;
         private int _wordCountPhysical;
@@ -224,7 +222,7 @@ namespace SoftwareBotany.Sunlight
             // PERF : Short circuits. When !IsCompressed wordPositionLogical === wordPositionPhysical, ALWAYS.
             // When it IsCompressed, we take advantage of the fact that if you are asking for the last logical word,
             // that word must reside on the last physical word.
-            if (!IsCompressed)
+            if (!_isCompressed)
                 return wordPositionLogical;
             else if (wordPositionLogical == _wordCountLogical - 1)
                 return _wordCountPhysical - 1;
@@ -263,7 +261,7 @@ namespace SoftwareBotany.Sunlight
                 }
             }
 
-            throw new Exception("Error in algorithm.");
+            throw new NotImplementedException("Error in algorithm.");
         }
 
         #endregion
@@ -280,8 +278,8 @@ namespace SoftwareBotany.Sunlight
 
             Contract.EndContractBlock();
 
-            if (IsCompressed && wordPositionLogical < (_wordCountLogical - 1))
-                throw new NotSupportedException("Writing is forward-only for a Compressed Vector.");
+            if (_isCompressed && wordPositionLogical < (_wordCountLogical - 1))
+                throw new NotSupportedException("Writing is forward-only for a compressed Vector.");
 
             if (word.Raw == 0 && ZeroFillCount(wordPositionLogical) > 0)
                 return;
@@ -304,8 +302,8 @@ namespace SoftwareBotany.Sunlight
             int wordPositionLogical = WordPositionLogical(bitPosition);
             int wordBitPosition = WordBitPosition(bitPosition);
 
-            if (IsCompressed && wordPositionLogical < _wordCountLogical - 1)
-                throw new NotSupportedException("Writing is forward-only for a Compressed Vector.");
+            if (_isCompressed && wordPositionLogical < _wordCountLogical - 1)
+                throw new NotSupportedException("Writing is forward-only for a compressed Vector.");
 
             if (!value && ZeroFillCount(wordPositionLogical) > 0)
                 return;
@@ -329,7 +327,7 @@ namespace SoftwareBotany.Sunlight
 
         private void ZeroFill(int wordPositionLogical)
         {
-            if (IsCompressed)
+            if (_isCompressed)
             {
                 ZeroFillWhenCompressedAndSingleWord(wordPositionLogical);
                 ZeroFillWhenCompressedAndTailIsCompressedAndCompressible(wordPositionLogical);
@@ -445,7 +443,7 @@ namespace SoftwareBotany.Sunlight
 
             if (zeroFillCount > 0)
             {
-                if (IsCompressed)
+                if (_isCompressed)
                     _words[_wordCountPhysical - 1].Compress();
 
                 WordsGrow(_wordCountPhysical + zeroFillCount);
@@ -471,16 +469,19 @@ namespace SoftwareBotany.Sunlight
 
         #region Bit Positions
 
-        public IEnumerable<bool> GetBits()
+        public IEnumerable<bool> Bits
         {
-            if (IsCompressed)
-                throw new NotSupportedException("GetBits not supported for a Compressed Vector.");
+            get
+            {
+                if (_isCompressed)
+                    throw new NotSupportedException("Not supported for a compressed Vector.");
 
-            Contract.EndContractBlock();
+                Contract.EndContractBlock();
 
-            for (int i = 0; i < _wordCountPhysical; i++)
-                foreach (bool bit in _words[i].Bits)
-                    yield return bit;
+                for (int i = 0; i < _wordCountPhysical; i++)
+                    foreach (bool bit in _words[i].Bits)
+                        yield return bit;
+            }
         }
 
         public IEnumerable<int> GetBitPositions(bool value)
@@ -533,8 +534,8 @@ namespace SoftwareBotany.Sunlight
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
-            if (IsCompressed)
-                throw new NotSupportedException("AndFilterGetBitPositions not supported for a Compressed Vector.");
+            if (_isCompressed)
+                throw new NotSupportedException("Not supported for a compressed Vector.");
 
             Contract.EndContractBlock();
 
@@ -607,8 +608,8 @@ namespace SoftwareBotany.Sunlight
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
-            if (IsCompressed)
-                throw new NotSupportedException("And (in-place) not supported for a Compressed Vector.");
+            if (_isCompressed)
+                throw new NotSupportedException("Not supported for a compressed Vector.");
 
             Contract.EndContractBlock();
 
@@ -623,7 +624,7 @@ namespace SoftwareBotany.Sunlight
                     Word* j = jFixed;
                     Word* jMax = jFixed + vector._wordCountPhysical;
 
-                    i = vector.IsCompressed ? AndCompressed(i, iMax, j, jMax) : AndUncompressed(i, iMax, j, jMax);
+                    i = vector._isCompressed ? AndCompressed(i, iMax, j, jMax) : AndUncompressed(i, iMax, j, jMax);
 
                     if (i < iMax)
                     {
@@ -660,8 +661,8 @@ namespace SoftwareBotany.Sunlight
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
-            if (IsCompressed)
-                throw new NotSupportedException("AndPopulation not supported for a compressed Vector.");
+            if (_isCompressed)
+                throw new NotSupportedException("Not supported for a compressed Vector.");
 
             Contract.EndContractBlock();
 
@@ -676,7 +677,7 @@ namespace SoftwareBotany.Sunlight
                     Word* j = jFixed;
                     Word* jMax = jFixed + vector._wordCountPhysical;
 
-                    return vector.IsCompressed ? AndPopulationCompressed(i, iMax, j, jMax) : AndPopulationUncompressed(i, iMax, j, jMax);
+                    return vector._isCompressed ? AndPopulationCompressed(i, iMax, j, jMax) : AndPopulationUncompressed(i, iMax, j, jMax);
                 }
             }
 #else
@@ -689,8 +690,8 @@ namespace SoftwareBotany.Sunlight
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
-            if (IsCompressed)
-                throw new NotSupportedException("Or (in-place) not supported for a Compressed Vector.");
+            if (_isCompressed)
+                throw new NotSupportedException("Not supported for a compressed Vector.");
 
             Contract.EndContractBlock();
 
@@ -709,7 +710,7 @@ namespace SoftwareBotany.Sunlight
                     Word* j = jFixed;
                     Word* jMax = jFixed + vector._wordCountPhysical;
 
-                    if (vector.IsCompressed)
+                    if (vector._isCompressed)
                         OrCompressed(i, iMax, j, jMax);
                     else
                         OrUncompressed(i, iMax, j, jMax);

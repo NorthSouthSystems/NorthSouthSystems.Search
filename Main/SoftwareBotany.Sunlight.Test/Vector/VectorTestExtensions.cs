@@ -36,7 +36,7 @@ namespace SoftwareBotany.Sunlight
             CollectionAssert.AreEqual(bitPositions, vector.GetBitPositions(true).ToArray());
 
             if (!vector.IsCompressed)
-                CollectionAssert.AreEqual(bits, vector.GetBits().Reverse().SkipWhile(bit => !bit).Reverse().ToArray());
+                CollectionAssert.AreEqual(bits, vector.Bits.Reverse().SkipWhile(bit => !bit).Reverse().ToArray());
 
             foreach (int bitPosition in bitPositions)
                 Assert.AreEqual(true, vector[bitPosition]);
