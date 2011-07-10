@@ -608,7 +608,7 @@ namespace SoftwareBotany.Sunlight
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
-            if (_isCompressed)
+            if (IsCompressed)
                 throw new NotSupportedException("Not supported for a compressed Vector.");
 
             Contract.EndContractBlock();
@@ -661,7 +661,7 @@ namespace SoftwareBotany.Sunlight
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
-            if (_isCompressed)
+            if (IsCompressed)
                 throw new NotSupportedException("Not supported for a compressed Vector.");
 
             Contract.EndContractBlock();
@@ -690,7 +690,7 @@ namespace SoftwareBotany.Sunlight
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
-            if (_isCompressed)
+            if (IsCompressed)
                 throw new NotSupportedException("Not supported for a compressed Vector.");
 
             Contract.EndContractBlock();
