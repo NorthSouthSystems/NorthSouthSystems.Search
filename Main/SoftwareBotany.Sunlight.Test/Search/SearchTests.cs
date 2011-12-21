@@ -128,19 +128,19 @@ namespace SoftwareBotany.Sunlight
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void AddProjectionNull()
+        public void AddFacetNull()
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(item => item.Id))
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
-                engine1.CreateSearch().AddProjectionParameter((ParameterFactory<int>)null);
+                engine1.CreateSearch().AddFacetParameter((ParameterFactory<int>)null);
             }
         }
 
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
-        public void DuplicateProjection()
+        public void DuplicateFacet()
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(item => item.Id))
             {
@@ -149,8 +149,8 @@ namespace SoftwareBotany.Sunlight
 
                 engine1.CreateSearch()
                     .AddSearchExactParameter(factory1, 1)
-                    .AddProjectionParameter(factory2)
-                    .AddProjectionParameter(factory2);
+                    .AddFacetParameter(factory2)
+                    .AddFacetParameter(factory2);
             }
         }
 
@@ -184,7 +184,7 @@ namespace SoftwareBotany.Sunlight
                     .AddSearchExactParameter(factory1, 1)
                     .AddSortDirectionalParameter(factory2, true)
                     .AddSortPrimaryKey(true)
-                    .AddProjectionParameter(factory2)
+                    .AddFacetParameter(factory2)
                     .Execute(0, 1, out totalCount);
             }
         }

@@ -1,28 +1,27 @@
 ﻿using System;
-using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SoftwareBotany.Sunlight
 {
     [TestClass]
-    public class ProjectionParameterTests
+    public class FacetParameterTests
     {
         #region Exceptions
 
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
-        public void ProjectionSearchNotExecuted()
+        public void FacetSearchNotExecuted()
         {
             Engine<EngineItem, int> engine = new Engine<EngineItem, int>(item => item.Id);
             var someIntFactory = engine.CreateCatalog("SomeInt", item => item.SomeInt);
 
-            ProjectionParameter<int> someIntProjection;
+            FacetParameter<int> someIntFacet;
 
             var search = engine.CreateSearch()
-                .AddProjectionParameter(someIntFactory, out someIntProjection);
+                .AddFacetParameter(someIntFactory, out someIntFacet);
 
-            var projections = someIntProjection.Projections;
+            var facets = someIntFacet.Facets;
         }
 
         #endregion

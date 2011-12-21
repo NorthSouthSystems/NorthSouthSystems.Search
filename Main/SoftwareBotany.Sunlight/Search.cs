@@ -155,19 +155,19 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Projection
+        #region Faceting
 
-        internal IEnumerable<IProjectionParameter> ProjectionParameters { get { return _projectionParameters; } }
-        private readonly List<IProjectionParameter> _projectionParameters = new List<IProjectionParameter>();
+        internal IEnumerable<IFacetParameter> FacetParameters { get { return _facetParameters; } }
+        private readonly List<IFacetParameter> _facetParameters = new List<IFacetParameter>();
 
-        public Search<TPrimaryKey> AddProjectionParameter<TKey>(ParameterFactory<TKey> factory)
+        public Search<TPrimaryKey> AddFacetParameter<TKey>(ParameterFactory<TKey> factory)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            ProjectionParameter<TKey> projectionParameter;
-            return AddProjectionParameter(factory, out projectionParameter);
+            FacetParameter<TKey> facetParameter;
+            return AddFacetParameter(factory, out facetParameter);
         }
 
-        public Search<TPrimaryKey> AddProjectionParameter<TKey>(ParameterFactory<TKey> factory, out ProjectionParameter<TKey> projectionParameter)
+        public Search<TPrimaryKey> AddFacetParameter<TKey>(ParameterFactory<TKey> factory, out FacetParameter<TKey> facetParameter)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (factory == null)
@@ -176,19 +176,19 @@ namespace SoftwareBotany.Sunlight
             Contract.EndContractBlock();
 
             ThrowEngineMismatchException(factory);
-            ThrowDuplicateProjectionException(factory);
+            ThrowDuplicateFacetException(factory);
 
-            projectionParameter = factory.CreateProjectionParameter();
-            _projectionParameters.Add(projectionParameter);
+            facetParameter = factory.CreateFacetParameter();
+            _facetParameters.Add(facetParameter);
 
             return this;
         }
 
-        private void ThrowDuplicateProjectionException<TKey>(ParameterFactory<TKey> factory)
+        private void ThrowDuplicateFacetException<TKey>(ParameterFactory<TKey> factory)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            if (_projectionParameters.Any(parameter => parameter.Catalog == factory.Catalog))
-                throw new NotSupportedException("Can only add 1 Projection Parameter per Catalog.");
+            if (_facetParameters.Any(parameter => parameter.Catalog == factory.Catalog))
+                throw new NotSupportedException("Can only add 1 Facet Parameter per Catalog.");
         }
 
         #endregion

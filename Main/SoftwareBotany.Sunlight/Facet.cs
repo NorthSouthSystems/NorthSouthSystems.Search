@@ -2,10 +2,10 @@
 
 namespace SoftwareBotany.Sunlight
 {
-    public struct Projection<TKey>
+    public struct Facet<TKey>
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
-        internal Projection(TKey key, int count)
+        internal Facet(TKey key, int count)
         {
             _key = key;
             _count = count;
@@ -19,18 +19,18 @@ namespace SoftwareBotany.Sunlight
 
         #region Equality & Hashing
 
-        public bool Equals(Projection<TKey> other)
+        public bool Equals(Facet<TKey> other)
         {
             return _key.Equals(other._key) && _count.Equals(other._count);
         }
 
         public override bool Equals(object obj)
         {
-            return obj != null && obj.GetType() == typeof(Projection<TKey>) && this.Equals((Projection<TKey>)obj);
+            return obj != null && obj.GetType() == typeof(Facet<TKey>) && this.Equals((Facet<TKey>)obj);
         }
 
-        public static bool operator ==(Projection<TKey> left, Projection<TKey> right) { return left.Equals(right); }
-        public static bool operator !=(Projection<TKey> left, Projection<TKey> right) { return !left.Equals(right); }
+        public static bool operator ==(Facet<TKey> left, Facet<TKey> right) { return left.Equals(right); }
+        public static bool operator !=(Facet<TKey> left, Facet<TKey> right) { return !left.Equals(right); }
 
         public override int GetHashCode()
         {
