@@ -106,14 +106,14 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Projection
+        #region Faceting
 
-        public ProjectionCollection<TKey> Projection(Vector vector)
+        public FacetCollection<TKey> Facets(Vector vector)
         {
-            var projections = _vectorSortedList
-                .Select(keyAndVector => new Projection<TKey>(keyAndVector.Key, vector.AndPopulation(keyAndVector.Value)));
+            var facets = _vectorSortedList
+                .Select(keyAndVector => new Facet<TKey>(keyAndVector.Key, vector.AndPopulation(keyAndVector.Value)));
 
-            return new ProjectionCollection<TKey>(projections);
+            return new FacetCollection<TKey>(facets);
         }
 
         #endregion

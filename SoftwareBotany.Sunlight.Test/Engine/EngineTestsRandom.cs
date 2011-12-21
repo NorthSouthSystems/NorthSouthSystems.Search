@@ -113,39 +113,39 @@ namespace SoftwareBotany.Sunlight
                         search = engine.CreateSearch()
                             .AddRandomSearchExactParameter(someIntFactory, random.Next(), someIntMax)
                             .AddSortDirectionalParameter(someStringFactory, random.Next() % 2 == 0)
-                            .AddProjectionParameter(someIntFactory)
-                            .AddProjectionParameter(someDateTimeFactory)
-                            .AddProjectionParameter(someStringFactory)
-                            .AddProjectionParameter(someTagsFactory);
+                            .AddFacetParameter(someIntFactory)
+                            .AddFacetParameter(someDateTimeFactory)
+                            .AddFacetParameter(someStringFactory)
+                            .AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
                         search = engine.CreateSearch()
                             .AddRandomSearchEnumerableParameter(someIntFactory, random.Next(), someIntMax)
                             .AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0)
-                            .AddProjectionParameter(someIntFactory)
-                            .AddProjectionParameter(someDateTimeFactory)
-                            .AddProjectionParameter(someStringFactory)
-                            .AddProjectionParameter(someTagsFactory);
+                            .AddFacetParameter(someIntFactory)
+                            .AddFacetParameter(someDateTimeFactory)
+                            .AddFacetParameter(someStringFactory)
+                            .AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
                         search = engine.CreateSearch()
                             .AddRandomSearchRangeParameter(someIntFactory, random.Next(), someIntMax)
                             .AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0)
-                            .AddProjectionParameter(someIntFactory)
-                            .AddProjectionParameter(someDateTimeFactory)
-                            .AddProjectionParameter(someStringFactory)
-                            .AddProjectionParameter(someTagsFactory);
+                            .AddFacetParameter(someIntFactory)
+                            .AddFacetParameter(someDateTimeFactory)
+                            .AddFacetParameter(someStringFactory)
+                            .AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
                         search = engine.CreateSearch()
                             .AddRandomSearchRangeParameter(someTagsFactory, random.Next(), someTagsMax)
                             .AddSortDirectionalParameter(someTagsFactory, random.Next() % 2 == 0)
-                            .AddProjectionParameter(someIntFactory)
-                            .AddProjectionParameter(someDateTimeFactory)
-                            .AddProjectionParameter(someStringFactory);
+                            .AddFacetParameter(someIntFactory)
+                            .AddFacetParameter(someDateTimeFactory)
+                            .AddFacetParameter(someStringFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
                     }
@@ -157,10 +157,10 @@ namespace SoftwareBotany.Sunlight
                             .AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0)
                             .AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0)
                             .AddSortPrimaryKey(random.Next() % 2 == 0)
-                            .AddProjectionParameter(someIntFactory)
-                            .AddProjectionParameter(someDateTimeFactory)
-                            .AddProjectionParameter(someStringFactory)
-                            .AddProjectionParameter(someTagsFactory);
+                            .AddFacetParameter(someIntFactory)
+                            .AddFacetParameter(someDateTimeFactory)
+                            .AddFacetParameter(someStringFactory)
+                            .AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -170,10 +170,10 @@ namespace SoftwareBotany.Sunlight
                             .AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0)
                             .AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0)
                             .AddSortPrimaryKey(random.Next() % 2 == 0)
-                            .AddProjectionParameter(someIntFactory)
-                            .AddProjectionParameter(someDateTimeFactory)
-                            .AddProjectionParameter(someStringFactory)
-                            .AddProjectionParameter(someTagsFactory);
+                            .AddFacetParameter(someIntFactory)
+                            .AddFacetParameter(someDateTimeFactory)
+                            .AddFacetParameter(someStringFactory)
+                            .AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -184,10 +184,10 @@ namespace SoftwareBotany.Sunlight
                             .AddSortDirectionalParameter(someStringFactory, random.Next() % 2 == 0)
                             .AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0)
                             .AddSortPrimaryKey(random.Next() % 2 == 0)
-                            .AddProjectionParameter(someIntFactory)
-                            .AddProjectionParameter(someDateTimeFactory)
-                            .AddProjectionParameter(someStringFactory)
-                            .AddProjectionParameter(someTagsFactory);
+                            .AddFacetParameter(someIntFactory)
+                            .AddFacetParameter(someDateTimeFactory)
+                            .AddFacetParameter(someStringFactory)
+                            .AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -198,10 +198,10 @@ namespace SoftwareBotany.Sunlight
                             .AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0)
                             .AddSortDirectionalParameter(someTagsFactory, random.Next() % 2 == 0)
                             .AddSortPrimaryKey(random.Next() % 2 == 0)
-                            .AddProjectionParameter(someIntFactory)
-                            .AddProjectionParameter(someDateTimeFactory)
-                            .AddProjectionParameter(someStringFactory)
-                            .AddProjectionParameter(someTagsFactory);
+                            .AddFacetParameter(someIntFactory)
+                            .AddFacetParameter(someDateTimeFactory)
+                            .AddFacetParameter(someStringFactory)
+                            .AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
                     }

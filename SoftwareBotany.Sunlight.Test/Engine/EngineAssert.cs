@@ -28,8 +28,8 @@ namespace SoftwareBotany.Sunlight
             Assert.AreEqual(sourceResults.Length, totalCount);
             CollectionAssert.AreEqual(sourceResults.Skip(skip).Take(take).Select(item => item.Id).ToArray(), primaryKeys);
 
-            foreach (IProjectionParameter param in search.ProjectionParameters)
-                AssertProjection(sourceResults, param);
+            foreach (IFacetParameter param in search.FacetParameters)
+                AssertFacet(sourceResults, param);
         }
 
         #region Search
@@ -167,75 +167,75 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Projection
+        #region Faceting
 
-        private static void AssertProjection(EngineItem[] sourceResults, IProjectionParameter param)
+        private static void AssertFacet(EngineItem[] sourceResults, IFacetParameter param)
         {
             switch (param.Catalog.Name)
             {
                 case "SomeInt":
-                    Projection<int>[] sourceSomeIntProjection = sourceResults.GroupBy(item => item.SomeInt)
-                        .Select(group => new Projection<int>(group.Key, group.Count()))
-                        .OrderBy(projection => projection.Key)
+                    Facet<int>[] sourceSomeIntFacet = sourceResults.GroupBy(item => item.SomeInt)
+                        .Select(group => new Facet<int>(group.Key, group.Count()))
+                        .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    Projection<int>[] paramSomeIntProjection = ((IEnumerable<Projection<int>>)param.DynamicProjections)
-                        .OrderBy(projection => projection.Key)
+                    Facet<int>[] paramSomeIntFacet = ((IEnumerable<Facet<int>>)param.DynamicFacets)
+                        .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    sourceSomeIntProjection.AssertProjections(paramSomeIntProjection);
+                    sourceSomeIntFacet.AssertFacets(paramSomeIntFacet);
                     break;
                 case "SomeDateTime":
-                    Projection<DateTime>[] sourceSomeDateTimeProjection = sourceResults.GroupBy(item => item.SomeDateTime)
-                        .Select(group => new Projection<DateTime>(group.Key, group.Count()))
-                        .OrderBy(projection => projection.Key)
+                    Facet<DateTime>[] sourceSomeDateTimeFacet = sourceResults.GroupBy(item => item.SomeDateTime)
+                        .Select(group => new Facet<DateTime>(group.Key, group.Count()))
+                        .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    Projection<DateTime>[] paramSomeDateTimeProjection = ((IEnumerable<Projection<DateTime>>)param.DynamicProjections)
-                        .OrderBy(projection => projection.Key)
+                    Facet<DateTime>[] paramSomeDateTimeFacet = ((IEnumerable<Facet<DateTime>>)param.DynamicFacets)
+                        .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    sourceSomeDateTimeProjection.AssertProjections(paramSomeDateTimeProjection);
+                    sourceSomeDateTimeFacet.AssertFacets(paramSomeDateTimeFacet);
                     break;
                 case "SomeString":
-                    Projection<string>[] sourceSomeStringProjection = sourceResults.GroupBy(item => item.SomeString)
-                        .Select(group => new Projection<string>(group.Key, group.Count()))
-                        .OrderBy(projection => projection.Key)
+                    Facet<string>[] sourceSomeStringFacet = sourceResults.GroupBy(item => item.SomeString)
+                        .Select(group => new Facet<string>(group.Key, group.Count()))
+                        .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    Projection<string>[] paramSomeStringProjection = ((IEnumerable<Projection<string>>)param.DynamicProjections)
-                        .OrderBy(projection => projection.Key)
+                    Facet<string>[] paramSomeStringFacet = ((IEnumerable<Facet<string>>)param.DynamicFacets)
+                        .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    sourceSomeStringProjection.AssertProjections(paramSomeStringProjection);
+                    sourceSomeStringFacet.AssertFacets(paramSomeStringFacet);
                     break;
                 case "SomeTags":
-                    Projection<string>[] sourceSomeTagsProjection = sourceResults.SelectMany(item => item.SomeTags)
+                    Facet<string>[] sourceSomeTagsFacet = sourceResults.SelectMany(item => item.SomeTags)
                         .GroupBy(tag => tag)
-                        .Select(group => new Projection<string>(group.Key, group.Count()))
-                        .OrderBy(projection => projection.Key)
+                        .Select(group => new Facet<string>(group.Key, group.Count()))
+                        .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    Projection<string>[] paramSomeTagsProjection = ((IEnumerable<Projection<string>>)param.DynamicProjections)
-                        .OrderBy(projection => projection.Key)
+                    Facet<string>[] paramSomeTagsFacet = ((IEnumerable<Facet<string>>)param.DynamicFacets)
+                        .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    sourceSomeTagsProjection.AssertProjections(paramSomeTagsProjection);
+                    sourceSomeTagsFacet.AssertFacets(paramSomeTagsFacet);
                     break;
                 default:
                     throw new NotImplementedException(param.Catalog.Name);
             }
         }
 
-        private static void AssertProjections<T>(this Projection<T>[] projections, Projection<T>[] compare)
+        private static void AssertFacets<T>(this Facet<T>[] facets, Facet<T>[] compare)
             where T : IEquatable<T>, IComparable<T>
         {
-            Assert.AreEqual(projections.Length, compare.Length);
+            Assert.AreEqual(facets.Length, compare.Length);
 
-            for (int i = 0; i < projections.Length; i++)
+            for (int i = 0; i < facets.Length; i++)
             {
-                Assert.AreEqual(projections[i].Key, compare[i].Key);
-                Assert.AreEqual(projections[i].Count, compare[i].Count);
+                Assert.AreEqual(facets[i].Key, compare[i].Key);
+                Assert.AreEqual(facets[i].Count, compare[i].Count);
             }
         }
 

@@ -43,11 +43,11 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Projection
+        #region Faceting
 
-        internal ProjectionParameter<TKey> CreateProjectionParameter()
+        internal FacetParameter<TKey> CreateFacetParameter()
         {
-            return new ProjectionParameter<TKey>(Catalog);
+            return new FacetParameter<TKey>(Catalog);
         }
 
         #endregion

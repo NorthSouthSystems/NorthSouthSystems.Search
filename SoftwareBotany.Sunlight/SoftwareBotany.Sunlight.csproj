@@ -346,10 +346,10 @@
     <Compile Include="Census.cs" />
     <Compile Include="CatalogPartialSortResult.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="ProjectionCollection.cs" />
+    <Compile Include="FacetCollection.cs" />
     <Compile Include="VectorLogicUnsafe.cs" />
     <Compile Include="VectorLogicSafe.cs" />
-    <Compile Include="Projection.cs" />
+    <Compile Include="Facet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CatalogStatistics.cs" />
     <Compile Include="EngineStatistics.cs" />
@@ -360,7 +360,7 @@
     <Compile Include="Catalog.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Parameter.cs" />
-    <Compile Include="ProjectionParameter.cs" />
+    <Compile Include="FacetParameter.cs" />
     <Compile Include="SearchParameter.cs" />
     <Compile Include="SortParameter.cs" />
     <Compile Include="VectorStatistics.cs" />

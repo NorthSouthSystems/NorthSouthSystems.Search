@@ -319,8 +319,8 @@ namespace SoftwareBotany.Sunlight
                 SearchCatalogs(result, search.SearchParameters);
                 totalCount = result.Population;
 
-                foreach (IProjectionParameter projectionParameter in search.ProjectionParameters)
-                    projectionParameter.DynamicProjections = ((dynamic)projectionParameter.Catalog).Projection(result);
+                foreach (IFacetParameter facetParameter in search.FacetParameters)
+                    facetParameter.DynamicFacets = ((dynamic)facetParameter.Catalog).Facets(result);
 
                 IEnumerable<int> sortedBitPositions = (!search.SortParameters.Any() && !search.SortPrimaryKeyAscending.HasValue)
                     ? result.GetBitPositions(true)
