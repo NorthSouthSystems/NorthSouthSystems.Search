@@ -80,7 +80,9 @@ namespace SoftwareBotany.Sunlight
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
-                engine1.CreateSearch().AddSearchExactParameter(factory1, 1).AddSearchExactParameter(factory1, 2);
+                var search = engine1.CreateSearch();
+                search.AddSearchExactParameter(factory1, 1);
+                search.AddSearchExactParameter(factory1, 2);
             }
         }
 
@@ -104,10 +106,10 @@ namespace SoftwareBotany.Sunlight
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
-                engine1.CreateSearch()
-                    .AddSearchExactParameter(factory1, 1)
-                    .AddSortPrimaryKey(true)
-                    .AddSortDirectionalParameter(factory1, true);
+                var search = engine1.CreateSearch();
+                search.AddSearchExactParameter(factory1, 1);
+                search.SortPrimaryKeyAscending = true;
+                search.AddSortDirectionalParameter(factory1, true);
             }
         }
 
@@ -119,10 +121,10 @@ namespace SoftwareBotany.Sunlight
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
-                engine1.CreateSearch()
-                    .AddSearchExactParameter(factory1, 1)
-                    .AddSortDirectionalParameter(factory1, true)
-                    .AddSortDirectionalParameter(factory1, true);
+                var search = engine1.CreateSearch();
+                search.AddSearchExactParameter(factory1, 1);
+                search.AddSortDirectionalParameter(factory1, true);
+                search.AddSortDirectionalParameter(factory1, true);
             }
         }
 
@@ -147,10 +149,10 @@ namespace SoftwareBotany.Sunlight
                 var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
                 var factory2 = engine1.CreateCatalog("SomeString", item => item.SomeString);
 
-                engine1.CreateSearch()
-                    .AddSearchExactParameter(factory1, 1)
-                    .AddFacetParameter(factory2)
-                    .AddFacetParameter(factory2);
+                var search = engine1.CreateSearch();
+                search.AddSearchExactParameter(factory1, 1);
+                search.AddFacetParameter(factory2);
+                search.AddFacetParameter(factory2);
             }
         }
 
@@ -164,7 +166,8 @@ namespace SoftwareBotany.Sunlight
 
                 int totalCount;
 
-                var search = engine1.CreateSearch().AddSearchExactParameter(factory1, 1);
+                var search = engine1.CreateSearch();
+                search.AddSearchExactParameter(factory1, 1);
                 search.Execute(0, 1, out totalCount);
                 search.Execute(0, 1, out totalCount);
             }
@@ -180,12 +183,12 @@ namespace SoftwareBotany.Sunlight
 
                 int totalCount;
 
-                engine1.CreateSearch()
-                    .AddSearchExactParameter(factory1, 1)
-                    .AddSortDirectionalParameter(factory2, true)
-                    .AddSortPrimaryKey(true)
-                    .AddFacetParameter(factory2)
-                    .Execute(0, 1, out totalCount);
+                var search = engine1.CreateSearch();
+                search.AddSearchExactParameter(factory1, 1);
+                search.AddSortDirectionalParameter(factory2, true);
+                search.SortPrimaryKeyAscending = true;
+                search.AddFacetParameter(factory2);
+                search.Execute(0, 1, out totalCount);
             }
         }
 

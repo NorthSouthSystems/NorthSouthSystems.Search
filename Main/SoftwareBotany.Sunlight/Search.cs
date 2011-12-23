@@ -31,7 +31,7 @@ namespace SoftwareBotany.Sunlight
         internal IEnumerable<TPrimaryKey> AmongstPrimaryKeys { get { return _amongstPrimaryKeys; } }
         private HashSet<TPrimaryKey> _amongstPrimaryKeys = new HashSet<TPrimaryKey>();
 
-        public Search<TPrimaryKey> AddAmongstPrimaryKeys(IEnumerable<TPrimaryKey> primaryKeys)
+        public void AddAmongstPrimaryKeys(IEnumerable<TPrimaryKey> primaryKeys)
         {
             if (primaryKeys == null)
                 throw new ArgumentNullException("primaryKeys");
@@ -39,8 +39,6 @@ namespace SoftwareBotany.Sunlight
             Contract.EndContractBlock();
 
             _amongstPrimaryKeys.UnionWith(primaryKeys);
-
-            return this;
         }
 
         #endregion
@@ -50,7 +48,7 @@ namespace SoftwareBotany.Sunlight
         internal IEnumerable<ISearchParameter> SearchParameters { get { return _searchParameters; } }
         private readonly List<ISearchParameter> _searchParameters = new List<ISearchParameter>();
 
-        public Search<TPrimaryKey> AddSearchExactParameter<TKey>(ParameterFactory<TKey> factory, TKey exact)
+        public SearchParameter<TKey> AddSearchExactParameter<TKey>(ParameterFactory<TKey> factory, TKey exact)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (factory == null)
@@ -61,12 +59,13 @@ namespace SoftwareBotany.Sunlight
             ThrowEngineMismatchException(factory);
             ThrowDuplicateSearchException(factory);
 
-            _searchParameters.Add(factory.CreateSearchExactParameter(exact));
+            var searchParameter = factory.CreateSearchExactParameter(exact);
+            _searchParameters.Add(searchParameter);
 
-            return this;
+            return searchParameter;
         }
 
-        public Search<TPrimaryKey> AddSearchEnumerableParameter<TKey>(ParameterFactory<TKey> factory, IEnumerable<TKey> enumerable)
+        public SearchParameter<TKey> AddSearchEnumerableParameter<TKey>(ParameterFactory<TKey> factory, IEnumerable<TKey> enumerable)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (factory == null)
@@ -77,12 +76,13 @@ namespace SoftwareBotany.Sunlight
             ThrowEngineMismatchException(factory);
             ThrowDuplicateSearchException(factory);
 
-            _searchParameters.Add(factory.CreateSearchEnumerableParameter(enumerable));
+            var searchParameter = factory.CreateSearchEnumerableParameter(enumerable);
+            _searchParameters.Add(searchParameter);
 
-            return this;
+            return searchParameter;
         }
 
-        public Search<TPrimaryKey> AddSearchRangeParameter<TKey>(ParameterFactory<TKey> factory, TKey rangeMin, TKey rangeMax)
+        public SearchParameter<TKey> AddSearchRangeParameter<TKey>(ParameterFactory<TKey> factory, TKey rangeMin, TKey rangeMax)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (factory == null)
@@ -93,9 +93,10 @@ namespace SoftwareBotany.Sunlight
             ThrowEngineMismatchException(factory);
             ThrowDuplicateSearchException(factory);
 
-            _searchParameters.Add(factory.CreateSearchRangeParameter(rangeMin, rangeMax));
+            var searchParameter = factory.CreateSearchRangeParameter(rangeMin, rangeMax);
+            _searchParameters.Add(searchParameter);
 
-            return this;
+            return searchParameter;
         }
 
         private void ThrowDuplicateSearchException<TKey>(ParameterFactory<TKey> factory)
@@ -112,7 +113,7 @@ namespace SoftwareBotany.Sunlight
         internal IEnumerable<ISortParameter> SortParameters { get { return _sortParameters; } }
         private readonly List<ISortParameter> _sortParameters = new List<ISortParameter>();
 
-        public Search<TPrimaryKey> AddSortDirectionalParameter<TKey>(ParameterFactory<TKey> factory, bool ascending)
+        public SortParameter<TKey> AddSortDirectionalParameter<TKey>(ParameterFactory<TKey> factory, bool ascending)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (factory == null)
@@ -124,26 +125,29 @@ namespace SoftwareBotany.Sunlight
             ThrowPrimaryKeySortExistsException();
             ThrowDuplicateSortException(factory);
 
-            _sortParameters.Add(factory.CreateSortDirectionalParameter(ascending));
+            var sortParameter = factory.CreateSortDirectionalParameter(ascending);
+            _sortParameters.Add(sortParameter);
 
-            return this;
+            return sortParameter;
         }
 
-        internal bool? SortPrimaryKeyAscending { get; private set; }
+        private bool? _sortPrimaryKeyAscending;
 
-        public Search<TPrimaryKey> AddSortPrimaryKey(bool ascending)
+        public bool? SortPrimaryKeyAscending
         {
-            ThrowPrimaryKeySortExistsException();
+            get { return _sortPrimaryKeyAscending; }
+            set
+            {
+                ThrowPrimaryKeySortExistsException();
 
-            SortPrimaryKeyAscending = ascending;
-
-            return this;
+                _sortPrimaryKeyAscending = value;
+            }
         }
 
         private void ThrowPrimaryKeySortExistsException()
         {
             if (SortPrimaryKeyAscending.HasValue)
-                throw new NotSupportedException("Cannot add a Sort Parameter after a Sort Primary Key has been added.");
+                throw new NotSupportedException("Cannot modify Sort Parameters after a Sort Primary Key has been set.");
         }
 
         private void ThrowDuplicateSortException<TKey>(ParameterFactory<TKey> factory)
@@ -160,14 +164,7 @@ namespace SoftwareBotany.Sunlight
         internal IEnumerable<IFacetParameter> FacetParameters { get { return _facetParameters; } }
         private readonly List<IFacetParameter> _facetParameters = new List<IFacetParameter>();
 
-        public Search<TPrimaryKey> AddFacetParameter<TKey>(ParameterFactory<TKey> factory)
-            where TKey : IEquatable<TKey>, IComparable<TKey>
-        {
-            FacetParameter<TKey> facetParameter;
-            return AddFacetParameter(factory, out facetParameter);
-        }
-
-        public Search<TPrimaryKey> AddFacetParameter<TKey>(ParameterFactory<TKey> factory, out FacetParameter<TKey> facetParameter)
+        public FacetParameter<TKey> AddFacetParameter<TKey>(ParameterFactory<TKey> factory)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (factory == null)
@@ -178,10 +175,10 @@ namespace SoftwareBotany.Sunlight
             ThrowEngineMismatchException(factory);
             ThrowDuplicateFacetException(factory);
 
-            facetParameter = factory.CreateFacetParameter();
+            FacetParameter<TKey> facetParameter = factory.CreateFacetParameter();
             _facetParameters.Add(facetParameter);
 
-            return this;
+            return facetParameter;
         }
 
         private void ThrowDuplicateFacetException<TKey>(ParameterFactory<TKey> factory)

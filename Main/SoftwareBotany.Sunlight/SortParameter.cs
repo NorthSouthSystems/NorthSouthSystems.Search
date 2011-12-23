@@ -2,7 +2,7 @@
 
 namespace SoftwareBotany.Sunlight
 {
-    internal sealed class SortParameter<TKey> : Parameter, ISortParameter
+    public sealed class SortParameter<TKey> : Parameter, ISortParameter
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal SortParameter(ICatalog catalog, bool ascending)
@@ -25,7 +25,7 @@ namespace SoftwareBotany.Sunlight
         bool Ascending { get; }
     }
 
-    internal enum SortParameterType
+    public enum SortParameterType
     {
         Directional
     }

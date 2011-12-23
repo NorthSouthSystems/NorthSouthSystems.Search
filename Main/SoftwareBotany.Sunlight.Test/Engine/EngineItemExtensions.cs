@@ -5,13 +5,13 @@ namespace SoftwareBotany.Sunlight
 {
     internal static class EngineItemExtensions
     {
-        public static Search<int> AddRandomSearchExactParameter(this Search<int> search, ParameterFactory<int> factory, int randomSeed, int max)
+        public static SearchParameter<int> AddRandomSearchExactParameter(this Search<int> search, ParameterFactory<int> factory, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
             return search.AddSearchExactParameter(factory, random.Next(max));
         }
 
-        public static Search<int> AddRandomSearchEnumerableParameter(this Search<int> search, ParameterFactory<int> factory, int randomSeed, int max)
+        public static SearchParameter<int> AddRandomSearchEnumerableParameter(this Search<int> search, ParameterFactory<int> factory, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
 
@@ -23,7 +23,7 @@ namespace SoftwareBotany.Sunlight
             return search.AddSearchEnumerableParameter(factory, enumerable);
         }
 
-        public static Search<int> AddRandomSearchRangeParameter(this Search<int> search, ParameterFactory<int> factory, int randomSeed, int max)
+        public static SearchParameter<int> AddRandomSearchRangeParameter(this Search<int> search, ParameterFactory<int> factory, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
             
@@ -36,13 +36,13 @@ namespace SoftwareBotany.Sunlight
             return search.AddSearchRangeParameter(factory, Math.Min(val1, val2), Math.Max(val1, val2));
         }
 
-        public static Search<int> AddRandomSearchExactParameter(this Search<int> search, ParameterFactory<DateTime> factory, int randomSeed, int max)
+        public static SearchParameter<DateTime> AddRandomSearchExactParameter(this Search<int> search, ParameterFactory<DateTime> factory, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
             return search.AddSearchExactParameter(factory, new DateTime(2011, 1, 1).AddDays(random.Next(max)));
         }
 
-        public static Search<int> AddRandomSearchEnumerableParameter(this Search<int> search, ParameterFactory<DateTime> factory, int randomSeed, int max)
+        public static SearchParameter<DateTime> AddRandomSearchEnumerableParameter(this Search<int> search, ParameterFactory<DateTime> factory, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
 
@@ -55,7 +55,7 @@ namespace SoftwareBotany.Sunlight
             return search.AddSearchEnumerableParameter(factory, enumerable);
         }
 
-        public static Search<int> AddRandomSearchRangeParameter(this Search<int> search, ParameterFactory<DateTime> factory, int randomSeed, int max)
+        public static SearchParameter<DateTime> AddRandomSearchRangeParameter(this Search<int> search, ParameterFactory<DateTime> factory, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
 
@@ -68,13 +68,13 @@ namespace SoftwareBotany.Sunlight
             return search.AddSearchRangeParameter(factory, new DateTime(2011, 1, 1).AddDays(Math.Min(val1, val2)), new DateTime(2011, 1, 1).AddDays(Math.Max(val1, val2)));
         }
 
-        public static Search<int> AddRandomSearchExactParameter(this Search<int> search, ParameterFactory<string> factory, int randomSeed, int max)
+        public static SearchParameter<string> AddRandomSearchExactParameter(this Search<int> search, ParameterFactory<string> factory, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
             return search.AddSearchExactParameter(factory, random.Next(max).ToString());
         }
 
-        public static Search<int> AddRandomSearchEnumerableParameter(this Search<int> search, ParameterFactory<string> factory, int randomSeed, int max)
+        public static SearchParameter<string> AddRandomSearchEnumerableParameter(this Search<int> search, ParameterFactory<string> factory, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
 
@@ -87,7 +87,7 @@ namespace SoftwareBotany.Sunlight
             return search.AddSearchEnumerableParameter(factory, enumerable);
         }
 
-        public static Search<int> AddRandomSearchRangeParameter(this Search<int> search, ParameterFactory<string> factory, int randomSeed, int max)
+        public static SearchParameter<string> AddRandomSearchRangeParameter(this Search<int> search, ParameterFactory<string> factory, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
 

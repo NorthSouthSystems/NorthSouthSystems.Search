@@ -76,7 +76,7 @@ namespace SoftwareBotany.Sunlight
         {
             Random random = new Random(randomSeed);
 
-            foreach(int run in Enumerable.Range(0, runs))
+            foreach (int run in Enumerable.Range(0, runs))
                 BaseImpl(random.Next(), size, simple);
         }
 
@@ -110,98 +110,98 @@ namespace SoftwareBotany.Sunlight
 
                     if (simple)
                     {
-                        search = engine.CreateSearch()
-                            .AddRandomSearchExactParameter(someIntFactory, random.Next(), someIntMax)
-                            .AddSortDirectionalParameter(someStringFactory, random.Next() % 2 == 0)
-                            .AddFacetParameter(someIntFactory)
-                            .AddFacetParameter(someDateTimeFactory)
-                            .AddFacetParameter(someStringFactory)
-                            .AddFacetParameter(someTagsFactory);
+                        search = engine.CreateSearch();
+                        search.AddRandomSearchExactParameter(someIntFactory, random.Next(), someIntMax);
+                        search.AddSortDirectionalParameter(someStringFactory, random.Next() % 2 == 0);
+                        search.AddFacetParameter(someIntFactory);
+                        search.AddFacetParameter(someDateTimeFactory);
+                        search.AddFacetParameter(someStringFactory);
+                        search.AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
-                        search = engine.CreateSearch()
-                            .AddRandomSearchEnumerableParameter(someIntFactory, random.Next(), someIntMax)
-                            .AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0)
-                            .AddFacetParameter(someIntFactory)
-                            .AddFacetParameter(someDateTimeFactory)
-                            .AddFacetParameter(someStringFactory)
-                            .AddFacetParameter(someTagsFactory);
+                        search = engine.CreateSearch();
+                        search.AddRandomSearchEnumerableParameter(someIntFactory, random.Next(), someIntMax);
+                        search.AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0);
+                        search.AddFacetParameter(someIntFactory);
+                        search.AddFacetParameter(someDateTimeFactory);
+                        search.AddFacetParameter(someStringFactory);
+                        search.AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
-                        search = engine.CreateSearch()
-                            .AddRandomSearchRangeParameter(someIntFactory, random.Next(), someIntMax)
-                            .AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0)
-                            .AddFacetParameter(someIntFactory)
-                            .AddFacetParameter(someDateTimeFactory)
-                            .AddFacetParameter(someStringFactory)
-                            .AddFacetParameter(someTagsFactory);
+                        search = engine.CreateSearch();
+                        search.AddRandomSearchRangeParameter(someIntFactory, random.Next(), someIntMax);
+                        search.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        search.AddFacetParameter(someIntFactory);
+                        search.AddFacetParameter(someDateTimeFactory);
+                        search.AddFacetParameter(someStringFactory);
+                        search.AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
-                        search = engine.CreateSearch()
-                            .AddRandomSearchRangeParameter(someTagsFactory, random.Next(), someTagsMax)
-                            .AddSortDirectionalParameter(someTagsFactory, random.Next() % 2 == 0)
-                            .AddFacetParameter(someIntFactory)
-                            .AddFacetParameter(someDateTimeFactory)
-                            .AddFacetParameter(someStringFactory);
+                        search = engine.CreateSearch();
+                        search.AddRandomSearchRangeParameter(someTagsFactory, random.Next(), someTagsMax);
+                        search.AddSortDirectionalParameter(someTagsFactory, random.Next() % 2 == 0);
+                        search.AddFacetParameter(someIntFactory);
+                        search.AddFacetParameter(someDateTimeFactory);
+                        search.AddFacetParameter(someStringFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
                     }
                     else
                     {
-                        search = engine.CreateSearch()
-                            .AddRandomSearchExactParameter(someStringFactory, random.Next(), someStringMax)
-                            .AddRandomSearchRangeParameter(someIntFactory, random.Next(), someIntMax)
-                            .AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0)
-                            .AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0)
-                            .AddSortPrimaryKey(random.Next() % 2 == 0)
-                            .AddFacetParameter(someIntFactory)
-                            .AddFacetParameter(someDateTimeFactory)
-                            .AddFacetParameter(someStringFactory)
-                            .AddFacetParameter(someTagsFactory);
+                        search = engine.CreateSearch();
+                        search.AddRandomSearchExactParameter(someStringFactory, random.Next(), someStringMax);
+                        search.AddRandomSearchRangeParameter(someIntFactory, random.Next(), someIntMax);
+                        search.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        search.AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0);
+                        search.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
+                        search.AddFacetParameter(someIntFactory);
+                        search.AddFacetParameter(someDateTimeFactory);
+                        search.AddFacetParameter(someStringFactory);
+                        search.AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
-                        search = engine.CreateSearch()
-                            .AddRandomSearchEnumerableParameter(someStringFactory, random.Next(), someStringMax)
-                            .AddRandomSearchRangeParameter(someDateTimeFactory, random.Next(), someDateTimeMax)
-                            .AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0)
-                            .AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0)
-                            .AddSortPrimaryKey(random.Next() % 2 == 0)
-                            .AddFacetParameter(someIntFactory)
-                            .AddFacetParameter(someDateTimeFactory)
-                            .AddFacetParameter(someStringFactory)
-                            .AddFacetParameter(someTagsFactory);
+                        search = engine.CreateSearch();
+                        search.AddRandomSearchEnumerableParameter(someStringFactory, random.Next(), someStringMax);
+                        search.AddRandomSearchRangeParameter(someDateTimeFactory, random.Next(), someDateTimeMax);
+                        search.AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0);
+                        search.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        search.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
+                        search.AddFacetParameter(someIntFactory);
+                        search.AddFacetParameter(someDateTimeFactory);
+                        search.AddFacetParameter(someStringFactory);
+                        search.AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
-                        search = engine.CreateSearch()
-                            .AddAmongstPrimaryKeys(items.Take((items.Length / 2) + random.Next(items.Length / 2)).Select(item => item.Id))
-                            .AddRandomSearchRangeParameter(someDateTimeFactory, random.Next(), someDateTimeMax)
-                            .AddRandomSearchRangeParameter(someIntFactory, random.Next(), someIntMax)
-                            .AddSortDirectionalParameter(someStringFactory, random.Next() % 2 == 0)
-                            .AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0)
-                            .AddSortPrimaryKey(random.Next() % 2 == 0)
-                            .AddFacetParameter(someIntFactory)
-                            .AddFacetParameter(someDateTimeFactory)
-                            .AddFacetParameter(someStringFactory)
-                            .AddFacetParameter(someTagsFactory);
+                        search = engine.CreateSearch();
+                        search.AddAmongstPrimaryKeys(items.Take((items.Length / 2) + random.Next(items.Length / 2)).Select(item => item.Id));
+                        search.AddRandomSearchRangeParameter(someDateTimeFactory, random.Next(), someDateTimeMax);
+                        search.AddRandomSearchRangeParameter(someIntFactory, random.Next(), someIntMax);
+                        search.AddSortDirectionalParameter(someStringFactory, random.Next() % 2 == 0);
+                        search.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        search.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
+                        search.AddFacetParameter(someIntFactory);
+                        search.AddFacetParameter(someDateTimeFactory);
+                        search.AddFacetParameter(someStringFactory);
+                        search.AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
-                        search = engine.CreateSearch()
-                            .AddRandomSearchRangeParameter(someIntFactory, random.Next(), someIntMax)
-                            .AddRandomSearchRangeParameter(someTagsFactory, random.Next(), someTagsMax)
-                            .AddRandomSearchRangeParameter(someTagsFactory, random.Next(), someTagsMax)
-                            .AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0)
-                            .AddSortDirectionalParameter(someTagsFactory, random.Next() % 2 == 0)
-                            .AddSortPrimaryKey(random.Next() % 2 == 0)
-                            .AddFacetParameter(someIntFactory)
-                            .AddFacetParameter(someDateTimeFactory)
-                            .AddFacetParameter(someStringFactory)
-                            .AddFacetParameter(someTagsFactory);
+                        search = engine.CreateSearch();
+                        search.AddRandomSearchRangeParameter(someIntFactory, random.Next(), someIntMax);
+                        search.AddRandomSearchRangeParameter(someTagsFactory, random.Next(), someTagsMax);
+                        search.AddRandomSearchRangeParameter(someTagsFactory, random.Next(), someTagsMax);
+                        search.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        search.AddSortDirectionalParameter(someTagsFactory, random.Next() % 2 == 0);
+                        search.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
+                        search.AddFacetParameter(someIntFactory);
+                        search.AddFacetParameter(someDateTimeFactory);
+                        search.AddFacetParameter(someStringFactory);
+                        search.AddFacetParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
                     }

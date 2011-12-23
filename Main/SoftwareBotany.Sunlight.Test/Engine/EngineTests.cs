@@ -24,7 +24,11 @@ namespace SoftwareBotany.Sunlight
                 engine1.Add(new SimpleItem { Id = 43, SomeInt = 0 });
 
                 int totalCount;
-                int[] primaryKeys = engine1.CreateSearch().AddAmongstPrimaryKeys(new[] { 43, 44 }).Execute(0, 10, out totalCount);
+                
+                var search = engine1.CreateSearch();
+                search.AddAmongstPrimaryKeys(new[] { 43, 44 });
+
+                int[] primaryKeys = search.Execute(0, 10, out totalCount);
 
                 Assert.AreEqual(1, totalCount);
                 Assert.AreEqual(1, primaryKeys.Length);

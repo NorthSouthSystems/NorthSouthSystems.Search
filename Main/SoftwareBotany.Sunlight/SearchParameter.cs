@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SoftwareBotany.Sunlight
 {
-    internal sealed class SearchParameter<TKey> : Parameter, ISearchParameter
+    public sealed class SearchParameter<TKey> : Parameter, ISearchParameter
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal SearchParameter(ICatalog catalog, TKey exact)
@@ -63,7 +63,7 @@ namespace SoftwareBotany.Sunlight
         dynamic DynamicRangeMax { get; }
     }
 
-    internal enum SearchParameterType
+    public enum SearchParameterType
     {
         Exact,
         Enumerable,
