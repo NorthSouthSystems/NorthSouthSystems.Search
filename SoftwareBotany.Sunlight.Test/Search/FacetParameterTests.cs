@@ -16,10 +16,8 @@ namespace SoftwareBotany.Sunlight
             Engine<EngineItem, int> engine = new Engine<EngineItem, int>(item => item.Id);
             var someIntFactory = engine.CreateCatalog("SomeInt", item => item.SomeInt);
 
-            FacetParameter<int> someIntFacet;
-
-            var search = engine.CreateSearch()
-                .AddFacetParameter(someIntFactory, out someIntFacet);
+            FacetParameter<int> someIntFacet = engine.CreateSearch()
+                .AddFacetParameter(someIntFactory);
 
             var facets = someIntFacet.Facets;
         }
