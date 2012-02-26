@@ -20,6 +20,7 @@ namespace SoftwareBotany.Sunlight
                 Assert.AreEqual(2, stats.CatalogCount);
                 Assert.AreEqual(0, stats.VectorCount);
                 Assert.AreEqual(0, stats.WordCount);
+                Assert.AreEqual(0, stats.PackedWordCount);
                 Assert.AreEqual(0, stats.OneBitPackableWordCount);
                 Assert.AreEqual(0, stats.TwoBitPackableWordCount);
 
@@ -29,36 +30,68 @@ namespace SoftwareBotany.Sunlight
                 stats = engine.GenerateStatistics();
                 Assert.AreEqual(2, stats.CatalogCount);
                 Assert.AreEqual(4, stats.VectorCount);
+#if POSITIONLIST
+                Assert.AreEqual(8, stats.WordCount);
+                Assert.AreEqual(2, stats.PackedWordCount);
+                Assert.AreEqual(0, stats.OneBitPackableWordCount);
+                Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+#else
                 Assert.AreEqual(10, stats.WordCount);
+                Assert.AreEqual(0, stats.PackedWordCount);
                 Assert.AreEqual(2, stats.OneBitPackableWordCount);
                 Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+#endif
 
                 engine.Add(items.Skip(63).Take(62));
 
                 stats = engine.GenerateStatistics();
                 Assert.AreEqual(2, stats.CatalogCount);
                 Assert.AreEqual(4, stats.VectorCount);
+#if POSITIONLIST
+                Assert.AreEqual(14, stats.WordCount);
+                Assert.AreEqual(4, stats.PackedWordCount);
+                Assert.AreEqual(0, stats.OneBitPackableWordCount);
+                Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+#else
                 Assert.AreEqual(18, stats.WordCount);
+                Assert.AreEqual(0, stats.PackedWordCount);
                 Assert.AreEqual(4, stats.OneBitPackableWordCount);
                 Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+#endif
 
                 engine.Add(items.Skip(125).Take(62));
 
                 stats = engine.GenerateStatistics();
                 Assert.AreEqual(2, stats.CatalogCount);
                 Assert.AreEqual(4, stats.VectorCount);
+#if POSITIONLIST
+                Assert.AreEqual(22, stats.WordCount);
+                Assert.AreEqual(4, stats.PackedWordCount);
+                Assert.AreEqual(0, stats.OneBitPackableWordCount);
+                Assert.AreEqual(2, stats.TwoBitPackableWordCount);
+#else
                 Assert.AreEqual(26, stats.WordCount);
+                Assert.AreEqual(0, stats.PackedWordCount);
                 Assert.AreEqual(4, stats.OneBitPackableWordCount);
                 Assert.AreEqual(2, stats.TwoBitPackableWordCount);
+#endif
 
                 engine.Add(items.Skip(187).Take(62));
 
                 stats = engine.GenerateStatistics();
                 Assert.AreEqual(2, stats.CatalogCount);
                 Assert.AreEqual(4, stats.VectorCount);
+#if POSITIONLIST
+                Assert.AreEqual(30, stats.WordCount);
+                Assert.AreEqual(4, stats.PackedWordCount);
+                Assert.AreEqual(0, stats.OneBitPackableWordCount);
+                Assert.AreEqual(4, stats.TwoBitPackableWordCount);
+#else
                 Assert.AreEqual(34, stats.WordCount);
+                Assert.AreEqual(0, stats.PackedWordCount);
                 Assert.AreEqual(4, stats.OneBitPackableWordCount);
                 Assert.AreEqual(4, stats.TwoBitPackableWordCount);
+#endif
             }
         }
 

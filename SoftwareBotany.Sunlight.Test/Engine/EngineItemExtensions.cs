@@ -97,7 +97,17 @@ namespace SoftwareBotany.Sunlight
             if (val1 == val2)
                 val2++;
 
-            return search.AddSearchRangeParameter(factory, Math.Min(val1, val2).ToString(), Math.Max(val1, val2).ToString());
+            string rangeMin = val1.ToString();
+            string rangeMax = val2.ToString();
+
+            if (rangeMin.CompareTo(rangeMax) > 0)
+            {
+                string s = rangeMin;
+                rangeMin = rangeMax;
+                rangeMax = s;
+            }
+
+            return search.AddSearchRangeParameter(factory, rangeMin, rangeMax);
         }
     }
 }

@@ -14,6 +14,7 @@ namespace SoftwareBotany.Sunlight
                 {
                     _vectorCount++;
                     _wordCount += vectorStats.WordCount;
+                    _packedWordCount += vectorStats.PackedWordCount;
                     _oneBitPackableWordCount += vectorStats.OneBitPackableWordCount;
                     _twoBitPackableWordCount += vectorStats.TwoBitPackableWordCount;
                 }
@@ -24,6 +25,9 @@ namespace SoftwareBotany.Sunlight
 
             private readonly int _wordCount;
             public int WordCount { get { return _wordCount; } }
+
+            private readonly int _packedWordCount;
+            public int PackedWordCount { get { return _packedWordCount; } }
 
             private readonly int _oneBitPackableWordCount;
             public int OneBitPackableWordCount { get { return _oneBitPackableWordCount; } }
@@ -37,6 +41,7 @@ namespace SoftwareBotany.Sunlight
     {
         int VectorCount { get; }
         int WordCount { get; }
+        int PackedWordCount { get; }
         int OneBitPackableWordCount { get; }
         int TwoBitPackableWordCount { get; }
     }
