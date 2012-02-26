@@ -153,7 +153,7 @@ namespace SoftwareBotany.Sunlight
 #if POSITIONLIST
         private const uint PACKEDPOSITIONMASK = 0x3E000000u;
 
-        public bool HasPackedWord { get { return (Raw & PACKEDPOSITIONMASK) > 0u; } }
+        public bool HasPackedWord { get { return IsCompressed && (Raw & PACKEDPOSITIONMASK) > 0u; } }
 
         /// <summary>
         /// Position is relative to the global bit position.  More specifically, it ignores the most significant bit which is
@@ -164,21 +164,42 @@ namespace SoftwareBotany.Sunlight
         /// PACKEDPOSITIONMASK and subtract 1 to get the real PackedPosition. This function will then return -1 should a PackedWord
         /// not be present. This offset is reflected in the PackedWord property and also the Pack function.
         /// </summary>
-        public int PackedPosition { get { return (int)((Raw & PACKEDPOSITIONMASK) >> (SIZE - 7)) - 1; } }
+        public int PackedPosition
+        {
+            get
+            {
+                if (!HasPackedWord)
+                    throw new NotSupportedException("Cannot retreive the PackedPosition for a Word that does not contain a Packed Word.");
 
-        public Word PackedWord { get { return new Word(1u << (SIZE - 2 - PackedPosition)); } }
+                return (int)((Raw & PACKEDPOSITIONMASK) >> (SIZE - 7)) - 1;
+            }
+        }
 
-        internal void Pack(Word wahWord)
+        public Word PackedWord
+        {
+            get
+            {
+                if (!HasPackedWord)
+                    throw new NotSupportedException("Cannot retreive the PackedWord for a Word that does not contain a Packed Word.");
+
+                return new Word(1u << (SIZE - 2 - PackedPosition));
+            }
+        }
+
+        internal void Pack(Word word)
         {
             if (!IsCompressed)
-                throw new NotSupportedException("Cannot pack a Word into an uncompessed Word.");
+                throw new NotSupportedException("Cannot pack a Word into an uncompressed Word.");
 
-            if (wahWord.IsCompressed)
+            if (word.IsCompressed)
                 throw new NotSupportedException("Cannot pack a compressed Word.");
+
+            if (HasPackedWord)
+                throw new NotSupportedException("Cannot pack a Word into a Word that already HasPackedWord.");
 
             Contract.EndContractBlock();
 
-            uint packedPosition = (uint)wahWord.GetBitPositions(true)[0];
+            uint packedPosition = (uint)word.GetBitPositions(true)[0];
             Raw |= (packedPosition + 1) << (SIZE - 7);
         }
 

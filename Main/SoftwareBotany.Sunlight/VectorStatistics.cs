@@ -16,6 +16,13 @@
                 {
                     Word word = vector._words[i];
 
+#if POSITIONLIST
+                    if (word.HasPackedWord)
+                        _packedWordCount++;
+#else
+                    _packedWordCount = 0;
+#endif
+
                     if (!word.IsCompressed && lastWordCompressed && i < vector._wordCountPhysical - 1)
                     {
                         if (word.Population == 1)
@@ -31,6 +38,9 @@
             private readonly int _wordCount;
             public int WordCount { get { return _wordCount; } }
 
+            private readonly int _packedWordCount;
+            public int PackedWordCount { get { return _packedWordCount; } }
+
             private readonly int _oneBitPackableWordCount;
             public int OneBitPackableWordCount { get { return _oneBitPackableWordCount; } }
 
@@ -42,6 +52,7 @@
     public interface IVectorStatistics
     {
         int WordCount { get; }
+        int PackedWordCount { get; }
         int OneBitPackableWordCount { get; }
         int TwoBitPackableWordCount { get; }
     }

@@ -22,6 +22,9 @@ namespace SoftwareBotany.Sunlight
             TKey exact = default(TKey), IEnumerable<TKey> enumerable = null, TKey rangeMin = default(TKey), TKey rangeMax = default(TKey))
             : base(catalog)
         {
+            if (parameterType == SearchParameterType.Range && rangeMin.CompareTo(rangeMax) > 0)
+                throw new ArgumentOutOfRangeException("rangeMin", "rangeMin must be <= rangeMax.");
+
             _parameterType = parameterType;
             _exact = exact;
             _enumerable = enumerable;
