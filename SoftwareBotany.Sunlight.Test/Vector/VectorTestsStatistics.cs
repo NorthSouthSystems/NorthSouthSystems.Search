@@ -83,5 +83,48 @@ namespace SoftwareBotany.Sunlight
             Assert.AreEqual(2, stats.TwoBitPackableWordCount);
 #endif
         }
+
+        [TestMethod]
+        public void PositionListOneBitPackable()
+        {
+            Vector vector = new Vector(true);
+
+            IVectorStatistics stats = vector.GenerateStatistics();
+            Assert.AreEqual(1, stats.WordCount);
+            Assert.AreEqual(0, stats.PackedWordCount);
+            Assert.AreEqual(0, stats.OneBitPackableWordCount);
+            Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+
+            vector.Fill(Enumerable.Range(0, 32).ToArray(), true);
+            vector[62] = true;
+
+            stats = vector.GenerateStatistics();
+#if POSITIONLIST
+            Assert.AreEqual(2, stats.WordCount);
+            Assert.AreEqual(1, stats.PackedWordCount);
+            Assert.AreEqual(0, stats.OneBitPackableWordCount);
+            Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+#else
+            Assert.AreEqual(3, stats.WordCount);
+            Assert.AreEqual(0, stats.PackedWordCount);
+            Assert.AreEqual(1, stats.OneBitPackableWordCount);
+            Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+#endif
+
+            vector[93] = true;
+
+            stats = vector.GenerateStatistics();
+#if POSITIONLIST
+            Assert.AreEqual(3, stats.WordCount);
+            Assert.AreEqual(1, stats.PackedWordCount);
+            Assert.AreEqual(1, stats.OneBitPackableWordCount);
+            Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+#else
+            Assert.AreEqual(4, stats.WordCount);
+            Assert.AreEqual(0, stats.PackedWordCount);
+            Assert.AreEqual(1, stats.OneBitPackableWordCount);
+            Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+#endif
+        }
     }
 }

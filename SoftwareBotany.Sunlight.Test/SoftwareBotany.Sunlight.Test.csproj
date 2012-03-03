@@ -72,10 +72,10 @@
     <Compile Include="Catalog\CatalogTestExtensions.cs" />
     <Compile Include="Catalog\CatalogTests.cs" />
     <Compile Include="CensusTests.cs" />
-    <Compile Include="Dependencies\SoftwareBotany.Soil.Collections.ListExtensionsTests.cs" />
     <Compile Include="Engine\EngineTests.cs" />
     <Compile Include="Engine\EngineTestsStatistics.cs" />
     <Compile Include="Facet\FacetTests.cs" />
+    <Compile Include="Search\SearchParameterTests.cs" />
     <Compile Include="Search\SearchTests.cs" />
     <Compile Include="Search\FacetParameterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

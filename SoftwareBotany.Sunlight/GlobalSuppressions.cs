@@ -6,3 +6,6 @@
 [assembly: SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "2#", Scope = "member", Target = "SoftwareBotany.Sunlight.Search`1.#Execute(System.Int32,System.Int32,System.Int32&)")]
 [assembly: SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Scope = "type", Target = "SoftwareBotany.Sunlight.CatalogPartialSortResult`1")]
 [assembly: SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Scope = "type", Target = "SoftwareBotany.Sunlight.CatalogSortResult`1")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "HasPackedWord", Scope = "member", Target = "SoftwareBotany.Sunlight.Word.#Pack(SoftwareBotany.Sunlight.Word)")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "PackedPosition", Scope = "member", Target = "SoftwareBotany.Sunlight.Word.#PackedPosition")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "PackedWord", Scope = "member", Target = "SoftwareBotany.Sunlight.Word.#PackedWord")]

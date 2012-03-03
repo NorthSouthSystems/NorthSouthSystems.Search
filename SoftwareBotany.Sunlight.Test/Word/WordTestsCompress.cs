@@ -108,6 +108,22 @@ namespace SoftwareBotany.Sunlight
 #if POSITIONLIST
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
+        public void PackedPositionNotSupported()
+        {
+            Word word = new Word(0);
+            int packedPositions = word.PackedPosition;
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void PackedWordNotSupported()
+        {
+            Word word = new Word(0);
+            Word packedWord = word.PackedWord;
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
         public void PackNotSupported1()
         {
             Word word = new Word(0);
@@ -120,6 +136,22 @@ namespace SoftwareBotany.Sunlight
         {
             Word word = new Word(true, 1);
             word.Pack(new Word(true, 1));
+        }
+
+        [TestMethod]
+        public void PackNotSupported3OK()
+        {
+            Word word = new Word(true, 1);
+            word.Pack(new Word(1));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void PackNotSupported3()
+        {
+            Word word = new Word(true, 1);
+            word.Pack(new Word(1));
+            word.Pack(new Word(1));
         }
 #endif
 

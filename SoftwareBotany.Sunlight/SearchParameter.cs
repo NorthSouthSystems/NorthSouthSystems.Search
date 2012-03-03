@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 namespace SoftwareBotany.Sunlight
 {
@@ -22,8 +23,16 @@ namespace SoftwareBotany.Sunlight
             TKey exact = default(TKey), IEnumerable<TKey> enumerable = null, TKey rangeMin = default(TKey), TKey rangeMax = default(TKey))
             : base(catalog)
         {
-            if (parameterType == SearchParameterType.Range && rangeMin.CompareTo(rangeMax) > 0)
-                throw new ArgumentOutOfRangeException("rangeMin", "rangeMin must be <= rangeMax.");
+            if (parameterType == SearchParameterType.Range)
+            {
+                if (rangeMin == null && rangeMax == null)
+                    throw new ArgumentNullException("rangeMin", "Either rangeMin or rangeMax must be non-null.");
+
+                if (rangeMin != null && rangeMax != null && rangeMin.CompareTo(rangeMax) > 0)
+                    throw new ArgumentOutOfRangeException("rangeMin", "rangeMin must be <= rangeMax.");
+            }
+
+            Contract.EndContractBlock();
 
             _parameterType = parameterType;
             _exact = exact;
