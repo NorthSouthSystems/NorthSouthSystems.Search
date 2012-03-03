@@ -22,26 +22,23 @@ namespace SoftwareBotany.Sunlight
 
         void ICatalog.RebuildHotReadPhase(int[] bitPositionShifts)
         {
-            foreach (Vector vector in _vectorSortedList.Values)
+            foreach (Vector vector in _vectors.Values)
                 vector.RebuildHotReadPhase(bitPositionShifts);
         }
 
         void ICatalog.RebuildHotWritePhase()
         {
-            // PERF : Null the Dictionary instance member. In cases of local variables, I know that this behavior is unneccessary
-            // because the garbage collector knows an instruction pointer for after which a given variable is no longer used.
-            // For instances members, I do not know this to be the case. So, simply null the now unused parameter here to ensure that
-            // it can be garbage collected if needed during this operation which will allocate a significant amount of memory.
-            _vectorDictionary = null;
+            List<TKey> deadKeys = new List<TKey>();
 
-            SortedList<TKey, Vector> newVectorSortedList = new SortedList<TKey, Vector>();
+            foreach (var kvp in _vectors)
+                if (!kvp.Value.RebuildHotWritePhase())
+                    deadKeys.Add(kvp.Key);
 
-            foreach (var kvp in _vectorSortedList)
-                if (kvp.Value.RebuildHotWritePhase())
-                    newVectorSortedList.Add(kvp.Key, kvp.Value);
-
-            _vectorSortedList = newVectorSortedList;
-            _vectorDictionary = new Dictionary<TKey, Vector>(_vectorSortedList);
+            foreach (TKey key in deadKeys)
+            {
+                _keys.Remove(key);
+                _vectors.Remove(key);
+            }
         }
 
         #endregion
@@ -52,20 +49,25 @@ namespace SoftwareBotany.Sunlight
         public string Name { get { return _name; } }
         private readonly string _name;
 
-        private Dictionary<TKey, Vector> _vectorDictionary = new Dictionary<TKey, Vector>();
-        private SortedList<TKey, Vector> _vectorSortedList = new SortedList<TKey, Vector>();
+        private SortedSet<TKey> _keys = new SortedSet<TKey>();
+        private Dictionary<TKey, Vector> _vectors = new Dictionary<TKey, Vector>();
 
         #region Set
 
         public void Set(TKey key, int bitPosition, bool value)
         {
+            if (key == null)
+                throw new ArgumentNullException("key");
+
+            Contract.EndContractBlock();
+
             Vector vector;
 
-            if (!_vectorDictionary.TryGetValue(key, out vector))
+            if (!_vectors.TryGetValue(key, out vector))
             {
                 vector = new Vector(true);
-                _vectorDictionary.Add(key, vector);
-                _vectorSortedList.Add(key, vector);
+                _keys.Add(key);
+                _vectors.Add(key, vector);
             }
 
             vector[bitPosition] = value;
@@ -86,15 +88,60 @@ namespace SoftwareBotany.Sunlight
 
         #region Search
 
-        public void Search(Vector vector, TKey key) { SearchImpl(vector, Lookup(key).Select(kvp => kvp.Value)); }
+        public void Search(Vector vector, TKey key)
+        {
+            if (vector == null)
+                throw new ArgumentNullException("vector");
 
-        public void Search(Vector vector, IEnumerable<TKey> keys) { SearchImpl(vector, Lookup(keys).Select(kvp => kvp.Value)); }
+            if (key == null)
+                throw new ArgumentNullException("key");
 
-        public void Search(Vector vector, TKey keyMin, TKey keyMax) { SearchImpl(vector, Lookup(keyMin, keyMax).Select(kvp => kvp.Value)); }
+            Contract.EndContractBlock();
+
+            SearchImpl(vector, new [] { Lookup(key) });
+        }
+
+        public void Search(Vector vector, IEnumerable<TKey> keys)
+        {
+            if (vector == null)
+                throw new ArgumentNullException("vector");
+
+            if (keys == null)
+                throw new ArgumentNullException("keys");
+
+            if (keys.Any(key => key == null))
+                throw new ArgumentNullException("keys", "All keys must be non-null.");
+
+            Contract.EndContractBlock();
+
+            SearchImpl(vector, keys.Distinct().Select(key => Lookup(key)));
+        }
+
+        public void Search(Vector vector, TKey keyMin, TKey keyMax)
+        {
+            if (vector == null)
+                throw new ArgumentNullException("vector");
+
+            if (keyMin == null && keyMax == null)
+                throw new ArgumentNullException("keyMin", "Either keyMin or keyMax must be non-null.");
+
+            if (keyMin != null && keyMax != null && keyMin.CompareTo(keyMax) > 0)
+                throw new ArgumentOutOfRangeException("keyMin", "keyMin must be <= keyMax.");
+
+            Contract.EndContractBlock();
+
+            if (keyMin == null)
+                keyMin = _keys.Min;
+
+            if (keyMax == null)
+                keyMax = _keys.Max;
+
+            SearchImpl(vector, _keys.Count == 0 ? new Vector[0] : _keys.GetViewBetween(keyMin, keyMax).Select(key => _vectors[key]));
+        }
 
         private static void SearchImpl(Vector vector, IEnumerable<Vector> lookups)
         {
-            Vector[] lookupsArray = lookups.ToArray();
+            Vector[] lookupsArray = lookups.Where(lookup => lookup != null).ToArray();
 
             if (lookupsArray.Length == 0)
                 vector.WordsClear();
@@ -104,13 +151,26 @@ namespace SoftwareBotany.Sunlight
                 vector.And(Vector.CreateUnion(lookupsArray));
         }
 
+        private Vector Lookup(TKey key)
+        {
+            Vector vector;
+            _vectors.TryGetValue(key, out vector);
+
+            return vector;
+        }
+
         #endregion
 
         #region Faceting
 
         public FacetCollection<TKey> Facets(Vector vector)
         {
-            var facets = _vectorSortedList
+            if (vector == null)
+                throw new ArgumentNullException("vector");
+
+            Contract.EndContractBlock();
+
+            var facets = _vectors
                 .Select(keyAndVector => new Facet<TKey>(keyAndVector.Key, vector.AndPopulation(keyAndVector.Value)));
 
             return new FacetCollection<TKey>(facets);
@@ -122,59 +182,15 @@ namespace SoftwareBotany.Sunlight
 
         public CatalogSortResult<TKey> SortBitPositions(Vector vector, bool value, bool ascending)
         {
-            return new CatalogSortResult<TKey>(SortBitPositionsImpl(vector, value, ascending));
-        }
+            if (vector == null)
+                throw new ArgumentNullException("vector");
 
-        private IEnumerable<CatalogPartialSortResult<TKey>> SortBitPositionsImpl(Vector vector, bool value, bool ascending)
-        {
-            // Enumerable.Reverse buffers the entire sequence, regardless of runtime type (in this case an IList).
-            // Using the indexer behavior on _vectorSortedList should offer a performance improvement; however,
-            // this hypothesis has not been formally tested here.
-            if (ascending)
-            {
-                for (int i = 0; i < _vectorSortedList.Count; i++)
-                    yield return new CatalogPartialSortResult<TKey>(_vectorSortedList.Keys[i], vector.AndFilterBitPositions(_vectorSortedList.Values[i], value));
-            }
-            else
-            {
-                for (int i = _vectorSortedList.Count - 1; i >= 0; i--)
-                    yield return new CatalogPartialSortResult<TKey>(_vectorSortedList.Keys[i], vector.AndFilterBitPositions(_vectorSortedList.Values[i], value));
-            }
-        }
+            Contract.EndContractBlock();
 
-        #endregion
+            var keys = ascending ? _keys : _keys.Reverse();
+            var partialSortResults = keys.Select(key => new CatalogPartialSortResult<TKey>(key, vector.AndFilterBitPositions(_vectors[key], value)));
 
-        #region Lookup
-
-        private IEnumerable<KeyValuePair<TKey, Vector>> Lookup(TKey key) { return Lookup(new TKey[1] { key }); }
-
-        private IEnumerable<KeyValuePair<TKey, Vector>> Lookup(IEnumerable<TKey> keys)
-        {
-            foreach (TKey key in keys)
-            {
-                Vector vector;
-                _vectorDictionary.TryGetValue(key, out vector);
-
-                if (vector != null)
-                    yield return new KeyValuePair<TKey, Vector>(key, vector);
-            }
-        }
-
-        private IEnumerable<KeyValuePair<TKey, Vector>> Lookup(TKey keyMin, TKey keyMax)
-        {
-            IList<TKey> keys = _vectorSortedList.Keys;
-
-            int indexMin = keys.BinarySearch(keyMin);
-
-            if (indexMin < 0)
-                indexMin = ~indexMin;
-
-            int indexMax = keys.BinarySearch(keyMax);
-
-            if (indexMax < 0)
-                indexMax = ~indexMax - 1;
-
-            return _vectorSortedList.Skip(indexMin).Take(indexMax - indexMin + 1);
+            return new CatalogSortResult<TKey>(partialSortResults);
         }
 
         #endregion

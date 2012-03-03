@@ -45,10 +45,118 @@ namespace SoftwareBotany.Sunlight
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void SetRangeNull()
+        public void SetNull()
+        {
+            Catalog<string> catalog = new Catalog<string>("SomeString");
+            catalog.Set((string)null, 777, true);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SetEnumerableNull()
         {
             Catalog<int> catalog = new Catalog<int>("SomeInt");
             catalog.Set((int[])null, 777, true);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SearchExactVectorNull()
+        {
+            Catalog<string> catalog = new Catalog<string>("SomeString");
+            catalog.Search(null, "A");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SearchExactKeyNull()
+        {
+            Vector vector = new Vector(true);
+
+            Catalog<string> catalog = new Catalog<string>("SomeString");
+            catalog.Search(vector, (string)null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SearchEnumerableVectorNull()
+        {
+            Catalog<string> catalog = new Catalog<string>("SomeString");
+            catalog.Search(null, new[] { "A", "B" });
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SearchEnumerableKeysNull()
+        {
+            Vector vector = new Vector(true);
+
+            Catalog<string> catalog = new Catalog<string>("SomeString");
+            catalog.Search(vector, (string[])null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SearchEnumerableKeysKeyNull()
+        {
+            Vector vector = new Vector(true);
+
+            Catalog<string> catalog = new Catalog<string>("SomeString");
+            catalog.Search(vector, new[] { "A", null });
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SearchRangeVectorNull()
+        {
+            Catalog<string> catalog = new Catalog<string>("SomeString");
+            catalog.Search(null, "A", "B");
+        }
+
+        [TestMethod]
+        public void SearchRangeKeyMinMaxOK()
+        {
+            Vector vector = new Vector(true);
+
+            Catalog<string> catalog = new Catalog<string>("SomeString");
+            catalog.Search(vector, (string)null, "A");
+            catalog.Search(vector, "A", (string)null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SearchRangeKeyMinMaxNull()
+        {
+            Vector vector = new Vector(true);
+
+            Catalog<string> catalog = new Catalog<string>("SomeString");
+            catalog.Search(vector, (string)null, (string)null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void SearchRangeKeyMinMaxOutOfRange()
+        {
+            Vector vector = new Vector(true);
+
+            Catalog<string> catalog = new Catalog<string>("SomeString");
+            catalog.Search(vector, "B", "A");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void FacetsVectorNull()
+        {
+            Catalog<string> catalog = new Catalog<string>("SomeString");
+            catalog.Facets(null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SortBitPositionsVectorNull()
+        {
+            Catalog<string> catalog = new Catalog<string>("SomeString");
+            catalog.SortBitPositions(null, true, true);
         }
 
         #endregion

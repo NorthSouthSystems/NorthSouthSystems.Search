@@ -355,7 +355,6 @@
     <Compile Include="EngineStatistics.cs" />
     <Compile Include="ParameterFactory.cs" />
     <Compile Include="Search.cs" />
-    <Compile Include="Dependencies\SoftwareBotany.Soil.Collections.ListExtensions.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Catalog.cs" />
     <Compile Include="Engine.cs" />

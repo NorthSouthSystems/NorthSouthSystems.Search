@@ -169,7 +169,9 @@ namespace SoftwareBotany.Sunlight
             get
             {
                 if (!HasPackedWord)
-                    throw new NotSupportedException("Cannot retreive the PackedPosition for a Word that does not contain a Packed Word.");
+                    throw new NotSupportedException("Cannot retrieve the PackedPosition for a Word that does not contain a Packed Word.");
+
+                Contract.EndContractBlock();
 
                 return (int)((Raw & PACKEDPOSITIONMASK) >> (SIZE - 7)) - 1;
             }
@@ -180,7 +182,9 @@ namespace SoftwareBotany.Sunlight
             get
             {
                 if (!HasPackedWord)
-                    throw new NotSupportedException("Cannot retreive the PackedWord for a Word that does not contain a Packed Word.");
+                    throw new NotSupportedException("Cannot retrieve the PackedWord for a Word that does not contain a Packed Word.");
+
+                Contract.EndContractBlock();
 
                 return new Word(1u << (SIZE - 2 - PackedPosition));
             }

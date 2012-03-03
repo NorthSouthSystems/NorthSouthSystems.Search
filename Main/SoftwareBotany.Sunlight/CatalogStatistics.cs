@@ -10,7 +10,7 @@ namespace SoftwareBotany.Sunlight
         {
             internal Statistics(Catalog<TKey> catalog)
             {
-                foreach (IVectorStatistics vectorStats in catalog._vectorSortedList.Values.Select(vector => vector.GenerateStatistics()))
+                foreach (IVectorStatistics vectorStats in catalog._vectors.Values.Select(vector => vector.GenerateStatistics()))
                 {
                     _vectorCount++;
                     _wordCount += vectorStats.WordCount;
