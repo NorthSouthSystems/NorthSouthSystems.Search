@@ -84,32 +84,21 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Rebuild
+        #region Optimize
 
-        private Vector _rebuilt;
-
-        internal void RebuildHotReadPhase(int[] bitPositionShifts)
+        internal bool OptimizeReadPhase(int[] bitPositionShifts, out Vector optimized)
         {
-            _rebuilt = new Vector(_isCompressed);
+            optimized = new Vector(_isCompressed);
 
             foreach (int bitPosition in GetBitPositions(true))
             {
                 int positionShift = bitPositionShifts[bitPosition];
 
                 if (positionShift >= 0)
-                    _rebuilt[bitPosition - positionShift] = true;
+                    optimized[bitPosition - positionShift] = true;
             }
-        }
 
-        internal bool RebuildHotWritePhase()
-        {
-            _words = _rebuilt._words;
-            _wordCountPhysical = _rebuilt._wordCountPhysical;
-            _wordCountLogical = _rebuilt._wordCountLogical;
-
-            _rebuilt = null;
-
-            return _wordCountLogical > 1 || _words[0].Raw > 0;
+            return optimized._wordCountLogical > 1 || optimized._words[0].Raw > 0;
         }
 
         #endregion

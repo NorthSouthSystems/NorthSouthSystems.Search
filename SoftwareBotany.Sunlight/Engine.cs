@@ -22,7 +22,7 @@ namespace SoftwareBotany.Sunlight
         private List<TPrimaryKey> _primaryKeys = new List<TPrimaryKey>();
         private Dictionary<TPrimaryKey, int> _primaryKeyToBitPositionMap = new Dictionary<TPrimaryKey, int>();
 
-        private readonly Vector _activeItems = new Vector(false);
+        private Vector _activeItems = new Vector(false);
 
         private List<CatalogPlusExtractor> _catalogsPlusExtractors = new List<CatalogPlusExtractor>();
 
@@ -83,49 +83,55 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Rebuild
+        #region Optimize
 
-        public void Rebuild()
+        public void Optimize()
         {
             try
             {
                 _rwLock.EnterUpgradeableReadLock();
 
                 int[] bitPositionShifts = new int[_primaryKeys.Count];
-                int i = 0;
-                int exclusionCount = 0;
+                int index = 0;
+                int exclusionCounter = 0;
 
                 foreach (bool bit in _activeItems.Bits)
                 {
                     if (bit)
-                        bitPositionShifts[i] = exclusionCount;
+                    {
+                        bitPositionShifts[index] = exclusionCounter;
+                    }
                     else
                     {
-                        bitPositionShifts[i] = -1;
-                        exclusionCount++;
+                        bitPositionShifts[index] = -1;
+                        exclusionCounter++;
                     }
 
-                    i++;
+                    index++;
 
                     // GetBits will return the trailing 0s on the Vector, so we must break out before
                     // we go out of bounds.
-                    if (i >= bitPositionShifts.Length)
+                    if (index >= bitPositionShifts.Length)
                         break;
                 }
 
+                // A potential optimization would be to construct this Vector in an efficient manner able to leverage
+                // the fact that we need exactly _activeItems.Population consecutive 1's.
+                Vector optimizedActiveItems = null;
+
                 List<Action> readActions = new List<Action>();
-                readActions.Add(() => _activeItems.RebuildHotReadPhase(bitPositionShifts));
-                readActions.AddRange(_catalogsPlusExtractors.Select(cpe => new Action(() => cpe.Catalog.RebuildHotReadPhase(bitPositionShifts))));
+                readActions.Add(() => _activeItems.OptimizeReadPhase(bitPositionShifts, out optimizedActiveItems));
+                readActions.AddRange(_catalogsPlusExtractors.Select(cpe => new Action(() => cpe.Catalog.OptimizeReadPhase(bitPositionShifts))));
 
                 Parallel.Invoke(readActions.ToArray());
 
                 List<Action> writeActions = new List<Action>();
-                writeActions.Add(() => RebuildPrimaryKeys(bitPositionShifts));
-                writeActions.AddRange(_catalogsPlusExtractors.Select(cpe => new Action(() => cpe.Catalog.RebuildHotWritePhase())));
+                writeActions.Add(() => OptimizePrimaryKeys(bitPositionShifts));
+                writeActions.AddRange(_catalogsPlusExtractors.Select(cpe => new Action(() => cpe.Catalog.OptimizeWritePhase())));
 
                 _rwLock.EnterWriteLock();
 
-                _activeItems.RebuildHotWritePhase();
+                _activeItems = optimizedActiveItems;
                 Parallel.Invoke(writeActions.ToArray());
             }
             finally
@@ -138,7 +144,7 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
-        private void RebuildPrimaryKeys(int[] bitPositionShifts)
+        private void OptimizePrimaryKeys(int[] bitPositionShifts)
         {
             // PERF : Null the Dictionary instance member. In cases of local variables, I know that this behavior is unneccessary
             // because the garbage collector knows an instruction pointer for after which a given variable is no longer used.

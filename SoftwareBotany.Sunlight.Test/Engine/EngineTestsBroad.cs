@@ -156,7 +156,7 @@ namespace SoftwareBotany.Sunlight
                     foreach (EngineItem item in items)
                         engine.Update(item);
 
-                    engine.Rebuild();
+                    engine.Optimize();
                 }
             }
         }

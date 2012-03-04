@@ -228,7 +228,7 @@ namespace SoftwareBotany.Sunlight
                     items = items.Where(item => !removeSet.Contains(item)).ToArray();
 
                     if (i % 2 == 0)
-                        engine.Rebuild();
+                        engine.Optimize();
                 }
             }
         }
