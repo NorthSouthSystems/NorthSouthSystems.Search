@@ -18,26 +18,33 @@ namespace SoftwareBotany.Sunlight
             : this(null, name)
         { }
 
-        #region Rebuild
+        #region Optimize
 
-        void ICatalog.RebuildHotReadPhase(int[] bitPositionShifts)
+        void ICatalog.OptimizeReadPhase(int[] bitPositionShifts)
         {
-            foreach (Vector vector in _vectors.Values)
-                vector.RebuildHotReadPhase(bitPositionShifts);
+            foreach (Entry entry in _entries.Values)
+                entry.IsVectorOptimizedAlive = entry.Vector.OptimizeReadPhase(bitPositionShifts, out entry.VectorOptimized);
         }
 
-        void ICatalog.RebuildHotWritePhase()
+        void ICatalog.OptimizeWritePhase()
         {
             List<TKey> deadKeys = new List<TKey>();
 
-            foreach (var kvp in _vectors)
-                if (!kvp.Value.RebuildHotWritePhase())
-                    deadKeys.Add(kvp.Key);
+            foreach (var keyAndEntry in _entries)
+            {
+                if (keyAndEntry.Value.IsVectorOptimizedAlive)
+                    keyAndEntry.Value.Vector = keyAndEntry.Value.VectorOptimized;
+                else
+                    deadKeys.Add(keyAndEntry.Key);
+
+                keyAndEntry.Value.VectorOptimized = null;
+                keyAndEntry.Value.IsVectorOptimizedAlive = false;
+            }
 
             foreach (TKey key in deadKeys)
             {
                 _keys.Remove(key);
-                _vectors.Remove(key);
+                _entries.Remove(key);
             }
         }
 
@@ -50,7 +57,18 @@ namespace SoftwareBotany.Sunlight
         private readonly string _name;
 
         private SortedSet<TKey> _keys = new SortedSet<TKey>();
-        private Dictionary<TKey, Vector> _vectors = new Dictionary<TKey, Vector>();
+        private Dictionary<TKey, Entry> _entries = new Dictionary<TKey, Entry>();
+
+        // TODO : Better OOP... right now this is just serving as a mutable Tuple which is probably
+        // not the best design.
+        private class Entry
+        {
+            internal Entry(Vector vector) { Vector = vector; }
+
+            internal Vector Vector;
+            internal Vector VectorOptimized;
+            internal bool IsVectorOptimizedAlive;
+        }
 
         #region Set
 
@@ -61,16 +79,17 @@ namespace SoftwareBotany.Sunlight
 
             Contract.EndContractBlock();
 
-            Vector vector;
+            Entry entry;
 
-            if (!_vectors.TryGetValue(key, out vector))
+            if (!_entries.TryGetValue(key, out entry))
             {
-                vector = new Vector(true);
+                entry = new Entry(new Vector(true));
+
                 _keys.Add(key);
-                _vectors.Add(key, vector);
+                _entries.Add(key, entry);
             }
 
-            vector[bitPosition] = value;
+            entry.Vector[bitPosition] = value;
         }
 
         public void Set(IEnumerable<TKey> keys, int bitPosition, bool value)
@@ -136,7 +155,7 @@ namespace SoftwareBotany.Sunlight
             if (keyMax == null)
                 keyMax = _keys.Max;
 
-            SearchImpl(vector, _keys.Count == 0 ? new Vector[0] : _keys.GetViewBetween(keyMin, keyMax).Select(key => _vectors[key]));
+            SearchImpl(vector, _keys.Count == 0 ? new Vector[0] : _keys.GetViewBetween(keyMin, keyMax).Select(key => _entries[key].Vector));
         }
 
         private static void SearchImpl(Vector vector, IEnumerable<Vector> lookups)
@@ -153,10 +172,10 @@ namespace SoftwareBotany.Sunlight
 
         private Vector Lookup(TKey key)
         {
-            Vector vector;
-            _vectors.TryGetValue(key, out vector);
+            Entry entry;
+            _entries.TryGetValue(key, out entry);
 
-            return vector;
+            return entry == null ? null : entry.Vector;
         }
 
         #endregion
@@ -170,8 +189,8 @@ namespace SoftwareBotany.Sunlight
 
             Contract.EndContractBlock();
 
-            var facets = _vectors
-                .Select(keyAndVector => new Facet<TKey>(keyAndVector.Key, vector.AndPopulation(keyAndVector.Value)));
+            var facets = _entries
+                .Select(keyAndEntry => new Facet<TKey>(keyAndEntry.Key, vector.AndPopulation(keyAndEntry.Value.Vector)));
 
             return new FacetCollection<TKey>(facets);
         }
@@ -188,7 +207,7 @@ namespace SoftwareBotany.Sunlight
             Contract.EndContractBlock();
 
             var keys = ascending ? _keys : _keys.Reverse();
-            var partialSortResults = keys.Select(key => new CatalogPartialSortResult<TKey>(key, vector.AndFilterBitPositions(_vectors[key], value)));
+            var partialSortResults = keys.Select(key => new CatalogPartialSortResult<TKey>(key, vector.AndFilterBitPositions(_entries[key].Vector, value)));
 
             return new CatalogSortResult<TKey>(partialSortResults);
         }
@@ -201,8 +220,8 @@ namespace SoftwareBotany.Sunlight
         IEngine Engine { get; }
         string Name { get; }
 
-        void RebuildHotReadPhase(int[] bitPositionShifts);
-        void RebuildHotWritePhase();
+        void OptimizeReadPhase(int[] bitPositionShifts);
+        void OptimizeWritePhase();
 
         ICatalogStatistics GenerateStatistics();
     }
