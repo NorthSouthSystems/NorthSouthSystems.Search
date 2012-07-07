@@ -8,14 +8,16 @@ namespace SoftwareBotany.Sunlight
     public sealed partial class Catalog<TKey> : ICatalog
       where TKey : IEquatable<TKey>, IComparable<TKey>
     {
-        internal Catalog(IEngine engine, string name)
+        internal Catalog(IEngine engine, string name, bool allowUnsafe, VectorCompression compression)
         {
             _engine = engine;
             _name = name;
+            _allowUnsafe = allowUnsafe;
+            _compression = compression;
         }
 
-        public Catalog(string name)
-            : this(null, name)
+        public Catalog(string name, bool allowUnsafe, VectorCompression compression)
+            : this(null, name, allowUnsafe, compression)
         { }
 
         #region Optimize
@@ -56,6 +58,12 @@ namespace SoftwareBotany.Sunlight
         public string Name { get { return _name; } }
         private readonly string _name;
 
+        public bool AllowUnsafe { get { return _allowUnsafe; } }
+        private readonly bool _allowUnsafe;
+
+        public VectorCompression Compression { get { return _compression; } }
+        private readonly VectorCompression _compression;
+
         private SortedSet<TKey> _keys = new SortedSet<TKey>();
         private Dictionary<TKey, Entry> _entries = new Dictionary<TKey, Entry>();
 
@@ -83,7 +91,8 @@ namespace SoftwareBotany.Sunlight
 
             if (!_entries.TryGetValue(key, out entry))
             {
-                entry = new Entry(new Vector(true));
+                // TODO : This will use a VectorFactory pattern shortly.
+                entry = new Entry(new Vector(_allowUnsafe, _compression));
 
                 _keys.Add(key);
                 _entries.Add(key, entry);

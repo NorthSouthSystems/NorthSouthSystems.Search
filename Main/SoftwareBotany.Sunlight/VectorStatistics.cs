@@ -16,12 +16,8 @@
                 {
                     Word word = vector._words[i];
 
-#if POSITIONLIST
                     if (word.HasPackedWord)
                         _packedWordCount++;
-#else
-                    _packedWordCount = 0;
-#endif
 
                     if (!word.IsCompressed && lastWordCompressed && i < vector._wordCountPhysical - 1)
                     {

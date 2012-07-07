@@ -13,8 +13,8 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(NotSupportedException))]
         public void FacetSearchNotExecuted()
         {
-            Engine<EngineItem, int> engine = new Engine<EngineItem, int>(item => item.Id);
-            var someIntFactory = engine.CreateCatalog("SomeInt", item => item.SomeInt);
+            Engine<EngineItem, int> engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var someIntFactory = engine.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
             FacetParameter<int> someIntFacet = engine.CreateSearch()
                 .AddFacetParameter(someIntFactory);

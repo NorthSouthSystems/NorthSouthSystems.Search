@@ -13,9 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SoftwareBotany.Sunlight.vsmdi = SoftwareBotany.Sunlight.vsmdi
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareBotany.Sunlight.Unsafe", "SoftwareBotany.Sunlight.Unsafe\SoftwareBotany.Sunlight.Unsafe.csproj", "{D881789E-40E3-487F-9E54-344CE7C2F988}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
+		SccNumberOfProjects = 4
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs24
 		SccLocalPath0 = .
@@ -25,53 +27,30 @@ Global
 		SccProjectUniqueName2 = SoftwareBotany.Sunlight.Test\\SoftwareBotany.Sunlight.Test.csproj
 		SccProjectName2 = SoftwareBotany.Sunlight.Test
 		SccLocalPath2 = SoftwareBotany.Sunlight.Test
+		SccProjectUniqueName3 = SoftwareBotany.Sunlight.Unsafe\\SoftwareBotany.Sunlight.Unsafe.csproj
+		SccProjectName3 = SoftwareBotany.Sunlight.Unsafe
+		SccLocalPath3 = SoftwareBotany.Sunlight.Unsafe
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = SoftwareBotany.Sunlight.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		DebugSafe|Any CPU = DebugSafe|Any CPU
-		DebugSafePositionList|Any CPU = DebugSafePositionList|Any CPU
-		DebugUnsafe|Any CPU = DebugUnsafe|Any CPU
-		DebugUnsafePositionList|Any CPU = DebugUnsafePositionList|Any CPU
-		ReleaseSafe|Any CPU = ReleaseSafe|Any CPU
-		ReleaseSafePositionList|Any CPU = ReleaseSafePositionList|Any CPU
-		ReleaseUnsafe|Any CPU = ReleaseUnsafe|Any CPU
-		ReleaseUnsafePositionList|Any CPU = ReleaseUnsafePositionList|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.DebugSafe|Any CPU.ActiveCfg = DebugSafe|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.DebugSafe|Any CPU.Build.0 = DebugSafe|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.DebugSafePositionList|Any CPU.ActiveCfg = DebugSafePositionList|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.DebugSafePositionList|Any CPU.Build.0 = DebugSafePositionList|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.DebugUnsafe|Any CPU.ActiveCfg = DebugUnsafe|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.DebugUnsafe|Any CPU.Build.0 = DebugUnsafe|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.DebugUnsafePositionList|Any CPU.ActiveCfg = DebugUnsafePositionList|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.DebugUnsafePositionList|Any CPU.Build.0 = DebugUnsafePositionList|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.ReleaseSafe|Any CPU.ActiveCfg = ReleaseSafe|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.ReleaseSafe|Any CPU.Build.0 = ReleaseSafe|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.ReleaseSafePositionList|Any CPU.ActiveCfg = ReleaseSafePositionList|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.ReleaseSafePositionList|Any CPU.Build.0 = ReleaseSafePositionList|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.ReleaseUnsafe|Any CPU.ActiveCfg = ReleaseUnsafe|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.ReleaseUnsafe|Any CPU.Build.0 = ReleaseUnsafe|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.ReleaseUnsafePositionList|Any CPU.ActiveCfg = ReleaseUnsafePositionList|Any CPU
-		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.ReleaseUnsafePositionList|Any CPU.Build.0 = ReleaseUnsafePositionList|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.DebugSafe|Any CPU.ActiveCfg = Debug|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.DebugSafe|Any CPU.Build.0 = Debug|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.DebugSafePositionList|Any CPU.ActiveCfg = DebugPositionList|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.DebugSafePositionList|Any CPU.Build.0 = DebugPositionList|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.DebugUnsafe|Any CPU.ActiveCfg = Debug|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.DebugUnsafe|Any CPU.Build.0 = Debug|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.DebugUnsafePositionList|Any CPU.ActiveCfg = DebugPositionList|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.DebugUnsafePositionList|Any CPU.Build.0 = DebugPositionList|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.ReleaseSafe|Any CPU.ActiveCfg = Release|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.ReleaseSafe|Any CPU.Build.0 = Release|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.ReleaseSafePositionList|Any CPU.ActiveCfg = ReleasePositionList|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.ReleaseSafePositionList|Any CPU.Build.0 = ReleasePositionList|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.ReleaseUnsafe|Any CPU.ActiveCfg = Release|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.ReleaseUnsafe|Any CPU.Build.0 = Release|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.ReleaseUnsafePositionList|Any CPU.ActiveCfg = ReleasePositionList|Any CPU
-		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.ReleaseUnsafePositionList|Any CPU.Build.0 = ReleasePositionList|Any CPU
+		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D881789E-40E3-487F-9E54-344CE7C2F988}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D881789E-40E3-487F-9E54-344CE7C2F988}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D881789E-40E3-487F-9E54-344CE7C2F988}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D881789E-40E3-487F-9E54-344CE7C2F988}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

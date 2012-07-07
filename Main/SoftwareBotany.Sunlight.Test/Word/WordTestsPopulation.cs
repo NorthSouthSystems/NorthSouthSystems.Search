@@ -60,7 +60,6 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
-#if POSITIONLIST
         [TestMethod]
         public void Packed()
         {
@@ -74,6 +73,5 @@ namespace SoftwareBotany.Sunlight
             word.Pack(new Word(1));
             Assert.AreEqual(Word.SIZE, word.Population);
         }
-#endif
     }
 }

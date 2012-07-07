@@ -8,6 +8,15 @@ namespace SoftwareBotany.Sunlight
     [TestClass]
     public class EngineTests
     {
+        [TestMethod]
+        public void Construction()
+        {
+            using (Engine<SimpleItem, int> engine = new Engine<SimpleItem, int>(false, item => item.Id))
+            {
+                Assert.AreEqual(false, engine.AllowUnsafe);
+            }
+        }
+
         private class SimpleItem
         {
             public int Id;
@@ -15,11 +24,13 @@ namespace SoftwareBotany.Sunlight
         }
 
         [TestMethod]
-        public void AmongstPrimaryKeyOutOfRange()
+        public void AmongstPrimaryKeyOutOfRange() { SafetyVectorCompressionTuple.RunAll(AmongstPrimaryKeyOutOfRangeBase); }
+
+        private static void AmongstPrimaryKeyOutOfRangeBase(SafetyVectorCompressionTuple safetyVectorCompression)
         {
-            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id))
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(safetyVectorCompression.AllowUnsafe, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
+                var factory1 = engine1.CreateCatalog("SomeInt", safetyVectorCompression.Compression, item => item.SomeInt);
 
                 engine1.Add(new SimpleItem { Id = 43, SomeInt = 0 });
 
@@ -42,13 +53,13 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(NotSupportedException))]
         public void CreateCatalogNotInitializing()
         {
-            using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(item => item.Id))
+            using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
+                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
                 engine1.Add(EngineItem.CreateItems(id => id, id => DateTime.Now, id => id.ToString(), id => new string[0], 1).Single());
 
-                var factory2 = engine1.CreateCatalog("SomeString", item => item.SomeString);
+                var factory2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
             }
         }
 
@@ -56,10 +67,10 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentException))]
         public void CreateCatalogDuplicateName()
         {
-            using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(item => item.Id))
+            using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("Name", item => item.SomeInt);
-                var factory2 = engine1.CreateCatalog("Name", item => item.SomeString);
+                var factory1 = engine1.CreateCatalog("Name", VectorCompression.None, item => item.SomeInt);
+                var factory2 = engine1.CreateCatalog("Name", VectorCompression.None, item => item.SomeString);
             }
         }
 
@@ -67,9 +78,9 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentException))]
         public void AddDuplicatePrimaryKey()
         {
-            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id))
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
+                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
                 engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
                 engine1.Add(new SimpleItem { Id = 0, SomeInt = 1 });
@@ -80,9 +91,9 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void AddRangeNull()
         {
-            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id))
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
+                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
                 engine1.Add((SimpleItem[])null);
             }
         }
@@ -91,9 +102,9 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateNoPrimaryKey()
         {
-            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id))
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
+                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
                 engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
                 engine1.Update(new SimpleItem { Id = 1, SomeInt = 1 });
@@ -104,9 +115,9 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void UpdateRangeNull()
         {
-            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id))
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
+                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
                 engine1.Update((SimpleItem[])null);
             }
         }
@@ -115,12 +126,36 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentException))]
         public void RemoveNoPrimaryKey()
         {
-            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(item => item.Id))
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
+                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
                 engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
                 engine1.Remove(new SimpleItem { Id = 1, SomeInt = 1 });
+            }
+        }
+
+        [TestMethod]
+        public void RemoveReAddPrimaryKey()
+        {
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
+            {
+                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+
+                engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
+                engine1.Remove(new SimpleItem { Id = 0, SomeInt = 0 });
+                engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void RemoveRangeNull()
+        {
+            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
+            {
+                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                engine1.Remove((SimpleItem[])null);
             }
         }
 

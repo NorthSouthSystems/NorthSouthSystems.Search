@@ -60,38 +60,55 @@ namespace SoftwareBotany.Sunlight
         [TestMethod]
         public void LargeSimple() { Base(LARGESEED, LARGESIZE, true, LARGERUNS); }
         [TestMethod]
-        public void LargeComplex() { Base(LARGESEED, LARGESIZE, false, LARGERUNS); }
+        public void LargeComplexNone() { Base(LARGESEED, LARGESIZE, false, LARGERUNS, VectorCompression.None); }
+        [TestMethod]
+        public void LargeComplexCompressed() { Base(LARGESEED, LARGESIZE, false, LARGERUNS, VectorCompression.Compressed); }
+        [TestMethod]
+        public void LargeComplexCompressedWithPackedPosition() { Base(LARGESEED, LARGESIZE, false, LARGERUNS, VectorCompression.CompressedWithPackedPosition); }
 
         [TestMethod]
         public void XLargeSimple() { Base(XLARGESEED, XLARGESIZE, true, XLARGERUNS); }
         [TestMethod]
-        public void XLargeComplex() { Base(XLARGESEED, XLARGESIZE, false, XLARGERUNS); }
+        public void XLargeComplexNone() { Base(XLARGESEED, XLARGESIZE, false, XLARGERUNS, VectorCompression.None); }
+        [TestMethod]
+        public void XLargeComplexCompressed() { Base(XLARGESEED, XLARGESIZE, false, XLARGERUNS, VectorCompression.Compressed); }
+        [TestMethod]
+        public void XLargeComplexCompressedWithPackedPosition() { Base(XLARGESEED, XLARGESIZE, false, XLARGERUNS, VectorCompression.CompressedWithPackedPosition); }
 
         [TestMethod]
         public void XXLargeSimple() { Base(XXLARGESEED, XXLARGESIZE, true, XXLARGERUNS); }
         [TestMethod]
-        public void XXLargeComplex() { Base(XXLARGESEED, XXLARGESIZE, false, XXLARGERUNS); }
+        public void XXLargeComplexNone() { Base(XXLARGESEED, XXLARGESIZE, false, XXLARGERUNS, VectorCompression.None); }
+        [TestMethod]
+        public void XXLargeComplexCompressed() { Base(XXLARGESEED, XXLARGESIZE, false, XXLARGERUNS, VectorCompression.Compressed); }
+        [TestMethod]
+        public void XXLargeComplexCompressedWithPackedPosition() { Base(XXLARGESEED, XXLARGESIZE, false, XXLARGERUNS, VectorCompression.CompressedWithPackedPosition); }
 
-        private static void Base(int randomSeed, int size, bool simple, int runs)
+        private static void Base(int randomSeed, int size, bool simple, int runs, VectorCompression? compression = null)
         {
             Random random = new Random(randomSeed);
 
             foreach (int run in Enumerable.Range(0, runs))
-                BaseImpl(random.Next(), size, simple);
+            {
+                if (compression == null)
+                    SafetyVectorCompressionTuple.RunAll(svct => BaseImpl(svct, random.Next(), size, simple));
+                else
+                    SafetyVectorCompressionTuple.RunAllSafeties(svct => BaseImpl(svct, random.Next(), size, simple), compression.Value);
+            }
         }
 
-        private static void BaseImpl(int randomSeed, int size, bool simple)
+        private static void BaseImpl(SafetyVectorCompressionTuple safetyVectorCompression, int randomSeed, int size, bool simple)
         {
             Random random = new Random(randomSeed);
 
             size = Convert.ToInt32(Math.Round((random.NextDouble() + .5) * size));
 
-            using (var engine = new Engine<EngineItem, int>(item => item.Id))
+            using (var engine = new Engine<EngineItem, int>(safetyVectorCompression.AllowUnsafe, item => item.Id))
             {
-                var someIntFactory = engine.CreateCatalog("SomeInt", item => item.SomeInt);
-                var someDateTimeFactory = engine.CreateCatalog("SomeDateTime", item => item.SomeDateTime);
-                var someStringFactory = engine.CreateCatalog("SomeString", item => item.SomeString);
-                var someTagsFactory = engine.CreateCatalog<string>("SomeTags", item => item.SomeTags);
+                var someIntFactory = engine.CreateCatalog("SomeInt", safetyVectorCompression.Compression, item => item.SomeInt);
+                var someDateTimeFactory = engine.CreateCatalog("SomeDateTime", safetyVectorCompression.Compression, item => item.SomeDateTime);
+                var someStringFactory = engine.CreateCatalog("SomeString", safetyVectorCompression.Compression, item => item.SomeString);
+                var someTagsFactory = engine.CreateCatalog<string>("SomeTags", safetyVectorCompression.Compression, item => item.SomeTags);
 
                 double fillFactor = Math.Max(random.NextDouble() * 10, 1);
                 int someIntMax, someDateTimeMax, someStringMax, someTagsMax, someTagsMaxCount;
@@ -206,31 +223,76 @@ namespace SoftwareBotany.Sunlight
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
                     }
 
-                    var itemsOrdered = (i % 2 == 0) ? items.OrderBy(item => item.GetHashCode()) : items.OrderByDescending(item => item.GetHashCode());
-                    EngineItem[] updateItems = itemsOrdered.Take(random.Next(items.Length)).ToArray();
-
-                    int enumerableUpdateCount = random.Next(updateItems.Length);
-
-                    engine.Update(updateItems.Take(enumerableUpdateCount));
-
-                    foreach (EngineItem item in updateItems.Skip(enumerableUpdateCount))
-                        engine.Update(item);
-
-                    HashSet<EngineItem> updateSet = new HashSet<EngineItem>(updateItems);
-                    items = items.Where(item => !updateSet.Contains(item)).Concat(updateItems).ToArray();
-
-                    EngineItem[] removeItems = itemsOrdered.Take(random.Next(items.Length / 10)).ToArray();
-
-                    foreach (EngineItem item in removeItems)
-                        engine.Remove(item);
-
-                    HashSet<EngineItem> removeSet = new HashSet<EngineItem>(removeItems);
-                    items = items.Where(item => !removeSet.Contains(item)).ToArray();
+                    items = Update(engine, items, random);
+                    items = Remove(engine, items, random);
+                    items = RemoveReAdd(engine, items, random);
 
                     if (i % 2 == 0)
                         engine.Optimize();
                 }
             }
+        }
+
+        private static EngineItem[] Update(Engine<EngineItem, int> engine, EngineItem[] items, Random random)
+        {
+            EngineItem[] updateItems = items.OrderBy(item => item.GetHashCode())
+                .Take(random.Next(items.Length))
+                .ToArray();
+
+            int rangeUpdateCount = random.Next(updateItems.Length);
+
+            engine.Update(updateItems.Take(rangeUpdateCount));
+
+            foreach (EngineItem item in updateItems.Skip(rangeUpdateCount))
+                engine.Update(item);
+
+            return items.Except(updateItems).Concat(updateItems).ToArray();
+        }
+
+        private static EngineItem[] Remove(Engine<EngineItem, int> engine, EngineItem[] items, Random random)
+        {
+            var removeItemsAsc = items.OrderBy(item => item.GetHashCode())
+                .Take(random.Next(items.Length / 20));
+
+            var removeItemsDesc = items.OrderByDescending(item => item.GetHashCode())
+                .Take(random.Next(items.Length / 20));
+
+            EngineItem[] removeItems = removeItemsAsc.Concat(removeItemsDesc)
+                .ToArray();
+
+            int rangeRemoveCount = random.Next(removeItems.Length);
+
+            engine.Remove(removeItems.Take(rangeRemoveCount));
+
+            foreach (EngineItem item in removeItems.Skip(rangeRemoveCount))
+                engine.Remove(item);
+
+            return items.Except(removeItems).ToArray();
+        }
+
+        private static EngineItem[] RemoveReAdd(Engine<EngineItem, int> engine, EngineItem[] items, Random random)
+        {
+            var removeReAddItemsAsc = items.OrderBy(item => item.GetHashCode())
+                .Take(random.Next(items.Length / 20));
+
+            var removeReAddItemsDesc = items.OrderByDescending(item => item.GetHashCode())
+                .Take(random.Next(items.Length / 20));
+
+            EngineItem[] removeReAddItems = removeReAddItemsAsc.Concat(removeReAddItemsDesc)
+                .ToArray();
+
+            int rangeRemoveReAddCount = random.Next(removeReAddItems.Length);
+
+            engine.Remove(removeReAddItems.Take(rangeRemoveReAddCount));
+            engine.Add(removeReAddItems.Take(rangeRemoveReAddCount));
+
+            foreach(EngineItem item in removeReAddItems.Skip(rangeRemoveReAddCount))
+            {
+                engine.Remove(item);
+                engine.Add(item);
+            }
+
+            return items.Except(removeReAddItems).Concat(removeReAddItems).ToArray();
         }
     }
 }

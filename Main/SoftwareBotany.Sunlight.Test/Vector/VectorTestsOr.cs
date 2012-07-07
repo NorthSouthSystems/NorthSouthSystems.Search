@@ -9,12 +9,14 @@ namespace SoftwareBotany.Sunlight
     public class VectorTestsOr
     {
         [TestMethod]
-        public void OrCompressedWithCompressedTrueInput()
+        public void OrCompressedWithCompressedTrueInput() { SafetyVectorCompressionTuple.RunAll(OrCompressedWithCompressedTrueInputBase); }
+
+        private static void OrCompressedWithCompressedTrueInputBase(SafetyVectorCompressionTuple safetyVectorCompression)
         {
-            Vector vector = new Vector(false);
+            Vector vector = new Vector(safetyVectorCompression.AllowUnsafe, VectorCompression.None);
             vector[100] = true;
 
-            Vector compressedTrue = new Vector(true);
+            Vector compressedTrue = new Vector(safetyVectorCompression.AllowUnsafe, safetyVectorCompression.Compression);
             compressedTrue.Fill(Enumerable.Range(0, 32).ToArray(), true);
 
             vector.Or(compressedTrue);
@@ -28,7 +30,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void OrArgumentNull()
         {
-            Vector vector = new Vector(false);
+            Vector vector = new Vector(false, VectorCompression.None);
             vector.Or(null);
         }
 
@@ -36,8 +38,8 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(NotSupportedException))]
         public void OrNotSupported()
         {
-            Vector vector = new Vector(true);
-            Vector input = new Vector(false);
+            Vector vector = new Vector(false, VectorCompression.Compressed);
+            Vector input = new Vector(false, VectorCompression.None);
             vector.Or(input);
         }
 
