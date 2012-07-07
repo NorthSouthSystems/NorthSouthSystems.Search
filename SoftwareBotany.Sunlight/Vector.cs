@@ -77,7 +77,7 @@ namespace SoftwareBotany.Sunlight
                 _wordCountLogical = 1;
 
                 for (int i = 0; i < vector._wordCountPhysical; i++)
-                    Set(i, vector._words[i]);
+                    SetWord(i, vector._words[i]);
             }
             else if (!_isCompressed && vector._isCompressed)
             {
@@ -198,7 +198,7 @@ namespace SoftwareBotany.Sunlight
 
                 Contract.EndContractBlock();
 
-                Set(bitPosition, value);
+                SetBit(bitPosition, value);
             }
         }
 
@@ -288,7 +288,7 @@ namespace SoftwareBotany.Sunlight
 
         #region Setting
 
-        internal void Set(int wordPositionLogical, Word word)
+        internal void SetWord(int wordPositionLogical, Word word)
         {
             if (wordPositionLogical < 0)
                 throw new ArgumentOutOfRangeException("wordPositionLogical", wordPositionLogical, "Must be >= 0.");
@@ -312,7 +312,7 @@ namespace SoftwareBotany.Sunlight
             _words[wordPosition] = word;
         }
 
-        private void Set(int bitPosition, bool value)
+        private void SetBit(int bitPosition, bool value)
         {
             if (bitPosition < 0)
                 throw new ArgumentOutOfRangeException("bitPosition", bitPosition, "Must be >= 0.");

@@ -8,17 +8,12 @@ namespace SoftwareBotany.Sunlight
     public sealed partial class Catalog<TKey> : ICatalog
       where TKey : IEquatable<TKey>, IComparable<TKey>
     {
-        internal Catalog(IEngine engine, string name, bool allowUnsafe, VectorCompression compression)
+        public Catalog(string name, bool allowUnsafe, VectorCompression compression)
         {
-            _engine = engine;
             _name = name;
             _allowUnsafe = allowUnsafe;
             _compression = compression;
         }
-
-        public Catalog(string name, bool allowUnsafe, VectorCompression compression)
-            : this(null, name, allowUnsafe, compression)
-        { }
 
         #region Optimize
 
@@ -52,9 +47,6 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        IEngine ICatalog.Engine { get { return _engine; } }
-        private readonly IEngine _engine;
-
         public string Name { get { return _name; } }
         private readonly string _name;
 
@@ -79,6 +71,14 @@ namespace SoftwareBotany.Sunlight
         }
 
         #region Set
+
+        void ICatalog.Set(object key, int bitPosition, bool value)
+        {
+            if (key is TKey)
+                Set((TKey)key, bitPosition, value);
+            else
+                Set((IEnumerable<TKey>)key, bitPosition, value);
+        }
 
         public void Set(TKey key, int bitPosition, bool value)
         {
@@ -116,6 +116,8 @@ namespace SoftwareBotany.Sunlight
 
         #region Search
 
+        void ICatalog.SearchExact(Vector vector, object key) { Search(vector, (TKey)key); }
+
         public void Search(Vector vector, TKey key)
         {
             if (vector == null)
@@ -128,6 +130,8 @@ namespace SoftwareBotany.Sunlight
 
             SearchImpl(vector, new [] { Lookup(key) });
         }
+
+        void ICatalog.SearchEnumerable(Vector vector, object keys) { Search(vector, (IEnumerable<TKey>)keys); }
 
         public void Search(Vector vector, IEnumerable<TKey> keys)
         {
@@ -144,6 +148,8 @@ namespace SoftwareBotany.Sunlight
 
             SearchImpl(vector, keys.Distinct().Select(key => Lookup(key)));
         }
+
+        void ICatalog.SearchRange(Vector vector, object keyMin, object keyMax) { Search(vector, (TKey)keyMin, (TKey)keyMax); }
 
         public void Search(Vector vector, TKey keyMin, TKey keyMax)
         {
@@ -191,6 +197,8 @@ namespace SoftwareBotany.Sunlight
 
         #region Faceting
 
+        object ICatalog.Facets(Vector vector) { return Facets(vector); }
+
         public FacetCollection<TKey> Facets(Vector vector)
         {
             if (vector == null)
@@ -208,6 +216,8 @@ namespace SoftwareBotany.Sunlight
 
         #region Sort
 
+        ICatalogSortResult ICatalog.SortBitPositions(Vector vector, bool value, bool ascending) { return SortBitPositions(vector, value, ascending); }
+
         public CatalogSortResult<TKey> SortBitPositions(Vector vector, bool value, bool ascending)
         {
             if (vector == null)
@@ -222,16 +232,5 @@ namespace SoftwareBotany.Sunlight
         }
 
         #endregion
-    }
-
-    internal interface ICatalog
-    {
-        IEngine Engine { get; }
-        string Name { get; }
-
-        void OptimizeReadPhase(int[] bitPositionShifts);
-        void OptimizeWritePhase();
-
-        ICatalogStatistics GenerateStatistics();
     }
 }

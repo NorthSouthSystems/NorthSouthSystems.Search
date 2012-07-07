@@ -17,7 +17,7 @@ namespace SoftwareBotany.Sunlight
             _activeItems = new Vector(_allowUnsafe, VectorCompression.None);
         }
 
-        private bool _initializing = true;
+        private bool _configuring = true;
         private readonly ReaderWriterLockSlim _rwLock = new ReaderWriterLockSlim();
 
         public bool AllowUnsafe { get { return _allowUnsafe; } }
@@ -47,17 +47,16 @@ namespace SoftwareBotany.Sunlight
 
         #region Catalog Management
 
+        public ParameterFactory<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, TKey> keyExtractor)
+            where TKey : IEquatable<TKey>, IComparable<TKey>
+        {
+            return CreateCatalogImpl<TKey>(name, compression, true, item => (object)keyExtractor(item));
+        }
+
         public ParameterFactory<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, IEnumerable<TKey>> keysExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             return CreateCatalogImpl<TKey>(name, compression, false, item => (object)keysExtractor(item));
-        }
-
-        public ParameterFactory<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, TKey> keyExtractor)
-            where TKey : IEquatable<TKey>, IComparable<TKey>
-        {
-            // Intentionally box the result of the keyExtractor because it is cheaper than a dynamic resolution.
-            return CreateCatalogImpl<TKey>(name, compression, true, item => (object)keyExtractor(item));
         }
 
         private ParameterFactory<TKey> CreateCatalogImpl<TKey>(string name, VectorCompression compression, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
@@ -69,13 +68,13 @@ namespace SoftwareBotany.Sunlight
             {
                 _rwLock.EnterWriteLock();
 
-                if (!_initializing)
-                    throw new NotSupportedException("Cannot create a Catalog after an item has been added to the Engine.");
+                if (!_configuring)
+                    throw new NotSupportedException("Cannot create a Catalog in an Engine that has already called Add or CreateSearch.");
 
                 if (_catalogsPlusExtractors.Any(cpe => cpe.Catalog.Name == name))
                     throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "A Catalog already exists with the name : {0}.", name));
 
-                catalog = new Catalog<TKey>(this, name, _allowUnsafe, compression);
+                catalog = new Catalog<TKey>(name, _allowUnsafe, compression);
                 _catalogsPlusExtractors.Add(new CatalogPlusExtractor(catalog, keyOrKeysExtractor));
             }
             finally
@@ -85,6 +84,10 @@ namespace SoftwareBotany.Sunlight
 
             return new ParameterFactory<TKey>(catalog, isOneToOne);
         }
+
+        // NOTE : No locking is necessary here because this is only called from the Search class, and in order to CreateSearch,
+        // _configuring is stopped which prevents the addition of Catalogs.
+        bool IEngine<TPrimaryKey>.HasCatalog(ICatalog catalog) { return _catalogsPlusExtractors.Any(cpe => cpe.Catalog == catalog); }
 
         #endregion
 
@@ -174,7 +177,7 @@ namespace SoftwareBotany.Sunlight
             {
                 _rwLock.EnterWriteLock();
 
-                _initializing = false;
+                _configuring = false;
 
                 AddItem(item);
             }
@@ -195,7 +198,7 @@ namespace SoftwareBotany.Sunlight
             {
                 _rwLock.EnterWriteLock();
 
-                _initializing = false;
+                _configuring = false;
 
                 foreach (TItem item in items)
                     AddItem(item);
@@ -219,13 +222,7 @@ namespace SoftwareBotany.Sunlight
             _activeItems[bitPosition] = true;
 
             foreach (CatalogPlusExtractor cpe in _catalogsPlusExtractors)
-            {
-                // Key must use dynamic cast here or else the dynamic resolution on Catalog.Set will look for a signature
-                // matching Set(object, int, bool) instead of the true runtime type of the key.
-                dynamic key = cpe.KeysOrKeyExtractor(item);
-                dynamic catalog = cpe.Catalog;
-                catalog.Set(key, bitPosition, true);
-            }
+                cpe.Catalog.Set(cpe.KeysOrKeyExtractor(item), bitPosition, true);
         }
 
         #endregion
@@ -282,13 +279,7 @@ namespace SoftwareBotany.Sunlight
             _activeItems[toBitPosition] = true;
 
             foreach (CatalogPlusExtractor cpe in _catalogsPlusExtractors)
-            {
-                // Key must use dynamic cast here or else the dynamic resolution on Catalog.Set will look for a signature
-                // matching Set(object, int, bool) instead of the true runtime type of the key.
-                dynamic key = cpe.KeysOrKeyExtractor(item);
-                dynamic catalog = cpe.Catalog;
-                catalog.Set(key, toBitPosition, true);
-            }
+                cpe.Catalog.Set(cpe.KeysOrKeyExtractor(item), toBitPosition, true);
         }
 
         #endregion
@@ -345,7 +336,23 @@ namespace SoftwareBotany.Sunlight
 
         #region Search
 
-        public Search<TPrimaryKey> CreateSearch() { return new Search<TPrimaryKey>(this); }
+        public Search<TPrimaryKey> CreateSearch()
+        {
+            if (_configuring)
+            {
+                try
+                {
+                    _rwLock.EnterWriteLock();
+                    _configuring = false;
+                }
+                finally
+                {
+                    _rwLock.ExitWriteLock();
+                }
+            }
+
+            return new Search<TPrimaryKey>(this);
+        }
 
         TPrimaryKey[] IEngine<TPrimaryKey>.Search(Search<TPrimaryKey> search, int skip, int take, out int totalCount)
         {
@@ -358,7 +365,7 @@ namespace SoftwareBotany.Sunlight
                 totalCount = result.Population;
 
                 foreach (IFacetParameter facetParameter in search.FacetParameters)
-                    facetParameter.DynamicFacets = ((dynamic)facetParameter.Catalog).Facets(result);
+                    facetParameter.Facets = facetParameter.Catalog.Facets(result);
 
                 IEnumerable<int> sortedBitPositions = (!search.SortParameters.Any() && !search.SortPrimaryKeyAscending.HasValue)
                     ? result.GetBitPositions(true)
@@ -416,18 +423,16 @@ namespace SoftwareBotany.Sunlight
         {
             foreach (ISearchParameter searchParameter in searchParameters)
             {
-                dynamic catalog = searchParameter.Catalog;
-
                 switch (searchParameter.ParameterType)
                 {
                     case SearchParameterType.Exact:
-                        catalog.Search(result, searchParameter.DynamicExact);
+                        searchParameter.Catalog.SearchExact(result, searchParameter.Exact);
                         break;
                     case SearchParameterType.Enumerable:
-                        catalog.Search(result, searchParameter.DynamicEnumerable);
+                        searchParameter.Catalog.SearchEnumerable(result, searchParameter.Enumerable);
                         break;
                     case SearchParameterType.Range:
-                        catalog.Search(result, searchParameter.DynamicRangeMin, searchParameter.DynamicRangeMax);
+                        searchParameter.Catalog.SearchRange(result, searchParameter.RangeMin, searchParameter.RangeMax);
                         break;
                     default:
                         throw new NotImplementedException(string.Format(CultureInfo.InvariantCulture, "Unrecognized search parameter type : {0}.", searchParameter.ParameterType));
@@ -461,19 +466,13 @@ namespace SoftwareBotany.Sunlight
 
         private static IEnumerable<IEnumerable<int>> SortBitPositionsByParameter(Vector result, ISortParameter sortParameter)
         {
-            dynamic catalog = sortParameter.Catalog;
-            ICatalogSortResult sortResult;
-
             switch (sortParameter.ParameterType)
             {
                 case SortParameterType.Directional:
-                    sortResult = catalog.SortBitPositions(result, true, sortParameter.Ascending);
-                    break;
+                    return sortParameter.Catalog.SortBitPositions(result, true, sortParameter.Ascending).PartialSortResultsBitPositions;
                 default:
                     throw new NotImplementedException(string.Format(CultureInfo.InvariantCulture, "Unrecognized sort parameter type : {0}.", sortParameter.ParameterType));
             }
-
-            return sortResult.PartialSortResultsBitPositions;
         }
 
         private static IEnumerable<IEnumerable<int>> SortBitPositionsThenByParameter(bool allowUnsafe, IEnumerable<IEnumerable<int>> partialResults, ISortParameter sortParameter)
@@ -505,11 +504,4 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
     }
-
-    internal interface IEngine<TPrimaryKey> : IEngine
-    {
-        TPrimaryKey[] Search(Search<TPrimaryKey> search, int skip, int take, out int totalCount);
-    }
-
-    internal interface IEngine { }
 }

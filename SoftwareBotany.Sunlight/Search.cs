@@ -22,7 +22,7 @@ namespace SoftwareBotany.Sunlight
         private void ThrowEngineMismatchException<TKey>(ParameterFactory<TKey> factory)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            if (_engine != factory.Catalog.Engine)
+            if (!_engine.HasCatalog(factory.Catalog))
                 throw new ArgumentException("factory belongs to a different Engine.", "factory");
         }
 
