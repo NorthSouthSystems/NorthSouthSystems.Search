@@ -30,10 +30,10 @@ namespace SoftwareBotany.Sunlight
 
         #region IFacetParameter
 
-        dynamic IFacetParameter.DynamicFacets
+        object IFacetParameter.Facets
         {
             get { return Facets; }
-            set { Facets = value; }
+            set { Facets = (FacetCollection<TKey>)value; }
         }
 
         #endregion
@@ -41,6 +41,6 @@ namespace SoftwareBotany.Sunlight
 
     internal interface IFacetParameter : IParameter
     {
-        dynamic DynamicFacets { get; set; }
+        object Facets { get; set; }
     }
 }

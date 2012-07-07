@@ -67,14 +67,14 @@ namespace SoftwareBotany.Sunlight
             switch (param.ParameterType)
             {
                 case SearchParameterType.Exact:
-                    return column == param.DynamicExact;
+                    return column == (dynamic)param.Exact;
                 case SearchParameterType.Enumerable:
-                    return Enumerable.Contains(param.DynamicEnumerable, column);
+                    return Enumerable.Contains((dynamic)param.Enumerable, column);
                 case SearchParameterType.Range:
                     if (param.Catalog.Name == "SomeString")
-                        return column.CompareTo(param.DynamicRangeMin) >= 0 && column.CompareTo(param.DynamicRangeMax) <= 0;
+                        return column.CompareTo((dynamic)param.RangeMin) >= 0 && column.CompareTo((dynamic)param.RangeMax) <= 0;
                     else
-                        return column >= param.DynamicRangeMin && column <= param.DynamicRangeMax;
+                        return column >= (dynamic)param.RangeMin && column <= (dynamic)param.RangeMax;
                 default:
                     throw new NotImplementedException();
             }
@@ -85,11 +85,11 @@ namespace SoftwareBotany.Sunlight
             switch (param.ParameterType)
             {
                 case SearchParameterType.Exact:
-                    return tags.Any(tag => tag == param.DynamicExact);
+                    return tags.Any(tag => tag == (string)param.Exact);
                 case SearchParameterType.Enumerable:
-                    return tags.Any(tag => Enumerable.Contains(param.DynamicEnumerable, tag));
+                    return tags.Any(tag => Enumerable.Contains((IEnumerable<string>)param.Enumerable, tag));
                 case SearchParameterType.Range:
-                    return tags.Any(tag => tag.CompareTo(param.DynamicRangeMin) >= 0 && tag.CompareTo(param.DynamicRangeMax) <= 0);
+                    return tags.Any(tag => tag.CompareTo((string)param.RangeMin) >= 0 && tag.CompareTo((string)param.RangeMax) <= 0);
                 default:
                     throw new NotImplementedException();
             }
@@ -179,7 +179,7 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    Facet<int>[] paramSomeIntFacet = ((IEnumerable<Facet<int>>)param.DynamicFacets)
+                    Facet<int>[] paramSomeIntFacet = ((IEnumerable<Facet<int>>)param.Facets)
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
@@ -191,7 +191,7 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    Facet<DateTime>[] paramSomeDateTimeFacet = ((IEnumerable<Facet<DateTime>>)param.DynamicFacets)
+                    Facet<DateTime>[] paramSomeDateTimeFacet = ((IEnumerable<Facet<DateTime>>)param.Facets)
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
@@ -203,7 +203,7 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    Facet<string>[] paramSomeStringFacet = ((IEnumerable<Facet<string>>)param.DynamicFacets)
+                    Facet<string>[] paramSomeStringFacet = ((IEnumerable<Facet<string>>)param.Facets)
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
@@ -216,7 +216,7 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    Facet<string>[] paramSomeTagsFacet = ((IEnumerable<Facet<string>>)param.DynamicFacets)
+                    Facet<string>[] paramSomeTagsFacet = ((IEnumerable<Facet<string>>)param.Facets)
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 

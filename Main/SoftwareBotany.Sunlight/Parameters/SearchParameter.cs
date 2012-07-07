@@ -58,10 +58,10 @@ namespace SoftwareBotany.Sunlight
 
         #region ISearchParameter
 
-        dynamic ISearchParameter.DynamicExact { get { return Exact; } }
-        dynamic ISearchParameter.DynamicEnumerable { get { return Enumerable; } }
-        dynamic ISearchParameter.DynamicRangeMin { get { return RangeMin; } }
-        dynamic ISearchParameter.DynamicRangeMax { get { return RangeMax; } }
+        object ISearchParameter.Exact { get { return Exact; } }
+        object ISearchParameter.Enumerable { get { return Enumerable; } }
+        object ISearchParameter.RangeMin { get { return RangeMin; } }
+        object ISearchParameter.RangeMax { get { return RangeMax; } }
 
         #endregion
     }
@@ -69,10 +69,10 @@ namespace SoftwareBotany.Sunlight
     internal interface ISearchParameter : IParameter
     {
         SearchParameterType ParameterType { get; }
-        dynamic DynamicExact { get; }
-        dynamic DynamicEnumerable { get; }
-        dynamic DynamicRangeMin { get; }
-        dynamic DynamicRangeMax { get; }
+        object Exact { get; }
+        object Enumerable { get; }
+        object RangeMin { get; }
+        object RangeMax { get; }
     }
 
     public enum SearchParameterType

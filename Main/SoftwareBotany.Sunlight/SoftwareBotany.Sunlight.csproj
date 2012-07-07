@@ -30,7 +30,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CodeAnalysisLogFile>bin\DebugUnsafePositionList\SoftwareBotany.Sunlight.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Debug\SoftwareBotany.Sunlight.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -51,7 +51,7 @@
     <NoWarn>1591</NoWarn>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisLogFile>bin\ReleaseUnsafePositionList\SoftwareBotany.Sunlight.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Release\SoftwareBotany.Sunlight.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -71,25 +71,28 @@
     <Compile Include="CatalogSortResult.cs" />
     <Compile Include="Census.cs" />
     <Compile Include="CatalogPartialSortResult.cs" />
+    <Compile Include="ICatalogSortResult.cs" />
+    <Compile Include="ICatalog.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="FacetCollection.cs" />
+    <Compile Include="IEngine.cs" />
     <Compile Include="IVectorLogic.cs" />
     <Compile Include="VectorCompression.cs" />
     <Compile Include="VectorLogicSafe.cs" />
     <Compile Include="Facet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CatalogStatistics.cs" />
-    <Compile Include="EngineStatistics.cs" />
-    <Compile Include="ParameterFactory.cs" />
+    <Compile Include="Statistics\CatalogStatistics.cs" />
+    <Compile Include="Statistics\EngineStatistics.cs" />
+    <Compile Include="Parameters\ParameterFactory.cs" />
     <Compile Include="Search.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Catalog.cs" />
     <Compile Include="Engine.cs" />
-    <Compile Include="Parameter.cs" />
-    <Compile Include="FacetParameter.cs" />
-    <Compile Include="SearchParameter.cs" />
-    <Compile Include="SortParameter.cs" />
-    <Compile Include="VectorStatistics.cs" />
+    <Compile Include="Parameters\Parameter.cs" />
+    <Compile Include="Parameters\FacetParameter.cs" />
+    <Compile Include="Parameters\SearchParameter.cs" />
+    <Compile Include="Parameters\SortParameter.cs" />
+    <Compile Include="Statistics\VectorStatistics.cs" />
     <Compile Include="Word.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

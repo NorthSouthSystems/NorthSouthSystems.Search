@@ -24,9 +24,4 @@ namespace SoftwareBotany.Sunlight
             get { return _partialSortResults.Select(partial => (IEnumerable<int>)partial); }
         }
     }
-
-    internal interface ICatalogSortResult
-    {
-        IEnumerable<IEnumerable<int>> PartialSortResultsBitPositions { get; }
-    }
 }
