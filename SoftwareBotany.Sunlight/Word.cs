@@ -150,7 +150,6 @@ namespace SoftwareBotany.Sunlight
 
         #region Packing
 
-#if POSITIONLIST
         private const uint PACKEDPOSITIONMASK = 0x3E000000u;
 
         public bool HasPackedWord { get { return IsCompressed && (Raw & PACKEDPOSITIONMASK) > 0u; } }
@@ -195,22 +194,20 @@ namespace SoftwareBotany.Sunlight
             if (!IsCompressed)
                 throw new NotSupportedException("Cannot pack a Word into an uncompressed Word.");
 
+            if (HasPackedWord)
+                throw new NotSupportedException("Cannot pack a Word into a Word that already HasPackedWord.");
+
             if (word.IsCompressed)
                 throw new NotSupportedException("Cannot pack a compressed Word.");
 
-            if (HasPackedWord)
-                throw new NotSupportedException("Cannot pack a Word into a Word that already HasPackedWord.");
+            if (word.Population != 1)
+                throw new NotSupportedException("Can only pack a Word with exactly 1 bit set (Population = 1).");
 
             Contract.EndContractBlock();
 
             uint packedPosition = (uint)word.GetBitPositions(true)[0];
             Raw |= (packedPosition + 1) << (SIZE - 7);
         }
-
-        internal static readonly bool PositionListEnabled = true;
-#else
-        internal static readonly bool PositionListEnabled = false;
-#endif
 
         #endregion
 
@@ -230,10 +227,8 @@ namespace SoftwareBotany.Sunlight
                     if (FillBit)
                         population = FillCount * (SIZE - 1);
 
-#if POSITIONLIST
                     if (HasPackedWord)
                         population++;
-#endif
                 }
                 else
                     population = Raw.Population();

@@ -12,8 +12,8 @@ namespace SoftwareBotany.Sunlight
         [TestMethod]
         public void SearchParameterRangeArgumentNullOK()
         {
-            Engine<EngineItem, int> engine = new Engine<EngineItem, int>(item => item.Id);
-            var someStringFactory = engine.CreateCatalog("SomeString", item => item.SomeString);
+            Engine<EngineItem, int> engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var someStringFactory = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
             SearchParameter<string> someStringParameter = engine.CreateSearch()
                 .AddSearchRangeParameter(someStringFactory, null, "A");
@@ -26,8 +26,8 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void SearchParameterRangeArgumentNull()
         {
-            Engine<EngineItem, int> engine = new Engine<EngineItem, int>(item => item.Id);
-            var someStringFactory = engine.CreateCatalog("SomeString", item => item.SomeString);
+            Engine<EngineItem, int> engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var someStringFactory = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
             SearchParameter<string> someStringParameter = engine.CreateSearch()
                 .AddSearchRangeParameter(someStringFactory, null, null);
@@ -37,8 +37,8 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void SearchParameterRangeArgumentOutOfRange()
         {
-            Engine<EngineItem, int> engine = new Engine<EngineItem, int>(item => item.Id);
-            var someStringFactory = engine.CreateCatalog("SomeString", item => item.SomeString);
+            Engine<EngineItem, int> engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var someStringFactory = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
             SearchParameter<string> someStringParameter = engine.CreateSearch()
                 .AddSearchRangeParameter(someStringFactory, "B", "A");

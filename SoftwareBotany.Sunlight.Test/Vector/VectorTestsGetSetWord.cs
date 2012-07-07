@@ -10,7 +10,7 @@ namespace SoftwareBotany.Sunlight
         [TestMethod]
         public void Uncompressed()
         {
-            Vector vector = new Vector(false);
+            Vector vector = new Vector(false, VectorCompression.None);
 
             vector.AssertWordLogicalValues(0, 0, 0);
             vector.AssertWordCounts(1, 1);
@@ -54,9 +54,14 @@ namespace SoftwareBotany.Sunlight
         }
 
         [TestMethod]
-        public void CompressedZeroFillCodeCoverage()
+        public void CompressedZeroFillCodeCoverage() { SafetyVectorCompressionTuple.RunAll(CompressedZeroFillCodeCoverageBase); }
+
+        private void CompressedZeroFillCodeCoverageBase(SafetyVectorCompressionTuple safetyVectorCompression)
         {
-            Vector vector = new Vector(true);
+            if (safetyVectorCompression.Compression == VectorCompression.None)
+                return;
+
+            Vector vector = new Vector(safetyVectorCompression.AllowUnsafe, safetyVectorCompression.Compression);
 
             vector.AssertWordLogicalValues(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
             vector.AssertWordCounts(1, 1);
@@ -92,22 +97,22 @@ namespace SoftwareBotany.Sunlight
             // Add a 1 and pack the tail
             vector.Set(4, new Word(1));
             vector.AssertWordLogicalValues(0, 0, 0, 1, 1, 0, 0, 0, 0, 0);
-            vector.AssertWordCounts(Word.PositionListEnabled ? 2 : 3, 5);
+            vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 2 : 3, 5);
 
             // Add a 0 Word
             vector.Set(4, new Word(0));
             vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 0, 0, 0);
-            vector.AssertWordCounts(Word.PositionListEnabled ? 2 : 3, 5);
+            vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 2 : 3, 5);
 
             // Add a 1 Word far away, forcing a compression
             vector.Set(7, new Word(1));
             vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 1, 0, 0);
-            vector.AssertWordCounts(Word.PositionListEnabled ? 3 : 4, 8);
+            vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 3 : 4, 8);
 
             // Add a 1 Word two spaces away, forcing a pack and 2xZeroFill with overwrite
             vector.Set(9, new Word(1));
             vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 1, 0, 1);
-            vector.AssertWordCounts(Word.PositionListEnabled ? 4 : 6, 10);
+            vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 4 : 6, 10);
         }
 
         #region Exceptions
@@ -116,7 +121,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void GetWordLogicalArgumentOutOfRange()
         {
-            Vector vector = new Vector(true);
+            Vector vector = new Vector(false, VectorCompression.None);
             vector.GetWordLogical(-1);
         }
 
@@ -124,7 +129,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void SetWordArgumentOutOfRange()
         {
-            Vector vector = new Vector(true);
+            Vector vector = new Vector(false, VectorCompression.None);
             vector.Set(-1, new Word(0x11111111));
         }
 
@@ -132,14 +137,14 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(NotSupportedException))]
         public void SetWordNotSupportedCompressed()
         {
-            Vector vector = new Vector(true);
+            Vector vector = new Vector(false, VectorCompression.Compressed);
             vector.Set(0, new Word(true, 1));
         }
 
         [TestMethod]
         public void SetWordSupportedForwardOnly()
         {
-            Vector vector = new Vector(true);
+            Vector vector = new Vector(false, VectorCompression.Compressed);
             vector[30] = true;
             vector.Set(0, new Word(0x00000001u));
         }
@@ -148,7 +153,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(NotSupportedException))]
         public void SetWordNotSupportedForwardOnly()
         {
-            Vector vector = new Vector(true);
+            Vector vector = new Vector(false, VectorCompression.Compressed);
             vector[31] = true;
             vector.Set(0, new Word(0x00000001u));
         }

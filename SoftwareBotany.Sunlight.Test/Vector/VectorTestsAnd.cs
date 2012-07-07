@@ -10,12 +10,9 @@ namespace SoftwareBotany.Sunlight
     public class VectorTestsAnd
     {
         [TestMethod]
-        public void AndPopulationCompressed() { AndPopulationBase(true); }
+        public void AndPopulation() { SafetyVectorCompressionTuple.RunAll(AndPopulationBase); }
 
-        [TestMethod]
-        public void AndPopulationUncompressed() { AndPopulationBase(false); }
-
-        private void AndPopulationBase(bool isCompressed)
+        private static void AndPopulationBase(SafetyVectorCompressionTuple safetyVectorCompression)
         {
             int[] fillCounts = new [] { 0, 1, 5, 10, 20, 30, 40, 50, 100, 200, 300, 400, 450, 460, 470, 480, 490, 495, 499, 500 };
 
@@ -23,9 +20,9 @@ namespace SoftwareBotany.Sunlight
             {
                 foreach (int fillCount2 in fillCounts)
                 {
-                    Vector vector1 = new Vector(false);
+                    Vector vector1 = new Vector(safetyVectorCompression.AllowUnsafe, VectorCompression.None);
                     vector1.RandomFill(500, fillCount1);
-                    Vector vector2 = new Vector(isCompressed);
+                    Vector vector2 = new Vector(safetyVectorCompression.AllowUnsafe, safetyVectorCompression.Compression);
                     vector2.RandomFill(500, fillCount2);
 
                     HashSet<int> bitPositions = new HashSet<int>(vector1.GetBitPositions(true));
@@ -45,7 +42,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void AndArgumentNull()
         {
-            Vector vector = new Vector(false);
+            Vector vector = new Vector(false, VectorCompression.None);
             vector.And(null);
         }
 
@@ -53,8 +50,8 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(NotSupportedException))]
         public void AndNotSupported()
         {
-            Vector vector = new Vector(true);
-            Vector input = new Vector(false);
+            Vector vector = new Vector(false, VectorCompression.Compressed);
+            Vector input = new Vector(false, VectorCompression.None);
             vector.And(input);
         }
 
@@ -62,7 +59,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void AndPopulationArgumentNull()
         {
-            Vector vector = new Vector(false);
+            Vector vector = new Vector(false, VectorCompression.None);
             vector.AndPopulation(null);
         }
 
@@ -70,8 +67,8 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(NotSupportedException))]
         public void AndPopulationNotSupported()
         {
-            Vector vector = new Vector(true);
-            Vector input = new Vector(false);
+            Vector vector = new Vector(false, VectorCompression.Compressed);
+            Vector input = new Vector(false, VectorCompression.None);
             vector.AndPopulation(input);
         }
 
@@ -79,7 +76,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void AndFilterArgumentNull()
         {
-            Vector vector = new Vector(false);
+            Vector vector = new Vector(false, VectorCompression.None);
             vector.AndFilterBitPositions(null, true).ToArray();
         }
 
@@ -87,8 +84,8 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(NotSupportedException))]
         public void AndFilterNotSupported()
         {
-            Vector vector = new Vector(true);
-            Vector input = new Vector(false);
+            Vector vector = new Vector(false, VectorCompression.Compressed);
+            Vector input = new Vector(false, VectorCompression.None);
             vector.AndFilterBitPositions(input, true).ToArray();
         }
 

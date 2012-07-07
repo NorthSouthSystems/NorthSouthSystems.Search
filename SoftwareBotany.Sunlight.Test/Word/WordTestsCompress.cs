@@ -65,7 +65,6 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
-#if POSITIONLIST
         [TestMethod]
         public void Pack()
         {
@@ -101,11 +100,9 @@ namespace SoftwareBotany.Sunlight
             Assert.AreEqual(0, word.PackedPosition);
             Assert.AreEqual((uint)1 << 30, word.PackedWord.Raw);
         }
-#endif
 
         #region Exceptions
 
-#if POSITIONLIST
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
         public void PackedPositionNotSupported()
@@ -131,17 +128,18 @@ namespace SoftwareBotany.Sunlight
         }
 
         [TestMethod]
+        public void PackNotSupported2OK()
+        {
+            Word word = new Word(true, 1);
+            word.Pack(new Word(1));
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
         public void PackNotSupported2()
         {
             Word word = new Word(true, 1);
-            word.Pack(new Word(true, 1));
-        }
-
-        [TestMethod]
-        public void PackNotSupported3OK()
-        {
-            Word word = new Word(true, 1);
+            word.Pack(new Word(1));
             word.Pack(new Word(1));
         }
 
@@ -150,10 +148,24 @@ namespace SoftwareBotany.Sunlight
         public void PackNotSupported3()
         {
             Word word = new Word(true, 1);
-            word.Pack(new Word(1));
-            word.Pack(new Word(1));
+            word.Pack(new Word(true, 1));
         }
-#endif
+
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void PackNotSupported4_1()
+        {
+            Word word = new Word(true, 1);
+            word.Pack(new Word(0));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void PackNotSupported4_2()
+        {
+            Word word = new Word(true, 1);
+            word.Pack(new Word(3));
+        }
 
         #endregion
     }

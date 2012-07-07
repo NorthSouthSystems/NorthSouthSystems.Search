@@ -14,22 +14,32 @@ namespace SoftwareBotany.Sunlight
     /// </remarks>
     public sealed partial class Vector
     {
+        static Vector()
+        {
+            _safeVectorLogic = new VectorLogicSafe();
+
+            Type unsafeVectorLogicType = Type.GetType("SoftwareBotany.Sunlight.VectorLogicUnsafe, SoftwareBotany.Sunlight.Unsafe");
+
+            if (unsafeVectorLogicType != null)
+                _unsafeVectorLogic = (IVectorLogic)Activator.CreateInstance(unsafeVectorLogicType);
+        }
+
+        private static readonly IVectorLogic _safeVectorLogic;
+        private static readonly IVectorLogic _unsafeVectorLogic;
+
         public static Vector CreateUnion(params Vector[] vectors)
         {
             if (vectors == null || vectors.Any(v => v == null))
                 throw new ArgumentNullException("vectors");
 
+            if (vectors.Length < 2)
+                throw new ArgumentOutOfRangeException("vectors", "At least 2 Vectors must be provided in order to CreateUnion.");
+
             Contract.EndContractBlock();
-
-            if (vectors.Length == 0)
-                return new Vector(false);
-
-            if (vectors.Length == 1)
-                return new Vector(vectors[0]._isCompressed, vectors[0]);
 
             int maxWordCountLogical = vectors.Max(v => v._wordCountLogical);
 
-            Vector vector = new Vector(false, vectors[0], maxWordCountLogical);
+            Vector vector = new Vector(vectors[0]._allowUnsafe, VectorCompression.None, vectors[0], maxWordCountLogical);
 
             for (int i = 1; i < vectors.Length; i++)
                 vector.Or(vectors[i]);
@@ -39,15 +49,20 @@ namespace SoftwareBotany.Sunlight
 
         #region Construction
 
-        public Vector(bool isCompressed)
-            : this(isCompressed, null) { }
+        public Vector(bool allowUnsafe, VectorCompression compression)
+            : this(allowUnsafe, compression, null) { }
 
-        public Vector(bool isCompressed, Vector vector)
-            : this(isCompressed, vector, 0) { }
+        public Vector(bool allowUnsafe, VectorCompression compression, Vector vector)
+            : this(allowUnsafe, compression, vector, 0) { }
 
-        public Vector(bool isCompressed, Vector vector, int wordsLength)
+        private Vector(bool allowUnsafe, VectorCompression compression, Vector vector, int wordsLength)
         {
-            _isCompressed = isCompressed;
+            if (allowUnsafe && _unsafeVectorLogic == null)
+                throw new ArgumentException("Cannot create an unsafe Vector unless the SoftwareBotany.Sunlight.Unsafe Assembly is included in the project.");
+
+            _allowUnsafe = allowUnsafe;
+            _isCompressed = (compression == VectorCompression.Compressed || compression == VectorCompression.CompressedWithPackedPosition);
+            _isPackedPositionEnabled = compression == VectorCompression.CompressedWithPackedPosition;
 
             if (vector == null)
             {
@@ -70,7 +85,7 @@ namespace SoftwareBotany.Sunlight
                 _wordCountPhysical = vector._wordCountLogical;
                 _wordCountLogical = vector._wordCountLogical;
 
-                Decompress(vector);
+                VectorLogic.Decompress(this._words, vector._words, vector._wordCountPhysical);
             }
             else
             {
@@ -88,7 +103,7 @@ namespace SoftwareBotany.Sunlight
 
         internal bool OptimizeReadPhase(int[] bitPositionShifts, out Vector optimized)
         {
-            optimized = new Vector(_isCompressed);
+            optimized = new Vector(_allowUnsafe, Compression);
 
             foreach (int bitPosition in GetBitPositions(true))
             {
@@ -105,8 +120,26 @@ namespace SoftwareBotany.Sunlight
 
         #region Words
 
+        public bool AllowUnsafe { get { return _allowUnsafe; } }
+        private readonly bool _allowUnsafe;
+
+        private IVectorLogic VectorLogic { get { return _allowUnsafe ? _unsafeVectorLogic : _safeVectorLogic; } }
+
+        public VectorCompression Compression
+        {
+            get
+            {
+                return _isCompressed
+                    ? (_isPackedPositionEnabled ? VectorCompression.CompressedWithPackedPosition : VectorCompression.Compressed)
+                    : VectorCompression.None;
+            }
+        }
+
         public bool IsCompressed { get { return _isCompressed; } }
         private readonly bool _isCompressed;
+
+        public bool IsPackedPositionEnabled { get { return _isPackedPositionEnabled; } }
+        private readonly bool _isPackedPositionEnabled;
 
         private Word[] _words;
         private int _wordCountPhysical;
@@ -125,7 +158,9 @@ namespace SoftwareBotany.Sunlight
             length = Math.Max(length, 2);
 
             if (_words == null)
+            {
                 _words = new Word[length];
+            }
             else if (_words.Length < length)
             {
                 length = Convert.ToInt32(length * WORDGROWTHFACTOR);
@@ -183,12 +218,10 @@ namespace SoftwareBotany.Sunlight
 
             if (word.IsCompressed)
             {
-#if POSITIONLIST
                 if (isPacked)
                     return word.PackedWord;
                 else
-#endif
-                return new Word((word.FillBit && word.FillCount > 0) ? Word.COMPRESSIBLEMASK : 0);
+                    return new Word((word.FillBit && word.FillCount > 0) ? Word.COMPRESSIBLEMASK : 0);
             }
             else
                 return word;
@@ -230,7 +263,6 @@ namespace SoftwareBotany.Sunlight
                     if (logical > wordPositionLogical)
                         return i;
 
-#if POSITIONLIST
                     if (word.HasPackedWord)
                     {
                         isPacked = true;
@@ -239,7 +271,6 @@ namespace SoftwareBotany.Sunlight
                         if (logical > wordPositionLogical)
                             return i;
                     }
-#endif
                 }
                 else
                 {
@@ -320,9 +351,7 @@ namespace SoftwareBotany.Sunlight
             {
                 ZeroFillWhenCompressedAndSingleWord(wordPositionLogical);
                 ZeroFillWhenCompressedAndTailIsCompressedAndCompressible(wordPositionLogical);
-#if POSITIONLIST
                 ZeroFillWhenCompressedAndTailIsPackable(wordPositionLogical);
-#endif
                 ZeroFillWhenCompressedAndTailIsZero(wordPositionLogical);
                 ZeroFillWhenCompressedAndLargeFill(wordPositionLogical);
             }
@@ -350,12 +379,10 @@ namespace SoftwareBotany.Sunlight
             int zeroFillCount = ZeroFillCount(wordPositionLogical);
 
             if (zeroFillCount > 0
-              && _words[_wordCountPhysical - 2].IsCompressed
-#if POSITIONLIST
-              && !_words[_wordCountPhysical - 2].HasPackedWord
-#endif
- && _words[_wordCountPhysical - 1].IsCompressible
-              && _words[_wordCountPhysical - 2].FillBit == _words[_wordCountPhysical - 1].CompressibleFillBit)
+                && _words[_wordCountPhysical - 2].IsCompressed
+                && !_words[_wordCountPhysical - 2].HasPackedWord
+                && _words[_wordCountPhysical - 1].IsCompressible
+                && _words[_wordCountPhysical - 2].FillBit == _words[_wordCountPhysical - 1].CompressibleFillBit)
             {
                 if (_words[_wordCountPhysical - 2].FillBit)
                 {
@@ -374,15 +401,17 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
-#if POSITIONLIST
         private void ZeroFillWhenCompressedAndTailIsPackable(int wordPositionLogical)
         {
+            if (!_isPackedPositionEnabled)
+                return;
+
             int zeroFillCount = ZeroFillCount(wordPositionLogical);
 
             if (zeroFillCount > 0
-              && _words[_wordCountPhysical - 2].IsCompressed
-              && !_words[_wordCountPhysical - 2].HasPackedWord
-              && _words[_wordCountPhysical - 1].Population == 1)
+                && _words[_wordCountPhysical - 2].IsCompressed
+                && !_words[_wordCountPhysical - 2].HasPackedWord
+                && _words[_wordCountPhysical - 1].Population == 1)
             {
                 _wordCountLogical++;
 
@@ -390,7 +419,6 @@ namespace SoftwareBotany.Sunlight
                 _words[_wordCountPhysical - 1].Raw = 0;
             }
         }
-#endif
 
         private void ZeroFillWhenCompressedAndTailIsZero(int wordPositionLogical)
         {
@@ -494,13 +522,11 @@ namespace SoftwareBotany.Sunlight
                     else
                         bitPositionOffset += word.FillCount * (Word.SIZE - 1);
 
-#if POSITIONLIST
                     if (word.HasPackedWord)
                     {
                         yield return word.PackedPosition + bitPositionOffset;
                         bitPositionOffset += (Word.SIZE - 1);
                     }
-#endif
                 }
                 else
                 {
@@ -555,7 +581,6 @@ namespace SoftwareBotany.Sunlight
 
                     i += jWord.FillCount;
 
-#if POSITIONLIST
                     if (jWord.HasPackedWord && i < iMax)
                     {
                         if (_words[i].Raw > 0 && _words[i][jWord.PackedPosition])
@@ -563,7 +588,6 @@ namespace SoftwareBotany.Sunlight
 
                         i++;
                     }
-#endif
 
                     j++;
                 }
@@ -597,52 +621,12 @@ namespace SoftwareBotany.Sunlight
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
-            if (IsCompressed)
+            if (_isCompressed)
                 throw new NotSupportedException("Not supported for a compressed Vector.");
 
             Contract.EndContractBlock();
 
-#if UNSAFE
-            unsafe
-            {
-                fixed (Word* iFixed = _words, jFixed = vector._words)
-                {
-                    Word* i = iFixed;
-                    Word* iMax = iFixed + _wordCountPhysical;
-
-                    Word* j = jFixed;
-                    Word* jMax = jFixed + vector._wordCountPhysical;
-
-                    i = vector._isCompressed ? AndCompressed(i, iMax, j, jMax) : AndUncompressed(i, iMax, j, jMax);
-
-                    if (i < iMax)
-                    {
-                        _wordCountPhysical = (int)(i - iFixed);
-                        _wordCountLogical = (int)(i - iFixed);
-
-                        while (i < iMax)
-                        {
-                            i->Raw = 0;
-                            i++;
-                        }
-                    }
-                }
-            }
-#else
-            int i = vector.IsCompressed ? AndCompressed(vector) : AndUncompressed(vector);
-
-            if (i < _wordCountPhysical)
-            {
-                _wordCountPhysical = i;
-                _wordCountLogical = i;
-
-                while (i < _wordCountPhysical)
-                {
-                    _words[i].Raw = 0;
-                    i++;
-                }
-            }
-#endif
+            VectorLogic.And(_words, ref _wordCountPhysical, ref _wordCountLogical, vector._isCompressed, vector._words, vector._wordCountPhysical);
         }
 
         public int AndPopulation(Vector vector)
@@ -650,28 +634,12 @@ namespace SoftwareBotany.Sunlight
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
-            if (IsCompressed)
+            if (_isCompressed)
                 throw new NotSupportedException("Not supported for a compressed Vector.");
 
             Contract.EndContractBlock();
 
-#if UNSAFE
-            unsafe
-            {
-                fixed (Word* iFixed = _words, jFixed = vector._words)
-                {
-                    Word* i = iFixed;
-                    Word* iMax = iFixed + _wordCountPhysical;
-
-                    Word* j = jFixed;
-                    Word* jMax = jFixed + vector._wordCountPhysical;
-
-                    return vector._isCompressed ? AndPopulationCompressed(i, iMax, j, jMax) : AndPopulationUncompressed(i, iMax, j, jMax);
-                }
-            }
-#else
-            return vector.IsCompressed ? AndPopulationCompressed(vector) : AndPopulationUncompressed(vector);
-#endif
+            return VectorLogic.AndPopulation(_words, _wordCountPhysical, vector._isCompressed, vector._words, vector._wordCountPhysical);
         }
 
         public void Or(Vector vector)
@@ -679,7 +647,7 @@ namespace SoftwareBotany.Sunlight
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
-            if (IsCompressed)
+            if (_isCompressed)
                 throw new NotSupportedException("Not supported for a compressed Vector.");
 
             Contract.EndContractBlock();
@@ -688,31 +656,9 @@ namespace SoftwareBotany.Sunlight
             _wordCountPhysical = Math.Max(_wordCountPhysical, vector._wordCountLogical);
             _wordCountLogical = Math.Max(_wordCountLogical, vector._wordCountLogical);
 
-#if UNSAFE
-            unsafe
-            {
-                fixed (Word* iFixed = _words, jFixed = vector._words)
-                {
-                    Word* i = iFixed;
-                    Word* iMax = iFixed + _wordCountPhysical;
-
-                    Word* j = jFixed;
-                    Word* jMax = jFixed + vector._wordCountPhysical;
-
-                    if (vector._isCompressed)
-                        OrCompressed(i, iMax, j, jMax);
-                    else
-                        OrUncompressed(i, iMax, j, jMax);
-                }
-            }
-#else
-            if (vector.IsCompressed)
-                OrCompressed(vector);
-            else
-                OrUncompressed(vector);
-#endif
+            VectorLogic.Or(_words, _wordCountPhysical, vector._isCompressed, vector._words, vector._wordCountPhysical);
+        }
 
         #endregion
-        }
     }
 }

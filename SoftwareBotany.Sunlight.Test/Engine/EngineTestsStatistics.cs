@@ -9,12 +9,14 @@ namespace SoftwareBotany.Sunlight
     public class EngineTestsStatistics
     {
         [TestMethod]
-        public void Full()
+        public void Full() { SafetyVectorCompressionTuple.RunAll(FullBase); }
+
+        private static void FullBase(SafetyVectorCompressionTuple safetyVectorCompression)
         {
-            using (Engine<EngineItem, int> engine = new Engine<EngineItem, int>(item => item.Id))
+            using (Engine<EngineItem, int> engine = new Engine<EngineItem, int>(safetyVectorCompression.AllowUnsafe, item => item.Id))
             {
-                engine.CreateCatalog("SomeInt", item => item.SomeInt);
-                engine.CreateCatalog("SomeString", item => item.SomeString);
+                engine.CreateCatalog("SomeInt", safetyVectorCompression.Compression, item => item.SomeInt);
+                engine.CreateCatalog("SomeString", safetyVectorCompression.Compression, item => item.SomeString);
 
                 IEngineStatistics stats = engine.GenerateStatistics();
                 Assert.AreEqual(2, stats.CatalogCount);
@@ -30,68 +32,108 @@ namespace SoftwareBotany.Sunlight
                 stats = engine.GenerateStatistics();
                 Assert.AreEqual(2, stats.CatalogCount);
                 Assert.AreEqual(4, stats.VectorCount);
-#if POSITIONLIST
-                Assert.AreEqual(8, stats.WordCount);
-                Assert.AreEqual(2, stats.PackedWordCount);
-                Assert.AreEqual(0, stats.OneBitPackableWordCount);
-                Assert.AreEqual(0, stats.TwoBitPackableWordCount);
-#else
-                Assert.AreEqual(10, stats.WordCount);
-                Assert.AreEqual(0, stats.PackedWordCount);
-                Assert.AreEqual(2, stats.OneBitPackableWordCount);
-                Assert.AreEqual(0, stats.TwoBitPackableWordCount);
-#endif
+
+                switch (safetyVectorCompression.Compression)
+                {
+                    case VectorCompression.None:
+                        // TODO
+                        break;
+
+                    case VectorCompression.Compressed:
+                        Assert.AreEqual(10, stats.WordCount);
+                        Assert.AreEqual(0, stats.PackedWordCount);
+                        Assert.AreEqual(2, stats.OneBitPackableWordCount);
+                        Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+                        break;
+
+                    case VectorCompression.CompressedWithPackedPosition:
+                        Assert.AreEqual(8, stats.WordCount);
+                        Assert.AreEqual(2, stats.PackedWordCount);
+                        Assert.AreEqual(0, stats.OneBitPackableWordCount);
+                        Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+                        break;
+                }
 
                 engine.Add(items.Skip(63).Take(62));
 
                 stats = engine.GenerateStatistics();
                 Assert.AreEqual(2, stats.CatalogCount);
                 Assert.AreEqual(4, stats.VectorCount);
-#if POSITIONLIST
-                Assert.AreEqual(14, stats.WordCount);
-                Assert.AreEqual(4, stats.PackedWordCount);
-                Assert.AreEqual(0, stats.OneBitPackableWordCount);
-                Assert.AreEqual(0, stats.TwoBitPackableWordCount);
-#else
-                Assert.AreEqual(18, stats.WordCount);
-                Assert.AreEqual(0, stats.PackedWordCount);
-                Assert.AreEqual(4, stats.OneBitPackableWordCount);
-                Assert.AreEqual(0, stats.TwoBitPackableWordCount);
-#endif
+
+                switch (safetyVectorCompression.Compression)
+                {
+                    case VectorCompression.None:
+                        // TODO
+                        break;
+
+                    case VectorCompression.Compressed:
+                        Assert.AreEqual(18, stats.WordCount);
+                        Assert.AreEqual(0, stats.PackedWordCount);
+                        Assert.AreEqual(4, stats.OneBitPackableWordCount);
+                        Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+                        break;
+
+                    case VectorCompression.CompressedWithPackedPosition:
+                        Assert.AreEqual(14, stats.WordCount);
+                        Assert.AreEqual(4, stats.PackedWordCount);
+                        Assert.AreEqual(0, stats.OneBitPackableWordCount);
+                        Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+                        break;
+                }
 
                 engine.Add(items.Skip(125).Take(62));
 
                 stats = engine.GenerateStatistics();
                 Assert.AreEqual(2, stats.CatalogCount);
                 Assert.AreEqual(4, stats.VectorCount);
-#if POSITIONLIST
-                Assert.AreEqual(22, stats.WordCount);
-                Assert.AreEqual(4, stats.PackedWordCount);
-                Assert.AreEqual(0, stats.OneBitPackableWordCount);
-                Assert.AreEqual(2, stats.TwoBitPackableWordCount);
-#else
-                Assert.AreEqual(26, stats.WordCount);
-                Assert.AreEqual(0, stats.PackedWordCount);
-                Assert.AreEqual(4, stats.OneBitPackableWordCount);
-                Assert.AreEqual(2, stats.TwoBitPackableWordCount);
-#endif
+
+                switch (safetyVectorCompression.Compression)
+                {
+                    case VectorCompression.None:
+                        // TODO
+                        break;
+
+                    case VectorCompression.Compressed:
+                        Assert.AreEqual(26, stats.WordCount);
+                        Assert.AreEqual(0, stats.PackedWordCount);
+                        Assert.AreEqual(4, stats.OneBitPackableWordCount);
+                        Assert.AreEqual(2, stats.TwoBitPackableWordCount);
+                        break;
+
+                    case VectorCompression.CompressedWithPackedPosition:
+                        Assert.AreEqual(22, stats.WordCount);
+                        Assert.AreEqual(4, stats.PackedWordCount);
+                        Assert.AreEqual(0, stats.OneBitPackableWordCount);
+                        Assert.AreEqual(2, stats.TwoBitPackableWordCount);
+                        break;
+                }
 
                 engine.Add(items.Skip(187).Take(62));
 
                 stats = engine.GenerateStatistics();
                 Assert.AreEqual(2, stats.CatalogCount);
                 Assert.AreEqual(4, stats.VectorCount);
-#if POSITIONLIST
-                Assert.AreEqual(30, stats.WordCount);
-                Assert.AreEqual(4, stats.PackedWordCount);
-                Assert.AreEqual(0, stats.OneBitPackableWordCount);
-                Assert.AreEqual(4, stats.TwoBitPackableWordCount);
-#else
-                Assert.AreEqual(34, stats.WordCount);
-                Assert.AreEqual(0, stats.PackedWordCount);
-                Assert.AreEqual(4, stats.OneBitPackableWordCount);
-                Assert.AreEqual(4, stats.TwoBitPackableWordCount);
-#endif
+
+                switch (safetyVectorCompression.Compression)
+                {
+                    case VectorCompression.None:
+                        // TODO
+                        break;
+
+                    case VectorCompression.Compressed:
+                        Assert.AreEqual(34, stats.WordCount);
+                        Assert.AreEqual(0, stats.PackedWordCount);
+                        Assert.AreEqual(4, stats.OneBitPackableWordCount);
+                        Assert.AreEqual(4, stats.TwoBitPackableWordCount);
+                        break;
+
+                    case VectorCompression.CompressedWithPackedPosition:
+                        Assert.AreEqual(30, stats.WordCount);
+                        Assert.AreEqual(4, stats.PackedWordCount);
+                        Assert.AreEqual(0, stats.OneBitPackableWordCount);
+                        Assert.AreEqual(4, stats.TwoBitPackableWordCount);
+                        break;
+                }
             }
         }
 

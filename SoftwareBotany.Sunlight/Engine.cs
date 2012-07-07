@@ -10,19 +10,24 @@ namespace SoftwareBotany.Sunlight
 {
     public sealed partial class Engine<TItem, TPrimaryKey> : IEngine<TPrimaryKey>, IDisposable
     {
-        public Engine(Func<TItem, TPrimaryKey> primaryKeyExtractor)
+        public Engine(bool allowUnsafe, Func<TItem, TPrimaryKey> primaryKeyExtractor)
         {
+            _allowUnsafe = allowUnsafe;
             _primaryKeyExtractor = primaryKeyExtractor;
+            _activeItems = new Vector(_allowUnsafe, VectorCompression.None);
         }
 
         private bool _initializing = true;
         private readonly ReaderWriterLockSlim _rwLock = new ReaderWriterLockSlim();
 
+        public bool AllowUnsafe { get { return _allowUnsafe; } }
+        private readonly bool _allowUnsafe;
+
         private readonly Func<TItem, TPrimaryKey> _primaryKeyExtractor;
         private List<TPrimaryKey> _primaryKeys = new List<TPrimaryKey>();
-        private Dictionary<TPrimaryKey, int> _primaryKeyToBitPositionMap = new Dictionary<TPrimaryKey, int>();
+        private Dictionary<TPrimaryKey, int> _primaryKeyToActiveBitPositionMap = new Dictionary<TPrimaryKey, int>();
 
-        private Vector _activeItems = new Vector(false);
+        private Vector _activeItems;
 
         private List<CatalogPlusExtractor> _catalogsPlusExtractors = new List<CatalogPlusExtractor>();
 
@@ -42,20 +47,20 @@ namespace SoftwareBotany.Sunlight
 
         #region Catalog Management
 
-        public ParameterFactory<TKey> CreateCatalog<TKey>(string name, Func<TItem, IEnumerable<TKey>> keysExtractor)
+        public ParameterFactory<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, IEnumerable<TKey>> keysExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            return CreateCatalogImpl<TKey>(name, false, item => (object)keysExtractor(item));
+            return CreateCatalogImpl<TKey>(name, compression, false, item => (object)keysExtractor(item));
         }
 
-        public ParameterFactory<TKey> CreateCatalog<TKey>(string name, Func<TItem, TKey> keyExtractor)
+        public ParameterFactory<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, TKey> keyExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             // Intentionally box the result of the keyExtractor because it is cheaper than a dynamic resolution.
-            return CreateCatalogImpl<TKey>(name, true, item => (object)keyExtractor(item));
+            return CreateCatalogImpl<TKey>(name, compression, true, item => (object)keyExtractor(item));
         }
 
-        private ParameterFactory<TKey> CreateCatalogImpl<TKey>(string name, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
+        private ParameterFactory<TKey> CreateCatalogImpl<TKey>(string name, VectorCompression compression, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             Catalog<TKey> catalog;
@@ -70,7 +75,7 @@ namespace SoftwareBotany.Sunlight
                 if (_catalogsPlusExtractors.Any(cpe => cpe.Catalog.Name == name))
                     throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "A Catalog already exists with the name : {0}.", name));
 
-                catalog = new Catalog<TKey>(this, name);
+                catalog = new Catalog<TKey>(this, name, _allowUnsafe, compression);
                 _catalogsPlusExtractors.Add(new CatalogPlusExtractor(catalog, keyOrKeysExtractor));
             }
             finally
@@ -150,12 +155,12 @@ namespace SoftwareBotany.Sunlight
             // because the garbage collector knows an instruction pointer for after which a given variable is no longer used.
             // For instances members, I do not know this to be the case. So, simply null the now unused parameter here to ensure that
             // it can be garbage collected if needed during this operation which will allocate a significant amount of memory.
-            _primaryKeyToBitPositionMap = null;
+            _primaryKeyToActiveBitPositionMap = null;
 
             _primaryKeys = _primaryKeys.Where((primaryKey, bitPosition) => bitPositionShifts[bitPosition] >= 0)
                 .ToList();
 
-            _primaryKeyToBitPositionMap = _primaryKeys.Select((primaryKey, bitPosition) => new { PrimaryKey = primaryKey, BitPosition = bitPosition })
+            _primaryKeyToActiveBitPositionMap = _primaryKeys.Select((primaryKey, bitPosition) => new { PrimaryKey = primaryKey, BitPosition = bitPosition })
                 .ToDictionary(pkbi => pkbi.PrimaryKey, pkbi => pkbi.BitPosition);
         }
 
@@ -205,12 +210,12 @@ namespace SoftwareBotany.Sunlight
         {
             TPrimaryKey primaryKey = _primaryKeyExtractor(item);
 
-            if (_primaryKeyToBitPositionMap.ContainsKey(primaryKey))
+            if (_primaryKeyToActiveBitPositionMap.ContainsKey(primaryKey))
                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "An item already exists in this Engine with the primary key : {0}.", primaryKey));
 
             int bitPosition = _primaryKeys.Count;
             _primaryKeys.Add(primaryKey);
-            _primaryKeyToBitPositionMap.Add(primaryKey, bitPosition);
+            _primaryKeyToActiveBitPositionMap.Add(primaryKey, bitPosition);
             _activeItems[bitPosition] = true;
 
             foreach (CatalogPlusExtractor cpe in _catalogsPlusExtractors)
@@ -265,15 +270,15 @@ namespace SoftwareBotany.Sunlight
         {
             TPrimaryKey primaryKey = _primaryKeyExtractor(item);
 
-            if (!_primaryKeyToBitPositionMap.ContainsKey(primaryKey))
+            if (!_primaryKeyToActiveBitPositionMap.ContainsKey(primaryKey))
                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "No item exists in this Engine with the primary key : {0}.", primaryKey));
 
-            int fromBitPosition = _primaryKeyToBitPositionMap[primaryKey];
+            int fromBitPosition = _primaryKeyToActiveBitPositionMap[primaryKey];
             _activeItems[fromBitPosition] = false;
 
             int toBitPosition = _primaryKeys.Count;
             _primaryKeys.Add(primaryKey);
-            _primaryKeyToBitPositionMap[primaryKey] = toBitPosition;
+            _primaryKeyToActiveBitPositionMap[primaryKey] = toBitPosition;
             _activeItems[toBitPosition] = true;
 
             foreach (CatalogPlusExtractor cpe in _catalogsPlusExtractors)
@@ -292,21 +297,48 @@ namespace SoftwareBotany.Sunlight
 
         public void Remove(TItem item)
         {
-            TPrimaryKey primaryKey = _primaryKeyExtractor(item);
-
             try
             {
                 _rwLock.EnterWriteLock();
 
-                if (!_primaryKeyToBitPositionMap.ContainsKey(primaryKey))
-                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "No item exists in this Engine with the primary key : {0}.", primaryKey));
-
-                _activeItems[_primaryKeyToBitPositionMap[primaryKey]] = false;
+                RemoveItem(item);
             }
             finally
             {
                 _rwLock.ExitWriteLock();
             }
+        }
+
+        public void Remove(IEnumerable<TItem> items)
+        {
+            if (items == null)
+                throw new ArgumentNullException("items");
+
+            Contract.EndContractBlock();
+
+            try
+            {
+                _rwLock.EnterWriteLock();
+
+                foreach (TItem item in items)
+                    RemoveItem(item);
+            }
+            finally
+            {
+                _rwLock.ExitWriteLock();
+            }
+        }
+
+        private void RemoveItem(TItem item)
+        {
+            TPrimaryKey primaryKey = _primaryKeyExtractor(item);
+
+            if (!_primaryKeyToActiveBitPositionMap.ContainsKey(primaryKey))
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "No item exists in this Engine with the primary key : {0}.", primaryKey));
+
+            int bitPosition = _primaryKeyToActiveBitPositionMap[primaryKey];
+            _primaryKeyToActiveBitPositionMap.Remove(primaryKey);
+            _activeItems[bitPosition] = false;
         }
 
         #endregion
@@ -347,30 +379,35 @@ namespace SoftwareBotany.Sunlight
 
         private Vector InitializeSearch(IEnumerable<TPrimaryKey> amongstPrimaryKeys)
         {
-            Vector result = new Vector(false, _activeItems);
+            Vector result;
 
             if (amongstPrimaryKeys.Any())
             {
-                Vector amongstPrimaryKeyMask = new Vector(true);
+                result = new Vector(_allowUnsafe, VectorCompression.None);
 
+                // No benchmarking was done to justify the OrderByDescending; however, the rationale
+                // is that if we start by setting the maximum position, the Vector's underlying Array
+                // will only have to undergo a single resizing. Obviously it comes at the price of a
+                // QuickSort O(n log n).  However, we are already in an n sized loop so resizing  which
+                // costs n each time could theoretically cost us O(n^2).
                 foreach (int bitPosition in amongstPrimaryKeys
                     .Select(primaryKey =>
                     {
                         int temp;
 
-                        if (_primaryKeyToBitPositionMap.TryGetValue(primaryKey, out temp))
+                        if (_primaryKeyToActiveBitPositionMap.TryGetValue(primaryKey, out temp))
                             return temp;
                         else
                             return -1;
                     })
                     .Where(position => position >= 0)
-                    .OrderBy(position => position))
+                    .OrderByDescending(position => position))
                 {
-                    amongstPrimaryKeyMask[bitPosition] = true;
+                    result[bitPosition] = true;
                 }
-
-                result.And(amongstPrimaryKeyMask);
             }
+            else
+                result = new Vector(_allowUnsafe, VectorCompression.None, _activeItems);
 
             return result;
         }
@@ -411,7 +448,7 @@ namespace SoftwareBotany.Sunlight
                 partialResults = SortBitPositionsByParameter(result, sortParameters.First());
 
                 for (int i = 1; i < sortParameters.Length; i++)
-                    partialResults = SortBitPositionsThenByParameter(partialResults, sortParameters[i]);
+                    partialResults = SortBitPositionsThenByParameter(_allowUnsafe, partialResults, sortParameters[i]);
 
                 if (sortPrimaryKeyAscending.HasValue)
                     return SortBitPositionsThenByPrimaryKey(partialResults, sortPrimaryKeyAscending.Value);
@@ -439,13 +476,13 @@ namespace SoftwareBotany.Sunlight
             return sortResult.PartialSortResultsBitPositions;
         }
 
-        private static IEnumerable<IEnumerable<int>> SortBitPositionsThenByParameter(IEnumerable<IEnumerable<int>> partialResults, ISortParameter sortParameter)
+        private static IEnumerable<IEnumerable<int>> SortBitPositionsThenByParameter(bool allowUnsafe, IEnumerable<IEnumerable<int>> partialResults, ISortParameter sortParameter)
         {
             return partialResults.SelectMany(partialResult =>
             {
                 // AndFilterBitPositions does not support Compressed Vectors. Implementing that feature could
-                // offer great performance gains here.
-                Vector partialResultVector = new Vector(false);
+                // possible offer significant performance gains here.
+                Vector partialResultVector = new Vector(allowUnsafe, VectorCompression.None);
 
                 foreach (int bitPosition in partialResult)
                     partialResultVector[bitPosition] = true;

@@ -9,33 +9,9 @@
 [assembly: AssemblyCulture("")]
 
 #if DEBUG
-    #if UNSAFE
-        #if POSITIONLIST
-[assembly: AssemblyConfiguration("Debug-Unsafe-PositionList")]
-        #else
-[assembly: AssemblyConfiguration("Debug-Unsafe")]
-        #endif
-    #else
-        #if POSITIONLIST
-[assembly: AssemblyConfiguration("Debug-Safe-PositionList")]
-        #else
-[assembly: AssemblyConfiguration("Debug-Safe")]
-        #endif
-    #endif
+[assembly: AssemblyConfiguration("Debug")]
 #else
-    #if UNSAFE
-        #if POSITIONLIST
-[assembly: AssemblyConfiguration("Release-Unsafe-PositionList")]
-        #else
-[assembly: AssemblyConfiguration("Release-Unsafe")]
-        #endif
-    #else
-        #if POSITIONLIST
-[assembly: AssemblyConfiguration("Release-Safe-PositionList")]
-        #else
-[assembly: AssemblyConfiguration("Release-Safe")]
-        #endif
-    #endif
+[assembly: AssemblyConfiguration("Release")]
 #endif
 
 [assembly: AssemblyVersion("0.9.0.*")]

@@ -38,19 +38,6 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugPositionList|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\DebugPositionList\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;POSITIONLIST</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleasePositionList|AnyCPU'">
-    <OutputPath>bin\ReleasePositionList\</OutputPath>
-    <DefineConstants>POSITIONLIST</DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -75,6 +62,7 @@
     <Compile Include="Engine\EngineTests.cs" />
     <Compile Include="Engine\EngineTestsStatistics.cs" />
     <Compile Include="Facet\FacetTests.cs" />
+    <Compile Include="SafetyVectorCompressionTuple.cs" />
     <Compile Include="Search\SearchParameterTests.cs" />
     <Compile Include="Search\SearchTests.cs" />
     <Compile Include="Search\FacetParameterTests.cs" />
@@ -101,6 +89,10 @@
     <Compile Include="Word\WordTestsPopulation.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SoftwareBotany.Sunlight.Unsafe\SoftwareBotany.Sunlight.Unsafe.csproj">
+      <Project>{D881789E-40E3-487F-9E54-344CE7C2F988}</Project>
+      <Name>SoftwareBotany.Sunlight.Unsafe</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SoftwareBotany.Sunlight\SoftwareBotany.Sunlight.csproj">
       <Project>{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}</Project>
       <Name>SoftwareBotany.Sunlight</Name>
