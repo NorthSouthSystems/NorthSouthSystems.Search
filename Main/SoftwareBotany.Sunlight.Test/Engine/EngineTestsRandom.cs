@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -58,30 +57,42 @@ namespace SoftwareBotany.Sunlight
         public void MediumComplex() { Base(MEDIUMSEED, MEDIUMSIZE, false, MEDIUMRUNS); }
 
         [TestMethod]
+        [TestProperty("Duration", "Long")]
         public void LargeSimple() { Base(LARGESEED, LARGESIZE, true, LARGERUNS); }
         [TestMethod]
+        [TestProperty("Duration", "Long")]
         public void LargeComplexNone() { Base(LARGESEED, LARGESIZE, false, LARGERUNS, VectorCompression.None); }
         [TestMethod]
+        [TestProperty("Duration", "Long")]
         public void LargeComplexCompressed() { Base(LARGESEED, LARGESIZE, false, LARGERUNS, VectorCompression.Compressed); }
         [TestMethod]
+        [TestProperty("Duration", "Long")]
         public void LargeComplexCompressedWithPackedPosition() { Base(LARGESEED, LARGESIZE, false, LARGERUNS, VectorCompression.CompressedWithPackedPosition); }
 
         [TestMethod]
+        [TestProperty("Duration", "Long")]
         public void XLargeSimple() { Base(XLARGESEED, XLARGESIZE, true, XLARGERUNS); }
         [TestMethod]
+        [TestProperty("Duration", "Long")]
         public void XLargeComplexNone() { Base(XLARGESEED, XLARGESIZE, false, XLARGERUNS, VectorCompression.None); }
         [TestMethod]
+        [TestProperty("Duration", "Long")]
         public void XLargeComplexCompressed() { Base(XLARGESEED, XLARGESIZE, false, XLARGERUNS, VectorCompression.Compressed); }
         [TestMethod]
+        [TestProperty("Duration", "Long")]
         public void XLargeComplexCompressedWithPackedPosition() { Base(XLARGESEED, XLARGESIZE, false, XLARGERUNS, VectorCompression.CompressedWithPackedPosition); }
 
         [TestMethod]
+        [TestProperty("Duration", "Long")]
         public void XXLargeSimple() { Base(XXLARGESEED, XXLARGESIZE, true, XXLARGERUNS); }
         [TestMethod]
+        [TestProperty("Duration", "Long")]
         public void XXLargeComplexNone() { Base(XXLARGESEED, XXLARGESIZE, false, XXLARGERUNS, VectorCompression.None); }
         [TestMethod]
+        [TestProperty("Duration", "Long")]
         public void XXLargeComplexCompressed() { Base(XXLARGESEED, XXLARGESIZE, false, XXLARGERUNS, VectorCompression.Compressed); }
         [TestMethod]
+        [TestProperty("Duration", "Long")]
         public void XXLargeComplexCompressedWithPackedPosition() { Base(XXLARGESEED, XXLARGESIZE, false, XXLARGERUNS, VectorCompression.CompressedWithPackedPosition); }
 
         private static void Base(int randomSeed, int size, bool simple, int runs, VectorCompression? compression = null)
@@ -134,6 +145,10 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
+                        search.AddFacetAnyParameter(someIntFactory);
+                        search.AddFacetAnyParameter(someDateTimeFactory);
+                        search.AddFacetAnyParameter(someStringFactory);
+                        search.AddFacetAnyParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -144,6 +159,10 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
+                        search.AddFacetAnyParameter(someIntFactory);
+                        search.AddFacetAnyParameter(someDateTimeFactory);
+                        search.AddFacetAnyParameter(someStringFactory);
+                        search.AddFacetAnyParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -154,6 +173,10 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
+                        search.AddFacetAnyParameter(someIntFactory);
+                        search.AddFacetAnyParameter(someDateTimeFactory);
+                        search.AddFacetAnyParameter(someStringFactory);
+                        search.AddFacetAnyParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -163,6 +186,11 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someIntFactory);
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
+                        search.AddFacetParameter(someTagsFactory);
+                        search.AddFacetAnyParameter(someIntFactory);
+                        search.AddFacetAnyParameter(someDateTimeFactory);
+                        search.AddFacetAnyParameter(someStringFactory);
+                        search.AddFacetAnyParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
                     }
@@ -178,6 +206,10 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
+                        search.AddFacetAnyParameter(someIntFactory);
+                        search.AddFacetAnyParameter(someDateTimeFactory);
+                        search.AddFacetAnyParameter(someStringFactory);
+                        search.AddFacetAnyParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -191,6 +223,10 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
+                        search.AddFacetAnyParameter(someIntFactory);
+                        search.AddFacetAnyParameter(someDateTimeFactory);
+                        search.AddFacetAnyParameter(someStringFactory);
+                        search.AddFacetAnyParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -205,6 +241,10 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
+                        search.AddFacetAnyParameter(someIntFactory);
+                        search.AddFacetAnyParameter(someDateTimeFactory);
+                        search.AddFacetAnyParameter(someStringFactory);
+                        search.AddFacetAnyParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -219,6 +259,10 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
+                        search.AddFacetAnyParameter(someIntFactory);
+                        search.AddFacetAnyParameter(someDateTimeFactory);
+                        search.AddFacetAnyParameter(someStringFactory);
+                        search.AddFacetAnyParameter(someTagsFactory);
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
                     }
@@ -286,7 +330,7 @@ namespace SoftwareBotany.Sunlight
             engine.Remove(removeReAddItems.Take(rangeRemoveReAddCount));
             engine.Add(removeReAddItems.Take(rangeRemoveReAddCount));
 
-            foreach(EngineItem item in removeReAddItems.Skip(rangeRemoveReAddCount))
+            foreach (EngineItem item in removeReAddItems.Skip(rangeRemoveReAddCount))
             {
                 engine.Remove(item);
                 engine.Add(item);

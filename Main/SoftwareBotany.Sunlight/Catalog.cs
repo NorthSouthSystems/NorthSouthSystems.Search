@@ -128,7 +128,7 @@ namespace SoftwareBotany.Sunlight
 
             Contract.EndContractBlock();
 
-            SearchImpl(vector, new [] { Lookup(key) });
+            SearchImpl(vector, new[] { Lookup(key) });
         }
 
         void ICatalog.SearchEnumerable(Vector vector, object keys) { Search(vector, (IEnumerable<TKey>)keys); }
@@ -195,7 +195,7 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Faceting
+        #region Facet
 
         object ICatalog.Facets(Vector vector) { return Facets(vector); }
 
@@ -214,6 +214,24 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
+        #region FacetAny
+
+        object ICatalog.FacetAnys(Vector vector) { return FacetAnys(vector); }
+
+        public TKey[] FacetAnys(Vector vector)
+        {
+            if (vector == null)
+                throw new ArgumentNullException("vector");
+
+            Contract.EndContractBlock();
+
+            return _entries.Where(keyAndEntry => vector.AndPopulationAny(keyAndEntry.Value.Vector))
+                .Select(keyAndEntry => keyAndEntry.Key)
+                .ToArray();
+        }
+
+        #endregion
+
         #region Sort
 
         ICatalogSortResult ICatalog.SortBitPositions(Vector vector, bool value, bool ascending) { return SortBitPositions(vector, value, ascending); }
@@ -225,8 +243,11 @@ namespace SoftwareBotany.Sunlight
 
             Contract.EndContractBlock();
 
+            // This uses SortedSet<T>.Reverse() and not the IEnumerable<T> extension method that suffers from greedy enumeration.
             var keys = ascending ? _keys : _keys.Reverse();
-            var partialSortResults = keys.Select(key => new CatalogPartialSortResult<TKey>(key, vector.AndFilterBitPositions(_entries[key].Vector, value)));
+
+            var partialSortResults = keys.Where(key => vector.AndPopulationAny(_entries[key].Vector))
+                .Select(key => new CatalogPartialSortResult<TKey>(key, vector.AndFilterBitPositions(_entries[key].Vector, value)));
 
             return new CatalogSortResult<TKey>(partialSortResults);
         }

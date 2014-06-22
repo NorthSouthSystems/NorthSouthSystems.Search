@@ -159,7 +159,7 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Faceting
+        #region Facet
 
         internal IEnumerable<IFacetParameter> FacetParameters { get { return _facetParameters; } }
         private readonly List<IFacetParameter> _facetParameters = new List<IFacetParameter>();
@@ -186,6 +186,37 @@ namespace SoftwareBotany.Sunlight
         {
             if (_facetParameters.Any(parameter => parameter.Catalog == factory.Catalog))
                 throw new NotSupportedException("Can only add 1 Facet Parameter per Catalog.");
+        }
+
+        #endregion
+
+        #region FacetAny
+
+        internal IEnumerable<IFacetAnyParameter> FacetAnyParameters { get { return _facetAnyParameters; } }
+        private readonly List<IFacetAnyParameter> _facetAnyParameters = new List<IFacetAnyParameter>();
+
+        public FacetAnyParameter<TKey> AddFacetAnyParameter<TKey>(ParameterFactory<TKey> factory)
+            where TKey : IEquatable<TKey>, IComparable<TKey>
+        {
+            if (factory == null)
+                throw new ArgumentNullException("factory");
+
+            Contract.EndContractBlock();
+
+            ThrowEngineMismatchException(factory);
+            ThrowDuplicateFacetAnyException(factory);
+
+            FacetAnyParameter<TKey> facetAnyParameter = factory.CreateFacetAnyParameter();
+            _facetAnyParameters.Add(facetAnyParameter);
+
+            return facetAnyParameter;
+        }
+
+        private void ThrowDuplicateFacetAnyException<TKey>(ParameterFactory<TKey> factory)
+            where TKey : IEquatable<TKey>, IComparable<TKey>
+        {
+            if (_facetAnyParameters.Any(parameter => parameter.Catalog == factory.Catalog))
+                throw new NotSupportedException("Can only add 1 Facet Any Parameter per Catalog.");
         }
 
         #endregion

@@ -43,11 +43,20 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Faceting
+        #region Facet
 
         internal FacetParameter<TKey> CreateFacetParameter()
         {
             return new FacetParameter<TKey>(Catalog);
+        }
+
+        #endregion
+
+        #region FacetAny
+
+        internal FacetAnyParameter<TKey> CreateFacetAnyParameter()
+        {
+            return new FacetAnyParameter<TKey>(Catalog);
         }
 
         #endregion
