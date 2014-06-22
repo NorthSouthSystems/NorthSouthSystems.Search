@@ -642,6 +642,19 @@ namespace SoftwareBotany.Sunlight
             return VectorLogic.AndPopulation(_words, _wordCountPhysical, vector._isCompressed, vector._words, vector._wordCountPhysical);
         }
 
+        public bool AndPopulationAny(Vector vector)
+        {
+            if (vector == null)
+                throw new ArgumentNullException("vector");
+
+            if (_isCompressed)
+                throw new NotSupportedException("Not supported for a compressed Vector.");
+
+            Contract.EndContractBlock();
+
+            return VectorLogic.AndPopulationAny(_words, _wordCountPhysical, vector._isCompressed, vector._words, vector._wordCountPhysical);
+        }
+
         public void Or(Vector vector)
         {
             if (vector == null)

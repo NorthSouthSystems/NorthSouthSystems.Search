@@ -181,7 +181,9 @@
 
                     if (jWord.HasPackedWord && i < iMax)
                     {
-                        if (iWords[i].Raw > 0 && (iWords[i].Raw & jWord.PackedWord.Raw) > 0)
+                        Word iWord = iWords[i];
+
+                        if (iWord.Raw > 0 && (iWord.Raw & jWord.PackedWord.Raw) > 0)
                             population++;
 
                         i++;
@@ -225,6 +227,97 @@
             }
 
             return population;
+        }
+
+        #endregion
+
+        #region AndPopulationAny
+
+        bool IVectorLogic.AndPopulationAny(Word[] iWords, int iWordCountPhysical, bool jIsCompressed, Word[] jWords, int jWordCountPhysical)
+        {
+            return jIsCompressed
+                ? AndPopulationAnyCompressed(iWords, iWordCountPhysical, jWords, jWordCountPhysical)
+                : AndPopulationAnyUncompressed(iWords, iWordCountPhysical, jWords, jWordCountPhysical);
+        }
+
+        private static bool AndPopulationAnyCompressed(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical)
+        {
+            int i = 0;
+            int iMax = iWordCountPhysical;
+
+            int j = 0;
+            int jMax = jWordCountPhysical;
+
+            while (i < iMax && j < jMax)
+            {
+                Word jWord = jWords[j];
+
+                if (jWord.IsCompressed)
+                {
+                    if (jWord.FillBit)
+                    {
+                        int k = i + jWord.FillCount;
+
+                        if (k > iMax)
+                            k = iMax;
+
+                        while (i < k)
+                        {
+                            if (iWords[i].Raw > 0)
+                                return true;
+
+                            i++;
+                        }
+                    }
+                    else
+                        i += jWord.FillCount;
+
+                    if (jWord.HasPackedWord && i < iMax)
+                    {
+                        Word iWord = iWords[i];
+
+                        if (iWord.Raw > 0 && (iWord.Raw & jWord.PackedWord.Raw) > 0)
+                            return true;
+
+                        i++;
+                    }
+                }
+                else
+                {
+                    uint word = iWords[i].Raw & jWord.Raw;
+
+                    if (word > 0)
+                        return true;
+
+                    i++;
+                }
+
+                j++;
+            }
+
+            return false;
+        }
+
+        private static bool AndPopulationAnyUncompressed(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical)
+        {
+            int i = 0;
+            int iMax = iWordCountPhysical;
+
+            int j = 0;
+            int jMax = jWordCountPhysical;
+
+            while (i < iMax && j < jMax)
+            {
+                uint word = iWords[i].Raw & jWords[j].Raw;
+
+                if (word > 0)
+                    return true;
+
+                i++;
+                j++;
+            }
+
+            return false;
         }
 
         #endregion

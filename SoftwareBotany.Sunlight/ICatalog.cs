@@ -16,6 +16,7 @@
         ICatalogSortResult SortBitPositions(Vector vector, bool value, bool ascending);
 
         object Facets(Vector vector);
+        object FacetAnys(Vector vector);
 
         ICatalogStatistics GenerateStatistics();
     }

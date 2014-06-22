@@ -28,8 +28,19 @@ namespace SoftwareBotany.Sunlight
             Assert.AreEqual(sourceResults.Length, totalCount);
             CollectionAssert.AreEqual(sourceResults.Skip(skip).Take(take).Select(item => item.Id).ToArray(), primaryKeys);
 
-            foreach (IFacetParameter param in search.FacetParameters)
-                AssertFacet(sourceResults, param);
+            // Testing convention: every FacetParameter must have a corresponding FacetAnyParameter.
+            var facetAndAnyParameters = search.FacetParameters
+                .Join(search.FacetAnyParameters,
+                    facetParameter => facetParameter.Catalog,
+                    facetAnyParameter => facetAnyParameter.Catalog,
+                    (facetParameter, facetAnyParameter) => Tuple.Create(facetParameter, facetAnyParameter))
+                .ToArray();
+
+            Assert.AreEqual(search.FacetParameters.Count(), facetAndAnyParameters.Length);
+            Assert.AreEqual(search.FacetAnyParameters.Count(), facetAndAnyParameters.Length);
+
+            foreach (var facetAndAnyParam in facetAndAnyParameters)
+                AssertFacet(sourceResults, facetAndAnyParam.Item1, facetAndAnyParam.Item2);
         }
 
         #region Search
@@ -167,9 +178,9 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Faceting
+        #region Facet
 
-        private static void AssertFacet(EngineItem[] sourceResults, IFacetParameter param)
+        private static void AssertFacet(EngineItem[] sourceResults, IFacetParameter param, IFacetAnyParameter paramAny)
         {
             switch (param.Catalog.Name)
             {
@@ -183,7 +194,11 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    sourceSomeIntFacet.AssertFacets(paramSomeIntFacet);
+                    int[] paramAnySomeIntFacet = ((IEnumerable<int>)paramAny.FacetAnys)
+                        .OrderBy(key => key)
+                        .ToArray();
+
+                    sourceSomeIntFacet.AssertFacets(paramSomeIntFacet, paramAnySomeIntFacet);
                     break;
                 case "SomeDateTime":
                     Facet<DateTime>[] sourceSomeDateTimeFacet = sourceResults.GroupBy(item => item.SomeDateTime)
@@ -195,7 +210,11 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    sourceSomeDateTimeFacet.AssertFacets(paramSomeDateTimeFacet);
+                    DateTime[] paramAnySomeDateTimeFacet = ((IEnumerable<DateTime>)paramAny.FacetAnys)
+                        .OrderBy(key => key)
+                        .ToArray();
+
+                    sourceSomeDateTimeFacet.AssertFacets(paramSomeDateTimeFacet, paramAnySomeDateTimeFacet);
                     break;
                 case "SomeString":
                     Facet<string>[] sourceSomeStringFacet = sourceResults.GroupBy(item => item.SomeString)
@@ -207,7 +226,11 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    sourceSomeStringFacet.AssertFacets(paramSomeStringFacet);
+                    string[] paramAnySomeStringFacet = ((IEnumerable<string>)paramAny.FacetAnys)
+                        .OrderBy(key => key)
+                        .ToArray();
+
+                    sourceSomeStringFacet.AssertFacets(paramSomeStringFacet, paramAnySomeStringFacet);
                     break;
                 case "SomeTags":
                     Facet<string>[] sourceSomeTagsFacet = sourceResults.SelectMany(item => item.SomeTags)
@@ -220,22 +243,29 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    sourceSomeTagsFacet.AssertFacets(paramSomeTagsFacet);
+                    string[] paramAnySomeTagsFacet = ((IEnumerable<string>)paramAny.FacetAnys)
+                        .OrderBy(key => key)
+                        .ToArray();
+
+                    sourceSomeTagsFacet.AssertFacets(paramSomeTagsFacet, paramAnySomeTagsFacet);
                     break;
                 default:
                     throw new NotImplementedException(param.Catalog.Name);
             }
         }
 
-        private static void AssertFacets<T>(this Facet<T>[] facets, Facet<T>[] compare)
+        private static void AssertFacets<T>(this Facet<T>[] facets, Facet<T>[] compare, T[] compareAny)
             where T : IEquatable<T>, IComparable<T>
         {
             Assert.AreEqual(facets.Length, compare.Length);
+            Assert.AreEqual(facets.Length, compareAny.Length);
 
             for (int i = 0; i < facets.Length; i++)
             {
                 Assert.AreEqual(facets[i].Key, compare[i].Key);
                 Assert.AreEqual(facets[i].Count, compare[i].Count);
+
+                Assert.AreEqual(facets[i].Key, compareAny[i]);
             }
         }
 

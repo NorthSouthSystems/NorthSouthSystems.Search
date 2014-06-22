@@ -367,6 +367,9 @@ namespace SoftwareBotany.Sunlight
                 foreach (IFacetParameter facetParameter in search.FacetParameters)
                     facetParameter.Facets = facetParameter.Catalog.Facets(result);
 
+                foreach (IFacetAnyParameter facetAnyParameter in search.FacetAnyParameters)
+                    facetAnyParameter.FacetAnys = facetAnyParameter.Catalog.FacetAnys(result);
+
                 IEnumerable<int> sortedBitPositions = (!search.SortParameters.Any() && !search.SortPrimaryKeyAscending.HasValue)
                     ? result.GetBitPositions(true)
                     : SortBitPositions(result, search.SortParameters.ToArray(), search.SortPrimaryKeyAscending);

@@ -218,6 +218,90 @@
 
         #endregion
 
+        #region AndPopulationAny
+
+        unsafe bool IVectorLogic.AndPopulationAny(Word[] iWords, int iWordCountPhysical, bool jIsCompressed, Word[] jWords, int jWordCountPhysical)
+        {
+            fixed (Word* iFixed = iWords, jFixed = jWords)
+            {
+                Word* i = iFixed;
+                Word* iMax = iFixed + iWordCountPhysical;
+
+                Word* j = jFixed;
+                Word* jMax = jFixed + jWordCountPhysical;
+
+                return jIsCompressed
+                    ? AndPopulationAnyCompressed(i, iMax, j, jMax)
+                    : AndPopulationAnyUncompressed(i, iMax, j, jMax);
+            }
+        }
+
+        private unsafe static bool AndPopulationAnyCompressed(Word* i, Word* iMax, Word* j, Word* jMax)
+        {
+            while (i < iMax && j < jMax)
+            {
+                if (j->IsCompressed)
+                {
+                    if (j->FillBit)
+                    {
+                        Word* k = i + j->FillCount;
+
+                        if (k > iMax)
+                            k = iMax;
+
+                        while (i < k)
+                        {
+                            if (i->Raw > 0)
+                                return true;
+
+                            i++;
+                        }
+                    }
+                    else
+                        i += j->FillCount;
+
+                    if (j->HasPackedWord && i < iMax)
+                    {
+                        if (i->Raw > 0 && (i->Raw & j->PackedWord.Raw) > 0)
+                            return true;
+
+                        i++;
+                    }
+                }
+                else
+                {
+                    uint word = i->Raw & j->Raw;
+
+                    if (word > 0)
+                        return true;
+
+                    i++;
+                }
+
+                j++;
+            }
+
+            return false;
+        }
+
+        private unsafe static bool AndPopulationAnyUncompressed(Word* i, Word* iMax, Word* j, Word* jMax)
+        {
+            while (i < iMax && j < jMax)
+            {
+                uint word = i->Raw & j->Raw;
+
+                if (word > 0)
+                    return true;
+
+                i++;
+                j++;
+            }
+
+            return false;
+        }
+
+        #endregion
+
         #region Or
 
         unsafe void IVectorLogic.Or(Word[] iWords, int iWordCountPhysical, bool jIsCompressed, Word[] jWords, int jWordCountPhysical)
