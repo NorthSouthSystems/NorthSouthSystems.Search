@@ -69,7 +69,7 @@ namespace SoftwareBotany.Sunlight
                 _rwLock.EnterWriteLock();
 
                 if (!_configuring)
-                    throw new NotSupportedException("Cannot create a Catalog in an Engine that has already called Add or CreateSearch.");
+                    throw new NotSupportedException("Cannot create a Catalog in an Engine that has already called Add or CreateQuery.");
 
                 if (_catalogsPlusExtractors.Any(cpe => cpe.Catalog.Name == name))
                     throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "A Catalog already exists with the name : {0}.", name));
@@ -85,7 +85,7 @@ namespace SoftwareBotany.Sunlight
             return new ParameterFactory<TKey>(catalog, isOneToOne);
         }
 
-        // NOTE : No locking is necessary here because this is only called from the Search class, and in order to CreateSearch,
+        // NOTE : No locking is necessary here because this is only called from the Query class, and in order to CreateQuery,
         // _configuring is stopped which prevents the addition of Catalogs.
         bool IEngine<TPrimaryKey>.HasCatalog(ICatalog catalog) { return _catalogsPlusExtractors.Any(cpe => cpe.Catalog == catalog); }
 
@@ -334,9 +334,9 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Search
+        #region Query
 
-        public Search<TPrimaryKey> CreateSearch()
+        public Query<TPrimaryKey> CreateQuery()
         {
             if (_configuring)
             {
@@ -351,25 +351,25 @@ namespace SoftwareBotany.Sunlight
                 }
             }
 
-            return new Search<TPrimaryKey>(this);
+            return new Query<TPrimaryKey>(this);
         }
 
-        TPrimaryKey[] IEngine<TPrimaryKey>.Search(Search<TPrimaryKey> search, int skip, int take, out int totalCount)
+        TPrimaryKey[] IEngine<TPrimaryKey>.ExecuteQuery(Query<TPrimaryKey> query, int skip, int take, out int totalCount)
         {
             try
             {
                 _rwLock.EnterReadLock();
 
-                Vector result = InitializeSearch(search.AmongstPrimaryKeys);
-                SearchCatalogs(result, search.SearchParameters);
+                Vector result = InitializeResult(query.AmongstPrimaryKeys);
+                FilterCatalogs(result, query.FilterParameters);
                 totalCount = result.Population;
 
-                Parallel.ForEach(search.FacetParameters, new ParallelOptions { MaxDegreeOfParallelism = search.FacetDisableParallel ? 1 : -1 },
-                    facetParameter => facetParameter.Facet = facetParameter.Catalog.Facet(result, search.FacetDisableParallel, search.FacetShortCircuitCounting));
+                Parallel.ForEach(query.FacetParameters, new ParallelOptions { MaxDegreeOfParallelism = query.FacetDisableParallel ? 1 : -1 },
+                    facetParameter => facetParameter.Facet = facetParameter.Catalog.Facet(result, query.FacetDisableParallel, query.FacetShortCircuitCounting));
 
-                IEnumerable<int> sortedBitPositions = (!search.SortParameters.Any() && !search.SortPrimaryKeyAscending.HasValue)
+                IEnumerable<int> sortedBitPositions = (!query.SortParameters.Any() && !query.SortPrimaryKeyAscending.HasValue)
                     ? result.GetBitPositions(true)
-                    : SortBitPositions(result, search.SortParameters.ToArray(), search.SortPrimaryKeyAscending);
+                    : SortBitPositions(result, query.SortParameters.ToArray(), query.SortPrimaryKeyAscending);
 
                 // Distinct is required because of Catalogs created from multi-key columns: e.g. think post/blog tags
                 return sortedBitPositions.Distinct()
@@ -384,7 +384,7 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
-        private Vector InitializeSearch(IEnumerable<TPrimaryKey> amongstPrimaryKeys)
+        private Vector InitializeResult(IEnumerable<TPrimaryKey> amongstPrimaryKeys)
         {
             Vector result;
 
@@ -419,23 +419,23 @@ namespace SoftwareBotany.Sunlight
             return result;
         }
 
-        private static void SearchCatalogs(Vector result, IEnumerable<ISearchParameter> searchParameters)
+        private static void FilterCatalogs(Vector result, IEnumerable<IFilterParameter> filterParameters)
         {
-            foreach (ISearchParameter searchParameter in searchParameters)
+            foreach (IFilterParameter filterParameter in filterParameters)
             {
-                switch (searchParameter.ParameterType)
+                switch (filterParameter.ParameterType)
                 {
-                    case SearchParameterType.Exact:
-                        searchParameter.Catalog.SearchExact(result, searchParameter.Exact);
+                    case FilterParameterType.Exact:
+                        filterParameter.Catalog.FilterExact(result, filterParameter.Exact);
                         break;
-                    case SearchParameterType.Enumerable:
-                        searchParameter.Catalog.SearchEnumerable(result, searchParameter.Enumerable);
+                    case FilterParameterType.Enumerable:
+                        filterParameter.Catalog.FilterEnumerable(result, filterParameter.Enumerable);
                         break;
-                    case SearchParameterType.Range:
-                        searchParameter.Catalog.SearchRange(result, searchParameter.RangeMin, searchParameter.RangeMax);
+                    case FilterParameterType.Range:
+                        filterParameter.Catalog.FilterRange(result, filterParameter.RangeMin, filterParameter.RangeMax);
                         break;
                     default:
-                        throw new NotImplementedException(string.Format(CultureInfo.InvariantCulture, "Unrecognized search parameter type : {0}.", searchParameter.ParameterType));
+                        throw new NotImplementedException(string.Format(CultureInfo.InvariantCulture, "Unrecognized filter parameter type : {0}.", filterParameter.ParameterType));
                 }
             }
         }

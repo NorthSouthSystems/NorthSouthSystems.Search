@@ -36,10 +36,10 @@ namespace SoftwareBotany.Sunlight
 
                 int totalCount;
                 
-                var search = engine1.CreateSearch();
-                search.AddAmongstPrimaryKeys(new[] { 43, 44 });
+                var query = engine1.CreateQuery();
+                query.AddAmongstPrimaryKeys(new[] { 43, 44 });
 
-                int[] primaryKeys = search.Execute(0, 10, out totalCount);
+                int[] primaryKeys = query.Execute(0, 10, out totalCount);
 
                 Assert.AreEqual(1, totalCount);
                 Assert.AreEqual(1, primaryKeys.Length);

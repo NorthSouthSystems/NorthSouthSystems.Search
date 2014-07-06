@@ -63,86 +63,86 @@ namespace SoftwareBotany.Sunlight
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void SearchExactVectorNull()
+        public void FilterExactVectorNull()
         {
             Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
-            catalog.Search(null, "A");
+            catalog.Filter(null, "A");
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void SearchExactKeyNull()
+        public void FilterExactKeyNull()
         {
             Vector vector = new Vector(false, VectorCompression.Compressed);
 
             Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
-            catalog.Search(vector, (string)null);
+            catalog.Filter(vector, (string)null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void SearchEnumerableVectorNull()
+        public void FilterEnumerableVectorNull()
         {
             Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
-            catalog.Search(null, new[] { "A", "B" });
+            catalog.Filter(null, new[] { "A", "B" });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void SearchEnumerableKeysNull()
+        public void FilterEnumerableKeysNull()
         {
             Vector vector = new Vector(false, VectorCompression.Compressed);
 
             Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
-            catalog.Search(vector, (string[])null);
+            catalog.Filter(vector, (string[])null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void SearchEnumerableKeysKeyNull()
+        public void FilterEnumerableKeysKeyNull()
         {
             Vector vector = new Vector(false, VectorCompression.Compressed);
 
             Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
-            catalog.Search(vector, new[] { "A", null });
+            catalog.Filter(vector, new[] { "A", null });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void SearchRangeVectorNull()
+        public void FilterRangeVectorNull()
         {
             Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
-            catalog.Search(null, "A", "B");
+            catalog.Filter(null, "A", "B");
         }
 
         [TestMethod]
-        public void SearchRangeKeyMinMaxOK()
+        public void FilterRangeKeyMinMaxOK()
         {
             Vector vector = new Vector(false, VectorCompression.Compressed);
 
             Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
-            catalog.Search(vector, (string)null, "A");
-            catalog.Search(vector, "A", (string)null);
+            catalog.Filter(vector, (string)null, "A");
+            catalog.Filter(vector, "A", (string)null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void SearchRangeKeyMinMaxNull()
+        public void FilterRangeKeyMinMaxNull()
         {
             Vector vector = new Vector(false, VectorCompression.Compressed);
 
             Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
-            catalog.Search(vector, (string)null, (string)null);
+            catalog.Filter(vector, (string)null, (string)null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void SearchRangeKeyMinMaxOutOfRange()
+        public void FilterRangeKeyMinMaxOutOfRange()
         {
             Vector vector = new Vector(false, VectorCompression.Compressed);
 
             Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
-            catalog.Search(vector, "B", "A");
+            catalog.Filter(vector, "B", "A");
         }
 
         [TestMethod]

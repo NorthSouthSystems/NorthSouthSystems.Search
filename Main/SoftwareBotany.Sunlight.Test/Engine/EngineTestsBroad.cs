@@ -33,124 +33,124 @@ namespace SoftwareBotany.Sunlight
 
                 for (int i = 0; i < 10; i++)
                 {
-                    Search<int> search = engine.CreateSearch();
-                    search.AddSearchExactParameter(someIntFactory, 0);
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someStringFactory);
+                    Query<int> query = engine.CreateQuery();
+                    query.AddFilterExactParameter(someIntFactory, 0);
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someStringFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 0, 10);
+                    EngineAssert.ExecuteAndAssert(items, query, 0, 10);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchExactParameter(someIntFactory, 0);
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someStringFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterExactParameter(someIntFactory, 0);
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someStringFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 1, 3);
+                    EngineAssert.ExecuteAndAssert(items, query, 1, 3);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchExactParameter(someIntFactory, 1);
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someStringFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterExactParameter(someIntFactory, 1);
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someStringFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 0, 4);
+                    EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchExactParameter(someIntFactory, 1);
-                    search.AddSortDirectionalParameter(someIntFactory, true);
-                    search.AddSortDirectionalParameter(someStringFactory, true);
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someStringFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterExactParameter(someIntFactory, 1);
+                    query.AddSortDirectionalParameter(someIntFactory, true);
+                    query.AddSortDirectionalParameter(someStringFactory, true);
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someStringFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 0, 4);
+                    EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchExactParameter(someIntFactory, 1);
-                    search.AddSortDirectionalParameter(someIntFactory, true);
-                    search.SortPrimaryKeyAscending = true;
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someStringFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterExactParameter(someIntFactory, 1);
+                    query.AddSortDirectionalParameter(someIntFactory, true);
+                    query.SortPrimaryKeyAscending = true;
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someStringFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 0, 4);
+                    EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchExactParameter(someIntFactory, 1);
-                    search.SortPrimaryKeyAscending = false;
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someStringFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterExactParameter(someIntFactory, 1);
+                    query.SortPrimaryKeyAscending = false;
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someStringFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 0, 4);
+                    EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchExactParameter(someIntFactory, 1);
-                    search.SortPrimaryKeyAscending = true;
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someStringFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterExactParameter(someIntFactory, 1);
+                    query.SortPrimaryKeyAscending = true;
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someStringFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 0, 4);
+                    EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchExactParameter(someIntFactory, 1);
-                    search.AddSortDirectionalParameter(someStringFactory, false);
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someStringFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterExactParameter(someIntFactory, 1);
+                    query.AddSortDirectionalParameter(someStringFactory, false);
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someStringFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 1, 3);
+                    EngineAssert.ExecuteAndAssert(items, query, 1, 3);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchEnumerableParameter(someStringFactory, new[] { "2", "4" });
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someIntFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterEnumerableParameter(someStringFactory, new[] { "2", "4" });
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someIntFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 0, 2);
+                    EngineAssert.ExecuteAndAssert(items, query, 0, 2);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchRangeParameter(someStringFactory, "2", "3");
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someIntFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterRangeParameter(someStringFactory, "2", "3");
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someIntFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 0, 2);
+                    EngineAssert.ExecuteAndAssert(items, query, 0, 2);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchEnumerableParameter(someStringFactory, new[] { "0", "5", "10" });
-                    search.AddSortDirectionalParameter(someIntFactory, false);
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someIntFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterEnumerableParameter(someStringFactory, new[] { "0", "5", "10" });
+                    query.AddSortDirectionalParameter(someIntFactory, false);
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someIntFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 0, 5);
+                    EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchExactParameter(someTagsFactory, "2");
-                    search.AddSortDirectionalParameter(someIntFactory, false);
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someIntFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterExactParameter(someTagsFactory, "2");
+                    query.AddSortDirectionalParameter(someIntFactory, false);
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someIntFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 0, 5);
+                    EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchExactParameter(someStringFactory, "2");
-                    search.AddSortDirectionalParameter(someTagsFactory, true);
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someIntFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterExactParameter(someStringFactory, "2");
+                    query.AddSortDirectionalParameter(someTagsFactory, true);
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someIntFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 0, 5);
+                    EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchExactParameter(someStringFactory, "2");
-                    search.AddSortDirectionalParameter(someTagsFactory, false);
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someIntFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterExactParameter(someStringFactory, "2");
+                    query.AddSortDirectionalParameter(someTagsFactory, false);
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someIntFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 0, 5);
+                    EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
-                    search = engine.CreateSearch();
-                    search.AddSearchExactParameter(someTagsFactory, "2");
-                    search.AddSearchExactParameter(someTagsFactory, "3");
-                    search.AddSortDirectionalParameter(someIntFactory, false);
-                    search.AddFacetParameter(someDateTimeFactory);
-                    search.AddFacetParameter(someIntFactory);
-                    search.AddFacetParameter(someTagsFactory);
+                    query = engine.CreateQuery();
+                    query.AddFilterExactParameter(someTagsFactory, "2");
+                    query.AddFilterExactParameter(someTagsFactory, "3");
+                    query.AddSortDirectionalParameter(someIntFactory, false);
+                    query.AddFacetParameter(someDateTimeFactory);
+                    query.AddFacetParameter(someIntFactory);
+                    query.AddFacetParameter(someTagsFactory);
 
-                    EngineAssert.ExecuteAndAssert(items, search, 0, 5);
+                    EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
                     items = Update(engine, items, i);
                     items = Remove(engine, items);

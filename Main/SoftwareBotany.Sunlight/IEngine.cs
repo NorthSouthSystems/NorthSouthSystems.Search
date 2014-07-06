@@ -3,6 +3,6 @@
     internal interface IEngine<TPrimaryKey>
     {
         bool HasCatalog(ICatalog catalog);
-        TPrimaryKey[] Search(Search<TPrimaryKey> search, int skip, int take, out int totalCount);
+        TPrimaryKey[] ExecuteQuery(Query<TPrimaryKey> query, int skip, int take, out int totalCount);
     }
 }

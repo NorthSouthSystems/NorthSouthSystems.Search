@@ -15,21 +15,21 @@ namespace SoftwareBotany.Sunlight
         internal readonly ICatalog Catalog;
         internal readonly bool IsCatalogOneToOne;
 
-        #region Search
+        #region Filter
 
-        internal SearchParameter<TKey> CreateSearchExactParameter(TKey exact)
+        internal FilterParameter<TKey> CreateFilterExactParameter(TKey exact)
         {
-            return new SearchParameter<TKey>(Catalog, exact);
+            return new FilterParameter<TKey>(Catalog, exact);
         }
 
-        internal SearchParameter<TKey> CreateSearchEnumerableParameter(IEnumerable<TKey> enumerable)
+        internal FilterParameter<TKey> CreateFilterEnumerableParameter(IEnumerable<TKey> enumerable)
         {
-            return new SearchParameter<TKey>(Catalog, enumerable);
+            return new FilterParameter<TKey>(Catalog, enumerable);
         }
 
-        internal SearchParameter<TKey> CreateSearchRangeParameter(TKey rangeMin, TKey rangeMax)
+        internal FilterParameter<TKey> CreateFilterRangeParameter(TKey rangeMin, TKey rangeMax)
         {
-            return new SearchParameter<TKey>(Catalog, rangeMin, rangeMax);
+            return new FilterParameter<TKey>(Catalog, rangeMin, rangeMax);
         }
 
         #endregion

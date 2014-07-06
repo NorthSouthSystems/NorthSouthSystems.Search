@@ -134,121 +134,121 @@ namespace SoftwareBotany.Sunlight
 
                 for (int i = 0; i < 3; i++)
                 {
-                    Search<int> search = null;
+                    Query<int> query = null;
 
                     if (simple)
                     {
-                        search = engine.CreateSearch();
-                        search.AddRandomSearchExactParameter(someIntFactory, random.Next(), someIntMax);
-                        search.AddSortDirectionalParameter(someStringFactory, random.Next() % 2 == 0);
-                        search.AddFacetParameter(someIntFactory);
-                        search.AddFacetParameter(someDateTimeFactory);
-                        search.AddFacetParameter(someStringFactory);
-                        search.AddFacetParameter(someTagsFactory);
-                        search.FacetDisableParallel = random.Next() % 5 == 0;
-                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery();
+                        query.AddRandomFilterExactParameter(someIntFactory, random.Next(), someIntMax);
+                        query.AddSortDirectionalParameter(someStringFactory, random.Next() % 2 == 0);
+                        query.AddFacetParameter(someIntFactory);
+                        query.AddFacetParameter(someDateTimeFactory);
+                        query.AddFacetParameter(someStringFactory);
+                        query.AddFacetParameter(someTagsFactory);
+                        query.FacetDisableParallel = random.Next() % 5 == 0;
+                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
-                        EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
+                        EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
-                        search = engine.CreateSearch();
-                        search.AddRandomSearchEnumerableParameter(someIntFactory, random.Next(), someIntMax);
-                        search.AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0);
-                        search.AddFacetParameter(someIntFactory);
-                        search.AddFacetParameter(someDateTimeFactory);
-                        search.AddFacetParameter(someStringFactory);
-                        search.AddFacetParameter(someTagsFactory);
-                        search.FacetDisableParallel = random.Next() % 5 == 0;
-                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery();
+                        query.AddRandomFilterEnumerableParameter(someIntFactory, random.Next(), someIntMax);
+                        query.AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0);
+                        query.AddFacetParameter(someIntFactory);
+                        query.AddFacetParameter(someDateTimeFactory);
+                        query.AddFacetParameter(someStringFactory);
+                        query.AddFacetParameter(someTagsFactory);
+                        query.FacetDisableParallel = random.Next() % 5 == 0;
+                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
-                        EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
+                        EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
-                        search = engine.CreateSearch();
-                        search.AddRandomSearchRangeParameter(someIntFactory, random.Next(), someIntMax);
-                        search.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
-                        search.AddFacetParameter(someIntFactory);
-                        search.AddFacetParameter(someDateTimeFactory);
-                        search.AddFacetParameter(someStringFactory);
-                        search.AddFacetParameter(someTagsFactory);
-                        search.FacetDisableParallel = random.Next() % 5 == 0;
-                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery();
+                        query.AddRandomFilterRangeParameter(someIntFactory, random.Next(), someIntMax);
+                        query.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        query.AddFacetParameter(someIntFactory);
+                        query.AddFacetParameter(someDateTimeFactory);
+                        query.AddFacetParameter(someStringFactory);
+                        query.AddFacetParameter(someTagsFactory);
+                        query.FacetDisableParallel = random.Next() % 5 == 0;
+                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
-                        EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
+                        EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
-                        search = engine.CreateSearch();
-                        search.AddRandomSearchRangeParameter(someTagsFactory, random.Next(), someTagsMax);
-                        search.AddSortDirectionalParameter(someTagsFactory, random.Next() % 2 == 0);
-                        search.AddFacetParameter(someIntFactory);
-                        search.AddFacetParameter(someDateTimeFactory);
-                        search.AddFacetParameter(someStringFactory);
-                        search.AddFacetParameter(someTagsFactory);
-                        search.FacetDisableParallel = random.Next() % 5 == 0;
-                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery();
+                        query.AddRandomFilterRangeParameter(someTagsFactory, random.Next(), someTagsMax);
+                        query.AddSortDirectionalParameter(someTagsFactory, random.Next() % 2 == 0);
+                        query.AddFacetParameter(someIntFactory);
+                        query.AddFacetParameter(someDateTimeFactory);
+                        query.AddFacetParameter(someStringFactory);
+                        query.AddFacetParameter(someTagsFactory);
+                        query.FacetDisableParallel = random.Next() % 5 == 0;
+                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
-                        EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
+                        EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
                     }
                     else
                     {
-                        search = engine.CreateSearch();
-                        search.AddRandomSearchExactParameter(someStringFactory, random.Next(), someStringMax);
-                        search.AddRandomSearchRangeParameter(someIntFactory, random.Next(), someIntMax);
-                        search.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
-                        search.AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0);
-                        search.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
-                        search.AddFacetParameter(someIntFactory);
-                        search.AddFacetParameter(someDateTimeFactory);
-                        search.AddFacetParameter(someStringFactory);
-                        search.AddFacetParameter(someTagsFactory);
-                        search.FacetDisableParallel = random.Next() % 5 == 0;
-                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery();
+                        query.AddRandomFilterExactParameter(someStringFactory, random.Next(), someStringMax);
+                        query.AddRandomFilterRangeParameter(someIntFactory, random.Next(), someIntMax);
+                        query.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        query.AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0);
+                        query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
+                        query.AddFacetParameter(someIntFactory);
+                        query.AddFacetParameter(someDateTimeFactory);
+                        query.AddFacetParameter(someStringFactory);
+                        query.AddFacetParameter(someTagsFactory);
+                        query.FacetDisableParallel = random.Next() % 5 == 0;
+                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
-                        EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
+                        EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
-                        search = engine.CreateSearch();
-                        search.AddRandomSearchEnumerableParameter(someStringFactory, random.Next(), someStringMax);
-                        search.AddRandomSearchRangeParameter(someDateTimeFactory, random.Next(), someDateTimeMax);
-                        search.AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0);
-                        search.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
-                        search.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
-                        search.AddFacetParameter(someIntFactory);
-                        search.AddFacetParameter(someDateTimeFactory);
-                        search.AddFacetParameter(someStringFactory);
-                        search.AddFacetParameter(someTagsFactory);
-                        search.FacetDisableParallel = random.Next() % 5 == 0;
-                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery();
+                        query.AddRandomFilterEnumerableParameter(someStringFactory, random.Next(), someStringMax);
+                        query.AddRandomFilterRangeParameter(someDateTimeFactory, random.Next(), someDateTimeMax);
+                        query.AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0);
+                        query.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
+                        query.AddFacetParameter(someIntFactory);
+                        query.AddFacetParameter(someDateTimeFactory);
+                        query.AddFacetParameter(someStringFactory);
+                        query.AddFacetParameter(someTagsFactory);
+                        query.FacetDisableParallel = random.Next() % 5 == 0;
+                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
-                        EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
+                        EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
-                        search = engine.CreateSearch();
-                        search.AddAmongstPrimaryKeys(items.Take((items.Length / 2) + random.Next(items.Length / 2)).Select(item => item.Id));
-                        search.AddRandomSearchRangeParameter(someDateTimeFactory, random.Next(), someDateTimeMax);
-                        search.AddRandomSearchRangeParameter(someIntFactory, random.Next(), someIntMax);
-                        search.AddSortDirectionalParameter(someStringFactory, random.Next() % 2 == 0);
-                        search.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
-                        search.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
-                        search.AddFacetParameter(someIntFactory);
-                        search.AddFacetParameter(someDateTimeFactory);
-                        search.AddFacetParameter(someStringFactory);
-                        search.AddFacetParameter(someTagsFactory);
-                        search.FacetDisableParallel = random.Next() % 5 == 0;
-                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery();
+                        query.AddAmongstPrimaryKeys(items.Take((items.Length / 2) + random.Next(items.Length / 2)).Select(item => item.Id));
+                        query.AddRandomFilterRangeParameter(someDateTimeFactory, random.Next(), someDateTimeMax);
+                        query.AddRandomFilterRangeParameter(someIntFactory, random.Next(), someIntMax);
+                        query.AddSortDirectionalParameter(someStringFactory, random.Next() % 2 == 0);
+                        query.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
+                        query.AddFacetParameter(someIntFactory);
+                        query.AddFacetParameter(someDateTimeFactory);
+                        query.AddFacetParameter(someStringFactory);
+                        query.AddFacetParameter(someTagsFactory);
+                        query.FacetDisableParallel = random.Next() % 5 == 0;
+                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
-                        EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
+                        EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
-                        search = engine.CreateSearch();
-                        search.AddRandomSearchRangeParameter(someIntFactory, random.Next(), someIntMax);
-                        search.AddRandomSearchRangeParameter(someTagsFactory, random.Next(), someTagsMax);
-                        search.AddRandomSearchRangeParameter(someTagsFactory, random.Next(), someTagsMax);
-                        search.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
-                        search.AddSortDirectionalParameter(someTagsFactory, random.Next() % 2 == 0);
-                        search.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
-                        search.AddFacetParameter(someIntFactory);
-                        search.AddFacetParameter(someDateTimeFactory);
-                        search.AddFacetParameter(someStringFactory);
-                        search.AddFacetParameter(someTagsFactory);
-                        search.FacetDisableParallel = random.Next() % 5 == 0;
-                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery();
+                        query.AddRandomFilterRangeParameter(someIntFactory, random.Next(), someIntMax);
+                        query.AddRandomFilterRangeParameter(someTagsFactory, random.Next(), someTagsMax);
+                        query.AddRandomFilterRangeParameter(someTagsFactory, random.Next(), someTagsMax);
+                        query.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        query.AddSortDirectionalParameter(someTagsFactory, random.Next() % 2 == 0);
+                        query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
+                        query.AddFacetParameter(someIntFactory);
+                        query.AddFacetParameter(someDateTimeFactory);
+                        query.AddFacetParameter(someStringFactory);
+                        query.AddFacetParameter(someTagsFactory);
+                        query.FacetDisableParallel = random.Next() % 5 == 0;
+                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
-                        EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
+                        EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
                     }
 
                     items = Update(engine, items, random);
