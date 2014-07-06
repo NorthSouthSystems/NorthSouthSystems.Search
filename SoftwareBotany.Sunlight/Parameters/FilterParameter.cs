@@ -4,26 +4,26 @@ using System.Diagnostics.Contracts;
 
 namespace SoftwareBotany.Sunlight
 {
-    public sealed class SearchParameter<TKey> : Parameter, ISearchParameter
+    public sealed class FilterParameter<TKey> : Parameter, IFilterParameter
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
-        internal SearchParameter(ICatalog catalog, TKey exact)
-            : this(catalog, SearchParameterType.Exact, exact: exact)
+        internal FilterParameter(ICatalog catalog, TKey exact)
+            : this(catalog, FilterParameterType.Exact, exact: exact)
         { }
 
-        internal SearchParameter(ICatalog catalog, IEnumerable<TKey> enumerable)
-            : this(catalog, SearchParameterType.Enumerable, enumerable: enumerable)
+        internal FilterParameter(ICatalog catalog, IEnumerable<TKey> enumerable)
+            : this(catalog, FilterParameterType.Enumerable, enumerable: enumerable)
         { }
 
-        internal SearchParameter(ICatalog catalog, TKey rangeMin, TKey rangeMax)
-            : this(catalog, SearchParameterType.Range, rangeMin: rangeMin, rangeMax: rangeMax)
+        internal FilterParameter(ICatalog catalog, TKey rangeMin, TKey rangeMax)
+            : this(catalog, FilterParameterType.Range, rangeMin: rangeMin, rangeMax: rangeMax)
         { }
 
-        private SearchParameter(ICatalog catalog, SearchParameterType parameterType,
+        private FilterParameter(ICatalog catalog, FilterParameterType parameterType,
             TKey exact = default(TKey), IEnumerable<TKey> enumerable = null, TKey rangeMin = default(TKey), TKey rangeMax = default(TKey))
             : base(catalog)
         {
-            if (parameterType == SearchParameterType.Range)
+            if (parameterType == FilterParameterType.Range)
             {
                 if (rangeMin == null && rangeMax == null)
                     throw new ArgumentNullException("rangeMin", "Either rangeMin or rangeMax must be non-null.");
@@ -41,8 +41,8 @@ namespace SoftwareBotany.Sunlight
             _rangeMax = rangeMax;
         }
 
-        public SearchParameterType ParameterType { get { return _parameterType; } }
-        private readonly SearchParameterType _parameterType;
+        public FilterParameterType ParameterType { get { return _parameterType; } }
+        private readonly FilterParameterType _parameterType;
 
         public TKey Exact { get { return _exact; } }
         private readonly TKey _exact;
@@ -56,26 +56,26 @@ namespace SoftwareBotany.Sunlight
         public TKey RangeMax { get { return _rangeMax; } }
         private readonly TKey _rangeMax;
 
-        #region ISearchParameter
+        #region IFilterParameter
 
-        object ISearchParameter.Exact { get { return Exact; } }
-        object ISearchParameter.Enumerable { get { return Enumerable; } }
-        object ISearchParameter.RangeMin { get { return RangeMin; } }
-        object ISearchParameter.RangeMax { get { return RangeMax; } }
+        object IFilterParameter.Exact { get { return Exact; } }
+        object IFilterParameter.Enumerable { get { return Enumerable; } }
+        object IFilterParameter.RangeMin { get { return RangeMin; } }
+        object IFilterParameter.RangeMax { get { return RangeMax; } }
 
         #endregion
     }
 
-    internal interface ISearchParameter : IParameter
+    internal interface IFilterParameter : IParameter
     {
-        SearchParameterType ParameterType { get; }
+        FilterParameterType ParameterType { get; }
         object Exact { get; }
         object Enumerable { get; }
         object RangeMin { get; }
         object RangeMax { get; }
     }
 
-    public enum SearchParameterType
+    public enum FilterParameterType
     {
         Exact,
         Enumerable,

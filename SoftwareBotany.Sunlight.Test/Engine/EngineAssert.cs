@@ -9,51 +9,51 @@ namespace SoftwareBotany.Sunlight
 {
     internal static class EngineAssert
     {
-        public static void ExecuteAndAssert(IEnumerable<EngineItem> source, Search<int> search, int skip, int take)
+        public static void ExecuteAndAssert(IEnumerable<EngineItem> source, Query<int> query, int skip, int take)
         {
             int totalCount;
-            int[] primaryKeys = search.Execute(skip, take, out totalCount);
+            int[] primaryKeys = query.Execute(skip, take, out totalCount);
 
-            HashSet<int> amongstPrimaryKeys = new HashSet<int>(search.AmongstPrimaryKeys);
+            HashSet<int> amongstPrimaryKeys = new HashSet<int>(query.AmongstPrimaryKeys);
 
             if (amongstPrimaryKeys.Count > 0)
                 source = source.Where(item => amongstPrimaryKeys.Contains(item.Id));
 
-            source = SourceSearch(source, search);
+            source = SourceFilter(source, query);
 
-            if (search.SortParameters.Any() || search.SortPrimaryKeyAscending.HasValue)
-                source = SourceSort(source, search);
+            if (query.SortParameters.Any() || query.SortPrimaryKeyAscending.HasValue)
+                source = SourceSort(source, query);
 
             EngineItem[] sourceResults = source.ToArray();
 
             Assert.AreEqual(sourceResults.Length, totalCount);
             CollectionAssert.AreEqual(sourceResults.Skip(skip).Take(take).Select(item => item.Id).ToArray(), primaryKeys);
 
-            foreach (var facetParam in search.FacetParameters)
-                AssertFacet(sourceResults, facetParam, search.FacetShortCircuitCounting);
+            foreach (var facetParam in query.FacetParameters)
+                AssertFacet(sourceResults, facetParam, query.FacetShortCircuitCounting);
         }
 
-        #region Search
+        #region Filter
 
-        private static IEnumerable<EngineItem> SourceSearch(IEnumerable<EngineItem> source, Search<int> search)
+        private static IEnumerable<EngineItem> SourceFilter(IEnumerable<EngineItem> source, Query<int> query)
         {
-            foreach (ISearchParameter param in search.SearchParameters)
+            foreach (IFilterParameter param in query.FilterParameters)
             {
-                ISearchParameter closedParam = param;
+                IFilterParameter closedParam = param;
 
                 switch (param.Catalog.Name)
                 {
                     case "SomeInt":
-                        source = source.Where(item => SourceSearch(item.SomeInt, closedParam));
+                        source = source.Where(item => SourceFilter(item.SomeInt, closedParam));
                         break;
                     case "SomeDateTime":
-                        source = source.Where(item => SourceSearch(item.SomeDateTime, closedParam));
+                        source = source.Where(item => SourceFilter(item.SomeDateTime, closedParam));
                         break;
                     case "SomeString":
-                        source = source.Where(item => SourceSearch(item.SomeString, closedParam));
+                        source = source.Where(item => SourceFilter(item.SomeString, closedParam));
                         break;
                     case "SomeTags":
-                        source = source.Where(item => item.SomeTags.Any(tag => SourceSearch(tag, closedParam)));
+                        source = source.Where(item => item.SomeTags.Any(tag => SourceFilter(tag, closedParam)));
                         break;
                     default:
                         throw new NotImplementedException(param.Catalog.Name);
@@ -63,15 +63,15 @@ namespace SoftwareBotany.Sunlight
             return source;
         }
 
-        private static bool SourceSearch(object column, ISearchParameter param)
+        private static bool SourceFilter(object column, IFilterParameter param)
         {
             switch (param.ParameterType)
             {
-                case SearchParameterType.Exact:
+                case FilterParameterType.Exact:
                     return object.Equals(column, param.Exact);
-                case SearchParameterType.Enumerable:
+                case FilterParameterType.Enumerable:
                     return ((IEnumerable)param.Enumerable).Cast<object>().Any(obj => object.Equals(column, obj));
-                case SearchParameterType.Range:
+                case FilterParameterType.Range:
                     return ((IComparable)column).CompareTo(param.RangeMin) >= 0 && ((IComparable)column).CompareTo(param.RangeMax) <= 0;
                 default:
                     throw new NotImplementedException();
@@ -82,24 +82,24 @@ namespace SoftwareBotany.Sunlight
 
         #region Sort
 
-        private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, Search<int> search)
+        private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, Query<int> query)
         {
             IOrderedEnumerable<EngineItem> sortedSource;
 
-            if (search.SortParameters.Any())
+            if (query.SortParameters.Any())
             {
-                sortedSource = SourceSort(source, search.SortParameters.First());
+                sortedSource = SourceSort(source, query.SortParameters.First());
 
-                for (int i = 1; i < search.SortParameters.Count(); i++)
-                    sortedSource = SourceSort(sortedSource, search.SortParameters.ToArray()[i]);
+                for (int i = 1; i < query.SortParameters.Count(); i++)
+                    sortedSource = SourceSort(sortedSource, query.SortParameters.ToArray()[i]);
 
-                if (search.SortPrimaryKeyAscending.HasValue)
-                    return search.SortPrimaryKeyAscending.Value ? sortedSource.ThenBy(item => item.Id) : sortedSource.ThenByDescending(item => item.Id);
+                if (query.SortPrimaryKeyAscending.HasValue)
+                    return query.SortPrimaryKeyAscending.Value ? sortedSource.ThenBy(item => item.Id) : sortedSource.ThenByDescending(item => item.Id);
                 else
                     return sortedSource;
             }
             else
-                return search.SortPrimaryKeyAscending.Value ? source.OrderBy(item => item.Id) : source.OrderByDescending(item => item.Id);
+                return query.SortPrimaryKeyAscending.Value ? source.OrderBy(item => item.Id) : source.OrderByDescending(item => item.Id);
         }
 
         private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, ISortParameter param)

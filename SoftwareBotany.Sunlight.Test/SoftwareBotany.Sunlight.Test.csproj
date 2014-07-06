@@ -62,9 +62,9 @@
     <Compile Include="Engine\EngineTestsStatistics.cs" />
     <Compile Include="Facet\FacetCategoryTests.cs" />
     <Compile Include="SafetyVectorCompressionTuple.cs" />
-    <Compile Include="Search\SearchParameterTests.cs" />
-    <Compile Include="Search\SearchTests.cs" />
-    <Compile Include="Search\FacetParameterTests.cs" />
+    <Compile Include="Query\FilterParameterTests.cs" />
+    <Compile Include="Query\QueryTests.cs" />
+    <Compile Include="Query\FacetParameterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Engine\EngineTestsRandom.cs" />
     <Compile Include="Engine\EngineAssert.cs" />

@@ -114,11 +114,11 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Search
+        #region Filter
 
-        void ICatalog.SearchExact(Vector vector, object key) { Search(vector, (TKey)key); }
+        void ICatalog.FilterExact(Vector vector, object key) { Filter(vector, (TKey)key); }
 
-        public void Search(Vector vector, TKey key)
+        public void Filter(Vector vector, TKey key)
         {
             if (vector == null)
                 throw new ArgumentNullException("vector");
@@ -128,12 +128,12 @@ namespace SoftwareBotany.Sunlight
 
             Contract.EndContractBlock();
 
-            SearchImpl(vector, new[] { Lookup(key) });
+            FilterImpl(vector, new[] { Lookup(key) });
         }
 
-        void ICatalog.SearchEnumerable(Vector vector, object keys) { Search(vector, (IEnumerable<TKey>)keys); }
+        void ICatalog.FilterEnumerable(Vector vector, object keys) { Filter(vector, (IEnumerable<TKey>)keys); }
 
-        public void Search(Vector vector, IEnumerable<TKey> keys)
+        public void Filter(Vector vector, IEnumerable<TKey> keys)
         {
             if (vector == null)
                 throw new ArgumentNullException("vector");
@@ -146,12 +146,12 @@ namespace SoftwareBotany.Sunlight
 
             Contract.EndContractBlock();
 
-            SearchImpl(vector, keys.Distinct().Select(key => Lookup(key)));
+            FilterImpl(vector, keys.Distinct().Select(key => Lookup(key)));
         }
 
-        void ICatalog.SearchRange(Vector vector, object keyMin, object keyMax) { Search(vector, (TKey)keyMin, (TKey)keyMax); }
+        void ICatalog.FilterRange(Vector vector, object keyMin, object keyMax) { Filter(vector, (TKey)keyMin, (TKey)keyMax); }
 
-        public void Search(Vector vector, TKey keyMin, TKey keyMax)
+        public void Filter(Vector vector, TKey keyMin, TKey keyMax)
         {
             if (vector == null)
                 throw new ArgumentNullException("vector");
@@ -170,10 +170,10 @@ namespace SoftwareBotany.Sunlight
             if (keyMax == null)
                 keyMax = _keys.Max;
 
-            SearchImpl(vector, _keys.Count == 0 ? new Vector[0] : _keys.GetViewBetween(keyMin, keyMax).Select(key => _keyToEntryMap[key].Vector));
+            FilterImpl(vector, _keys.Count == 0 ? new Vector[0] : _keys.GetViewBetween(keyMin, keyMax).Select(key => _keyToEntryMap[key].Vector));
         }
 
-        private static void SearchImpl(Vector vector, IEnumerable<Vector> lookups)
+        private static void FilterImpl(Vector vector, IEnumerable<Vector> lookups)
         {
             Vector[] lookupsArray = lookups.Where(lookup => lookup != null).ToArray();
 

@@ -7,9 +7,9 @@ using System.Threading;
 
 namespace SoftwareBotany.Sunlight
 {
-    public sealed class Search<TPrimaryKey>
+    public sealed class Query<TPrimaryKey>
     {
-        internal Search(IEngine<TPrimaryKey> engine)
+        internal Query(IEngine<TPrimaryKey> engine)
         {
             _engine = engine;
         }
@@ -43,12 +43,12 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Search
+        #region Filter
 
-        internal IEnumerable<ISearchParameter> SearchParameters { get { return _searchParameters; } }
-        private readonly List<ISearchParameter> _searchParameters = new List<ISearchParameter>();
+        internal IEnumerable<IFilterParameter> FilterParameters { get { return _filterParameters; } }
+        private readonly List<IFilterParameter> _filterParameters = new List<IFilterParameter>();
 
-        public SearchParameter<TKey> AddSearchExactParameter<TKey>(ParameterFactory<TKey> factory, TKey exact)
+        public FilterParameter<TKey> AddFilterExactParameter<TKey>(ParameterFactory<TKey> factory, TKey exact)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (factory == null)
@@ -57,15 +57,15 @@ namespace SoftwareBotany.Sunlight
             Contract.EndContractBlock();
 
             ThrowEngineMismatchException(factory);
-            ThrowDuplicateSearchException(factory);
+            ThrowDuplicateFilterException(factory);
 
-            var searchParameter = factory.CreateSearchExactParameter(exact);
-            _searchParameters.Add(searchParameter);
+            var filterParameter = factory.CreateFilterExactParameter(exact);
+            _filterParameters.Add(filterParameter);
 
-            return searchParameter;
+            return filterParameter;
         }
 
-        public SearchParameter<TKey> AddSearchEnumerableParameter<TKey>(ParameterFactory<TKey> factory, IEnumerable<TKey> enumerable)
+        public FilterParameter<TKey> AddFilterEnumerableParameter<TKey>(ParameterFactory<TKey> factory, IEnumerable<TKey> enumerable)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (factory == null)
@@ -74,15 +74,15 @@ namespace SoftwareBotany.Sunlight
             Contract.EndContractBlock();
 
             ThrowEngineMismatchException(factory);
-            ThrowDuplicateSearchException(factory);
+            ThrowDuplicateFilterException(factory);
 
-            var searchParameter = factory.CreateSearchEnumerableParameter(enumerable);
-            _searchParameters.Add(searchParameter);
+            var filterParameter = factory.CreateFilterEnumerableParameter(enumerable);
+            _filterParameters.Add(filterParameter);
 
-            return searchParameter;
+            return filterParameter;
         }
 
-        public SearchParameter<TKey> AddSearchRangeParameter<TKey>(ParameterFactory<TKey> factory, TKey rangeMin, TKey rangeMax)
+        public FilterParameter<TKey> AddFilterRangeParameter<TKey>(ParameterFactory<TKey> factory, TKey rangeMin, TKey rangeMax)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (factory == null)
@@ -91,19 +91,19 @@ namespace SoftwareBotany.Sunlight
             Contract.EndContractBlock();
 
             ThrowEngineMismatchException(factory);
-            ThrowDuplicateSearchException(factory);
+            ThrowDuplicateFilterException(factory);
 
-            var searchParameter = factory.CreateSearchRangeParameter(rangeMin, rangeMax);
-            _searchParameters.Add(searchParameter);
+            var filterParameter = factory.CreateFilterRangeParameter(rangeMin, rangeMax);
+            _filterParameters.Add(filterParameter);
 
-            return searchParameter;
+            return filterParameter;
         }
 
-        private void ThrowDuplicateSearchException<TKey>(ParameterFactory<TKey> factory)
+        private void ThrowDuplicateFilterException<TKey>(ParameterFactory<TKey> factory)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            if (factory.IsCatalogOneToOne && _searchParameters.Any(parameter => parameter.Catalog == factory.Catalog))
-                throw new NotSupportedException("Can only add 1 Search Parameter per one-to-one Catalog.");
+            if (factory.IsCatalogOneToOne && _filterParameters.Any(parameter => parameter.Catalog == factory.Catalog))
+                throw new NotSupportedException("Can only add 1 Filter Parameter per one-to-one Catalog.");
         }
 
         #endregion
@@ -196,12 +196,12 @@ namespace SoftwareBotany.Sunlight
         public TPrimaryKey[] Execute(int skip, int take, out int totalCount)
         {
             if (Interlocked.CompareExchange(ref _executed, 1, 0) > 0)
-                throw new NotSupportedException("Search already executed.");
+                throw new NotSupportedException("Query already executed.");
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
-            TPrimaryKey[] results = _engine.Search(this, skip, take, out totalCount);
+            TPrimaryKey[] results = _engine.ExecuteQuery(this, skip, take, out totalCount);
 
             watch.Stop();
             ExecuteElapsedTime = watch.Elapsed;

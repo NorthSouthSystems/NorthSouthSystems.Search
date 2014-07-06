@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace SoftwareBotany.Sunlight
 {
     [TestClass]
-    public class SearchTests
+    public class QueryTests
     {
         #region Exceptions
 
@@ -20,7 +20,7 @@ namespace SoftwareBotany.Sunlight
                 var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
                 var factory2 = engine2.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateSearch().AddSearchExactParameter(factory2, 1);
+                engine1.CreateQuery().AddFilterExactParameter(factory2, 1);
             }
         }
 
@@ -32,57 +32,57 @@ namespace SoftwareBotany.Sunlight
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateSearch().AddAmongstPrimaryKeys((int[])null);
+                engine1.CreateQuery().AddAmongstPrimaryKeys((int[])null);
             }
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void AddSearchExactNull()
+        public void AddFilterExactNull()
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateSearch().AddSearchExactParameter((ParameterFactory<int>)null, 1);
+                engine1.CreateQuery().AddFilterExactParameter((ParameterFactory<int>)null, 1);
             }
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void AddSearchEnumerableNull()
+        public void AddFilterEnumerableNull()
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateSearch().AddSearchEnumerableParameter((ParameterFactory<int>)null, new[] { 1, 2 });
+                engine1.CreateQuery().AddFilterEnumerableParameter((ParameterFactory<int>)null, new[] { 1, 2 });
             }
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void AddSearchRangeNull()
+        public void AddFilterRangeNull()
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateSearch().AddSearchRangeParameter((ParameterFactory<int>)null, 1, 3);
+                engine1.CreateQuery().AddFilterRangeParameter((ParameterFactory<int>)null, 1, 3);
             }
         }
 
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
-        public void DuplicateSearch()
+        public void DuplicateFilter()
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                var search = engine1.CreateSearch();
-                search.AddSearchExactParameter(factory1, 1);
-                search.AddSearchExactParameter(factory1, 2);
+                var query = engine1.CreateQuery();
+                query.AddFilterExactParameter(factory1, 1);
+                query.AddFilterExactParameter(factory1, 2);
             }
         }
 
@@ -94,7 +94,7 @@ namespace SoftwareBotany.Sunlight
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateSearch().AddSortDirectionalParameter((ParameterFactory<int>)null, true);
+                engine1.CreateQuery().AddSortDirectionalParameter((ParameterFactory<int>)null, true);
             }
         }
 
@@ -106,10 +106,10 @@ namespace SoftwareBotany.Sunlight
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                var search = engine1.CreateSearch();
-                search.AddSearchExactParameter(factory1, 1);
-                search.SortPrimaryKeyAscending = true;
-                search.AddSortDirectionalParameter(factory1, true);
+                var query = engine1.CreateQuery();
+                query.AddFilterExactParameter(factory1, 1);
+                query.SortPrimaryKeyAscending = true;
+                query.AddSortDirectionalParameter(factory1, true);
             }
         }
 
@@ -121,10 +121,10 @@ namespace SoftwareBotany.Sunlight
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                var search = engine1.CreateSearch();
-                search.AddSearchExactParameter(factory1, 1);
-                search.AddSortDirectionalParameter(factory1, true);
-                search.AddSortDirectionalParameter(factory1, true);
+                var query = engine1.CreateQuery();
+                query.AddFilterExactParameter(factory1, 1);
+                query.AddSortDirectionalParameter(factory1, true);
+                query.AddSortDirectionalParameter(factory1, true);
             }
         }
 
@@ -136,7 +136,7 @@ namespace SoftwareBotany.Sunlight
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateSearch().AddFacetParameter((ParameterFactory<int>)null);
+                engine1.CreateQuery().AddFacetParameter((ParameterFactory<int>)null);
             }
         }
 
@@ -149,16 +149,16 @@ namespace SoftwareBotany.Sunlight
                 var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
                 var factory2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
-                var search = engine1.CreateSearch();
-                search.AddSearchExactParameter(factory1, 1);
-                search.AddFacetParameter(factory2);
-                search.AddFacetParameter(factory2);
+                var query = engine1.CreateQuery();
+                query.AddFilterExactParameter(factory1, 1);
+                query.AddFacetParameter(factory2);
+                query.AddFacetParameter(factory2);
             }
         }
 
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
-        public void SearchAlreadyExecuted()
+        public void QueryAlreadyExecuted()
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
@@ -166,10 +166,10 @@ namespace SoftwareBotany.Sunlight
 
                 int totalCount;
 
-                var search = engine1.CreateSearch();
-                search.AddSearchExactParameter(factory1, 1);
-                search.Execute(0, 1, out totalCount);
-                search.Execute(0, 1, out totalCount);
+                var query = engine1.CreateQuery();
+                query.AddFilterExactParameter(factory1, 1);
+                query.Execute(0, 1, out totalCount);
+                query.Execute(0, 1, out totalCount);
             }
         }
 
@@ -183,12 +183,12 @@ namespace SoftwareBotany.Sunlight
 
                 int totalCount;
 
-                var search = engine1.CreateSearch();
-                search.AddSearchExactParameter(factory1, 1);
-                search.AddSortDirectionalParameter(factory2, true);
-                search.SortPrimaryKeyAscending = true;
-                search.AddFacetParameter(factory2);
-                search.Execute(0, 1, out totalCount);
+                var query = engine1.CreateQuery();
+                query.AddFilterExactParameter(factory1, 1);
+                query.AddSortDirectionalParameter(factory2, true);
+                query.SortPrimaryKeyAscending = true;
+                query.AddFacetParameter(factory2);
+                query.Execute(0, 1, out totalCount);
             }
         }
 

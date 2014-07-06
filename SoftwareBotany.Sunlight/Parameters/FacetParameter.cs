@@ -14,7 +14,7 @@ namespace SoftwareBotany.Sunlight
             get
             {
                 if (!_facetSet)
-                    throw new NotSupportedException("Search must be executed before Facet is available.");
+                    throw new NotSupportedException("Query must be executed before Facet is available.");
 
                 return _facet;
             }

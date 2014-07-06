@@ -84,13 +84,13 @@
     <Compile Include="Statistics\CatalogStatistics.cs" />
     <Compile Include="Statistics\EngineStatistics.cs" />
     <Compile Include="Parameters\ParameterFactory.cs" />
-    <Compile Include="Search.cs" />
+    <Compile Include="Query.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Catalog.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Parameters\Parameter.cs" />
     <Compile Include="Parameters\FacetParameter.cs" />
-    <Compile Include="Parameters\SearchParameter.cs" />
+    <Compile Include="Parameters\FilterParameter.cs" />
     <Compile Include="Parameters\SortParameter.cs" />
     <Compile Include="Statistics\VectorStatistics.cs" />
     <Compile Include="Word.cs" />

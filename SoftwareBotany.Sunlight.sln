@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareBotany.Sunlight", "SoftwareBotany.Sunlight\SoftwareBotany.Sunlight.csproj", "{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareBotany.Sunlight.Test", "SoftwareBotany.Sunlight.Test\SoftwareBotany.Sunlight.Test.csproj", "{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}"
@@ -10,7 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		AssemblyInfoShared.cs = AssemblyInfoShared.cs
 		Local.testsettings = Local.testsettings
 		SoftwareBotany.Sunlight.Help\SoftwareBotany.Sunlight.Help.shfbproj = SoftwareBotany.Sunlight.Help\SoftwareBotany.Sunlight.Help.shfbproj
-		SoftwareBotany.Sunlight.vsmdi = SoftwareBotany.Sunlight.vsmdi
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareBotany.Sunlight.Unsafe", "SoftwareBotany.Sunlight.Unsafe\SoftwareBotany.Sunlight.Unsafe.csproj", "{D881789E-40E3-487F-9E54-344CE7C2F988}"
@@ -30,9 +31,6 @@ Global
 		SccProjectUniqueName3 = SoftwareBotany.Sunlight.Unsafe\\SoftwareBotany.Sunlight.Unsafe.csproj
 		SccProjectName3 = SoftwareBotany.Sunlight.Unsafe
 		SccLocalPath3 = SoftwareBotany.Sunlight.Unsafe
-	EndGlobalSection
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = SoftwareBotany.Sunlight.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +52,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = SoftwareBotany.Sunlight.vsmdi
 	EndGlobalSection
 EndGlobal
