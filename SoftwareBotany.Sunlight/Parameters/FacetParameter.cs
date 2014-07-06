@@ -9,31 +9,31 @@ namespace SoftwareBotany.Sunlight
             : base(catalog)
         { }
 
-        public FacetCollection<TKey> Facets
+        public Facet<TKey> Facet
         {
             get
             {
-                if (!_facetsSet)
-                    throw new NotSupportedException("Search must be executed before Facets are available.");
+                if (!_facetSet)
+                    throw new NotSupportedException("Search must be executed before Facet is available.");
 
-                return _facets;
+                return _facet;
             }
             private set
             {
-                _facets = value;
-                _facetsSet = true;
+                _facet = value;
+                _facetSet = true;
             }
         }
 
-        private FacetCollection<TKey> _facets;
-        private bool _facetsSet = false;
+        private Facet<TKey> _facet;
+        private bool _facetSet = false;
 
         #region IFacetParameter
 
-        object IFacetParameter.Facets
+        object IFacetParameter.Facet
         {
-            get { return Facets; }
-            set { Facets = (FacetCollection<TKey>)value; }
+            get { return Facet; }
+            set { Facet = (Facet<TKey>)value; }
         }
 
         #endregion
@@ -41,6 +41,6 @@ namespace SoftwareBotany.Sunlight
 
     internal interface IFacetParameter : IParameter
     {
-        object Facets { get; set; }
+        object Facet { get; set; }
     }
 }

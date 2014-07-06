@@ -19,7 +19,7 @@ namespace SoftwareBotany.Sunlight
 
         void ICatalog.OptimizeReadPhase(int[] bitPositionShifts)
         {
-            foreach (Entry entry in _entries.Values)
+            foreach (Entry entry in _keyToEntryMap.Values)
                 entry.IsVectorOptimizedAlive = entry.Vector.OptimizeReadPhase(bitPositionShifts, out entry.VectorOptimized);
         }
 
@@ -27,7 +27,7 @@ namespace SoftwareBotany.Sunlight
         {
             List<TKey> deadKeys = new List<TKey>();
 
-            foreach (var keyAndEntry in _entries)
+            foreach (var keyAndEntry in _keyToEntryMap)
             {
                 if (keyAndEntry.Value.IsVectorOptimizedAlive)
                     keyAndEntry.Value.Vector = keyAndEntry.Value.VectorOptimized;
@@ -41,7 +41,7 @@ namespace SoftwareBotany.Sunlight
             foreach (TKey key in deadKeys)
             {
                 _keys.Remove(key);
-                _entries.Remove(key);
+                _keyToEntryMap.Remove(key);
             }
         }
 
@@ -57,7 +57,7 @@ namespace SoftwareBotany.Sunlight
         private readonly VectorCompression _compression;
 
         private SortedSet<TKey> _keys = new SortedSet<TKey>();
-        private Dictionary<TKey, Entry> _entries = new Dictionary<TKey, Entry>();
+        private Dictionary<TKey, Entry> _keyToEntryMap = new Dictionary<TKey, Entry>();
 
         // TODO : Better OOP... right now this is just serving as a mutable Tuple which is probably
         // not the best design.
@@ -89,13 +89,13 @@ namespace SoftwareBotany.Sunlight
 
             Entry entry;
 
-            if (!_entries.TryGetValue(key, out entry))
+            if (!_keyToEntryMap.TryGetValue(key, out entry))
             {
                 // TODO : This will use a VectorFactory pattern shortly.
                 entry = new Entry(new Vector(_allowUnsafe, _compression));
 
                 _keys.Add(key);
-                _entries.Add(key, entry);
+                _keyToEntryMap.Add(key, entry);
             }
 
             entry.Vector[bitPosition] = value;
@@ -170,7 +170,7 @@ namespace SoftwareBotany.Sunlight
             if (keyMax == null)
                 keyMax = _keys.Max;
 
-            SearchImpl(vector, _keys.Count == 0 ? new Vector[0] : _keys.GetViewBetween(keyMin, keyMax).Select(key => _entries[key].Vector));
+            SearchImpl(vector, _keys.Count == 0 ? new Vector[0] : _keys.GetViewBetween(keyMin, keyMax).Select(key => _keyToEntryMap[key].Vector));
         }
 
         private static void SearchImpl(Vector vector, IEnumerable<Vector> lookups)
@@ -188,7 +188,7 @@ namespace SoftwareBotany.Sunlight
         private Vector Lookup(TKey key)
         {
             Entry entry;
-            _entries.TryGetValue(key, out entry);
+            _keyToEntryMap.TryGetValue(key, out entry);
 
             return entry == null ? null : entry.Vector;
         }
@@ -197,37 +197,25 @@ namespace SoftwareBotany.Sunlight
 
         #region Facet
 
-        object ICatalog.Facets(Vector vector) { return Facets(vector); }
+        object ICatalog.Facet(Vector vector, bool disableParallel, bool shortCircuitCounting) { return Facet(vector, disableParallel, shortCircuitCounting); }
 
-        public FacetCollection<TKey> Facets(Vector vector)
+        public Facet<TKey> Facet(Vector vector, bool disableParallel = false, bool shortCircuitCounting = false)
         {
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
             Contract.EndContractBlock();
 
-            var facets = _entries
-                .Select(keyAndEntry => new Facet<TKey>(keyAndEntry.Key, vector.AndPopulation(keyAndEntry.Value.Vector)));
+            var keyAndEntries = _keyToEntryMap.AsParallel();
 
-            return new FacetCollection<TKey>(facets);
-        }
+            if (disableParallel)
+                keyAndEntries = keyAndEntries.WithDegreeOfParallelism(1);
 
-        #endregion
+            var categories = shortCircuitCounting
+                ? keyAndEntries.Where(keyAndEntry => vector.AndPopulationAny(keyAndEntry.Value.Vector)).Select(keyAndEntry => new FacetCategory<TKey>(keyAndEntry.Key, 1))
+                : keyAndEntries.Select(keyAndEntry => new FacetCategory<TKey>(keyAndEntry.Key, vector.AndPopulation(keyAndEntry.Value.Vector)));
 
-        #region FacetAny
-
-        object ICatalog.FacetAnys(Vector vector) { return FacetAnys(vector); }
-
-        public TKey[] FacetAnys(Vector vector)
-        {
-            if (vector == null)
-                throw new ArgumentNullException("vector");
-
-            Contract.EndContractBlock();
-
-            return _entries.Where(keyAndEntry => vector.AndPopulationAny(keyAndEntry.Value.Vector))
-                .Select(keyAndEntry => keyAndEntry.Key)
-                .ToArray();
+            return new Facet<TKey>(categories);
         }
 
         #endregion
@@ -246,8 +234,8 @@ namespace SoftwareBotany.Sunlight
             // This uses SortedSet<T>.Reverse() and not the IEnumerable<T> extension method that suffers from greedy enumeration.
             var keys = ascending ? _keys : _keys.Reverse();
 
-            var partialSortResults = keys.Where(key => vector.AndPopulationAny(_entries[key].Vector))
-                .Select(key => new CatalogPartialSortResult<TKey>(key, vector.AndFilterBitPositions(_entries[key].Vector, value)));
+            var partialSortResults = keys.Where(key => vector.AndPopulationAny(_keyToEntryMap[key].Vector))
+                .Select(key => new CatalogPartialSortResult<TKey>(key, vector.AndFilterBitPositions(_keyToEntryMap[key].Vector, value)));
 
             return new CatalogSortResult<TKey>(partialSortResults);
         }

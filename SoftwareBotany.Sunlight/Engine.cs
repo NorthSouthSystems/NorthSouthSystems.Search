@@ -364,11 +364,8 @@ namespace SoftwareBotany.Sunlight
                 SearchCatalogs(result, search.SearchParameters);
                 totalCount = result.Population;
 
-                foreach (IFacetParameter facetParameter in search.FacetParameters)
-                    facetParameter.Facets = facetParameter.Catalog.Facets(result);
-
-                foreach (IFacetAnyParameter facetAnyParameter in search.FacetAnyParameters)
-                    facetAnyParameter.FacetAnys = facetAnyParameter.Catalog.FacetAnys(result);
+                Parallel.ForEach(search.FacetParameters, new ParallelOptions { MaxDegreeOfParallelism = search.FacetDisableParallel ? 1 : -1 },
+                    facetParameter => facetParameter.Facet = facetParameter.Catalog.Facet(result, search.FacetDisableParallel, search.FacetShortCircuitCounting));
 
                 IEnumerable<int> sortedBitPositions = (!search.SortParameters.Any() && !search.SortPrimaryKeyAscending.HasValue)
                     ? result.GetBitPositions(true)

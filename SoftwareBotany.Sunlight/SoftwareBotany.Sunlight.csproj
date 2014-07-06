@@ -75,13 +75,12 @@
     <Compile Include="ICatalogSortResult.cs" />
     <Compile Include="ICatalog.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="FacetCollection.cs" />
+    <Compile Include="Facet.cs" />
     <Compile Include="IEngine.cs" />
     <Compile Include="IVectorLogic.cs" />
-    <Compile Include="Parameters\FacetAnyParameter.cs" />
     <Compile Include="VectorCompression.cs" />
     <Compile Include="VectorLogicSafe.cs" />
-    <Compile Include="Facet.cs" />
+    <Compile Include="FacetCategory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics\CatalogStatistics.cs" />
     <Compile Include="Statistics\EngineStatistics.cs" />
