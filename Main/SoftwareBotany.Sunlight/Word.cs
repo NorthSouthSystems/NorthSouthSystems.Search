@@ -96,6 +96,16 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
+        public bool HasBitPositions(bool value)
+        {
+            if (IsCompressed)
+                throw new NotSupportedException("Not supported for compressed Words.");
+
+            Contract.EndContractBlock();
+
+            return (value && Raw != 0u) || (!value && Raw != COMPRESSIBLEMASK);
+        }
+
         public int[] GetBitPositions(bool value)
         {
             if (IsCompressed)
@@ -104,7 +114,7 @@ namespace SoftwareBotany.Sunlight
             Contract.EndContractBlock();
 
             if ((value && Raw == 0u) || (!value && Raw == COMPRESSIBLEMASK))
-                return EmptyBitPositions;
+                return _emptyBitPositions;
 
             int count = value ? Population : SIZE - 1 - Population;
             int[] bitPositions = new int[count];
@@ -123,7 +133,7 @@ namespace SoftwareBotany.Sunlight
             return bitPositions;
         }
 
-        public static readonly int[] EmptyBitPositions = new int[0];
+        private static readonly int[] _emptyBitPositions = new int[0];
 
         #endregion
 

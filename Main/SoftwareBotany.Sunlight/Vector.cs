@@ -530,14 +530,10 @@ namespace SoftwareBotany.Sunlight
                 }
                 else
                 {
-                    int[] wordBitPositions = word.GetBitPositions(value);
-
-                    // PERF : This empty check is a micro-optimization
-                    if (wordBitPositions != Word.EmptyBitPositions)
-                    {
-                        foreach (int bitPosition in wordBitPositions)
+                    // PERF : Always check HasBitPositions before enumerating on GetBitPositions.
+                    if (word.HasBitPositions(value))
+                        foreach (int bitPosition in word.GetBitPositions(value))
                             yield return bitPosition + bitPositionOffset;
-                    }
 
                     bitPositionOffset += (Word.SIZE - 1);
                 }
@@ -572,8 +568,12 @@ namespace SoftwareBotany.Sunlight
 
                         for (int k = i; k < i + jWord.FillCount && k < iMax; k++)
                         {
-                            foreach (int bitPosition in _words[k].GetBitPositions(value))
-                                yield return bitPosition + bitPositionOffset;
+                            Word kWord = _words[k];
+
+                            // PERF : Always check HasBitPositions before enumerating on GetBitPositions.
+                            if (kWord.HasBitPositions(value))
+                                foreach (int bitPosition in kWord.GetBitPositions(value))
+                                    yield return bitPosition + bitPositionOffset;
 
                             bitPositionOffset += (Word.SIZE - 1);
                         }
@@ -593,17 +593,15 @@ namespace SoftwareBotany.Sunlight
                 }
                 else
                 {
-                    uint word = _words[i].Raw & jWord.Raw;
-                    int[] wordBitPositions = new Word(word).GetBitPositions(value);
+                    Word word = new Word(_words[i].Raw & jWord.Raw);
 
-                    // PERF : This empty check is a micro-optimization
-                    if (wordBitPositions != Word.EmptyBitPositions)
+                    // PERF : Always check HasBitPositions before enumerating on GetBitPositions.
+                    if (word.HasBitPositions(value))
                     {
-                        foreach (int bitPosition in wordBitPositions)
-                        {
-                            int bitPositionOffset = i * (Word.SIZE - 1);
-                            yield return bitPosition + bitPositionOffset;
-                        }
+                        int bitPositionOffset = i * (Word.SIZE - 1);
+
+                        foreach (int bitPosition in word.GetBitPositions(value))
+                            yield return bitPositionOffset + bitPosition;
                     }
 
                     i++;
