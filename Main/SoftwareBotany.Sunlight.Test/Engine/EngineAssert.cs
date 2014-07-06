@@ -28,19 +28,8 @@ namespace SoftwareBotany.Sunlight
             Assert.AreEqual(sourceResults.Length, totalCount);
             CollectionAssert.AreEqual(sourceResults.Skip(skip).Take(take).Select(item => item.Id).ToArray(), primaryKeys);
 
-            // Testing convention: every FacetParameter must have a corresponding FacetAnyParameter.
-            var facetAndAnyParameters = search.FacetParameters
-                .Join(search.FacetAnyParameters,
-                    facetParameter => facetParameter.Catalog,
-                    facetAnyParameter => facetAnyParameter.Catalog,
-                    (facetParameter, facetAnyParameter) => Tuple.Create(facetParameter, facetAnyParameter))
-                .ToArray();
-
-            Assert.AreEqual(search.FacetParameters.Count(), facetAndAnyParameters.Length);
-            Assert.AreEqual(search.FacetAnyParameters.Count(), facetAndAnyParameters.Length);
-
-            foreach (var facetAndAnyParam in facetAndAnyParameters)
-                AssertFacet(sourceResults, facetAndAnyParam.Item1, facetAndAnyParam.Item2);
+            foreach (var facetParam in search.FacetParameters)
+                AssertFacet(sourceResults, facetParam, search.FacetShortCircuitCounting);
         }
 
         #region Search
@@ -180,92 +169,73 @@ namespace SoftwareBotany.Sunlight
 
         #region Facet
 
-        private static void AssertFacet(EngineItem[] sourceResults, IFacetParameter param, IFacetAnyParameter paramAny)
+        private static void AssertFacet(EngineItem[] sourceResults, IFacetParameter param, bool shortCircuitCounting)
         {
             switch (param.Catalog.Name)
             {
                 case "SomeInt":
-                    Facet<int>[] sourceSomeIntFacet = sourceResults.GroupBy(item => item.SomeInt)
-                        .Select(group => new Facet<int>(group.Key, group.Count()))
+                    var sourceSomeIntFacet = sourceResults.GroupBy(item => item.SomeInt)
+                        .Select(group => new FacetCategory<int>(group.Key, group.Count()))
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    Facet<int>[] paramSomeIntFacet = ((IEnumerable<Facet<int>>)param.Facets)
+                    var paramSomeIntFacet = ((IEnumerable<FacetCategory<int>>)param.Facet)
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    int[] paramAnySomeIntFacet = ((IEnumerable<int>)paramAny.FacetAnys)
-                        .OrderBy(key => key)
-                        .ToArray();
-
-                    sourceSomeIntFacet.AssertFacets(paramSomeIntFacet, paramAnySomeIntFacet);
+                    sourceSomeIntFacet.AssertFacet(paramSomeIntFacet, shortCircuitCounting);
                     break;
                 case "SomeDateTime":
-                    Facet<DateTime>[] sourceSomeDateTimeFacet = sourceResults.GroupBy(item => item.SomeDateTime)
-                        .Select(group => new Facet<DateTime>(group.Key, group.Count()))
+                    var sourceSomeDateTimeFacet = sourceResults.GroupBy(item => item.SomeDateTime)
+                        .Select(group => new FacetCategory<DateTime>(group.Key, group.Count()))
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    Facet<DateTime>[] paramSomeDateTimeFacet = ((IEnumerable<Facet<DateTime>>)param.Facets)
+                    var paramSomeDateTimeFacet = ((IEnumerable<FacetCategory<DateTime>>)param.Facet)
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    DateTime[] paramAnySomeDateTimeFacet = ((IEnumerable<DateTime>)paramAny.FacetAnys)
-                        .OrderBy(key => key)
-                        .ToArray();
-
-                    sourceSomeDateTimeFacet.AssertFacets(paramSomeDateTimeFacet, paramAnySomeDateTimeFacet);
+                    sourceSomeDateTimeFacet.AssertFacet(paramSomeDateTimeFacet, shortCircuitCounting);
                     break;
                 case "SomeString":
-                    Facet<string>[] sourceSomeStringFacet = sourceResults.GroupBy(item => item.SomeString)
-                        .Select(group => new Facet<string>(group.Key, group.Count()))
+                    var sourceSomeStringFacet = sourceResults.GroupBy(item => item.SomeString)
+                        .Select(group => new FacetCategory<string>(group.Key, group.Count()))
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    Facet<string>[] paramSomeStringFacet = ((IEnumerable<Facet<string>>)param.Facets)
+                    var paramSomeStringFacet = ((IEnumerable<FacetCategory<string>>)param.Facet)
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    string[] paramAnySomeStringFacet = ((IEnumerable<string>)paramAny.FacetAnys)
-                        .OrderBy(key => key)
-                        .ToArray();
-
-                    sourceSomeStringFacet.AssertFacets(paramSomeStringFacet, paramAnySomeStringFacet);
+                    sourceSomeStringFacet.AssertFacet(paramSomeStringFacet, shortCircuitCounting);
                     break;
                 case "SomeTags":
-                    Facet<string>[] sourceSomeTagsFacet = sourceResults.SelectMany(item => item.SomeTags)
+                    var sourceSomeTagsFacet = sourceResults.SelectMany(item => item.SomeTags)
                         .GroupBy(tag => tag)
-                        .Select(group => new Facet<string>(group.Key, group.Count()))
+                        .Select(group => new FacetCategory<string>(group.Key, group.Count()))
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    Facet<string>[] paramSomeTagsFacet = ((IEnumerable<Facet<string>>)param.Facets)
+                    var paramSomeTagsFacet = ((IEnumerable<FacetCategory<string>>)param.Facet)
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    string[] paramAnySomeTagsFacet = ((IEnumerable<string>)paramAny.FacetAnys)
-                        .OrderBy(key => key)
-                        .ToArray();
-
-                    sourceSomeTagsFacet.AssertFacets(paramSomeTagsFacet, paramAnySomeTagsFacet);
+                    sourceSomeTagsFacet.AssertFacet(paramSomeTagsFacet, shortCircuitCounting);
                     break;
                 default:
                     throw new NotImplementedException(param.Catalog.Name);
             }
         }
 
-        private static void AssertFacets<T>(this Facet<T>[] facets, Facet<T>[] compare, T[] compareAny)
+        private static void AssertFacet<T>(this FacetCategory<T>[] categories, FacetCategory<T>[] compare, bool shortCircuitCounting)
             where T : IEquatable<T>, IComparable<T>
         {
-            Assert.AreEqual(facets.Length, compare.Length);
-            Assert.AreEqual(facets.Length, compareAny.Length);
+            Assert.AreEqual(categories.Length, compare.Length);
 
-            for (int i = 0; i < facets.Length; i++)
+            for (int i = 0; i < categories.Length; i++)
             {
-                Assert.AreEqual(facets[i].Key, compare[i].Key);
-                Assert.AreEqual(facets[i].Count, compare[i].Count);
-
-                Assert.AreEqual(facets[i].Key, compareAny[i]);
+                Assert.AreEqual(categories[i].Key, compare[i].Key);
+                Assert.AreEqual(shortCircuitCounting ? 1 : categories[i].Count, compare[i].Count);
             }
         }
 

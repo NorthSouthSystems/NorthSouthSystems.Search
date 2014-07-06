@@ -37,8 +37,6 @@ namespace SoftwareBotany.Sunlight
                     search.AddSearchExactParameter(someIntFactory, 0);
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someStringFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someStringFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 0, 10);
 
@@ -46,8 +44,6 @@ namespace SoftwareBotany.Sunlight
                     search.AddSearchExactParameter(someIntFactory, 0);
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someStringFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someStringFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 1, 3);
 
@@ -55,8 +51,6 @@ namespace SoftwareBotany.Sunlight
                     search.AddSearchExactParameter(someIntFactory, 1);
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someStringFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someStringFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 0, 4);
 
@@ -66,8 +60,6 @@ namespace SoftwareBotany.Sunlight
                     search.AddSortDirectionalParameter(someStringFactory, true);
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someStringFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someStringFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 0, 4);
 
@@ -77,8 +69,6 @@ namespace SoftwareBotany.Sunlight
                     search.SortPrimaryKeyAscending = true;
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someStringFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someStringFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 0, 4);
 
@@ -87,8 +77,6 @@ namespace SoftwareBotany.Sunlight
                     search.SortPrimaryKeyAscending = false;
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someStringFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someStringFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 0, 4);
 
@@ -97,8 +85,6 @@ namespace SoftwareBotany.Sunlight
                     search.SortPrimaryKeyAscending = true;
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someStringFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someStringFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 0, 4);
 
@@ -107,8 +93,6 @@ namespace SoftwareBotany.Sunlight
                     search.AddSortDirectionalParameter(someStringFactory, false);
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someStringFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someStringFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 1, 3);
 
@@ -116,8 +100,6 @@ namespace SoftwareBotany.Sunlight
                     search.AddSearchEnumerableParameter(someStringFactory, new[] { "2", "4" });
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someIntFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someIntFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 0, 2);
 
@@ -125,8 +107,6 @@ namespace SoftwareBotany.Sunlight
                     search.AddSearchRangeParameter(someStringFactory, "2", "3");
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someIntFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someIntFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 0, 2);
 
@@ -135,8 +115,6 @@ namespace SoftwareBotany.Sunlight
                     search.AddSortDirectionalParameter(someIntFactory, false);
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someIntFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someIntFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 0, 5);
 
@@ -145,8 +123,6 @@ namespace SoftwareBotany.Sunlight
                     search.AddSortDirectionalParameter(someIntFactory, false);
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someIntFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someIntFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 0, 5);
 
@@ -155,8 +131,6 @@ namespace SoftwareBotany.Sunlight
                     search.AddSortDirectionalParameter(someTagsFactory, true);
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someIntFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someIntFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 0, 5);
 
@@ -165,8 +139,6 @@ namespace SoftwareBotany.Sunlight
                     search.AddSortDirectionalParameter(someTagsFactory, false);
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someIntFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someIntFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 0, 5);
 
@@ -177,9 +149,6 @@ namespace SoftwareBotany.Sunlight
                     search.AddFacetParameter(someDateTimeFactory);
                     search.AddFacetParameter(someIntFactory);
                     search.AddFacetParameter(someTagsFactory);
-                    search.AddFacetAnyParameter(someDateTimeFactory);
-                    search.AddFacetAnyParameter(someIntFactory);
-                    search.AddFacetAnyParameter(someTagsFactory);
 
                     EngineAssert.ExecuteAndAssert(items, search, 0, 5);
 

@@ -19,7 +19,7 @@ namespace SoftwareBotany.Sunlight
             FacetParameter<int> someIntFacet = engine.CreateSearch()
                 .AddFacetParameter(someIntFactory);
 
-            var facets = someIntFacet.Facets;
+            var facet = someIntFacet.Facet;
         }
 
         #endregion

@@ -147,10 +147,10 @@ namespace SoftwareBotany.Sunlight
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void FacetsVectorNull()
+        public void FacetVectorNull()
         {
             Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
-            catalog.Facets(null);
+            catalog.Facet(null);
         }
 
         [TestMethod]

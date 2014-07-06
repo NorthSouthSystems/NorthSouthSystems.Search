@@ -1,41 +1,27 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace SoftwareBotany.Sunlight
 {
-    public struct Facet<TKey>
+    public sealed class Facet<TKey> : IEnumerable<FacetCategory<TKey>>
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
-        internal Facet(TKey key, int count)
+        internal Facet(IEnumerable<FacetCategory<TKey>> categories)
         {
-            _key = key;
-            _count = count;
+            _categories = categories.Where(category => category.Count > 0).ToArray();
         }
 
-        public TKey Key { get { return _key; } }
-        private readonly TKey _key;
+        private readonly FacetCategory<TKey>[] _categories;
 
-        public int Count { get { return _count; } }
-        private readonly int _count;
+        #region Enumeration
 
-        #region Equality & Hashing
+        IEnumerator<FacetCategory<TKey>> IEnumerable<FacetCategory<TKey>>.GetEnumerator() { return ((IEnumerable<FacetCategory<TKey>>)_categories).GetEnumerator(); }
 
-        public bool Equals(Facet<TKey> other)
-        {
-            return _key.Equals(other._key) && _count.Equals(other._count);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj != null && obj.GetType() == typeof(Facet<TKey>) && this.Equals((Facet<TKey>)obj);
-        }
-
-        public static bool operator ==(Facet<TKey> left, Facet<TKey> right) { return left.Equals(right); }
-        public static bool operator !=(Facet<TKey> left, Facet<TKey> right) { return !left.Equals(right); }
-
-        public override int GetHashCode()
-        {
-            return _key.GetHashCode() ^ _count.GetHashCode();
-        }
+        [ExcludeFromCodeCoverage]
+        IEnumerator IEnumerable.GetEnumerator() { return _categories.GetEnumerator(); }
 
         #endregion
     }

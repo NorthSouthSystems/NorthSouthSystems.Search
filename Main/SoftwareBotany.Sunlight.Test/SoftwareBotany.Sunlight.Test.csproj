@@ -61,7 +61,7 @@
     <Compile Include="CensusTests.cs" />
     <Compile Include="Engine\EngineTests.cs" />
     <Compile Include="Engine\EngineTestsStatistics.cs" />
-    <Compile Include="Facet\FacetTests.cs" />
+    <Compile Include="Facet\FacetCategoryTests.cs" />
     <Compile Include="SafetyVectorCompressionTuple.cs" />
     <Compile Include="Search\SearchParameterTests.cs" />
     <Compile Include="Search\SearchTests.cs" />

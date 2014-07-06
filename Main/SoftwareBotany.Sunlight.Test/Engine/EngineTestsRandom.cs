@@ -145,10 +145,8 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
-                        search.AddFacetAnyParameter(someIntFactory);
-                        search.AddFacetAnyParameter(someDateTimeFactory);
-                        search.AddFacetAnyParameter(someStringFactory);
-                        search.AddFacetAnyParameter(someTagsFactory);
+                        search.FacetDisableParallel = random.Next() % 5 == 0;
+                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -159,10 +157,8 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
-                        search.AddFacetAnyParameter(someIntFactory);
-                        search.AddFacetAnyParameter(someDateTimeFactory);
-                        search.AddFacetAnyParameter(someStringFactory);
-                        search.AddFacetAnyParameter(someTagsFactory);
+                        search.FacetDisableParallel = random.Next() % 5 == 0;
+                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -173,10 +169,8 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
-                        search.AddFacetAnyParameter(someIntFactory);
-                        search.AddFacetAnyParameter(someDateTimeFactory);
-                        search.AddFacetAnyParameter(someStringFactory);
-                        search.AddFacetAnyParameter(someTagsFactory);
+                        search.FacetDisableParallel = random.Next() % 5 == 0;
+                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -187,10 +181,8 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
-                        search.AddFacetAnyParameter(someIntFactory);
-                        search.AddFacetAnyParameter(someDateTimeFactory);
-                        search.AddFacetAnyParameter(someStringFactory);
-                        search.AddFacetAnyParameter(someTagsFactory);
+                        search.FacetDisableParallel = random.Next() % 5 == 0;
+                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
                     }
@@ -206,10 +198,8 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
-                        search.AddFacetAnyParameter(someIntFactory);
-                        search.AddFacetAnyParameter(someDateTimeFactory);
-                        search.AddFacetAnyParameter(someStringFactory);
-                        search.AddFacetAnyParameter(someTagsFactory);
+                        search.FacetDisableParallel = random.Next() % 5 == 0;
+                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -223,10 +213,8 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
-                        search.AddFacetAnyParameter(someIntFactory);
-                        search.AddFacetAnyParameter(someDateTimeFactory);
-                        search.AddFacetAnyParameter(someStringFactory);
-                        search.AddFacetAnyParameter(someTagsFactory);
+                        search.FacetDisableParallel = random.Next() % 5 == 0;
+                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -241,10 +229,8 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
-                        search.AddFacetAnyParameter(someIntFactory);
-                        search.AddFacetAnyParameter(someDateTimeFactory);
-                        search.AddFacetAnyParameter(someStringFactory);
-                        search.AddFacetAnyParameter(someTagsFactory);
+                        search.FacetDisableParallel = random.Next() % 5 == 0;
+                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
 
@@ -259,10 +245,8 @@ namespace SoftwareBotany.Sunlight
                         search.AddFacetParameter(someDateTimeFactory);
                         search.AddFacetParameter(someStringFactory);
                         search.AddFacetParameter(someTagsFactory);
-                        search.AddFacetAnyParameter(someIntFactory);
-                        search.AddFacetAnyParameter(someDateTimeFactory);
-                        search.AddFacetAnyParameter(someStringFactory);
-                        search.AddFacetAnyParameter(someTagsFactory);
+                        search.FacetDisableParallel = random.Next() % 5 == 0;
+                        search.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
                         EngineAssert.ExecuteAndAssert(items, search, 0, random.Next(size));
                     }
