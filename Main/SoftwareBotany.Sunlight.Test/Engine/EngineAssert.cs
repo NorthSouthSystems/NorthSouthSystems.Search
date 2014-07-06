@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -52,7 +53,7 @@ namespace SoftwareBotany.Sunlight
                         source = source.Where(item => SourceSearch(item.SomeString, closedParam));
                         break;
                     case "SomeTags":
-                        source = source.Where(item => SourceSearchTags(item.SomeTags, closedParam));
+                        source = source.Where(item => item.SomeTags.Any(tag => SourceSearch(tag, closedParam)));
                         break;
                     default:
                         throw new NotImplementedException(param.Catalog.Name);
@@ -62,34 +63,16 @@ namespace SoftwareBotany.Sunlight
             return source;
         }
 
-        private static bool SourceSearch(dynamic column, ISearchParameter param)
+        private static bool SourceSearch(object column, ISearchParameter param)
         {
             switch (param.ParameterType)
             {
                 case SearchParameterType.Exact:
-                    return column == (dynamic)param.Exact;
+                    return object.Equals(column, param.Exact);
                 case SearchParameterType.Enumerable:
-                    return Enumerable.Contains((dynamic)param.Enumerable, column);
+                    return ((IEnumerable)param.Enumerable).Cast<object>().Any(obj => object.Equals(column, obj));
                 case SearchParameterType.Range:
-                    if (param.Catalog.Name == "SomeString")
-                        return column.CompareTo((dynamic)param.RangeMin) >= 0 && column.CompareTo((dynamic)param.RangeMax) <= 0;
-                    else
-                        return column >= (dynamic)param.RangeMin && column <= (dynamic)param.RangeMax;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
-        private static bool SourceSearchTags(string[] tags, ISearchParameter param)
-        {
-            switch (param.ParameterType)
-            {
-                case SearchParameterType.Exact:
-                    return tags.Any(tag => tag == (string)param.Exact);
-                case SearchParameterType.Enumerable:
-                    return tags.Any(tag => Enumerable.Contains((IEnumerable<string>)param.Enumerable, tag));
-                case SearchParameterType.Range:
-                    return tags.Any(tag => tag.CompareTo((string)param.RangeMin) >= 0 && tag.CompareTo((string)param.RangeMax) <= 0);
+                    return ((IComparable)column).CompareTo(param.RangeMin) >= 0 && ((IComparable)column).CompareTo(param.RangeMax) <= 0;
                 default:
                     throw new NotImplementedException();
             }
