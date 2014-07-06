@@ -2,7 +2,7 @@
 
 namespace SoftwareBotany.Sunlight
 {
-    public sealed class FacetParameter<TKey> : Parameter, IFacetParameter
+    public sealed class FacetParameter<TKey> : Parameter, IFacetParameterInternal
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal FacetParameter(ICatalog catalog)
@@ -28,19 +28,30 @@ namespace SoftwareBotany.Sunlight
         private Facet<TKey> _facet;
         private bool _facetSet = false;
 
-        #region IFacetParameter
+        #region IFacetParameterInternal
 
-        object IFacetParameter.Facet
+        IFacet IFacetParameterInternal.Facet
         {
             get { return Facet; }
             set { Facet = (Facet<TKey>)value; }
         }
 
         #endregion
+
+        #region IFacetParameter
+
+        IFacet IFacetParameter.Facet { get { return Facet; } }
+
+        #endregion
     }
 
-    internal interface IFacetParameter : IParameter
+    internal interface IFacetParameterInternal : IParameterInternal, IFacetParameter
     {
-        object Facet { get; set; }
+        new IFacet Facet { get; set; }
+    }
+
+    public interface IFacetParameter : IParameter
+    {
+        IFacet Facet { get; }
     }
 }

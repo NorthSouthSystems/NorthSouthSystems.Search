@@ -419,9 +419,9 @@ namespace SoftwareBotany.Sunlight
             return result;
         }
 
-        private static void FilterCatalogs(Vector result, IEnumerable<IFilterParameter> filterParameters)
+        private static void FilterCatalogs(Vector result, IEnumerable<IFilterParameterInternal> filterParameters)
         {
-            foreach (IFilterParameter filterParameter in filterParameters)
+            foreach (IFilterParameterInternal filterParameter in filterParameters)
             {
                 switch (filterParameter.ParameterType)
                 {
@@ -444,13 +444,14 @@ namespace SoftwareBotany.Sunlight
 
         #region Sort
 
-        private IEnumerable<int> SortBitPositions(Vector result, ISortParameter[] sortParameters, bool? sortPrimaryKeyAscending)
+        private IEnumerable<int> SortBitPositions(Vector result, ISortParameterInternal[] sortParameters, bool? sortPrimaryKeyAscending)
         {
             if (sortParameters.Any())
             {
                 IEnumerable<IEnumerable<int>> partialResults = null;
 
-                partialResults = SortBitPositionsByParameter(result, sortParameters.First());
+                var firstSortParameter = sortParameters.First();
+                partialResults = firstSortParameter.Catalog.SortBitPositions(result, true, firstSortParameter.Ascending).PartialSortResultsBitPositions;
 
                 for (int i = 1; i < sortParameters.Length; i++)
                     partialResults = SortBitPositionsThenByParameter(_allowUnsafe, partialResults, sortParameters[i]);
@@ -464,18 +465,7 @@ namespace SoftwareBotany.Sunlight
                 return SortBitPositionsByPrimaryKey(result.GetBitPositions(true), sortPrimaryKeyAscending.Value);
         }
 
-        private static IEnumerable<IEnumerable<int>> SortBitPositionsByParameter(Vector result, ISortParameter sortParameter)
-        {
-            switch (sortParameter.ParameterType)
-            {
-                case SortParameterType.Directional:
-                    return sortParameter.Catalog.SortBitPositions(result, true, sortParameter.Ascending).PartialSortResultsBitPositions;
-                default:
-                    throw new NotImplementedException(string.Format(CultureInfo.InvariantCulture, "Unrecognized sort parameter type : {0}.", sortParameter.ParameterType));
-            }
-        }
-
-        private static IEnumerable<IEnumerable<int>> SortBitPositionsThenByParameter(bool allowUnsafe, IEnumerable<IEnumerable<int>> partialResults, ISortParameter sortParameter)
+        private static IEnumerable<IEnumerable<int>> SortBitPositionsThenByParameter(bool allowUnsafe, IEnumerable<IEnumerable<int>> partialResults, ISortParameterInternal sortParameter)
         {
             return partialResults.SelectMany(partialResult =>
             {
@@ -486,7 +476,7 @@ namespace SoftwareBotany.Sunlight
                 foreach (int bitPosition in partialResult)
                     partialResultVector[bitPosition] = true;
 
-                return SortBitPositionsByParameter(partialResultVector, sortParameter);
+                return sortParameter.Catalog.SortBitPositions(partialResultVector, true, sortParameter.Ascending).PartialSortResultsBitPositions;
             });
         }
 

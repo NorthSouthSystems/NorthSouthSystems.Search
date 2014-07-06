@@ -15,7 +15,7 @@
 
         ICatalogSortResult SortBitPositions(Vector vector, bool value, bool ascending);
 
-        object Facet(Vector vector, bool disableParallel, bool shortCircuitCounting);
+        IFacet Facet(Vector vector, bool disableParallel, bool shortCircuitCounting);
 
         ICatalogStatistics GenerateStatistics();
     }

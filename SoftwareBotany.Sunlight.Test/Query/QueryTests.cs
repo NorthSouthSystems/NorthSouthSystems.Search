@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -94,7 +93,7 @@ namespace SoftwareBotany.Sunlight
             {
                 var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateQuery().AddSortDirectionalParameter((ParameterFactory<int>)null, true);
+                engine1.CreateQuery().AddSortParameter((ParameterFactory<int>)null, true);
             }
         }
 
@@ -109,7 +108,7 @@ namespace SoftwareBotany.Sunlight
                 var query = engine1.CreateQuery();
                 query.AddFilterExactParameter(factory1, 1);
                 query.SortPrimaryKeyAscending = true;
-                query.AddSortDirectionalParameter(factory1, true);
+                query.AddSortParameter(factory1, true);
             }
         }
 
@@ -123,8 +122,8 @@ namespace SoftwareBotany.Sunlight
 
                 var query = engine1.CreateQuery();
                 query.AddFilterExactParameter(factory1, 1);
-                query.AddSortDirectionalParameter(factory1, true);
-                query.AddSortDirectionalParameter(factory1, true);
+                query.AddSortParameter(factory1, true);
+                query.AddSortParameter(factory1, true);
             }
         }
 
@@ -185,7 +184,7 @@ namespace SoftwareBotany.Sunlight
 
                 var query = engine1.CreateQuery();
                 query.AddFilterExactParameter(factory1, 1);
-                query.AddSortDirectionalParameter(factory2, true);
+                query.AddSortParameter(factory2, true);
                 query.SortPrimaryKeyAscending = true;
                 query.AddFacetParameter(factory2);
                 query.Execute(0, 1, out totalCount);

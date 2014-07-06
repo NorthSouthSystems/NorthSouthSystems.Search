@@ -37,9 +37,9 @@ namespace SoftwareBotany.Sunlight
 
         private static IEnumerable<EngineItem> SourceFilter(IEnumerable<EngineItem> source, Query<int> query)
         {
-            foreach (IFilterParameter param in query.FilterParameters)
+            foreach (IFilterParameterInternal param in query.FilterParameters)
             {
-                IFilterParameter closedParam = param;
+                IFilterParameterInternal closedParam = param;
 
                 switch (param.Catalog.Name)
                 {
@@ -63,7 +63,7 @@ namespace SoftwareBotany.Sunlight
             return source;
         }
 
-        private static bool SourceFilter(object column, IFilterParameter param)
+        private static bool SourceFilter(object column, IFilterParameterInternal param)
         {
             switch (param.ParameterType)
             {
@@ -102,49 +102,37 @@ namespace SoftwareBotany.Sunlight
                 return query.SortPrimaryKeyAscending.Value ? source.OrderBy(item => item.Id) : source.OrderByDescending(item => item.Id);
         }
 
-        private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, ISortParameter param)
+        private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, ISortParameterInternal param)
         {
-            switch (param.ParameterType)
+            switch (param.Catalog.Name)
             {
-                case SortParameterType.Directional:
-                    switch (param.Catalog.Name)
-                    {
-                        case "SomeInt":
-                            return param.Ascending ? source.OrderBy(item => item.SomeInt) : source.OrderByDescending(item => item.SomeInt);
-                        case "SomeDateTime":
-                            return param.Ascending ? source.OrderBy(item => item.SomeDateTime) : source.OrderByDescending(item => item.SomeDateTime);
-                        case "SomeString":
-                            return param.Ascending ? source.OrderBy(item => item.SomeString) : source.OrderByDescending(item => item.SomeString);
-                        case "SomeTags":
-                            return param.Ascending ? source.OrderBy(item => item.SomeTags.Min()) : source.OrderByDescending(item => item.SomeTags.Max());
-                        default:
-                            throw new NotImplementedException(param.Catalog.Name);
-                    }
+                case "SomeInt":
+                    return param.Ascending ? source.OrderBy(item => item.SomeInt) : source.OrderByDescending(item => item.SomeInt);
+                case "SomeDateTime":
+                    return param.Ascending ? source.OrderBy(item => item.SomeDateTime) : source.OrderByDescending(item => item.SomeDateTime);
+                case "SomeString":
+                    return param.Ascending ? source.OrderBy(item => item.SomeString) : source.OrderByDescending(item => item.SomeString);
+                case "SomeTags":
+                    return param.Ascending ? source.OrderBy(item => item.SomeTags.Min()) : source.OrderByDescending(item => item.SomeTags.Max());
                 default:
-                    throw new NotImplementedException();
+                    throw new NotImplementedException(param.Catalog.Name);
             }
         }
 
-        private static IOrderedEnumerable<EngineItem> SourceSort(IOrderedEnumerable<EngineItem> source, ISortParameter param)
+        private static IOrderedEnumerable<EngineItem> SourceSort(IOrderedEnumerable<EngineItem> source, ISortParameterInternal param)
         {
-            switch (param.ParameterType)
+            switch (param.Catalog.Name)
             {
-                case SortParameterType.Directional:
-                    switch (param.Catalog.Name)
-                    {
-                        case "SomeInt":
-                            return param.Ascending ? source.ThenBy(item => item.SomeInt) : source.ThenByDescending(item => item.SomeInt);
-                        case "SomeDateTime":
-                            return param.Ascending ? source.ThenBy(item => item.SomeDateTime) : source.ThenByDescending(item => item.SomeDateTime);
-                        case "SomeString":
-                            return param.Ascending ? source.ThenBy(item => item.SomeString) : source.ThenByDescending(item => item.SomeString);
-                        case "SomeTags":
-                            return param.Ascending ? source.ThenBy(item => item.SomeTags.Min()) : source.ThenByDescending(item => item.SomeTags.Max());
-                        default:
-                            throw new NotImplementedException(param.Catalog.Name);
-                    }
+                case "SomeInt":
+                    return param.Ascending ? source.ThenBy(item => item.SomeInt) : source.ThenByDescending(item => item.SomeInt);
+                case "SomeDateTime":
+                    return param.Ascending ? source.ThenBy(item => item.SomeDateTime) : source.ThenByDescending(item => item.SomeDateTime);
+                case "SomeString":
+                    return param.Ascending ? source.ThenBy(item => item.SomeString) : source.ThenByDescending(item => item.SomeString);
+                case "SomeTags":
+                    return param.Ascending ? source.ThenBy(item => item.SomeTags.Min()) : source.ThenByDescending(item => item.SomeTags.Max());
                 default:
-                    throw new NotImplementedException();
+                    throw new NotImplementedException(param.Catalog.Name);
             }
         }
 
@@ -152,7 +140,7 @@ namespace SoftwareBotany.Sunlight
 
         #region Facet
 
-        private static void AssertFacet(EngineItem[] sourceResults, IFacetParameter param, bool shortCircuitCounting)
+        private static void AssertFacet(EngineItem[] sourceResults, IFacetParameterInternal param, bool shortCircuitCounting)
         {
             switch (param.Catalog.Name)
             {
@@ -162,7 +150,9 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    var paramSomeIntFacet = ((IEnumerable<FacetCategory<int>>)param.Facet)
+                    var paramSomeIntFacet = param.Facet
+                        .Categories
+                        .Cast<FacetCategory<int>>()
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
@@ -174,7 +164,9 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    var paramSomeDateTimeFacet = ((IEnumerable<FacetCategory<DateTime>>)param.Facet)
+                    var paramSomeDateTimeFacet = param.Facet
+                        .Categories
+                        .Cast<FacetCategory<DateTime>>()
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
@@ -186,7 +178,9 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    var paramSomeStringFacet = ((IEnumerable<FacetCategory<string>>)param.Facet)
+                    var paramSomeStringFacet = param.Facet
+                        .Categories
+                        .Cast<FacetCategory<string>>()
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
@@ -199,7 +193,9 @@ namespace SoftwareBotany.Sunlight
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 
-                    var paramSomeTagsFacet = ((IEnumerable<FacetCategory<string>>)param.Facet)
+                    var paramSomeTagsFacet = param.Facet
+                        .Categories
+                        .Cast<FacetCategory<string>>()
                         .OrderBy(facet => facet.Key)
                         .ToArray();
 

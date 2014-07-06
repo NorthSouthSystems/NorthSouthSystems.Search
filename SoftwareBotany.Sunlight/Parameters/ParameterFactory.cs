@@ -36,7 +36,7 @@ namespace SoftwareBotany.Sunlight
 
         #region Sort
 
-        internal SortParameter<TKey> CreateSortDirectionalParameter(bool ascending)
+        internal SortParameter<TKey> CreateSortParameter(bool ascending)
         {
             return new SortParameter<TKey>(Catalog, ascending);
         }
