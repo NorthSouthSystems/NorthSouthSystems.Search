@@ -373,9 +373,9 @@ namespace SoftwareBotany.Sunlight
 
                 // Distinct is required because of Catalogs created from multi-key columns: e.g. think post/blog tags
                 return sortedBitPositions.Distinct()
-                    .Select(bitPosition => _primaryKeys[bitPosition])
                     .Skip(skip)
                     .Take(take)
+                    .Select(bitPosition => _primaryKeys[bitPosition])
                     .ToArray();
             }
             finally
@@ -492,9 +492,9 @@ namespace SoftwareBotany.Sunlight
 
         private IEnumerable<int> SortBitPositionsByPrimaryKey(IEnumerable<int> result, bool ascending)
         {
-            var query = result.Select(bitPosition => new { BitPosition = bitPosition, PrimaryKey = _primaryKeys[bitPosition] });
-            query = ascending ? query.OrderBy(x => x.PrimaryKey) : query.OrderByDescending(x => x.PrimaryKey);
-            return query.Select(x => x.BitPosition);
+            return ascending
+                ? result.OrderBy(bitPosition => _primaryKeys[bitPosition])
+                : result.OrderByDescending(bitPosition => _primaryKeys[bitPosition]);
         }
 
         private IEnumerable<int> SortBitPositionsThenByPrimaryKey(IEnumerable<IEnumerable<int>> partialResults, bool ascending)
