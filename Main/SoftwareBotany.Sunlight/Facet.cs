@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace SoftwareBotany.Sunlight
 {
-    public sealed class Facet<TKey> : IEnumerable<FacetCategory<TKey>>
+    public sealed class Facet<TKey> : IFacet
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal Facet(IEnumerable<FacetCategory<TKey>> categories)
@@ -14,15 +12,18 @@ namespace SoftwareBotany.Sunlight
             _categories = categories.Where(category => category.Count > 0).ToArray();
         }
 
+        public IEnumerable<FacetCategory<TKey>> Categories { get { return _categories; } }
         private readonly FacetCategory<TKey>[] _categories;
 
-        #region Enumeration
+        #region IFacet
 
-        IEnumerator<FacetCategory<TKey>> IEnumerable<FacetCategory<TKey>>.GetEnumerator() { return ((IEnumerable<FacetCategory<TKey>>)_categories).GetEnumerator(); }
-
-        [ExcludeFromCodeCoverage]
-        IEnumerator IEnumerable.GetEnumerator() { return _categories.GetEnumerator(); }
+        IEnumerable<IFacetCategory> IFacet.Categories { get { return _categories.Cast<IFacetCategory>(); } }
 
         #endregion
+    }
+
+    public interface IFacet
+    {
+        IEnumerable<IFacetCategory> Categories { get; }
     }
 }

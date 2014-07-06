@@ -4,7 +4,7 @@ using System.Diagnostics.Contracts;
 
 namespace SoftwareBotany.Sunlight
 {
-    public sealed class FilterParameter<TKey> : Parameter, IFilterParameter
+    public sealed class FilterParameter<TKey> : Parameter, IFilterParameterInternal
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal FilterParameter(ICatalog catalog, TKey exact)
@@ -66,7 +66,9 @@ namespace SoftwareBotany.Sunlight
         #endregion
     }
 
-    internal interface IFilterParameter : IParameter
+    internal interface IFilterParameterInternal : IParameterInternal, IFilterParameter { }
+
+    public interface IFilterParameter : IParameter
     {
         FilterParameterType ParameterType { get; }
         object Exact { get; }

@@ -45,8 +45,8 @@ namespace SoftwareBotany.Sunlight
 
         #region Filter
 
-        internal IEnumerable<IFilterParameter> FilterParameters { get { return _filterParameters; } }
-        private readonly List<IFilterParameter> _filterParameters = new List<IFilterParameter>();
+        internal IEnumerable<IFilterParameterInternal> FilterParameters { get { return _filterParameters; } }
+        private readonly List<IFilterParameterInternal> _filterParameters = new List<IFilterParameterInternal>();
 
         public FilterParameter<TKey> AddFilterExactParameter<TKey>(ParameterFactory<TKey> factory, TKey exact)
             where TKey : IEquatable<TKey>, IComparable<TKey>
@@ -110,10 +110,10 @@ namespace SoftwareBotany.Sunlight
 
         #region Sort
 
-        internal IEnumerable<ISortParameter> SortParameters { get { return _sortParameters; } }
-        private readonly List<ISortParameter> _sortParameters = new List<ISortParameter>();
+        internal IEnumerable<ISortParameterInternal> SortParameters { get { return _sortParameters; } }
+        private readonly List<ISortParameterInternal> _sortParameters = new List<ISortParameterInternal>();
 
-        public SortParameter<TKey> AddSortDirectionalParameter<TKey>(ParameterFactory<TKey> factory, bool ascending)
+        public SortParameter<TKey> AddSortParameter<TKey>(ParameterFactory<TKey> factory, bool ascending)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (factory == null)
@@ -125,7 +125,7 @@ namespace SoftwareBotany.Sunlight
             ThrowPrimaryKeySortExistsException();
             ThrowDuplicateSortException(factory);
 
-            var sortParameter = factory.CreateSortDirectionalParameter(ascending);
+            var sortParameter = factory.CreateSortParameter(ascending);
             _sortParameters.Add(sortParameter);
 
             return sortParameter;
@@ -164,8 +164,8 @@ namespace SoftwareBotany.Sunlight
         public bool FacetDisableParallel { get; set; }
         public bool FacetShortCircuitCounting { get; set; }
 
-        internal IEnumerable<IFacetParameter> FacetParameters { get { return _facetParameters; } }
-        private readonly List<IFacetParameter> _facetParameters = new List<IFacetParameter>();
+        internal IEnumerable<IFacetParameterInternal> FacetParameters { get { return _facetParameters; } }
+        private readonly List<IFacetParameterInternal> _facetParameters = new List<IFacetParameterInternal>();
 
         public FacetParameter<TKey> AddFacetParameter<TKey>(ParameterFactory<TKey> factory)
             where TKey : IEquatable<TKey>, IComparable<TKey>

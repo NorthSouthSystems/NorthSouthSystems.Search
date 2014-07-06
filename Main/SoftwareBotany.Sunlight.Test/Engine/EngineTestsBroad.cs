@@ -56,8 +56,8 @@ namespace SoftwareBotany.Sunlight
 
                     query = engine.CreateQuery();
                     query.AddFilterExactParameter(someIntFactory, 1);
-                    query.AddSortDirectionalParameter(someIntFactory, true);
-                    query.AddSortDirectionalParameter(someStringFactory, true);
+                    query.AddSortParameter(someIntFactory, true);
+                    query.AddSortParameter(someStringFactory, true);
                     query.AddFacetParameter(someDateTimeFactory);
                     query.AddFacetParameter(someStringFactory);
 
@@ -65,7 +65,7 @@ namespace SoftwareBotany.Sunlight
 
                     query = engine.CreateQuery();
                     query.AddFilterExactParameter(someIntFactory, 1);
-                    query.AddSortDirectionalParameter(someIntFactory, true);
+                    query.AddSortParameter(someIntFactory, true);
                     query.SortPrimaryKeyAscending = true;
                     query.AddFacetParameter(someDateTimeFactory);
                     query.AddFacetParameter(someStringFactory);
@@ -90,7 +90,7 @@ namespace SoftwareBotany.Sunlight
 
                     query = engine.CreateQuery();
                     query.AddFilterExactParameter(someIntFactory, 1);
-                    query.AddSortDirectionalParameter(someStringFactory, false);
+                    query.AddSortParameter(someStringFactory, false);
                     query.AddFacetParameter(someDateTimeFactory);
                     query.AddFacetParameter(someStringFactory);
 
@@ -112,7 +112,7 @@ namespace SoftwareBotany.Sunlight
 
                     query = engine.CreateQuery();
                     query.AddFilterEnumerableParameter(someStringFactory, new[] { "0", "5", "10" });
-                    query.AddSortDirectionalParameter(someIntFactory, false);
+                    query.AddSortParameter(someIntFactory, false);
                     query.AddFacetParameter(someDateTimeFactory);
                     query.AddFacetParameter(someIntFactory);
 
@@ -120,7 +120,7 @@ namespace SoftwareBotany.Sunlight
 
                     query = engine.CreateQuery();
                     query.AddFilterExactParameter(someTagsFactory, "2");
-                    query.AddSortDirectionalParameter(someIntFactory, false);
+                    query.AddSortParameter(someIntFactory, false);
                     query.AddFacetParameter(someDateTimeFactory);
                     query.AddFacetParameter(someIntFactory);
 
@@ -128,7 +128,7 @@ namespace SoftwareBotany.Sunlight
 
                     query = engine.CreateQuery();
                     query.AddFilterExactParameter(someStringFactory, "2");
-                    query.AddSortDirectionalParameter(someTagsFactory, true);
+                    query.AddSortParameter(someTagsFactory, true);
                     query.AddFacetParameter(someDateTimeFactory);
                     query.AddFacetParameter(someIntFactory);
 
@@ -136,7 +136,7 @@ namespace SoftwareBotany.Sunlight
 
                     query = engine.CreateQuery();
                     query.AddFilterExactParameter(someStringFactory, "2");
-                    query.AddSortDirectionalParameter(someTagsFactory, false);
+                    query.AddSortParameter(someTagsFactory, false);
                     query.AddFacetParameter(someDateTimeFactory);
                     query.AddFacetParameter(someIntFactory);
 
@@ -145,7 +145,7 @@ namespace SoftwareBotany.Sunlight
                     query = engine.CreateQuery();
                     query.AddFilterExactParameter(someTagsFactory, "2");
                     query.AddFilterExactParameter(someTagsFactory, "3");
-                    query.AddSortDirectionalParameter(someIntFactory, false);
+                    query.AddSortParameter(someIntFactory, false);
                     query.AddFacetParameter(someDateTimeFactory);
                     query.AddFacetParameter(someIntFactory);
                     query.AddFacetParameter(someTagsFactory);

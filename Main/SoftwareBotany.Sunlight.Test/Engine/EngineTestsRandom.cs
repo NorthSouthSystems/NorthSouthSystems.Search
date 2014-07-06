@@ -140,7 +140,7 @@ namespace SoftwareBotany.Sunlight
                     {
                         query = engine.CreateQuery();
                         query.AddRandomFilterExactParameter(someIntFactory, random.Next(), someIntMax);
-                        query.AddSortDirectionalParameter(someStringFactory, random.Next() % 2 == 0);
+                        query.AddSortParameter(someStringFactory, random.Next() % 2 == 0);
                         query.AddFacetParameter(someIntFactory);
                         query.AddFacetParameter(someDateTimeFactory);
                         query.AddFacetParameter(someStringFactory);
@@ -152,7 +152,7 @@ namespace SoftwareBotany.Sunlight
 
                         query = engine.CreateQuery();
                         query.AddRandomFilterEnumerableParameter(someIntFactory, random.Next(), someIntMax);
-                        query.AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0);
+                        query.AddSortParameter(someIntFactory, random.Next() % 2 == 0);
                         query.AddFacetParameter(someIntFactory);
                         query.AddFacetParameter(someDateTimeFactory);
                         query.AddFacetParameter(someStringFactory);
@@ -164,7 +164,7 @@ namespace SoftwareBotany.Sunlight
 
                         query = engine.CreateQuery();
                         query.AddRandomFilterRangeParameter(someIntFactory, random.Next(), someIntMax);
-                        query.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        query.AddSortParameter(someDateTimeFactory, random.Next() % 2 == 0);
                         query.AddFacetParameter(someIntFactory);
                         query.AddFacetParameter(someDateTimeFactory);
                         query.AddFacetParameter(someStringFactory);
@@ -176,7 +176,7 @@ namespace SoftwareBotany.Sunlight
 
                         query = engine.CreateQuery();
                         query.AddRandomFilterRangeParameter(someTagsFactory, random.Next(), someTagsMax);
-                        query.AddSortDirectionalParameter(someTagsFactory, random.Next() % 2 == 0);
+                        query.AddSortParameter(someTagsFactory, random.Next() % 2 == 0);
                         query.AddFacetParameter(someIntFactory);
                         query.AddFacetParameter(someDateTimeFactory);
                         query.AddFacetParameter(someStringFactory);
@@ -191,8 +191,8 @@ namespace SoftwareBotany.Sunlight
                         query = engine.CreateQuery();
                         query.AddRandomFilterExactParameter(someStringFactory, random.Next(), someStringMax);
                         query.AddRandomFilterRangeParameter(someIntFactory, random.Next(), someIntMax);
-                        query.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
-                        query.AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0);
+                        query.AddSortParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        query.AddSortParameter(someIntFactory, random.Next() % 2 == 0);
                         query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
                         query.AddFacetParameter(someIntFactory);
                         query.AddFacetParameter(someDateTimeFactory);
@@ -206,8 +206,8 @@ namespace SoftwareBotany.Sunlight
                         query = engine.CreateQuery();
                         query.AddRandomFilterEnumerableParameter(someStringFactory, random.Next(), someStringMax);
                         query.AddRandomFilterRangeParameter(someDateTimeFactory, random.Next(), someDateTimeMax);
-                        query.AddSortDirectionalParameter(someIntFactory, random.Next() % 2 == 0);
-                        query.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        query.AddSortParameter(someIntFactory, random.Next() % 2 == 0);
+                        query.AddSortParameter(someDateTimeFactory, random.Next() % 2 == 0);
                         query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
                         query.AddFacetParameter(someIntFactory);
                         query.AddFacetParameter(someDateTimeFactory);
@@ -222,8 +222,8 @@ namespace SoftwareBotany.Sunlight
                         query.AddAmongstPrimaryKeys(items.Take((items.Length / 2) + random.Next(items.Length / 2)).Select(item => item.Id));
                         query.AddRandomFilterRangeParameter(someDateTimeFactory, random.Next(), someDateTimeMax);
                         query.AddRandomFilterRangeParameter(someIntFactory, random.Next(), someIntMax);
-                        query.AddSortDirectionalParameter(someStringFactory, random.Next() % 2 == 0);
-                        query.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        query.AddSortParameter(someStringFactory, random.Next() % 2 == 0);
+                        query.AddSortParameter(someDateTimeFactory, random.Next() % 2 == 0);
                         query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
                         query.AddFacetParameter(someIntFactory);
                         query.AddFacetParameter(someDateTimeFactory);
@@ -238,8 +238,8 @@ namespace SoftwareBotany.Sunlight
                         query.AddRandomFilterRangeParameter(someIntFactory, random.Next(), someIntMax);
                         query.AddRandomFilterRangeParameter(someTagsFactory, random.Next(), someTagsMax);
                         query.AddRandomFilterRangeParameter(someTagsFactory, random.Next(), someTagsMax);
-                        query.AddSortDirectionalParameter(someDateTimeFactory, random.Next() % 2 == 0);
-                        query.AddSortDirectionalParameter(someTagsFactory, random.Next() % 2 == 0);
+                        query.AddSortParameter(someDateTimeFactory, random.Next() % 2 == 0);
+                        query.AddSortParameter(someTagsFactory, random.Next() % 2 == 0);
                         query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
                         query.AddFacetParameter(someIntFactory);
                         query.AddFacetParameter(someDateTimeFactory);

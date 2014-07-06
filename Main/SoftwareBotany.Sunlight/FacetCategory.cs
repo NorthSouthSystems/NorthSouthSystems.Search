@@ -2,7 +2,7 @@
 
 namespace SoftwareBotany.Sunlight
 {
-    public struct FacetCategory<TKey>
+    public struct FacetCategory<TKey> : IFacetCategory
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal FacetCategory(TKey key, int count)
@@ -17,6 +17,12 @@ namespace SoftwareBotany.Sunlight
         public int Count { get { return _count; } }
         private readonly int _count;
 
+        #region IFacetCategory
+
+        object IFacetCategory.Key { get { return Key; } }
+
+        #endregion
+
         #region Equality & Hashing
 
         public bool Equals(FacetCategory<TKey> other)
@@ -26,7 +32,7 @@ namespace SoftwareBotany.Sunlight
 
         public override bool Equals(object obj)
         {
-            return obj != null && obj.GetType() == typeof(FacetCategory<TKey>) && this.Equals((FacetCategory<TKey>)obj);
+            return obj != null && obj.GetType() == typeof(FacetCategory<TKey>) && Equals((FacetCategory<TKey>)obj);
         }
 
         public static bool operator ==(FacetCategory<TKey> left, FacetCategory<TKey> right) { return left.Equals(right); }
@@ -38,5 +44,11 @@ namespace SoftwareBotany.Sunlight
         }
 
         #endregion
+    }
+
+    public interface IFacetCategory
+    {
+        object Key { get; }
+        int Count { get; }
     }
 }

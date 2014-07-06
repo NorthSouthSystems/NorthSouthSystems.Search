@@ -197,7 +197,7 @@ namespace SoftwareBotany.Sunlight
 
         #region Facet
 
-        object ICatalog.Facet(Vector vector, bool disableParallel, bool shortCircuitCounting) { return Facet(vector, disableParallel, shortCircuitCounting); }
+        IFacet ICatalog.Facet(Vector vector, bool disableParallel, bool shortCircuitCounting) { return Facet(vector, disableParallel, shortCircuitCounting); }
 
         public Facet<TKey> Facet(Vector vector, bool disableParallel = false, bool shortCircuitCounting = false)
         {
