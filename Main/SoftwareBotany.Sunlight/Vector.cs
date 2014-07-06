@@ -213,8 +213,8 @@ namespace SoftwareBotany.Sunlight
                 return new Word(0);
 
             bool isPacked;
-            int wordPosition = WordPositionPhysical(wordPositionLogical, out isPacked);
-            Word word = _words[wordPosition];
+            int wordPositionPhysical = WordPositionPhysical(wordPositionLogical, out isPacked);
+            Word word = _words[wordPositionPhysical];
 
             if (word.IsCompressed)
             {
@@ -308,8 +308,8 @@ namespace SoftwareBotany.Sunlight
 
             // IsPacked can be safely ignored here because of the LAW.
             bool isPacked;
-            int wordPosition = WordPositionPhysical(wordPositionLogical, out isPacked);
-            _words[wordPosition] = word;
+            int wordPositionPhysical = WordPositionPhysical(wordPositionLogical, out isPacked);
+            _words[wordPositionPhysical] = word;
         }
 
         private void SetBit(int bitPosition, bool value)
@@ -332,8 +332,8 @@ namespace SoftwareBotany.Sunlight
 
             // IsPacked can be safely ignored here because of the LAW.
             bool isPacked;
-            int wordPosition = WordPositionPhysical(wordPositionLogical, out isPacked);
-            _words[wordPosition][wordBitPosition] = value;
+            int wordPositionPhysical = WordPositionPhysical(wordPositionLogical, out isPacked);
+            _words[wordPositionPhysical][wordBitPosition] = value;
         }
 
         #endregion
