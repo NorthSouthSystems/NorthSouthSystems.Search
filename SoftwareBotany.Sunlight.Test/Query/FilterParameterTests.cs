@@ -13,13 +13,13 @@ namespace SoftwareBotany.Sunlight
         public void FilterParameterRangeArgumentNullOK()
         {
             Engine<EngineItem, int> engine = new Engine<EngineItem, int>(false, item => item.Id);
-            var someStringFactory = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+            var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
             FilterParameter<string> someStringParameter = engine.CreateQuery()
-                .AddFilterRangeParameter(someStringFactory, null, "A");
+                .AddFilterRangeParameter(someStringCatalog, null, "A");
 
             someStringParameter = engine.CreateQuery()
-                .AddFilterRangeParameter(someStringFactory, "A", null);
+                .AddFilterRangeParameter(someStringCatalog, "A", null);
         }
 
         [TestMethod]
@@ -27,10 +27,10 @@ namespace SoftwareBotany.Sunlight
         public void FilterParameterRangeArgumentNull()
         {
             Engine<EngineItem, int> engine = new Engine<EngineItem, int>(false, item => item.Id);
-            var someStringFactory = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+            var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
             FilterParameter<string> someStringParameter = engine.CreateQuery()
-                .AddFilterRangeParameter(someStringFactory, null, null);
+                .AddFilterRangeParameter(someStringCatalog, null, null);
         }
 
         [TestMethod]
@@ -38,10 +38,10 @@ namespace SoftwareBotany.Sunlight
         public void FilterParameterRangeArgumentOutOfRange()
         {
             Engine<EngineItem, int> engine = new Engine<EngineItem, int>(false, item => item.Id);
-            var someStringFactory = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+            var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
             FilterParameter<string> someStringParameter = engine.CreateQuery()
-                .AddFilterRangeParameter(someStringFactory, "B", "A");
+                .AddFilterRangeParameter(someStringCatalog, "B", "A");
         }
 
         #endregion

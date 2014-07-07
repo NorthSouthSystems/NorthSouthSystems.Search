@@ -21,10 +21,10 @@ namespace SoftwareBotany.Sunlight
         {
             using (var engine = new Engine<EngineItem, int>(safetyVectorCompression.AllowUnsafe, item => item.Id))
             {
-                var someIntFactory = engine.CreateCatalog("SomeInt", safetyVectorCompression.Compression, item => item.SomeInt);
-                var someDateTimeFactory = engine.CreateCatalog("SomeDateTime", safetyVectorCompression.Compression, item => item.SomeDateTime);
-                var someStringFactory = engine.CreateCatalog("SomeString", safetyVectorCompression.Compression, item => item.SomeString);
-                var someTagsFactory = engine.CreateCatalog<string>("SomeTags", safetyVectorCompression.Compression, item => item.SomeTags);
+                var someIntCatalog = engine.CreateCatalog("SomeInt", safetyVectorCompression.Compression, item => item.SomeInt);
+                var someDateTimeCatalog = engine.CreateCatalog("SomeDateTime", safetyVectorCompression.Compression, item => item.SomeDateTime);
+                var someStringCatalog = engine.CreateCatalog("SomeString", safetyVectorCompression.Compression, item => item.SomeString);
+                var someTagsCatalog = engine.CreateCatalog<string>("SomeTags", safetyVectorCompression.Compression, item => item.SomeTags);
 
                 EngineItem[] items = EngineItem.CreateItems(id => id / 5, id => new DateTime(2011, 1, 1).AddDays(id / 7), id => id.ToString(), id => new[] { id, id / 2, id / 3, id / 5 }.Distinct().Select(i => i.ToString()).ToArray(), size);
 
@@ -34,121 +34,121 @@ namespace SoftwareBotany.Sunlight
                 for (int i = 0; i < 10; i++)
                 {
                     Query<int> query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someIntFactory, 0);
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someStringFactory);
+                    query.AddFilterExactParameter(someIntCatalog, 0);
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someStringCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 10);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someIntFactory, 0);
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someStringFactory);
+                    query.AddFilterExactParameter(someIntCatalog, 0);
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someStringCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 1, 3);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someIntFactory, 1);
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someStringFactory);
+                    query.AddFilterExactParameter(someIntCatalog, 1);
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someStringCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someIntFactory, 1);
-                    query.AddSortParameter(someIntFactory, true);
-                    query.AddSortParameter(someStringFactory, true);
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someStringFactory);
+                    query.AddFilterExactParameter(someIntCatalog, 1);
+                    query.AddSortParameter(someIntCatalog, true);
+                    query.AddSortParameter(someStringCatalog, true);
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someStringCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someIntFactory, 1);
-                    query.AddSortParameter(someIntFactory, true);
+                    query.AddFilterExactParameter(someIntCatalog, 1);
+                    query.AddSortParameter(someIntCatalog, true);
                     query.SortPrimaryKeyAscending = true;
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someStringFactory);
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someStringCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someIntFactory, 1);
+                    query.AddFilterExactParameter(someIntCatalog, 1);
                     query.SortPrimaryKeyAscending = false;
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someStringFactory);
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someStringCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someIntFactory, 1);
+                    query.AddFilterExactParameter(someIntCatalog, 1);
                     query.SortPrimaryKeyAscending = true;
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someStringFactory);
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someStringCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someIntFactory, 1);
-                    query.AddSortParameter(someStringFactory, false);
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someStringFactory);
+                    query.AddFilterExactParameter(someIntCatalog, 1);
+                    query.AddSortParameter(someStringCatalog, false);
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someStringCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 1, 3);
 
                     query = engine.CreateQuery();
-                    query.AddFilterEnumerableParameter(someStringFactory, new[] { "2", "4" });
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someIntFactory);
+                    query.AddFilterEnumerableParameter(someStringCatalog, new[] { "2", "4" });
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someIntCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 2);
 
                     query = engine.CreateQuery();
-                    query.AddFilterRangeParameter(someStringFactory, "2", "3");
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someIntFactory);
+                    query.AddFilterRangeParameter(someStringCatalog, "2", "3");
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someIntCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 2);
 
                     query = engine.CreateQuery();
-                    query.AddFilterEnumerableParameter(someStringFactory, new[] { "0", "5", "10" });
-                    query.AddSortParameter(someIntFactory, false);
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someIntFactory);
+                    query.AddFilterEnumerableParameter(someStringCatalog, new[] { "0", "5", "10" });
+                    query.AddSortParameter(someIntCatalog, false);
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someIntCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someTagsFactory, "2");
-                    query.AddSortParameter(someIntFactory, false);
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someIntFactory);
+                    query.AddFilterExactParameter(someTagsCatalog, "2");
+                    query.AddSortParameter(someIntCatalog, false);
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someIntCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someStringFactory, "2");
-                    query.AddSortParameter(someTagsFactory, true);
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someIntFactory);
+                    query.AddFilterExactParameter(someStringCatalog, "2");
+                    query.AddSortParameter(someTagsCatalog, true);
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someIntCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someStringFactory, "2");
-                    query.AddSortParameter(someTagsFactory, false);
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someIntFactory);
+                    query.AddFilterExactParameter(someStringCatalog, "2");
+                    query.AddSortParameter(someTagsCatalog, false);
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someIntCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someTagsFactory, "2");
-                    query.AddFilterExactParameter(someTagsFactory, "3");
-                    query.AddSortParameter(someIntFactory, false);
-                    query.AddFacetParameter(someDateTimeFactory);
-                    query.AddFacetParameter(someIntFactory);
-                    query.AddFacetParameter(someTagsFactory);
+                    query.AddFilterExactParameter(someTagsCatalog, "2");
+                    query.AddFilterExactParameter(someTagsCatalog, "3");
+                    query.AddSortParameter(someIntCatalog, false);
+                    query.AddFacetParameter(someDateTimeCatalog);
+                    query.AddFacetParameter(someIntCatalog);
+                    query.AddFacetParameter(someTagsCatalog);
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 

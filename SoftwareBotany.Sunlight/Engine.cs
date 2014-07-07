@@ -47,19 +47,19 @@ namespace SoftwareBotany.Sunlight
 
         #region Catalog Management
 
-        public ParameterFactory<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, TKey> keyExtractor)
+        public CatalogHandle<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, TKey> keyExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             return CreateCatalogImpl<TKey>(name, compression, true, item => (object)keyExtractor(item));
         }
 
-        public ParameterFactory<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, IEnumerable<TKey>> keysExtractor)
+        public CatalogHandle<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, IEnumerable<TKey>> keysExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             return CreateCatalogImpl<TKey>(name, compression, false, item => (object)keysExtractor(item));
         }
 
-        private ParameterFactory<TKey> CreateCatalogImpl<TKey>(string name, VectorCompression compression, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
+        private CatalogHandle<TKey> CreateCatalogImpl<TKey>(string name, VectorCompression compression, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             Catalog<TKey> catalog;
@@ -82,7 +82,7 @@ namespace SoftwareBotany.Sunlight
                 _rwLock.ExitWriteLock();
             }
 
-            return new ParameterFactory<TKey>(catalog, isOneToOne);
+            return new CatalogHandle<TKey>(catalog, isOneToOne);
         }
 
         // NOTE : No locking is necessary here because this is only called from the Query class, and in order to CreateQuery,

@@ -5,13 +5,13 @@ namespace SoftwareBotany.Sunlight
 {
     internal static class EngineItemExtensions
     {
-        public static FilterParameter<int> AddRandomFilterExactParameter(this Query<int> query, ParameterFactory<int> factory, int randomSeed, int max)
+        public static FilterParameter<int> AddRandomFilterExactParameter(this Query<int> query, CatalogHandle<int> catalog, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
-            return query.AddFilterExactParameter(factory, random.Next(max));
+            return query.AddFilterExactParameter(catalog, random.Next(max));
         }
 
-        public static FilterParameter<int> AddRandomFilterEnumerableParameter(this Query<int> query, ParameterFactory<int> factory, int randomSeed, int max)
+        public static FilterParameter<int> AddRandomFilterEnumerableParameter(this Query<int> query, CatalogHandle<int> catalog, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
 
@@ -20,29 +20,29 @@ namespace SoftwareBotany.Sunlight
                 .Distinct()
                 .ToArray();
 
-            return query.AddFilterEnumerableParameter(factory, enumerable);
+            return query.AddFilterEnumerableParameter(catalog, enumerable);
         }
 
-        public static FilterParameter<int> AddRandomFilterRangeParameter(this Query<int> query, ParameterFactory<int> factory, int randomSeed, int max)
+        public static FilterParameter<int> AddRandomFilterRangeParameter(this Query<int> query, CatalogHandle<int> catalog, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
-            
+
             int val1 = random.Next(max);
             int val2 = random.Next(max);
 
             if (val1 == val2)
                 val2++;
 
-            return query.AddFilterRangeParameter(factory, Math.Min(val1, val2), Math.Max(val1, val2));
+            return query.AddFilterRangeParameter(catalog, Math.Min(val1, val2), Math.Max(val1, val2));
         }
 
-        public static FilterParameter<DateTime> AddRandomFilterExactParameter(this Query<int> query, ParameterFactory<DateTime> factory, int randomSeed, int max)
+        public static FilterParameter<DateTime> AddRandomFilterExactParameter(this Query<int> query, CatalogHandle<DateTime> catalog, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
-            return query.AddFilterExactParameter(factory, new DateTime(2011, 1, 1).AddDays(random.Next(max)));
+            return query.AddFilterExactParameter(catalog, new DateTime(2011, 1, 1).AddDays(random.Next(max)));
         }
 
-        public static FilterParameter<DateTime> AddRandomFilterEnumerableParameter(this Query<int> query, ParameterFactory<DateTime> factory, int randomSeed, int max)
+        public static FilterParameter<DateTime> AddRandomFilterEnumerableParameter(this Query<int> query, CatalogHandle<DateTime> catalog, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
 
@@ -52,10 +52,10 @@ namespace SoftwareBotany.Sunlight
                 .Select(i => new DateTime(2011, 1, 1).AddDays(i))
                 .ToArray();
 
-            return query.AddFilterEnumerableParameter(factory, enumerable);
+            return query.AddFilterEnumerableParameter(catalog, enumerable);
         }
 
-        public static FilterParameter<DateTime> AddRandomFilterRangeParameter(this Query<int> query, ParameterFactory<DateTime> factory, int randomSeed, int max)
+        public static FilterParameter<DateTime> AddRandomFilterRangeParameter(this Query<int> query, CatalogHandle<DateTime> catalog, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
 
@@ -65,16 +65,16 @@ namespace SoftwareBotany.Sunlight
             if (val1 == val2)
                 val2++;
 
-            return query.AddFilterRangeParameter(factory, new DateTime(2011, 1, 1).AddDays(Math.Min(val1, val2)), new DateTime(2011, 1, 1).AddDays(Math.Max(val1, val2)));
+            return query.AddFilterRangeParameter(catalog, new DateTime(2011, 1, 1).AddDays(Math.Min(val1, val2)), new DateTime(2011, 1, 1).AddDays(Math.Max(val1, val2)));
         }
 
-        public static FilterParameter<string> AddRandomFilterExactParameter(this Query<int> query, ParameterFactory<string> factory, int randomSeed, int max)
+        public static FilterParameter<string> AddRandomFilterExactParameter(this Query<int> query, CatalogHandle<string> catalog, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
-            return query.AddFilterExactParameter(factory, random.Next(max).ToString());
+            return query.AddFilterExactParameter(catalog, random.Next(max).ToString());
         }
 
-        public static FilterParameter<string> AddRandomFilterEnumerableParameter(this Query<int> query, ParameterFactory<string> factory, int randomSeed, int max)
+        public static FilterParameter<string> AddRandomFilterEnumerableParameter(this Query<int> query, CatalogHandle<string> catalog, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
 
@@ -84,10 +84,10 @@ namespace SoftwareBotany.Sunlight
                 .Select(i => i.ToString())
                 .ToArray();
 
-            return query.AddFilterEnumerableParameter(factory, enumerable);
+            return query.AddFilterEnumerableParameter(catalog, enumerable);
         }
 
-        public static FilterParameter<string> AddRandomFilterRangeParameter(this Query<int> query, ParameterFactory<string> factory, int randomSeed, int max)
+        public static FilterParameter<string> AddRandomFilterRangeParameter(this Query<int> query, CatalogHandle<string> catalog, int randomSeed, int max)
         {
             Random random = new Random(randomSeed);
 
@@ -107,7 +107,7 @@ namespace SoftwareBotany.Sunlight
                 rangeMax = s;
             }
 
-            return query.AddFilterRangeParameter(factory, rangeMin, rangeMax);
+            return query.AddFilterRangeParameter(catalog, rangeMin, rangeMax);
         }
     }
 }

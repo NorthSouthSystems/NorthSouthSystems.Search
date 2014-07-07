@@ -83,7 +83,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics\CatalogStatistics.cs" />
     <Compile Include="Statistics\EngineStatistics.cs" />
-    <Compile Include="Parameters\ParameterFactory.cs" />
+    <Compile Include="CatalogHandle.cs" />
     <Compile Include="Query.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Catalog.cs" />

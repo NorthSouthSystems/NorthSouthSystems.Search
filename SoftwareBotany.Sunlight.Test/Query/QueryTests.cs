@@ -16,10 +16,10 @@ namespace SoftwareBotany.Sunlight
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             using (Engine<EngineItem, int> engine2 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-                var factory2 = engine2.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog2 = engine2.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateQuery().AddFilterExactParameter(factory2, 1);
+                engine1.CreateQuery().AddFilterExactParameter(catalog2, 1);
             }
         }
 
@@ -29,7 +29,7 @@ namespace SoftwareBotany.Sunlight
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
                 engine1.CreateQuery().AddAmongstPrimaryKeys((int[])null);
             }
@@ -41,9 +41,9 @@ namespace SoftwareBotany.Sunlight
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateQuery().AddFilterExactParameter((ParameterFactory<int>)null, 1);
+                engine1.CreateQuery().AddFilterExactParameter((CatalogHandle<int>)null, 1);
             }
         }
 
@@ -53,9 +53,9 @@ namespace SoftwareBotany.Sunlight
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateQuery().AddFilterEnumerableParameter((ParameterFactory<int>)null, new[] { 1, 2 });
+                engine1.CreateQuery().AddFilterEnumerableParameter((CatalogHandle<int>)null, new[] { 1, 2 });
             }
         }
 
@@ -65,9 +65,9 @@ namespace SoftwareBotany.Sunlight
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateQuery().AddFilterRangeParameter((ParameterFactory<int>)null, 1, 3);
+                engine1.CreateQuery().AddFilterRangeParameter((CatalogHandle<int>)null, 1, 3);
             }
         }
 
@@ -77,11 +77,11 @@ namespace SoftwareBotany.Sunlight
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
                 var query = engine1.CreateQuery();
-                query.AddFilterExactParameter(factory1, 1);
-                query.AddFilterExactParameter(factory1, 2);
+                query.AddFilterExactParameter(catalog1, 1);
+                query.AddFilterExactParameter(catalog1, 2);
             }
         }
 
@@ -91,9 +91,9 @@ namespace SoftwareBotany.Sunlight
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateQuery().AddSortParameter((ParameterFactory<int>)null, true);
+                engine1.CreateQuery().AddSortParameter((CatalogHandle<int>)null, true);
             }
         }
 
@@ -103,12 +103,12 @@ namespace SoftwareBotany.Sunlight
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
                 var query = engine1.CreateQuery();
-                query.AddFilterExactParameter(factory1, 1);
+                query.AddFilterExactParameter(catalog1, 1);
                 query.SortPrimaryKeyAscending = true;
-                query.AddSortParameter(factory1, true);
+                query.AddSortParameter(catalog1, true);
             }
         }
 
@@ -118,12 +118,12 @@ namespace SoftwareBotany.Sunlight
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
                 var query = engine1.CreateQuery();
-                query.AddFilterExactParameter(factory1, 1);
-                query.AddSortParameter(factory1, true);
-                query.AddSortParameter(factory1, true);
+                query.AddFilterExactParameter(catalog1, 1);
+                query.AddSortParameter(catalog1, true);
+                query.AddSortParameter(catalog1, true);
             }
         }
 
@@ -133,9 +133,9 @@ namespace SoftwareBotany.Sunlight
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateQuery().AddFacetParameter((ParameterFactory<int>)null);
+                engine1.CreateQuery().AddFacetParameter((CatalogHandle<int>)null);
             }
         }
 
@@ -145,13 +145,13 @@ namespace SoftwareBotany.Sunlight
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-                var factory2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
                 var query = engine1.CreateQuery();
-                query.AddFilterExactParameter(factory1, 1);
-                query.AddFacetParameter(factory2);
-                query.AddFacetParameter(factory2);
+                query.AddFilterExactParameter(catalog1, 1);
+                query.AddFacetParameter(catalog2);
+                query.AddFacetParameter(catalog2);
             }
         }
 
@@ -161,12 +161,12 @@ namespace SoftwareBotany.Sunlight
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
                 int totalCount;
 
                 var query = engine1.CreateQuery();
-                query.AddFilterExactParameter(factory1, 1);
+                query.AddFilterExactParameter(catalog1, 1);
                 query.Execute(0, 1, out totalCount);
                 query.Execute(0, 1, out totalCount);
             }
@@ -177,16 +177,16 @@ namespace SoftwareBotany.Sunlight
         {
             using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
-                var factory1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-                var factory2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+                var catalog2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
                 int totalCount;
 
                 var query = engine1.CreateQuery();
-                query.AddFilterExactParameter(factory1, 1);
-                query.AddSortParameter(factory2, true);
+                query.AddFilterExactParameter(catalog1, 1);
+                query.AddSortParameter(catalog2, true);
                 query.SortPrimaryKeyAscending = true;
-                query.AddFacetParameter(factory2);
+                query.AddFacetParameter(catalog2);
                 query.Execute(0, 1, out totalCount);
             }
         }
