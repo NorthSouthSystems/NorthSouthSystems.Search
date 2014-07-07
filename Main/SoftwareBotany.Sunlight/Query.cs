@@ -19,11 +19,11 @@ namespace SoftwareBotany.Sunlight
 
         public TimeSpan? ExecuteElapsedTime { get; private set; }
 
-        private void ThrowEngineMismatchException<TKey>(ParameterFactory<TKey> factory)
+        private void ThrowEngineMismatchException<TKey>(CatalogHandle<TKey> catalog)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            if (!_engine.HasCatalog(factory.Catalog))
-                throw new ArgumentException("factory belongs to a different Engine.", "factory");
+            if (!_engine.HasCatalog(catalog.Catalog))
+                throw new ArgumentException("Catalog belongs to a different Engine.", "catalog");
         }
 
         #region Amongst
@@ -48,61 +48,61 @@ namespace SoftwareBotany.Sunlight
         internal IEnumerable<IFilterParameterInternal> FilterParameters { get { return _filterParameters; } }
         private readonly List<IFilterParameterInternal> _filterParameters = new List<IFilterParameterInternal>();
 
-        public FilterParameter<TKey> AddFilterExactParameter<TKey>(ParameterFactory<TKey> factory, TKey exact)
+        public FilterParameter<TKey> AddFilterExactParameter<TKey>(CatalogHandle<TKey> catalog, TKey exact)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            if (factory == null)
-                throw new ArgumentNullException("factory");
+            if (catalog == null)
+                throw new ArgumentNullException("catalog");
 
             Contract.EndContractBlock();
 
-            ThrowEngineMismatchException(factory);
-            ThrowDuplicateFilterException(factory);
+            ThrowEngineMismatchException(catalog);
+            ThrowDuplicateFilterException(catalog);
 
-            var filterParameter = factory.CreateFilterExactParameter(exact);
+            var filterParameter = new FilterParameter<TKey>(catalog.Catalog, exact);
             _filterParameters.Add(filterParameter);
 
             return filterParameter;
         }
 
-        public FilterParameter<TKey> AddFilterEnumerableParameter<TKey>(ParameterFactory<TKey> factory, IEnumerable<TKey> enumerable)
+        public FilterParameter<TKey> AddFilterEnumerableParameter<TKey>(CatalogHandle<TKey> catalog, IEnumerable<TKey> enumerable)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            if (factory == null)
-                throw new ArgumentNullException("factory");
+            if (catalog == null)
+                throw new ArgumentNullException("catalog");
 
             Contract.EndContractBlock();
 
-            ThrowEngineMismatchException(factory);
-            ThrowDuplicateFilterException(factory);
+            ThrowEngineMismatchException(catalog);
+            ThrowDuplicateFilterException(catalog);
 
-            var filterParameter = factory.CreateFilterEnumerableParameter(enumerable);
+            var filterParameter = new FilterParameter<TKey>(catalog.Catalog, enumerable);
             _filterParameters.Add(filterParameter);
 
             return filterParameter;
         }
 
-        public FilterParameter<TKey> AddFilterRangeParameter<TKey>(ParameterFactory<TKey> factory, TKey rangeMin, TKey rangeMax)
+        public FilterParameter<TKey> AddFilterRangeParameter<TKey>(CatalogHandle<TKey> catalog, TKey rangeMin, TKey rangeMax)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            if (factory == null)
-                throw new ArgumentNullException("factory");
+            if (catalog == null)
+                throw new ArgumentNullException("catalog");
 
             Contract.EndContractBlock();
 
-            ThrowEngineMismatchException(factory);
-            ThrowDuplicateFilterException(factory);
+            ThrowEngineMismatchException(catalog);
+            ThrowDuplicateFilterException(catalog);
 
-            var filterParameter = factory.CreateFilterRangeParameter(rangeMin, rangeMax);
+            var filterParameter = new FilterParameter<TKey>(catalog.Catalog, rangeMin, rangeMax);
             _filterParameters.Add(filterParameter);
 
             return filterParameter;
         }
 
-        private void ThrowDuplicateFilterException<TKey>(ParameterFactory<TKey> factory)
+        private void ThrowDuplicateFilterException<TKey>(CatalogHandle<TKey> catalog)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            if (factory.IsCatalogOneToOne && _filterParameters.Any(parameter => parameter.Catalog == factory.Catalog))
+            if (catalog.IsCatalogOneToOne && _filterParameters.Any(parameter => parameter.Catalog == catalog.Catalog))
                 throw new NotSupportedException("Can only add 1 Filter Parameter per one-to-one Catalog.");
         }
 
@@ -113,19 +113,19 @@ namespace SoftwareBotany.Sunlight
         internal IEnumerable<ISortParameterInternal> SortParameters { get { return _sortParameters; } }
         private readonly List<ISortParameterInternal> _sortParameters = new List<ISortParameterInternal>();
 
-        public SortParameter<TKey> AddSortParameter<TKey>(ParameterFactory<TKey> factory, bool ascending)
+        public SortParameter<TKey> AddSortParameter<TKey>(CatalogHandle<TKey> catalog, bool ascending)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            if (factory == null)
-                throw new ArgumentNullException("factory");
+            if (catalog == null)
+                throw new ArgumentNullException("catalog");
 
             Contract.EndContractBlock();
 
-            ThrowEngineMismatchException(factory);
+            ThrowEngineMismatchException(catalog);
             ThrowPrimaryKeySortExistsException();
-            ThrowDuplicateSortException(factory);
+            ThrowDuplicateSortException(catalog);
 
-            var sortParameter = factory.CreateSortParameter(ascending);
+            var sortParameter = new SortParameter<TKey>(catalog.Catalog, ascending);
             _sortParameters.Add(sortParameter);
 
             return sortParameter;
@@ -150,10 +150,10 @@ namespace SoftwareBotany.Sunlight
                 throw new NotSupportedException("Cannot modify Sort Parameters after a Sort Primary Key has been set.");
         }
 
-        private void ThrowDuplicateSortException<TKey>(ParameterFactory<TKey> factory)
+        private void ThrowDuplicateSortException<TKey>(CatalogHandle<TKey> catalog)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            if (_sortParameters.Any(parameter => parameter.Catalog == factory.Catalog))
+            if (_sortParameters.Any(parameter => parameter.Catalog == catalog.Catalog))
                 throw new NotSupportedException("Can only add 1 Sort Parameter per Catalog.");
         }
 
@@ -167,27 +167,27 @@ namespace SoftwareBotany.Sunlight
         internal IEnumerable<IFacetParameterInternal> FacetParameters { get { return _facetParameters; } }
         private readonly List<IFacetParameterInternal> _facetParameters = new List<IFacetParameterInternal>();
 
-        public FacetParameter<TKey> AddFacetParameter<TKey>(ParameterFactory<TKey> factory)
+        public FacetParameter<TKey> AddFacetParameter<TKey>(CatalogHandle<TKey> catalog)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            if (factory == null)
-                throw new ArgumentNullException("factory");
+            if (catalog == null)
+                throw new ArgumentNullException("catalog");
 
             Contract.EndContractBlock();
 
-            ThrowEngineMismatchException(factory);
-            ThrowDuplicateFacetException(factory);
+            ThrowEngineMismatchException(catalog);
+            ThrowDuplicateFacetException(catalog);
 
-            FacetParameter<TKey> facetParameter = factory.CreateFacetParameter();
+            var facetParameter = new FacetParameter<TKey>(catalog.Catalog);
             _facetParameters.Add(facetParameter);
 
             return facetParameter;
         }
 
-        private void ThrowDuplicateFacetException<TKey>(ParameterFactory<TKey> factory)
+        private void ThrowDuplicateFacetException<TKey>(CatalogHandle<TKey> catalog)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            if (_facetParameters.Any(parameter => parameter.Catalog == factory.Catalog))
+            if (_facetParameters.Any(parameter => parameter.Catalog == catalog.Catalog))
                 throw new NotSupportedException("Can only add 1 Facet Parameter per Catalog.");
         }
 

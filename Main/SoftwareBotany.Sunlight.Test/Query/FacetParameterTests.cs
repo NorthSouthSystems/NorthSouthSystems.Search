@@ -14,10 +14,10 @@ namespace SoftwareBotany.Sunlight
         public void FacetQueryNotExecuted()
         {
             Engine<EngineItem, int> engine = new Engine<EngineItem, int>(false, item => item.Id);
-            var someIntFactory = engine.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var someIntCatalog = engine.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
             FacetParameter<int> someIntFacet = engine.CreateQuery()
-                .AddFacetParameter(someIntFactory);
+                .AddFacetParameter(someIntCatalog);
 
             var facet = someIntFacet.Facet;
         }
