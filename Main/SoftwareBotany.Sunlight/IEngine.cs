@@ -2,7 +2,7 @@
 {
     internal interface IEngine<TPrimaryKey>
     {
-        bool HasCatalog(ICatalog catalog);
+        bool HasCatalog(ICatalogHandle catalog);
         TPrimaryKey[] ExecuteQuery(Query<TPrimaryKey> query, int skip, int take, out int totalCount);
     }
 }

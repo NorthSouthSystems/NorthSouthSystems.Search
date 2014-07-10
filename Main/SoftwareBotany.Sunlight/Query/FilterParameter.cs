@@ -4,22 +4,22 @@ using System.Diagnostics.Contracts;
 
 namespace SoftwareBotany.Sunlight
 {
-    public sealed class FilterParameter<TKey> : Parameter, IFilterParameterInternal
+    public sealed class FilterParameter<TKey> : Parameter, IFilterParameter
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
-        internal FilterParameter(ICatalog catalog, TKey exact)
+        internal FilterParameter(ICatalogHandle<TKey> catalog, TKey exact)
             : this(catalog, FilterParameterType.Exact, exact: exact)
         { }
 
-        internal FilterParameter(ICatalog catalog, IEnumerable<TKey> enumerable)
+        internal FilterParameter(ICatalogHandle<TKey> catalog, IEnumerable<TKey> enumerable)
             : this(catalog, FilterParameterType.Enumerable, enumerable: enumerable)
         { }
 
-        internal FilterParameter(ICatalog catalog, TKey rangeMin, TKey rangeMax)
+        internal FilterParameter(ICatalogHandle<TKey> catalog, TKey rangeMin, TKey rangeMax)
             : this(catalog, FilterParameterType.Range, rangeMin: rangeMin, rangeMax: rangeMax)
         { }
 
-        private FilterParameter(ICatalog catalog, FilterParameterType parameterType,
+        private FilterParameter(ICatalogHandle<TKey> catalog, FilterParameterType parameterType,
             TKey exact = default(TKey), IEnumerable<TKey> enumerable = null, TKey rangeMin = default(TKey), TKey rangeMax = default(TKey))
             : base(catalog)
         {
@@ -65,8 +65,6 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
     }
-
-    internal interface IFilterParameterInternal : IParameterInternal, IFilterParameter { }
 
     public interface IFilterParameter : IParameter
     {

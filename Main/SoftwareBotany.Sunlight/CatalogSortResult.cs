@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SoftwareBotany.Sunlight
 {
-    public sealed class CatalogSortResult<TKey> : IEnumerable<CatalogPartialSortResult<TKey>>, ICatalogSortResult
+    public sealed class CatalogSortResult<TKey> : IEnumerable<CatalogPartialSortResult<TKey>>, ICatalogInEngineSortResult
     {
         internal CatalogSortResult(IEnumerable<CatalogPartialSortResult<TKey>> partialSortResults)
         {
@@ -19,7 +19,7 @@ namespace SoftwareBotany.Sunlight
         [ExcludeFromCodeCoverage]
         IEnumerator IEnumerable.GetEnumerator() { return _partialSortResults.GetEnumerator(); }
 
-        IEnumerable<IEnumerable<int>> ICatalogSortResult.PartialSortResultsBitPositions
+        IEnumerable<IEnumerable<int>> ICatalogInEngineSortResult.PartialSortResultsBitPositions
         {
             get { return _partialSortResults.Select(partial => (IEnumerable<int>)partial); }
         }

@@ -5,25 +5,26 @@ using System.Linq;
 
 namespace SoftwareBotany.Sunlight
 {
-    public sealed partial class Catalog<TKey> : ICatalog
+    public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngine
       where TKey : IEquatable<TKey>, IComparable<TKey>
     {
-        public Catalog(string name, bool allowUnsafe, VectorCompression compression)
+        public Catalog(string name, bool isOneToOne, bool allowUnsafe, VectorCompression compression)
         {
             _name = name;
+            _isOneToOne = isOneToOne;
             _allowUnsafe = allowUnsafe;
             _compression = compression;
         }
 
         #region Optimize
 
-        void ICatalog.OptimizeReadPhase(int[] bitPositionShifts)
+        void ICatalogInEngine.OptimizeReadPhase(int[] bitPositionShifts)
         {
             foreach (Entry entry in _keyToEntryMap.Values)
                 entry.IsVectorOptimizedAlive = entry.Vector.OptimizeReadPhase(bitPositionShifts, out entry.VectorOptimized);
         }
 
-        void ICatalog.OptimizeWritePhase()
+        void ICatalogInEngine.OptimizeWritePhase()
         {
             List<TKey> deadKeys = new List<TKey>();
 
@@ -50,6 +51,9 @@ namespace SoftwareBotany.Sunlight
         public string Name { get { return _name; } }
         private readonly string _name;
 
+        public bool IsOneToOne { get { return _isOneToOne; } }
+        private readonly bool _isOneToOne;
+
         public bool AllowUnsafe { get { return _allowUnsafe; } }
         private readonly bool _allowUnsafe;
 
@@ -72,7 +76,7 @@ namespace SoftwareBotany.Sunlight
 
         #region Set
 
-        void ICatalog.Set(object key, int bitPosition, bool value)
+        void ICatalogInEngine.Set(object key, int bitPosition, bool value)
         {
             if (key is TKey)
                 Set((TKey)key, bitPosition, value);
@@ -106,6 +110,9 @@ namespace SoftwareBotany.Sunlight
             if (keys == null)
                 throw new ArgumentNullException("keys");
 
+            if (_isOneToOne)
+                throw new NotSupportedException("One-to-one Catalogs must use Set(TKey key, ...) instead.");
+
             Contract.EndContractBlock();
 
             foreach (TKey key in keys)
@@ -116,7 +123,7 @@ namespace SoftwareBotany.Sunlight
 
         #region Filter
 
-        void ICatalog.FilterExact(Vector vector, object key) { Filter(vector, (TKey)key); }
+        void ICatalogInEngine.FilterExact(Vector vector, object key) { Filter(vector, (TKey)key); }
 
         public void Filter(Vector vector, TKey key)
         {
@@ -131,7 +138,7 @@ namespace SoftwareBotany.Sunlight
             FilterImpl(vector, new[] { Lookup(key) });
         }
 
-        void ICatalog.FilterEnumerable(Vector vector, object keys) { Filter(vector, (IEnumerable<TKey>)keys); }
+        void ICatalogInEngine.FilterEnumerable(Vector vector, object keys) { Filter(vector, (IEnumerable<TKey>)keys); }
 
         public void Filter(Vector vector, IEnumerable<TKey> keys)
         {
@@ -149,7 +156,7 @@ namespace SoftwareBotany.Sunlight
             FilterImpl(vector, keys.Distinct().Select(key => Lookup(key)));
         }
 
-        void ICatalog.FilterRange(Vector vector, object keyMin, object keyMax) { Filter(vector, (TKey)keyMin, (TKey)keyMax); }
+        void ICatalogInEngine.FilterRange(Vector vector, object keyMin, object keyMax) { Filter(vector, (TKey)keyMin, (TKey)keyMax); }
 
         public void Filter(Vector vector, TKey keyMin, TKey keyMax)
         {
@@ -197,7 +204,7 @@ namespace SoftwareBotany.Sunlight
 
         #region Facet
 
-        IFacet ICatalog.Facet(Vector vector, bool disableParallel, bool shortCircuitCounting) { return Facet(vector, disableParallel, shortCircuitCounting); }
+        IFacet ICatalogInEngine.Facet(Vector vector, bool disableParallel, bool shortCircuitCounting) { return Facet(vector, disableParallel, shortCircuitCounting); }
 
         public Facet<TKey> Facet(Vector vector, bool disableParallel = false, bool shortCircuitCounting = false)
         {
@@ -222,7 +229,7 @@ namespace SoftwareBotany.Sunlight
 
         #region Sort
 
-        ICatalogSortResult ICatalog.SortBitPositions(Vector vector, bool value, bool ascending) { return SortBitPositions(vector, value, ascending); }
+        ICatalogInEngineSortResult ICatalogInEngine.SortBitPositions(Vector vector, bool value, bool ascending) { return SortBitPositions(vector, value, ascending); }
 
         public CatalogSortResult<TKey> SortBitPositions(Vector vector, bool value, bool ascending)
         {
@@ -241,5 +248,13 @@ namespace SoftwareBotany.Sunlight
         }
 
         #endregion
+    }
+
+    public interface ICatalogHandle<TKey> : ICatalogHandle { }
+
+    public interface ICatalogHandle
+    {
+        string Name { get; }
+        bool IsOneToOne { get; }
     }
 }

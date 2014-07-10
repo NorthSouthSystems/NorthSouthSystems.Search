@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -13,7 +12,7 @@ namespace SoftwareBotany.Sunlight
 
         private static void FullBase(SafetyVectorCompressionTuple safetyVectorCompression)
         {
-            Catalog<int> catalog = new Catalog<int>("SomeInt", safetyVectorCompression.AllowUnsafe, safetyVectorCompression.Compression);
+            Catalog<int> catalog = new Catalog<int>("SomeInt", true, safetyVectorCompression.AllowUnsafe, safetyVectorCompression.Compression);
             ICatalogStatistics stats = catalog.GenerateStatistics();
             Assert.AreEqual(0, stats.VectorCount);
             Assert.AreEqual(0, stats.WordCount);

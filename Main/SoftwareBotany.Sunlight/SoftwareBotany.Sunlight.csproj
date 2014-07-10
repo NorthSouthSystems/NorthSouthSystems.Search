@@ -71,8 +71,8 @@
     <Compile Include="CatalogSortResult.cs" />
     <Compile Include="Census.cs" />
     <Compile Include="CatalogPartialSortResult.cs" />
-    <Compile Include="ICatalogSortResult.cs" />
-    <Compile Include="ICatalog.cs" />
+    <Compile Include="ICatalogInEngineSortResult.cs" />
+    <Compile Include="ICatalogInEngine.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Facet.cs" />
     <Compile Include="IEngine.cs" />
@@ -83,15 +83,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics\CatalogStatistics.cs" />
     <Compile Include="Statistics\EngineStatistics.cs" />
-    <Compile Include="CatalogHandle.cs" />
-    <Compile Include="Query.cs" />
+    <Compile Include="Query\Query.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Catalog.cs" />
     <Compile Include="Engine.cs" />
-    <Compile Include="Parameters\Parameter.cs" />
-    <Compile Include="Parameters\FacetParameter.cs" />
-    <Compile Include="Parameters\FilterParameter.cs" />
-    <Compile Include="Parameters\SortParameter.cs" />
+    <Compile Include="Query\Parameter.cs" />
+    <Compile Include="Query\FacetParameter.cs" />
+    <Compile Include="Query\FilterParameter.cs" />
+    <Compile Include="Query\SortParameter.cs" />
     <Compile Include="Statistics\VectorStatistics.cs" />
     <Compile Include="Word.cs" />
   </ItemGroup>

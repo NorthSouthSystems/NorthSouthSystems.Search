@@ -19,10 +19,10 @@ namespace SoftwareBotany.Sunlight
 
         public TimeSpan? ExecuteElapsedTime { get; private set; }
 
-        private void ThrowEngineMismatchException<TKey>(CatalogHandle<TKey> catalog)
+        private void ThrowEngineMismatchException<TKey>(ICatalogHandle<TKey> catalog)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            if (!_engine.HasCatalog(catalog.Catalog))
+            if (!_engine.HasCatalog(catalog))
                 throw new ArgumentException("Catalog belongs to a different Engine.", "catalog");
         }
 
@@ -45,10 +45,10 @@ namespace SoftwareBotany.Sunlight
 
         #region Filter
 
-        internal IEnumerable<IFilterParameterInternal> FilterParameters { get { return _filterParameters; } }
-        private readonly List<IFilterParameterInternal> _filterParameters = new List<IFilterParameterInternal>();
+        public IEnumerable<IFilterParameter> FilterParameters { get { return _filterParameters; } }
+        private readonly List<IFilterParameter> _filterParameters = new List<IFilterParameter>();
 
-        public FilterParameter<TKey> AddFilterExactParameter<TKey>(CatalogHandle<TKey> catalog, TKey exact)
+        public FilterParameter<TKey> AddFilterExactParameter<TKey>(ICatalogHandle<TKey> catalog, TKey exact)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (catalog == null)
@@ -59,13 +59,13 @@ namespace SoftwareBotany.Sunlight
             ThrowEngineMismatchException(catalog);
             ThrowDuplicateFilterException(catalog);
 
-            var filterParameter = new FilterParameter<TKey>(catalog.Catalog, exact);
+            var filterParameter = new FilterParameter<TKey>(catalog, exact);
             _filterParameters.Add(filterParameter);
 
             return filterParameter;
         }
 
-        public FilterParameter<TKey> AddFilterEnumerableParameter<TKey>(CatalogHandle<TKey> catalog, IEnumerable<TKey> enumerable)
+        public FilterParameter<TKey> AddFilterEnumerableParameter<TKey>(ICatalogHandle<TKey> catalog, IEnumerable<TKey> enumerable)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (catalog == null)
@@ -76,13 +76,13 @@ namespace SoftwareBotany.Sunlight
             ThrowEngineMismatchException(catalog);
             ThrowDuplicateFilterException(catalog);
 
-            var filterParameter = new FilterParameter<TKey>(catalog.Catalog, enumerable);
+            var filterParameter = new FilterParameter<TKey>(catalog, enumerable);
             _filterParameters.Add(filterParameter);
 
             return filterParameter;
         }
 
-        public FilterParameter<TKey> AddFilterRangeParameter<TKey>(CatalogHandle<TKey> catalog, TKey rangeMin, TKey rangeMax)
+        public FilterParameter<TKey> AddFilterRangeParameter<TKey>(ICatalogHandle<TKey> catalog, TKey rangeMin, TKey rangeMax)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (catalog == null)
@@ -93,16 +93,15 @@ namespace SoftwareBotany.Sunlight
             ThrowEngineMismatchException(catalog);
             ThrowDuplicateFilterException(catalog);
 
-            var filterParameter = new FilterParameter<TKey>(catalog.Catalog, rangeMin, rangeMax);
+            var filterParameter = new FilterParameter<TKey>(catalog, rangeMin, rangeMax);
             _filterParameters.Add(filterParameter);
 
             return filterParameter;
         }
 
-        private void ThrowDuplicateFilterException<TKey>(CatalogHandle<TKey> catalog)
-            where TKey : IEquatable<TKey>, IComparable<TKey>
+        private void ThrowDuplicateFilterException(ICatalogHandle catalog)
         {
-            if (catalog.IsCatalogOneToOne && _filterParameters.Any(parameter => parameter.Catalog == catalog.Catalog))
+            if (catalog.IsOneToOne && _filterParameters.Any(parameter => parameter.Catalog == catalog))
                 throw new NotSupportedException("Can only add 1 Filter Parameter per one-to-one Catalog.");
         }
 
@@ -110,10 +109,10 @@ namespace SoftwareBotany.Sunlight
 
         #region Sort
 
-        internal IEnumerable<ISortParameterInternal> SortParameters { get { return _sortParameters; } }
-        private readonly List<ISortParameterInternal> _sortParameters = new List<ISortParameterInternal>();
+        public IEnumerable<ISortParameter> SortParameters { get { return _sortParameters; } }
+        private readonly List<ISortParameter> _sortParameters = new List<ISortParameter>();
 
-        public SortParameter<TKey> AddSortParameter<TKey>(CatalogHandle<TKey> catalog, bool ascending)
+        public SortParameter<TKey> AddSortParameter<TKey>(ICatalogHandle<TKey> catalog, bool ascending)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (catalog == null)
@@ -125,7 +124,7 @@ namespace SoftwareBotany.Sunlight
             ThrowPrimaryKeySortExistsException();
             ThrowDuplicateSortException(catalog);
 
-            var sortParameter = new SortParameter<TKey>(catalog.Catalog, ascending);
+            var sortParameter = new SortParameter<TKey>(catalog, ascending);
             _sortParameters.Add(sortParameter);
 
             return sortParameter;
@@ -150,10 +149,9 @@ namespace SoftwareBotany.Sunlight
                 throw new NotSupportedException("Cannot modify Sort Parameters after a Sort Primary Key has been set.");
         }
 
-        private void ThrowDuplicateSortException<TKey>(CatalogHandle<TKey> catalog)
-            where TKey : IEquatable<TKey>, IComparable<TKey>
+        private void ThrowDuplicateSortException(ICatalogHandle catalog)
         {
-            if (_sortParameters.Any(parameter => parameter.Catalog == catalog.Catalog))
+            if (_sortParameters.Any(parameter => parameter.Catalog == catalog))
                 throw new NotSupportedException("Can only add 1 Sort Parameter per Catalog.");
         }
 
@@ -164,10 +162,11 @@ namespace SoftwareBotany.Sunlight
         public bool FacetDisableParallel { get; set; }
         public bool FacetShortCircuitCounting { get; set; }
 
-        internal IEnumerable<IFacetParameterInternal> FacetParameters { get { return _facetParameters; } }
+        public IEnumerable<IFacetParameter> FacetParameters { get { return _facetParameters; } }
+        internal IEnumerable<IFacetParameterInternal> FacetParametersInternal { get { return _facetParameters; } }
         private readonly List<IFacetParameterInternal> _facetParameters = new List<IFacetParameterInternal>();
 
-        public FacetParameter<TKey> AddFacetParameter<TKey>(CatalogHandle<TKey> catalog)
+        public FacetParameter<TKey> AddFacetParameter<TKey>(ICatalogHandle<TKey> catalog)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             if (catalog == null)
@@ -178,16 +177,15 @@ namespace SoftwareBotany.Sunlight
             ThrowEngineMismatchException(catalog);
             ThrowDuplicateFacetException(catalog);
 
-            var facetParameter = new FacetParameter<TKey>(catalog.Catalog);
+            var facetParameter = new FacetParameter<TKey>(catalog);
             _facetParameters.Add(facetParameter);
 
             return facetParameter;
         }
 
-        private void ThrowDuplicateFacetException<TKey>(CatalogHandle<TKey> catalog)
-            where TKey : IEquatable<TKey>, IComparable<TKey>
+        private void ThrowDuplicateFacetException(ICatalogHandle catalog)
         {
-            if (_facetParameters.Any(parameter => parameter.Catalog == catalog.Catalog))
+            if (_facetParameters.Any(parameter => parameter.Catalog == catalog))
                 throw new NotSupportedException("Can only add 1 Facet Parameter per Catalog.");
         }
 

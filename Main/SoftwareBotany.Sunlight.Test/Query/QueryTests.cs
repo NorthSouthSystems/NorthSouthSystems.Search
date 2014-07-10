@@ -43,7 +43,7 @@ namespace SoftwareBotany.Sunlight
             {
                 var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateQuery().AddFilterExactParameter((CatalogHandle<int>)null, 1);
+                engine1.CreateQuery().AddFilterExactParameter((ICatalogHandle<int>)null, 1);
             }
         }
 
@@ -55,7 +55,7 @@ namespace SoftwareBotany.Sunlight
             {
                 var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateQuery().AddFilterEnumerableParameter((CatalogHandle<int>)null, new[] { 1, 2 });
+                engine1.CreateQuery().AddFilterEnumerableParameter((ICatalogHandle<int>)null, new[] { 1, 2 });
             }
         }
 
@@ -67,7 +67,7 @@ namespace SoftwareBotany.Sunlight
             {
                 var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateQuery().AddFilterRangeParameter((CatalogHandle<int>)null, 1, 3);
+                engine1.CreateQuery().AddFilterRangeParameter((ICatalogHandle<int>)null, 1, 3);
             }
         }
 
@@ -93,7 +93,7 @@ namespace SoftwareBotany.Sunlight
             {
                 var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateQuery().AddSortParameter((CatalogHandle<int>)null, true);
+                engine1.CreateQuery().AddSortParameter((ICatalogHandle<int>)null, true);
             }
         }
 
@@ -135,7 +135,7 @@ namespace SoftwareBotany.Sunlight
             {
                 var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-                engine1.CreateQuery().AddFacetParameter((CatalogHandle<int>)null);
+                engine1.CreateQuery().AddFacetParameter((ICatalogHandle<int>)null);
             }
         }
 
