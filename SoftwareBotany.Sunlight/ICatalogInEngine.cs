@@ -1,6 +1,6 @@
 ﻿namespace SoftwareBotany.Sunlight
 {
-    internal interface ICatalog
+    internal interface ICatalogInEngine
     {
         string Name { get; }
 
@@ -13,7 +13,7 @@
         void FilterEnumerable(Vector vector, object keys);
         void FilterRange(Vector vector, object keyMin, object keyMax);
 
-        ICatalogSortResult SortBitPositions(Vector vector, bool value, bool ascending);
+        ICatalogInEngineSortResult SortBitPositions(Vector vector, bool value, bool ascending);
 
         IFacet Facet(Vector vector, bool disableParallel, bool shortCircuitCounting);
 

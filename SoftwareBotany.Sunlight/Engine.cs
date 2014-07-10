@@ -33,33 +33,33 @@ namespace SoftwareBotany.Sunlight
 
         private class CatalogPlusExtractor
         {
-            public CatalogPlusExtractor(ICatalog catalog, Func<TItem, object> keysOrKeyExtractor)
+            internal CatalogPlusExtractor(ICatalogInEngine catalog, Func<TItem, object> keysOrKeyExtractor)
             {
                 Catalog = catalog;
                 KeysOrKeyExtractor = keysOrKeyExtractor;
             }
 
-            public readonly ICatalog Catalog;
-            public readonly Func<TItem, object> KeysOrKeyExtractor;
+            internal readonly ICatalogInEngine Catalog;
+            internal readonly Func<TItem, object> KeysOrKeyExtractor;
         }
 
         public void Dispose() { _rwLock.Dispose(); }
 
         #region Catalog Management
 
-        public CatalogHandle<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, TKey> keyExtractor)
+        public ICatalogHandle<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, TKey> keyExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             return CreateCatalogImpl<TKey>(name, compression, true, item => (object)keyExtractor(item));
         }
 
-        public CatalogHandle<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, IEnumerable<TKey>> keysExtractor)
+        public ICatalogHandle<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, IEnumerable<TKey>> keysExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             return CreateCatalogImpl<TKey>(name, compression, false, item => (object)keysExtractor(item));
         }
 
-        private CatalogHandle<TKey> CreateCatalogImpl<TKey>(string name, VectorCompression compression, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
+        private ICatalogHandle<TKey> CreateCatalogImpl<TKey>(string name, VectorCompression compression, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             Catalog<TKey> catalog;
@@ -74,7 +74,7 @@ namespace SoftwareBotany.Sunlight
                 if (_catalogsPlusExtractors.Any(cpe => cpe.Catalog.Name == name))
                     throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "A Catalog already exists with the name : {0}.", name));
 
-                catalog = new Catalog<TKey>(name, _allowUnsafe, compression);
+                catalog = new Catalog<TKey>(name, isOneToOne, _allowUnsafe, compression);
                 _catalogsPlusExtractors.Add(new CatalogPlusExtractor(catalog, keyOrKeysExtractor));
             }
             finally
@@ -82,12 +82,12 @@ namespace SoftwareBotany.Sunlight
                 _rwLock.ExitWriteLock();
             }
 
-            return new CatalogHandle<TKey>(catalog, isOneToOne);
+            return catalog;
         }
 
         // NOTE : No locking is necessary here because this is only called from the Query class, and in order to CreateQuery,
         // _configuring is stopped which prevents the addition of Catalogs.
-        bool IEngine<TPrimaryKey>.HasCatalog(ICatalog catalog) { return _catalogsPlusExtractors.Any(cpe => cpe.Catalog == catalog); }
+        bool IEngine<TPrimaryKey>.HasCatalog(ICatalogHandle catalog) { return _catalogsPlusExtractors.Any(cpe => cpe.Catalog == catalog); }
 
         #endregion
 
@@ -364,8 +364,8 @@ namespace SoftwareBotany.Sunlight
                 FilterCatalogs(result, query.FilterParameters);
                 totalCount = result.Population;
 
-                Parallel.ForEach(query.FacetParameters, new ParallelOptions { MaxDegreeOfParallelism = query.FacetDisableParallel ? 1 : -1 },
-                    facetParameter => facetParameter.Facet = facetParameter.Catalog.Facet(result, query.FacetDisableParallel, query.FacetShortCircuitCounting));
+                Parallel.ForEach(query.FacetParametersInternal, new ParallelOptions { MaxDegreeOfParallelism = query.FacetDisableParallel ? 1 : -1 },
+                    facetParameter => facetParameter.Facet = ((ICatalogInEngine)facetParameter.Catalog).Facet(result, query.FacetDisableParallel, query.FacetShortCircuitCounting));
 
                 IEnumerable<int> sortedBitPositions = (!query.SortParameters.Any() && !query.SortPrimaryKeyAscending.HasValue)
                     ? result.GetBitPositions(true)
@@ -419,20 +419,22 @@ namespace SoftwareBotany.Sunlight
             return result;
         }
 
-        private static void FilterCatalogs(Vector result, IEnumerable<IFilterParameterInternal> filterParameters)
+        private static void FilterCatalogs(Vector result, IEnumerable<IFilterParameter> filterParameters)
         {
-            foreach (IFilterParameterInternal filterParameter in filterParameters)
+            foreach (IFilterParameter filterParameter in filterParameters)
             {
+                var catalog = (ICatalogInEngine)filterParameter.Catalog;
+
                 switch (filterParameter.ParameterType)
                 {
                     case FilterParameterType.Exact:
-                        filterParameter.Catalog.FilterExact(result, filterParameter.Exact);
+                        catalog.FilterExact(result, filterParameter.Exact);
                         break;
                     case FilterParameterType.Enumerable:
-                        filterParameter.Catalog.FilterEnumerable(result, filterParameter.Enumerable);
+                        catalog.FilterEnumerable(result, filterParameter.Enumerable);
                         break;
                     case FilterParameterType.Range:
-                        filterParameter.Catalog.FilterRange(result, filterParameter.RangeMin, filterParameter.RangeMax);
+                        catalog.FilterRange(result, filterParameter.RangeMin, filterParameter.RangeMax);
                         break;
                     default:
                         throw new NotImplementedException(string.Format(CultureInfo.InvariantCulture, "Unrecognized filter parameter type : {0}.", filterParameter.ParameterType));
@@ -444,14 +446,14 @@ namespace SoftwareBotany.Sunlight
 
         #region Sort
 
-        private IEnumerable<int> SortBitPositions(Vector result, ISortParameterInternal[] sortParameters, bool? sortPrimaryKeyAscending)
+        private IEnumerable<int> SortBitPositions(Vector result, ISortParameter[] sortParameters, bool? sortPrimaryKeyAscending)
         {
             if (sortParameters.Any())
             {
                 IEnumerable<IEnumerable<int>> partialResults = null;
 
                 var firstSortParameter = sortParameters.First();
-                partialResults = firstSortParameter.Catalog.SortBitPositions(result, true, firstSortParameter.Ascending).PartialSortResultsBitPositions;
+                partialResults = ((ICatalogInEngine)firstSortParameter.Catalog).SortBitPositions(result, true, firstSortParameter.Ascending).PartialSortResultsBitPositions;
 
                 for (int i = 1; i < sortParameters.Length; i++)
                     partialResults = SortBitPositionsThenByParameter(_allowUnsafe, partialResults, sortParameters[i]);
@@ -465,7 +467,7 @@ namespace SoftwareBotany.Sunlight
                 return SortBitPositionsByPrimaryKey(result.GetBitPositions(true), sortPrimaryKeyAscending.Value);
         }
 
-        private static IEnumerable<IEnumerable<int>> SortBitPositionsThenByParameter(bool allowUnsafe, IEnumerable<IEnumerable<int>> partialResults, ISortParameterInternal sortParameter)
+        private static IEnumerable<IEnumerable<int>> SortBitPositionsThenByParameter(bool allowUnsafe, IEnumerable<IEnumerable<int>> partialResults, ISortParameter sortParameter)
         {
             return partialResults.SelectMany(partialResult =>
             {
@@ -476,7 +478,7 @@ namespace SoftwareBotany.Sunlight
                 foreach (int bitPosition in partialResult)
                     partialResultVector[bitPosition] = true;
 
-                return sortParameter.Catalog.SortBitPositions(partialResultVector, true, sortParameter.Ascending).PartialSortResultsBitPositions;
+                return ((ICatalogInEngine)sortParameter.Catalog).SortBitPositions(partialResultVector, true, sortParameter.Ascending).PartialSortResultsBitPositions;
             });
         }
 

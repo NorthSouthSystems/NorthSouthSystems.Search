@@ -2,7 +2,7 @@
 
 namespace SoftwareBotany.Sunlight
 {
-    internal interface ICatalogSortResult
+    internal interface ICatalogInEngineSortResult
     {
         IEnumerable<IEnumerable<int>> PartialSortResultsBitPositions { get; }
     }

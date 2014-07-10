@@ -13,7 +13,7 @@ namespace SoftwareBotany.Sunlight
 
         private static void SortBitPositionsBase(SafetyVectorCompressionTuple safetyVectorCompression)
         {
-            Catalog<int> catalog = new Catalog<int>("SomeInt", safetyVectorCompression.AllowUnsafe, safetyVectorCompression.Compression);
+            Catalog<int> catalog = new Catalog<int>("SomeInt", true, safetyVectorCompression.AllowUnsafe, safetyVectorCompression.Compression);
             catalog.Set(0, 5, true);
             catalog.Set(1, 6, true);
             catalog.Set(2, 7, true);
@@ -49,7 +49,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void SetNull()
         {
-            Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
+            Catalog<string> catalog = new Catalog<string>("SomeString", true, false, VectorCompression.None);
             catalog.Set((string)null, 777, true);
         }
 
@@ -57,7 +57,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void SetEnumerableNull()
         {
-            Catalog<int> catalog = new Catalog<int>("SomeInt", false, VectorCompression.None);
+            Catalog<int> catalog = new Catalog<int>("SomeInt", true, false, VectorCompression.None);
             catalog.Set((int[])null, 777, true);
         }
 
@@ -65,7 +65,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void FilterExactVectorNull()
         {
-            Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
+            Catalog<string> catalog = new Catalog<string>("SomeString", true, false, VectorCompression.None);
             catalog.Filter(null, "A");
         }
 
@@ -75,7 +75,7 @@ namespace SoftwareBotany.Sunlight
         {
             Vector vector = new Vector(false, VectorCompression.Compressed);
 
-            Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
+            Catalog<string> catalog = new Catalog<string>("SomeString", true, false, VectorCompression.None);
             catalog.Filter(vector, (string)null);
         }
 
@@ -83,7 +83,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void FilterEnumerableVectorNull()
         {
-            Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
+            Catalog<string> catalog = new Catalog<string>("SomeString", true, false, VectorCompression.None);
             catalog.Filter(null, new[] { "A", "B" });
         }
 
@@ -93,7 +93,7 @@ namespace SoftwareBotany.Sunlight
         {
             Vector vector = new Vector(false, VectorCompression.Compressed);
 
-            Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
+            Catalog<string> catalog = new Catalog<string>("SomeString", true, false, VectorCompression.None);
             catalog.Filter(vector, (string[])null);
         }
 
@@ -103,7 +103,7 @@ namespace SoftwareBotany.Sunlight
         {
             Vector vector = new Vector(false, VectorCompression.Compressed);
 
-            Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
+            Catalog<string> catalog = new Catalog<string>("SomeString", true, false, VectorCompression.None);
             catalog.Filter(vector, new[] { "A", null });
         }
 
@@ -111,7 +111,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void FilterRangeVectorNull()
         {
-            Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
+            Catalog<string> catalog = new Catalog<string>("SomeString", true, false, VectorCompression.None);
             catalog.Filter(null, "A", "B");
         }
 
@@ -120,7 +120,7 @@ namespace SoftwareBotany.Sunlight
         {
             Vector vector = new Vector(false, VectorCompression.Compressed);
 
-            Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
+            Catalog<string> catalog = new Catalog<string>("SomeString", true, false, VectorCompression.None);
             catalog.Filter(vector, (string)null, "A");
             catalog.Filter(vector, "A", (string)null);
         }
@@ -131,7 +131,7 @@ namespace SoftwareBotany.Sunlight
         {
             Vector vector = new Vector(false, VectorCompression.Compressed);
 
-            Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
+            Catalog<string> catalog = new Catalog<string>("SomeString", true, false, VectorCompression.None);
             catalog.Filter(vector, (string)null, (string)null);
         }
 
@@ -141,7 +141,7 @@ namespace SoftwareBotany.Sunlight
         {
             Vector vector = new Vector(false, VectorCompression.Compressed);
 
-            Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
+            Catalog<string> catalog = new Catalog<string>("SomeString", true, false, VectorCompression.None);
             catalog.Filter(vector, "B", "A");
         }
 
@@ -149,7 +149,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void FacetVectorNull()
         {
-            Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
+            Catalog<string> catalog = new Catalog<string>("SomeString", true, false, VectorCompression.None);
             catalog.Facet(null);
         }
 
@@ -157,7 +157,7 @@ namespace SoftwareBotany.Sunlight
         [ExpectedException(typeof(ArgumentNullException))]
         public void SortBitPositionsVectorNull()
         {
-            Catalog<string> catalog = new Catalog<string>("SomeString", false, VectorCompression.None);
+            Catalog<string> catalog = new Catalog<string>("SomeString", true, false, VectorCompression.None);
             catalog.SortBitPositions(null, true, true);
         }
 

@@ -29,7 +29,7 @@ namespace SoftwareBotany.Sunlight
             Assert.AreEqual(sourceResults.Length, totalCount);
             CollectionAssert.AreEqual(sourceResults.Skip(skip).Take(take).Select(item => item.Id).ToArray(), primaryKeys);
 
-            foreach (var facetParam in query.FacetParameters)
+            foreach (var facetParam in query.FacetParametersInternal)
                 AssertFacet(sourceResults, facetParam, query.FacetShortCircuitCounting);
         }
 
@@ -37,9 +37,9 @@ namespace SoftwareBotany.Sunlight
 
         private static IEnumerable<EngineItem> SourceFilter(IEnumerable<EngineItem> source, Query<int> query)
         {
-            foreach (IFilterParameterInternal param in query.FilterParameters)
+            foreach (IFilterParameter param in query.FilterParameters)
             {
-                IFilterParameterInternal closedParam = param;
+                IFilterParameter closedParam = param;
 
                 switch (param.Catalog.Name)
                 {
@@ -63,7 +63,7 @@ namespace SoftwareBotany.Sunlight
             return source;
         }
 
-        private static bool SourceFilter(object column, IFilterParameterInternal param)
+        private static bool SourceFilter(object column, IFilterParameter param)
         {
             switch (param.ParameterType)
             {
@@ -102,7 +102,7 @@ namespace SoftwareBotany.Sunlight
                 return query.SortPrimaryKeyAscending.Value ? source.OrderBy(item => item.Id) : source.OrderByDescending(item => item.Id);
         }
 
-        private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, ISortParameterInternal param)
+        private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, ISortParameter param)
         {
             switch (param.Catalog.Name)
             {
@@ -119,7 +119,7 @@ namespace SoftwareBotany.Sunlight
             }
         }
 
-        private static IOrderedEnumerable<EngineItem> SourceSort(IOrderedEnumerable<EngineItem> source, ISortParameterInternal param)
+        private static IOrderedEnumerable<EngineItem> SourceSort(IOrderedEnumerable<EngineItem> source, ISortParameter param)
         {
             switch (param.Catalog.Name)
             {
