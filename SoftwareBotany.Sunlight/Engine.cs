@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.Contracts;
+    using System.Globalization;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     public sealed partial class Engine<TItem, TPrimaryKey> : IEngine<TPrimaryKey>, IDisposable
     {
         public Engine(bool allowUnsafe, Func<TItem, TPrimaryKey> primaryKeyExtractor)
@@ -509,5 +509,13 @@ namespace SoftwareBotany.Sunlight
         }
 
         #endregion
+    }
+
+    internal interface IEngine<TPrimaryKey>
+    {
+        bool HasCatalog(ICatalogHandle catalog);
+        ICatalogInEngine GetCatalog(string name);
+
+        TPrimaryKey[] ExecuteQuery(Query<TPrimaryKey> query, int skip, int take, out int totalCount);
     }
 }

@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+
     public static class CatalogTestExtensions
     {
         public static void Fill<TKey>(this Catalog<TKey> catalog, TKey key, int[] bitPositions, bool value)

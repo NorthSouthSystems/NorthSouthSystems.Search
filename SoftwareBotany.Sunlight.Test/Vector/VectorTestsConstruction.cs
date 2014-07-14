@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+    using System.Linq;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class VectorTestsConstruction
     {
@@ -15,7 +15,7 @@ namespace SoftwareBotany.Sunlight
             int[] fillCounts = new int[] { 0, 1, 2, 5, 10, 20, 30, 40, 50, 100, 200, 300, 400, 450, 460, 470, 480, 490, 495, 498, 499, 500 };
 
             var instructions =
-                 from allowUnsafe in new [] { false, true }
+                 from allowUnsafe in new[] { false, true }
                  from sourceCompression in (int[])Enum.GetValues(typeof(VectorCompression))
                  from resultCompression in (int[])Enum.GetValues(typeof(VectorCompression))
                  from fillMaxBitPosition in fillMaxBitPositions

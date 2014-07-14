@@ -1,8 +1,8 @@
-﻿using System;
-using System.Linq;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+    using System.Linq;
+
     internal static class EngineItemExtensions
     {
         public static FilterParameter<int> AddRandomFilterExactParameter(this Query<int> query, ICatalogHandle<int> catalog, int randomSeed, int max)

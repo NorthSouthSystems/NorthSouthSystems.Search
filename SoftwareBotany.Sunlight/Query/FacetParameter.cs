@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+
     public sealed class FacetParameter<TKey> : Parameter, IFacetParameterInternal
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {

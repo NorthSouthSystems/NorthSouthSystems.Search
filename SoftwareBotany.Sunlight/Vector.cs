@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.Contracts;
+    using System.Linq;
+
     /// <summary>
     /// Word-aligned hybrid bit vector.
     /// </summary>
@@ -612,7 +612,7 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Logical Operations
+        #region IVectorLogic
 
         public void And(Vector vector)
         {
@@ -671,5 +671,14 @@ namespace SoftwareBotany.Sunlight
         }
 
         #endregion
+    }
+
+    internal interface IVectorLogic
+    {
+        void Decompress(Word[] iWords, Word[] jWords, int jWordCountPhysical);
+        void And(Word[] iWords, ref int iWordCountPhysical, ref int iWordCountLogical, bool jIsCompressed, Word[] jWords, int jWordCountPhysical);
+        int AndPopulation(Word[] iWords, int iWordCountPhysical, bool jIsCompressed, Word[] jWords, int jWordCountPhysical);
+        bool AndPopulationAny(Word[] iWords, int iWordCountPhysical, bool jIsCompressed, Word[] jWords, int jWordCountPhysical);
+        void Or(Word[] iWords, int iWordCountPhysical, bool jIsCompressed, Word[] jWords, int jWordCountPhysical);
     }
 }

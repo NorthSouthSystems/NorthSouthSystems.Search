@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+    using System.Linq;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class EngineTests
     {
@@ -35,7 +35,7 @@ namespace SoftwareBotany.Sunlight
                 engine1.Add(new SimpleItem { Id = 43, SomeInt = 0 });
 
                 int totalCount;
-                
+
                 var query = engine1.CreateQuery();
                 query.AddAmongstPrimaryKeys(new[] { 43, 44 });
 

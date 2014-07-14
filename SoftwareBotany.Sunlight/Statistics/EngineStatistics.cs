@@ -1,7 +1,7 @@
-﻿using System.Linq;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System.Linq;
+
     public sealed partial class Engine<TItem, TPrimaryKey>
     {
         public IEngineStatistics GenerateStatistics()
