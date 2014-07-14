@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class VectorTestsAnd
     {
@@ -14,7 +14,7 @@ namespace SoftwareBotany.Sunlight
 
         private static void AndPopulationBase(SafetyVectorCompressionTuple safetyVectorCompression)
         {
-            int[] fillCounts = new [] { 0, 1, 5, 10, 20, 30, 40, 50, 100, 200, 300, 400, 450, 460, 470, 480, 490, 495, 499, 500 };
+            int[] fillCounts = new[] { 0, 1, 5, 10, 20, 30, 40, 50, 100, 200, 300, 400, 450, 460, 470, 480, 490, 495, 499, 500 };
 
             foreach (int fillCount1 in fillCounts)
             {

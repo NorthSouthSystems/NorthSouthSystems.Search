@@ -1,9 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+
     public sealed class CatalogPartialSortResult<TKey> : IEnumerable<int>
     {
         internal CatalogPartialSortResult(TKey key, IEnumerable<int> sortedBitPositions)

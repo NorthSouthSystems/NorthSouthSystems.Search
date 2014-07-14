@@ -1,9 +1,9 @@
-﻿using System;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+
     public struct FacetCategory<TKey> : IFacetCategory
-        where TKey : IEquatable<TKey>, IComparable<TKey>
+            where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal FacetCategory(TKey key, int count)
         {

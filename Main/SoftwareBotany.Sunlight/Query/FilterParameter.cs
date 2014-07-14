@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics.Contracts;
+
     public sealed class FilterParameter<TKey> : Parameter, IFilterParameter
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {

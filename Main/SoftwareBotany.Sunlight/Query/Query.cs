@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Threading;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Diagnostics.Contracts;
+    using System.Linq;
+    using System.Threading;
+
     public sealed class Query<TPrimaryKey>
     {
         internal Query(IEngine<TPrimaryKey> engine)

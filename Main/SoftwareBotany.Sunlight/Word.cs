@@ -1,9 +1,9 @@
-﻿using System;
-using System.Diagnostics.Contracts;
-using System.Globalization;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+    using System.Diagnostics.Contracts;
+    using System.Globalization;
+
     internal struct Word
     {
         public const int SIZE = 32;

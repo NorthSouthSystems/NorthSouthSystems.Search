@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     public static class VectorTestExtensions
     {
         public static void AssertWordCounts(this Vector vector, int expectedWordCountPhysical, int expectedWordCountLogical)

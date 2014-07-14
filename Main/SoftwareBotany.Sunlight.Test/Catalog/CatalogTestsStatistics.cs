@@ -1,9 +1,9 @@
-﻿using System.Linq;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System.Linq;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class CatalogTestsStatistics
     {

@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     internal static class EngineAssert
     {
         public static void ExecuteAndAssert(IEnumerable<EngineItem> source, Query<int> query, int skip, int take)

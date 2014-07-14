@@ -1,10 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+
     public sealed class CatalogSortResult<TKey> : IEnumerable<CatalogPartialSortResult<TKey>>, ICatalogInEngineSortResult
     {
         internal CatalogSortResult(IEnumerable<CatalogPartialSortResult<TKey>> partialSortResults)
@@ -23,5 +23,10 @@ namespace SoftwareBotany.Sunlight
         {
             get { return _partialSortResults.Select(partial => (IEnumerable<int>)partial); }
         }
+    }
+
+    internal interface ICatalogInEngineSortResult
+    {
+        IEnumerable<IEnumerable<int>> PartialSortResultsBitPositions { get; }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     internal class SafetyVectorCompressionTuple : Tuple<bool, VectorCompression>
     {
         private SafetyVectorCompressionTuple(bool allowUnsafe, VectorCompression compression)

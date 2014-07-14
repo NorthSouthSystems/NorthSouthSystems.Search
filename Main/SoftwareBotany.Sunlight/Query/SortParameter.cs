@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace SoftwareBotany.Sunlight
+﻿namespace SoftwareBotany.Sunlight
 {
+    using System;
+
     public sealed class SortParameter<TKey> : Parameter, ISortParameter
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
