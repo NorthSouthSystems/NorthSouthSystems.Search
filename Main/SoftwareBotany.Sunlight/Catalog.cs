@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -14,6 +15,32 @@ namespace SoftwareBotany.Sunlight
             _isOneToOne = isOneToOne;
             _allowUnsafe = allowUnsafe;
             _compression = compression;
+        }
+
+        public string Name { get { return _name; } }
+        private readonly string _name;
+
+        public bool IsOneToOne { get { return _isOneToOne; } }
+        private readonly bool _isOneToOne;
+
+        public bool AllowUnsafe { get { return _allowUnsafe; } }
+        private readonly bool _allowUnsafe;
+
+        public VectorCompression Compression { get { return _compression; } }
+        private readonly VectorCompression _compression;
+
+        private SortedSet<TKey> _keys = new SortedSet<TKey>();
+        private Dictionary<TKey, Entry> _keyToEntryMap = new Dictionary<TKey, Entry>();
+
+        // TODO : Better OOP... right now this is just serving as a mutable Tuple which is probably
+        // not the best design.
+        private class Entry
+        {
+            internal Entry(Vector vector) { Vector = vector; }
+
+            internal Vector Vector;
+            internal Vector VectorOptimized;
+            internal bool IsVectorOptimizedAlive;
         }
 
         #region Optimize
@@ -47,32 +74,6 @@ namespace SoftwareBotany.Sunlight
         }
 
         #endregion
-
-        public string Name { get { return _name; } }
-        private readonly string _name;
-
-        public bool IsOneToOne { get { return _isOneToOne; } }
-        private readonly bool _isOneToOne;
-
-        public bool AllowUnsafe { get { return _allowUnsafe; } }
-        private readonly bool _allowUnsafe;
-
-        public VectorCompression Compression { get { return _compression; } }
-        private readonly VectorCompression _compression;
-
-        private SortedSet<TKey> _keys = new SortedSet<TKey>();
-        private Dictionary<TKey, Entry> _keyToEntryMap = new Dictionary<TKey, Entry>();
-
-        // TODO : Better OOP... right now this is just serving as a mutable Tuple which is probably
-        // not the best design.
-        private class Entry
-        {
-            internal Entry(Vector vector) { Vector = vector; }
-
-            internal Vector Vector;
-            internal Vector VectorOptimized;
-            internal bool IsVectorOptimizedAlive;
-        }
 
         #region Set
 
@@ -123,6 +124,12 @@ namespace SoftwareBotany.Sunlight
 
         #region Filter
 
+        IFilterParameter ICatalogInEngine.CreateFilterParameter(object exact) { return new FilterParameter<TKey>(this, ConvertToTKey(exact)); }
+        IFilterParameter ICatalogInEngine.CreateFilterParameter(IEnumerable enumerable) { return new FilterParameter<TKey>(this, enumerable.Cast<object>().Select(ConvertToTKey)); }
+        IFilterParameter ICatalogInEngine.CreateFilterParameter(object rangeMin, object rangeMax) { return new FilterParameter<TKey>(this, ConvertToTKey(rangeMin), ConvertToTKey(rangeMax)); }
+
+        private static TKey ConvertToTKey(object obj) { return (TKey)Convert.ChangeType(obj, typeof(TKey)); }
+
         void ICatalogInEngine.FilterExact(Vector vector, object key) { Filter(vector, (TKey)key); }
 
         public void Filter(Vector vector, TKey key)
@@ -138,7 +145,7 @@ namespace SoftwareBotany.Sunlight
             FilterImpl(vector, new[] { Lookup(key) });
         }
 
-        void ICatalogInEngine.FilterEnumerable(Vector vector, object keys) { Filter(vector, (IEnumerable<TKey>)keys); }
+        void ICatalogInEngine.FilterEnumerable(Vector vector, IEnumerable keys) { Filter(vector, (IEnumerable<TKey>)keys); }
 
         public void Filter(Vector vector, IEnumerable<TKey> keys)
         {
@@ -202,7 +209,33 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
+        #region Sort
+
+        ISortParameter ICatalogInEngine.CreateSortParameter(bool ascending) { return new SortParameter<TKey>(this, ascending); }
+
+        ICatalogInEngineSortResult ICatalogInEngine.SortBitPositions(Vector vector, bool value, bool ascending) { return SortBitPositions(vector, value, ascending); }
+
+        public CatalogSortResult<TKey> SortBitPositions(Vector vector, bool value, bool ascending)
+        {
+            if (vector == null)
+                throw new ArgumentNullException("vector");
+
+            Contract.EndContractBlock();
+
+            // This uses SortedSet<T>.Reverse() and not the IEnumerable<T> extension method that suffers from greedy enumeration.
+            var keys = ascending ? _keys : _keys.Reverse();
+
+            var partialSortResults = keys.Where(key => vector.AndPopulationAny(_keyToEntryMap[key].Vector))
+                .Select(key => new CatalogPartialSortResult<TKey>(key, vector.AndFilterBitPositions(_keyToEntryMap[key].Vector, value)));
+
+            return new CatalogSortResult<TKey>(partialSortResults);
+        }
+
+        #endregion
+
         #region Facet
+
+        IFacetParameterInternal ICatalogInEngine.CreateFacetParameter() { return new FacetParameter<TKey>(this); }
 
         IFacet ICatalogInEngine.Facet(Vector vector, bool disableParallel, bool shortCircuitCounting) { return Facet(vector, disableParallel, shortCircuitCounting); }
 
@@ -223,28 +256,6 @@ namespace SoftwareBotany.Sunlight
                 : keyAndEntries.Select(keyAndEntry => new FacetCategory<TKey>(keyAndEntry.Key, vector.AndPopulation(keyAndEntry.Value.Vector)));
 
             return new Facet<TKey>(categories);
-        }
-
-        #endregion
-
-        #region Sort
-
-        ICatalogInEngineSortResult ICatalogInEngine.SortBitPositions(Vector vector, bool value, bool ascending) { return SortBitPositions(vector, value, ascending); }
-
-        public CatalogSortResult<TKey> SortBitPositions(Vector vector, bool value, bool ascending)
-        {
-            if (vector == null)
-                throw new ArgumentNullException("vector");
-
-            Contract.EndContractBlock();
-
-            // This uses SortedSet<T>.Reverse() and not the IEnumerable<T> extension method that suffers from greedy enumeration.
-            var keys = ascending ? _keys : _keys.Reverse();
-
-            var partialSortResults = keys.Where(key => vector.AndPopulationAny(_keyToEntryMap[key].Vector))
-                .Select(key => new CatalogPartialSortResult<TKey>(key, vector.AndFilterBitPositions(_keyToEntryMap[key].Vector, value)));
-
-            return new CatalogSortResult<TKey>(partialSortResults);
         }
 
         #endregion
