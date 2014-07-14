@@ -62,6 +62,11 @@ namespace SoftwareBotany.Sunlight
         private ICatalogHandle<TKey> CreateCatalogImpl<TKey>(string name, VectorCompression compression, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException("name");
+
+            Contract.EndContractBlock();
+
             Catalog<TKey> catalog;
 
             try
@@ -71,8 +76,8 @@ namespace SoftwareBotany.Sunlight
                 if (!_configuring)
                     throw new NotSupportedException("Cannot create a Catalog in an Engine that has already called Add or CreateQuery.");
 
-                if (_catalogsPlusExtractors.Any(cpe => cpe.Catalog.Name == name))
-                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "A Catalog already exists with the name : {0}.", name));
+                if (_catalogsPlusExtractors.Any(cpe => cpe.Catalog.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "A Catalog already exists with the case-insensitive name : {0}.", name));
 
                 catalog = new Catalog<TKey>(name, isOneToOne, _allowUnsafe, compression);
                 _catalogsPlusExtractors.Add(new CatalogPlusExtractor(catalog, keyOrKeysExtractor));
@@ -88,6 +93,11 @@ namespace SoftwareBotany.Sunlight
         // NOTE : No locking is necessary here because this is only called from the Query class, and in order to CreateQuery,
         // _configuring is stopped which prevents the addition of Catalogs.
         bool IEngine<TPrimaryKey>.HasCatalog(ICatalogHandle catalog) { return _catalogsPlusExtractors.Any(cpe => cpe.Catalog == catalog); }
+
+        ICatalogInEngine IEngine<TPrimaryKey>.GetCatalog(string name)
+        {
+            return _catalogsPlusExtractors.Single(cpe => cpe.Catalog.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).Catalog;
+        }
 
         #endregion
 
@@ -419,6 +429,10 @@ namespace SoftwareBotany.Sunlight
             return result;
         }
 
+        #endregion
+
+        #region Query Filter
+
         private static void FilterCatalogs(Vector result, IEnumerable<IFilterParameter> filterParameters)
         {
             foreach (IFilterParameter filterParameter in filterParameters)
@@ -444,7 +458,7 @@ namespace SoftwareBotany.Sunlight
 
         #endregion
 
-        #region Sort
+        #region Query Sort
 
         private IEnumerable<int> SortBitPositions(Vector result, ISortParameter[] sortParameters, bool? sortPrimaryKeyAscending)
         {

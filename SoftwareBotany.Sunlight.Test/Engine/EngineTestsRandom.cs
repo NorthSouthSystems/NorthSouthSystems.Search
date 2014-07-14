@@ -152,11 +152,11 @@ namespace SoftwareBotany.Sunlight
 
                         query = engine.CreateQuery();
                         query.AddRandomFilterEnumerableParameter(someIntCatalog, random.Next(), someIntMax);
-                        query.AddSortParameter(someIntCatalog, random.Next() % 2 == 0);
-                        query.AddFacetParameter(someIntCatalog);
-                        query.AddFacetParameter(someDateTimeCatalog);
-                        query.AddFacetParameter(someStringCatalog);
-                        query.AddFacetParameter(someTagsCatalog);
+                        query.AddSortParameter("SomeInt", random.Next() % 2 == 0);
+                        query.AddFacetParameter("SomeInt");
+                        query.AddFacetParameter("SomeDateTime");
+                        query.AddFacetParameter("SomeString");
+                        query.AddFacetParameter("SomeTags");
                         query.FacetDisableParallel = random.Next() % 5 == 0;
                         query.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
@@ -176,11 +176,11 @@ namespace SoftwareBotany.Sunlight
 
                         query = engine.CreateQuery();
                         query.AddRandomFilterRangeParameter(someTagsCatalog, random.Next(), someTagsMax);
-                        query.AddSortParameter(someTagsCatalog, random.Next() % 2 == 0);
-                        query.AddFacetParameter(someIntCatalog);
-                        query.AddFacetParameter(someDateTimeCatalog);
-                        query.AddFacetParameter(someStringCatalog);
-                        query.AddFacetParameter(someTagsCatalog);
+                        query.AddSortParameter("SomeTags", random.Next() % 2 == 0);
+                        query.AddFacetParameter("SomeInt");
+                        query.AddFacetParameter("SomeDateTime");
+                        query.AddFacetParameter("SomeString");
+                        query.AddFacetParameter("SomeTags");
                         query.FacetDisableParallel = random.Next() % 5 == 0;
                         query.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
@@ -206,13 +206,13 @@ namespace SoftwareBotany.Sunlight
                         query = engine.CreateQuery();
                         query.AddRandomFilterEnumerableParameter(someStringCatalog, random.Next(), someStringMax);
                         query.AddRandomFilterRangeParameter(someDateTimeCatalog, random.Next(), someDateTimeMax);
-                        query.AddSortParameter(someIntCatalog, random.Next() % 2 == 0);
-                        query.AddSortParameter(someDateTimeCatalog, random.Next() % 2 == 0);
+                        query.AddSortParameter("SomeInt", random.Next() % 2 == 0);
+                        query.AddSortParameter("SomeDateTime", random.Next() % 2 == 0);
                         query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
-                        query.AddFacetParameter(someIntCatalog);
-                        query.AddFacetParameter(someDateTimeCatalog);
-                        query.AddFacetParameter(someStringCatalog);
-                        query.AddFacetParameter(someTagsCatalog);
+                        query.AddFacetParameter("SomeInt");
+                        query.AddFacetParameter("SomeDateTime");
+                        query.AddFacetParameter("SomeString");
+                        query.AddFacetParameter("SomeTags");
                         query.FacetDisableParallel = random.Next() % 5 == 0;
                         query.FacetShortCircuitCounting = random.Next() % 5 == 0;
 
@@ -238,13 +238,13 @@ namespace SoftwareBotany.Sunlight
                         query.AddRandomFilterRangeParameter(someIntCatalog, random.Next(), someIntMax);
                         query.AddRandomFilterRangeParameter(someTagsCatalog, random.Next(), someTagsMax);
                         query.AddRandomFilterRangeParameter(someTagsCatalog, random.Next(), someTagsMax);
-                        query.AddSortParameter(someDateTimeCatalog, random.Next() % 2 == 0);
-                        query.AddSortParameter(someTagsCatalog, random.Next() % 2 == 0);
+                        query.AddSortParameter("SomeDateTime", random.Next() % 2 == 0);
+                        query.AddSortParameter("SomeTags", random.Next() % 2 == 0);
                         query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
-                        query.AddFacetParameter(someIntCatalog);
-                        query.AddFacetParameter(someDateTimeCatalog);
-                        query.AddFacetParameter(someStringCatalog);
-                        query.AddFacetParameter(someTagsCatalog);
+                        query.AddFacetParameter("SomeInt");
+                        query.AddFacetParameter("SomeDateTime");
+                        query.AddFacetParameter("SomeString");
+                        query.AddFacetParameter("SomeTags");
                         query.FacetDisableParallel = random.Next() % 5 == 0;
                         query.FacetShortCircuitCounting = random.Next() % 5 == 0;
 

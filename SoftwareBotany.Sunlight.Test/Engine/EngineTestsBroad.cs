@@ -41,9 +41,9 @@ namespace SoftwareBotany.Sunlight
                     EngineAssert.ExecuteAndAssert(items, query, 0, 10);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someIntCatalog, 0);
-                    query.AddFacetParameter(someDateTimeCatalog);
-                    query.AddFacetParameter(someStringCatalog);
+                    query.AddFilterExactParameter("SomeInt", 0);
+                    query.AddFacetParameter("SomeDateTime");
+                    query.AddFacetParameter("SomeString");
 
                     EngineAssert.ExecuteAndAssert(items, query, 1, 3);
 
@@ -55,11 +55,11 @@ namespace SoftwareBotany.Sunlight
                     EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someIntCatalog, 1);
-                    query.AddSortParameter(someIntCatalog, true);
-                    query.AddSortParameter(someStringCatalog, true);
-                    query.AddFacetParameter(someDateTimeCatalog);
-                    query.AddFacetParameter(someStringCatalog);
+                    query.AddFilterExactParameter("SomeInt", 1);
+                    query.AddSortParameter("SomeInt", true);
+                    query.AddSortParameter("SomeString", true);
+                    query.AddFacetParameter("SomeDateTime");
+                    query.AddFacetParameter("SomeString");
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
@@ -73,10 +73,10 @@ namespace SoftwareBotany.Sunlight
                     EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someIntCatalog, 1);
+                    query.AddFilterExactParameter("SomeInt", 1);
                     query.SortPrimaryKeyAscending = false;
-                    query.AddFacetParameter(someDateTimeCatalog);
-                    query.AddFacetParameter(someStringCatalog);
+                    query.AddFacetParameter("SomeDateTime");
+                    query.AddFacetParameter("SomeString");
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
@@ -89,10 +89,10 @@ namespace SoftwareBotany.Sunlight
                     EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someIntCatalog, 1);
-                    query.AddSortParameter(someStringCatalog, false);
-                    query.AddFacetParameter(someDateTimeCatalog);
-                    query.AddFacetParameter(someStringCatalog);
+                    query.AddFilterExactParameter("SomeInt", 1);
+                    query.AddSortParameter("SomeString", false);
+                    query.AddFacetParameter("SomeDateTime");
+                    query.AddFacetParameter("SomeString");
 
                     EngineAssert.ExecuteAndAssert(items, query, 1, 3);
 
@@ -104,9 +104,9 @@ namespace SoftwareBotany.Sunlight
                     EngineAssert.ExecuteAndAssert(items, query, 0, 2);
 
                     query = engine.CreateQuery();
-                    query.AddFilterRangeParameter(someStringCatalog, "2", "3");
-                    query.AddFacetParameter(someDateTimeCatalog);
-                    query.AddFacetParameter(someIntCatalog);
+                    query.AddFilterRangeParameter("SomeString", "2", "3");
+                    query.AddFacetParameter("SomeDateTime");
+                    query.AddFacetParameter("SomeInt");
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 2);
 
@@ -119,10 +119,10 @@ namespace SoftwareBotany.Sunlight
                     EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someTagsCatalog, "2");
-                    query.AddSortParameter(someIntCatalog, false);
-                    query.AddFacetParameter(someDateTimeCatalog);
-                    query.AddFacetParameter(someIntCatalog);
+                    query.AddFilterExactParameter("SomeTags", "2");
+                    query.AddSortParameter("SomeInt", false);
+                    query.AddFacetParameter("SomeDateTime");
+                    query.AddFacetParameter("SomeInt");
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
@@ -135,10 +135,10 @@ namespace SoftwareBotany.Sunlight
                     EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
                     query = engine.CreateQuery();
-                    query.AddFilterExactParameter(someStringCatalog, "2");
-                    query.AddSortParameter(someTagsCatalog, false);
-                    query.AddFacetParameter(someDateTimeCatalog);
-                    query.AddFacetParameter(someIntCatalog);
+                    query.AddFilterExactParameter("SomeString", "2");
+                    query.AddSortParameter("SomeTags", false);
+                    query.AddFacetParameter("SomeDateTime");
+                    query.AddFacetParameter("SomeInt");
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 

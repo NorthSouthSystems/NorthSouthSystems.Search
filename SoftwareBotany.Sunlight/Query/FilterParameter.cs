@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 
@@ -59,7 +60,7 @@ namespace SoftwareBotany.Sunlight
         #region IFilterParameter
 
         object IFilterParameter.Exact { get { return Exact; } }
-        object IFilterParameter.Enumerable { get { return Enumerable; } }
+        IEnumerable IFilterParameter.Enumerable { get { return Enumerable; } }
         object IFilterParameter.RangeMin { get { return RangeMin; } }
         object IFilterParameter.RangeMax { get { return RangeMax; } }
 
@@ -70,7 +71,7 @@ namespace SoftwareBotany.Sunlight
     {
         FilterParameterType ParameterType { get; }
         object Exact { get; }
-        object Enumerable { get; }
+        IEnumerable Enumerable { get; }
         object RangeMin { get; }
         object RangeMax { get; }
     }
