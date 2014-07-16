@@ -69,7 +69,7 @@
     <Compile Include="Engine\EngineTestsRandom.cs" />
     <Compile Include="Engine\EngineAssert.cs" />
     <Compile Include="Engine\EngineItem.cs" />
-    <Compile Include="Engine\EngineItemExtensions.cs" />
+    <Compile Include="Engine\EngineExtensions.cs" />
     <Compile Include="Vector\VectorTestsStatistics.cs" />
     <Compile Include="Vector\VectorTestsOr.cs" />
     <Compile Include="Vector\VectorTestExtensions.cs" />

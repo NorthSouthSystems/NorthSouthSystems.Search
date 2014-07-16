@@ -12,36 +12,31 @@
         [TestMethod]
         public void FilterParameterRangeArgumentNullOK()
         {
-            Engine<EngineItem, int> engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var engine = new Engine<EngineItem, int>(false, item => item.Id);
             var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
-            FilterParameter<string> someStringParameter = engine.CreateQuery()
-                .AddFilterRangeParameter(someStringCatalog, null, "A");
-
-            someStringParameter = engine.CreateQuery()
-                .AddFilterRangeParameter(someStringCatalog, "A", null);
+            var someStringParameter = FilterParameter.Create(someStringCatalog, null, "A");
+            someStringParameter = FilterParameter.Create(someStringCatalog, "A", null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void FilterParameterRangeArgumentNull()
         {
-            Engine<EngineItem, int> engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var engine = new Engine<EngineItem, int>(false, item => item.Id);
             var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
-            FilterParameter<string> someStringParameter = engine.CreateQuery()
-                .AddFilterRangeParameter(someStringCatalog, null, null);
+            var someStringParameter = FilterParameter.Create(someStringCatalog, null, null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void FilterParameterRangeArgumentOutOfRange()
         {
-            Engine<EngineItem, int> engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var engine = new Engine<EngineItem, int>(false, item => item.Id);
             var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
-            FilterParameter<string> someStringParameter = engine.CreateQuery()
-                .AddFilterRangeParameter(someStringCatalog, "B", "A");
+            var someStringParameter = FilterParameter.Create(someStringCatalog, "B", "A");
         }
 
         #endregion

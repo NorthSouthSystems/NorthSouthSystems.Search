@@ -8,7 +8,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public sealed partial class Engine<TItem, TPrimaryKey> : IEngine<TPrimaryKey>, IDisposable
+    public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
     {
         public Engine(bool allowUnsafe, Func<TItem, TPrimaryKey> primaryKeyExtractor)
         {
@@ -90,11 +90,13 @@
             return catalog;
         }
 
-        // NOTE : No locking is necessary here because this is only called from the Query class, and in order to CreateQuery,
+        // NOTE : No locking is necessary for the following Catalog methods because they are only called from the Query class, and in order to CreateQuery,
         // _configuring is stopped which prevents the addition of Catalogs.
-        bool IEngine<TPrimaryKey>.HasCatalog(ICatalogHandle catalog) { return _catalogsPlusExtractors.Any(cpe => cpe.Catalog == catalog); }
+        internal bool HasCatalog(ICatalogHandle catalog) { return _catalogsPlusExtractors.Any(cpe => cpe.Catalog == catalog); }
 
-        ICatalogInEngine IEngine<TPrimaryKey>.GetCatalog(string name)
+        internal IEnumerable<ICatalogInEngine> GetCatalogs() { return _catalogsPlusExtractors.Select(cpe => cpe.Catalog); }
+
+        internal ICatalogInEngine GetCatalog(string name)
         {
             return _catalogsPlusExtractors.Single(cpe => cpe.Catalog.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).Catalog;
         }
@@ -346,7 +348,7 @@
 
         #region Query
 
-        public Query<TPrimaryKey> CreateQuery()
+        public Query<TItem, TPrimaryKey> CreateQuery()
         {
             if (_configuring)
             {
@@ -361,10 +363,10 @@
                 }
             }
 
-            return new Query<TPrimaryKey>(this);
+            return new Query<TItem, TPrimaryKey>(this);
         }
 
-        TPrimaryKey[] IEngine<TPrimaryKey>.ExecuteQuery(Query<TPrimaryKey> query, int skip, int take, out int totalCount)
+        internal TPrimaryKey[] ExecuteQuery(Query<TItem, TPrimaryKey> query, int skip, int take, out int totalCount)
         {
             try
             {
@@ -509,13 +511,5 @@
         }
 
         #endregion
-    }
-
-    internal interface IEngine<TPrimaryKey>
-    {
-        bool HasCatalog(ICatalogHandle catalog);
-        ICatalogInEngine GetCatalog(string name);
-
-        TPrimaryKey[] ExecuteQuery(Query<TPrimaryKey> query, int skip, int take, out int totalCount);
     }
 }

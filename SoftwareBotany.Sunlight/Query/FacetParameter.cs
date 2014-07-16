@@ -2,6 +2,20 @@
 {
     using System;
 
+    public static class FacetParameter
+    {
+        public static FacetParameter<TKey> Create<TKey>(ICatalogHandle<TKey> catalog)
+            where TKey : IEquatable<TKey>, IComparable<TKey>
+        {
+            return new FacetParameter<TKey>(catalog);
+        }
+
+        public static IFacetParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName)
+        {
+            return ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFacetParameter());
+        }
+    }
+
     public sealed class FacetParameter<TKey> : Parameter, IFacetParameterInternal
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {

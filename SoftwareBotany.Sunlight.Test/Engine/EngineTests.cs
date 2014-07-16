@@ -34,16 +34,14 @@
 
                 engine1.Add(new SimpleItem { Id = 43, SomeInt = 0 });
 
-                int totalCount;
-
                 var query = engine1.CreateQuery();
-                query.AddAmongstPrimaryKeys(new[] { 43, 44 });
+                query.Amongst(new[] { 43, 44 });
 
-                int[] primaryKeys = query.Execute(0, 10, out totalCount);
+                query.Execute(0, 10);
 
-                Assert.AreEqual(1, totalCount);
-                Assert.AreEqual(1, primaryKeys.Length);
-                Assert.AreEqual(43, primaryKeys[0]);
+                Assert.AreEqual(1, query.ResultTotalCount);
+                Assert.AreEqual(1, query.ResultPrimaryKeys.Length);
+                Assert.AreEqual(43, query.ResultPrimaryKeys[0]);
             }
         }
 

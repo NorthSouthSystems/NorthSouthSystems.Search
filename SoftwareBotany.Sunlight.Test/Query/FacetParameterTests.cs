@@ -13,11 +13,10 @@
         [ExpectedException(typeof(NotSupportedException))]
         public void FacetQueryNotExecuted()
         {
-            Engine<EngineItem, int> engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var engine = new Engine<EngineItem, int>(false, item => item.Id);
             var someIntCatalog = engine.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-            FacetParameter<int> someIntFacet = engine.CreateQuery()
-                .AddFacetParameter(someIntCatalog);
+            var someIntFacet = FacetParameter.Create(someIntCatalog);
 
             var facet = someIntFacet.Facet;
         }

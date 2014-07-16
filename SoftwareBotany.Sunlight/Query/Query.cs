@@ -1,24 +1,18 @@
 ﻿namespace SoftwareBotany.Sunlight
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.Contracts;
     using System.Linq;
-    using System.Threading;
 
-    public sealed class Query<TPrimaryKey>
+    public sealed class Query<TItem, TPrimaryKey>
     {
-        internal Query(IEngine<TPrimaryKey> engine)
+        internal Query(Engine<TItem, TPrimaryKey> engine)
         {
             _engine = engine;
         }
 
-        private readonly IEngine<TPrimaryKey> _engine;
-        private int _executed = 0;
-
-        public TimeSpan? ExecuteElapsedTime { get; private set; }
+        private readonly Engine<TItem, TPrimaryKey> _engine;
 
         private void ThrowIfEngineMismatch(ICatalogHandle catalog)
         {
@@ -29,16 +23,18 @@
         #region Amongst
 
         public IEnumerable<TPrimaryKey> AmongstPrimaryKeys { get { return _amongstPrimaryKeys; } }
-        private HashSet<TPrimaryKey> _amongstPrimaryKeys = new HashSet<TPrimaryKey>();
+        private readonly List<TPrimaryKey> _amongstPrimaryKeys = new List<TPrimaryKey>();
 
-        public void AddAmongstPrimaryKeys(IEnumerable<TPrimaryKey> primaryKeys)
+        public Query<TItem, TPrimaryKey> Amongst(IEnumerable<TPrimaryKey> primaryKeys)
         {
-            if (primaryKeys == null)
-                throw new ArgumentNullException("primaryKeys");
+            ThrowIfExecuted();
 
-            Contract.EndContractBlock();
+            if (_amongstPrimaryKeys.Any())
+                throw new NotSupportedException("Amongst may only be called once.");
 
-            _amongstPrimaryKeys.UnionWith(primaryKeys);
+            _amongstPrimaryKeys.AddRange(primaryKeys ?? Enumerable.Empty<TPrimaryKey>());
+
+            return this;
         }
 
         #endregion
@@ -48,90 +44,24 @@
         public IEnumerable<IFilterParameter> FilterParameters { get { return _filterParameters; } }
         private readonly List<IFilterParameter> _filterParameters = new List<IFilterParameter>();
 
-        public FilterParameter<TKey> AddFilterExactParameter<TKey>(ICatalogHandle<TKey> catalog, TKey exact)
-            where TKey : IEquatable<TKey>, IComparable<TKey>
+        public Query<TItem, TPrimaryKey> Filter(params IFilterParameter[] filterParameters)
         {
-            ThrowIfFilterInvalid(catalog);
+            ThrowIfExecuted();
 
-            var filterParameter = new FilterParameter<TKey>(catalog, exact);
-            _filterParameters.Add(filterParameter);
+            if (_filterParameters.Any())
+                throw new NotSupportedException("Filter may only be called once.");
 
-            return filterParameter;
-        }
+            foreach (var filterParameter in (filterParameters ?? Enumerable.Empty<IFilterParameter>()).Where(p => p != null))
+            {
+                ThrowIfEngineMismatch(filterParameter.Catalog);
 
-        public IFilterParameter AddFilterExactParameter(string name, object exact)
-        {
-            var catalog = _engine.GetCatalog(name);
+                if (filterParameter.Catalog.IsOneToOne && _filterParameters.Any(parameter => parameter.Catalog == filterParameter.Catalog))
+                    throw new NotSupportedException("Can only add 1 Filter Parameter per one-to-one Catalog.");
 
-            ThrowIfFilterInvalid(catalog);
+                _filterParameters.Add(filterParameter);
+            }
 
-            var filterParameter = catalog.CreateFilterParameter(exact);
-            _filterParameters.Add(filterParameter);
-
-            return filterParameter;
-        }
-
-        public FilterParameter<TKey> AddFilterEnumerableParameter<TKey>(ICatalogHandle<TKey> catalog, IEnumerable<TKey> enumerable)
-            where TKey : IEquatable<TKey>, IComparable<TKey>
-        {
-            ThrowIfFilterInvalid(catalog);
-
-            var filterParameter = new FilterParameter<TKey>(catalog, enumerable);
-            _filterParameters.Add(filterParameter);
-
-            return filterParameter;
-        }
-
-        public IFilterParameter AddFilterEnumerableParameter(string name, IEnumerable enumerable)
-        {
-            var catalog = _engine.GetCatalog(name);
-
-            ThrowIfFilterInvalid(catalog);
-
-            var filterParameter = catalog.CreateFilterParameter(enumerable);
-            _filterParameters.Add(filterParameter);
-
-            return filterParameter;
-        }
-
-        public FilterParameter<TKey> AddFilterRangeParameter<TKey>(ICatalogHandle<TKey> catalog, TKey rangeMin, TKey rangeMax)
-            where TKey : IEquatable<TKey>, IComparable<TKey>
-        {
-            ThrowIfFilterInvalid(catalog);
-
-            var filterParameter = new FilterParameter<TKey>(catalog, rangeMin, rangeMax);
-            _filterParameters.Add(filterParameter);
-
-            return filterParameter;
-        }
-
-        public IFilterParameter AddFilterRangeParameter(string name, object rangeMin, object rangeMax)
-        {
-            var catalog = _engine.GetCatalog(name);
-
-            ThrowIfFilterInvalid(catalog);
-
-            var filterParameter = catalog.CreateFilterParameter(rangeMin, rangeMax);
-            _filterParameters.Add(filterParameter);
-
-            return filterParameter;
-        }
-
-        private void ThrowIfFilterInvalid(ICatalogHandle catalog)
-        {
-            if (catalog == null)
-                throw new ArgumentNullException("catalog");
-
-            Contract.EndContractBlock();
-
-            ThrowIfEngineMismatch(catalog);
-            ThrowIfFilterDuplicate(catalog);
-        }
-
-        private void ThrowIfFilterDuplicate(ICatalogHandle catalog)
-        {
-            if (catalog.IsOneToOne && _filterParameters.Any(parameter => parameter.Catalog == catalog))
-                throw new NotSupportedException("Can only add 1 Filter Parameter per one-to-one Catalog.");
+            return this;
         }
 
         #endregion
@@ -141,133 +71,163 @@
         public IEnumerable<ISortParameter> SortParameters { get { return _sortParameters; } }
         private readonly List<ISortParameter> _sortParameters = new List<ISortParameter>();
 
-        public SortParameter<TKey> AddSortParameter<TKey>(ICatalogHandle<TKey> catalog, bool ascending)
-            where TKey : IEquatable<TKey>, IComparable<TKey>
+        public Query<TItem, TPrimaryKey> Sort(params ISortParameter[] sortParameters)
         {
-            ThrowIfSortInvalid(catalog);
+            ThrowIfExecuted();
 
-            var sortParameter = new SortParameter<TKey>(catalog, ascending);
-            _sortParameters.Add(sortParameter);
+            if (_sortParameters.Any())
+                throw new NotSupportedException("Sort may only be called once.");
 
-            return sortParameter;
-        }
-
-        public ISortParameter AddSortParameter(string name, bool ascending)
-        {
-            var catalog = _engine.GetCatalog(name);
-
-            ThrowIfSortInvalid(catalog);
-
-            var sortParameter = catalog.CreateSortParameter(ascending);
-            _sortParameters.Add(sortParameter);
-
-            return sortParameter;
-        }
-
-        private bool? _sortPrimaryKeyAscending;
-
-        public bool? SortPrimaryKeyAscending
-        {
-            get { return _sortPrimaryKeyAscending; }
-            set
-            {
-                ThrowIfSortPrimaryKeyExists();
-
-                _sortPrimaryKeyAscending = value;
-            }
-        }
-
-        private void ThrowIfSortInvalid(ICatalogHandle catalog)
-        {
-            if (catalog == null)
-                throw new ArgumentNullException("catalog");
-
-            Contract.EndContractBlock();
-
-            ThrowIfEngineMismatch(catalog);
-            ThrowIfSortPrimaryKeyExists();
-            ThrowIfSortDuplicate(catalog);
-        }
-
-        private void ThrowIfSortPrimaryKeyExists()
-        {
             if (SortPrimaryKeyAscending.HasValue)
-                throw new NotSupportedException("Cannot modify Sort Parameters after a Sort Primary Key has been set.");
+                throw new NotSupportedException("Sort must be called before SortPrimaryKey.");
+
+            foreach (var sortParameter in (sortParameters ?? Enumerable.Empty<ISortParameter>()).Where(p => p != null))
+            {
+                ThrowIfEngineMismatch(sortParameter.Catalog);
+
+                if (_sortParameters.Any(parameter => parameter.Catalog == sortParameter.Catalog))
+                    throw new NotSupportedException("Can only add 1 Sort Parameter per Catalog.");
+
+                _sortParameters.Add(sortParameter);
+            }
+
+            return this;
         }
 
-        private void ThrowIfSortDuplicate(ICatalogHandle catalog)
+        public bool? SortPrimaryKeyAscending { get; private set; }
+
+        public Query<TItem, TPrimaryKey> SortPrimaryKey(bool ascending)
         {
-            if (_sortParameters.Any(parameter => parameter.Catalog == catalog))
-                throw new NotSupportedException("Can only add 1 Sort Parameter per Catalog.");
+            ThrowIfExecuted();
+
+            if (SortPrimaryKeyAscending.HasValue)
+                throw new NotSupportedException("SortPrimaryKey may only be called once.");
+
+            SortPrimaryKeyAscending = ascending;
+
+            return this;
         }
 
         #endregion
 
         #region Facet
 
-        public bool FacetDisableParallel { get; set; }
-        public bool FacetShortCircuitCounting { get; set; }
-
         public IEnumerable<IFacetParameter> FacetParameters { get { return _facetParameters; } }
         internal IEnumerable<IFacetParameterInternal> FacetParametersInternal { get { return _facetParameters; } }
         private readonly List<IFacetParameterInternal> _facetParameters = new List<IFacetParameterInternal>();
 
-        public FacetParameter<TKey> AddFacetParameter<TKey>(ICatalogHandle<TKey> catalog)
-            where TKey : IEquatable<TKey>, IComparable<TKey>
+        public Query<TItem, TPrimaryKey> FacetAll()
         {
-            ThrowIfFacetInvalid(catalog);
+            var facetParameters = _engine.GetCatalogs()
+                .Select(catalog => (IFacetParameter)catalog.CreateFacetParameter())
+                .ToArray();
 
-            var facetParameter = new FacetParameter<TKey>(catalog);
-            _facetParameters.Add(facetParameter);
-
-            return facetParameter;
+            return Facet(facetParameters);
         }
 
-        public IFacetParameter AddFacetParameter(string name)
+        public Query<TItem, TPrimaryKey> Facet(params IFacetParameter[] facetParameters)
         {
-            var catalog = _engine.GetCatalog(name);
+            ThrowIfExecuted();
 
-            ThrowIfFacetInvalid(catalog);
+            if (_facetParameters.Any())
+                throw new NotSupportedException("Facet may only be called once.");
 
-            var facetParameter = catalog.CreateFacetParameter();
-            _facetParameters.Add(facetParameter);
+            foreach (var facetParameter in (facetParameters ?? Enumerable.Empty<IFacetParameter>()).Where(p => p != null))
+            {
+                ThrowIfEngineMismatch(facetParameter.Catalog);
 
-            return facetParameter;
+                if (_facetParameters.Any(parameter => parameter.Catalog == facetParameter.Catalog))
+                    throw new NotSupportedException("Can only add 1 Facet Parameter per Catalog.");
+
+                _facetParameters.Add((IFacetParameterInternal)facetParameter);
+            }
+
+            return this;
         }
 
-        private void ThrowIfFacetInvalid(ICatalogHandle catalog)
+        public bool FacetDisableParallel { get; private set; }
+        public bool FacetShortCircuitCounting { get; private set; }
+
+        public Query<TItem, TPrimaryKey> WithFacetOptions(bool facetDisableParallel = false, bool facetShortCircuitCounting = false)
         {
-            if (catalog == null)
-                throw new ArgumentNullException("catalog");
+            ThrowIfExecuted();
 
-            Contract.EndContractBlock();
+            FacetDisableParallel = facetDisableParallel;
+            FacetShortCircuitCounting = facetShortCircuitCounting;
 
-            ThrowIfEngineMismatch(catalog);
-            ThrowIfFacetDuplicate(catalog);
-        }
-
-        private void ThrowIfFacetDuplicate(ICatalogHandle catalog)
-        {
-            if (_facetParameters.Any(parameter => parameter.Catalog == catalog))
-                throw new NotSupportedException("Can only add 1 Facet Parameter per Catalog.");
+            return this;
         }
 
         #endregion
 
-        public TPrimaryKey[] Execute(int skip, int take, out int totalCount)
+        #region Execution
+
+        public bool Executed { get; private set; }
+
+        private void ThrowIfExecuted()
         {
-            if (Interlocked.CompareExchange(ref _executed, 1, 0) > 0)
-                throw new NotSupportedException("Query already executed.");
+            if (Executed)
+                throw new NotSupportedException("Query has already been executed.");
+        }
+
+        private void ThrowIfNotExecuted()
+        {
+            if (!Executed)
+                throw new NotSupportedException("Query has not yet been executed.");
+        }
+
+        public TPrimaryKey[] ResultPrimaryKeys
+        {
+            get
+            {
+                ThrowIfNotExecuted();
+
+                return _resultPrimaryKeys;
+            }
+        }
+        private TPrimaryKey[] _resultPrimaryKeys;
+
+        public int ResultTotalCount
+        {
+            get
+            {
+                ThrowIfNotExecuted();
+
+                return _resultTotalCount;
+            }
+        }
+        private int _resultTotalCount;
+
+        public TimeSpan ResultElapsedTime
+        {
+            get
+            {
+                ThrowIfNotExecuted();
+
+                return _resultElapsedTime;
+            }
+        }
+        private TimeSpan _resultElapsedTime;
+
+        public Query<TItem, TPrimaryKey> Execute(int skip, int take)
+        {
+            ThrowIfExecuted();
+
+            Executed = true;
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
-            TPrimaryKey[] results = _engine.ExecuteQuery(this, skip, take, out totalCount);
+            int totalCount;
+            _resultPrimaryKeys = _engine.ExecuteQuery(this, skip, take, out totalCount);
+            _resultTotalCount = totalCount;
 
             watch.Stop();
-            ExecuteElapsedTime = watch.Elapsed;
+            _resultElapsedTime = watch.Elapsed;
 
-            return results;
+            return this;
         }
+
+        #endregion
     }
 }

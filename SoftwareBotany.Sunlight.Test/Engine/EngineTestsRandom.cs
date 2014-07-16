@@ -134,119 +134,87 @@
 
                 for (int i = 0; i < 3; i++)
                 {
-                    Query<int> query = null;
+                    Query<EngineItem, int> query = null;
 
                     if (simple)
                     {
-                        query = engine.CreateQuery();
-                        query.AddRandomFilterExactParameter(someIntCatalog, random.Next(), someIntMax);
-                        query.AddSortParameter(someStringCatalog, random.Next() % 2 == 0);
-                        query.AddFacetParameter(someIntCatalog);
-                        query.AddFacetParameter(someDateTimeCatalog);
-                        query.AddFacetParameter(someStringCatalog);
-                        query.AddFacetParameter(someTagsCatalog);
-                        query.FacetDisableParallel = random.Next() % 5 == 0;
-                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery()
+                            .Filter(engine.CreateRandomFilterExactParameter(someIntCatalog, random, someIntMax))
+                            .Sort(SortParameter.Create(someStringCatalog, random.Next() % 2 == 0))
+                            .FacetAll()
+                            .WithFacetOptions(random.Next() % 5 == 0, random.Next() % 5 == 0);
 
                         EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
-                        query = engine.CreateQuery();
-                        query.AddRandomFilterEnumerableParameter(someIntCatalog, random.Next(), someIntMax);
-                        query.AddSortParameter("SomeInt", random.Next() % 2 == 0);
-                        query.AddFacetParameter("SomeInt");
-                        query.AddFacetParameter("SomeDateTime");
-                        query.AddFacetParameter("SomeString");
-                        query.AddFacetParameter("SomeTags");
-                        query.FacetDisableParallel = random.Next() % 5 == 0;
-                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery()
+                            .Filter(engine.CreateRandomFilterEnumerableParameter(someIntCatalog, random, someIntMax))
+                            .Sort(SortParameter.Create(engine, "SomeInt", random.Next() % 2 == 0))
+                            .FacetAll()
+                            .WithFacetOptions(random.Next() % 5 == 0, random.Next() % 5 == 0);
 
                         EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
-                        query = engine.CreateQuery();
-                        query.AddRandomFilterRangeParameter(someIntCatalog, random.Next(), someIntMax);
-                        query.AddSortParameter(someDateTimeCatalog, random.Next() % 2 == 0);
-                        query.AddFacetParameter(someIntCatalog);
-                        query.AddFacetParameter(someDateTimeCatalog);
-                        query.AddFacetParameter(someStringCatalog);
-                        query.AddFacetParameter(someTagsCatalog);
-                        query.FacetDisableParallel = random.Next() % 5 == 0;
-                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery()
+                            .Filter(engine.CreateRandomFilterRangeParameter(someIntCatalog, random, someIntMax))
+                            .Sort(SortParameter.Create(someDateTimeCatalog, random.Next() % 2 == 0))
+                            .FacetAll()
+                            .WithFacetOptions(random.Next() % 5 == 0, random.Next() % 5 == 0);
 
                         EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
-                        query = engine.CreateQuery();
-                        query.AddRandomFilterRangeParameter(someTagsCatalog, random.Next(), someTagsMax);
-                        query.AddSortParameter("SomeTags", random.Next() % 2 == 0);
-                        query.AddFacetParameter("SomeInt");
-                        query.AddFacetParameter("SomeDateTime");
-                        query.AddFacetParameter("SomeString");
-                        query.AddFacetParameter("SomeTags");
-                        query.FacetDisableParallel = random.Next() % 5 == 0;
-                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery()
+                            .Filter(engine.CreateRandomFilterRangeParameter(someTagsCatalog, random, someTagsMax))
+                            .Sort(SortParameter.Create(engine, "SomeTags", random.Next() % 2 == 0))
+                            .FacetAll()
+                            .WithFacetOptions(random.Next() % 5 == 0, random.Next() % 5 == 0);
 
                         EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
                     }
                     else
                     {
-                        query = engine.CreateQuery();
-                        query.AddRandomFilterExactParameter(someStringCatalog, random.Next(), someStringMax);
-                        query.AddRandomFilterRangeParameter(someIntCatalog, random.Next(), someIntMax);
-                        query.AddSortParameter(someDateTimeCatalog, random.Next() % 2 == 0);
-                        query.AddSortParameter(someIntCatalog, random.Next() % 2 == 0);
-                        query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
-                        query.AddFacetParameter(someIntCatalog);
-                        query.AddFacetParameter(someDateTimeCatalog);
-                        query.AddFacetParameter(someStringCatalog);
-                        query.AddFacetParameter(someTagsCatalog);
-                        query.FacetDisableParallel = random.Next() % 5 == 0;
-                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery()
+                            .Filter(engine.CreateRandomFilterExactParameter(someStringCatalog, random, someStringMax),
+                                engine.CreateRandomFilterRangeParameter(someIntCatalog, random, someIntMax))
+                            .Sort(SortParameter.Create(someDateTimeCatalog, random.Next() % 2 == 0),
+                                SortParameter.Create(someIntCatalog, random.Next() % 2 == 0))
+                            .SortPrimaryKey(random.Next() % 2 == 0)
+                            .FacetAll()
+                            .WithFacetOptions(random.Next() % 5 == 0, random.Next() % 5 == 0);
 
                         EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
-                        query = engine.CreateQuery();
-                        query.AddRandomFilterEnumerableParameter(someStringCatalog, random.Next(), someStringMax);
-                        query.AddRandomFilterRangeParameter(someDateTimeCatalog, random.Next(), someDateTimeMax);
-                        query.AddSortParameter("SomeInt", random.Next() % 2 == 0);
-                        query.AddSortParameter("SomeDateTime", random.Next() % 2 == 0);
-                        query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
-                        query.AddFacetParameter("SomeInt");
-                        query.AddFacetParameter("SomeDateTime");
-                        query.AddFacetParameter("SomeString");
-                        query.AddFacetParameter("SomeTags");
-                        query.FacetDisableParallel = random.Next() % 5 == 0;
-                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery()
+                            .Filter(engine.CreateRandomFilterEnumerableParameter(someStringCatalog, random, someStringMax),
+                                engine.CreateRandomFilterRangeParameter(someDateTimeCatalog, random, someDateTimeMax))
+                            .Sort(SortParameter.Create(engine, "SomeInt", random.Next() % 2 == 0),
+                                SortParameter.Create(engine, "SomeDateTime", random.Next() % 2 == 0))
+                            .SortPrimaryKey(random.Next() % 2 == 0)
+                            .FacetAll()
+                            .WithFacetOptions(random.Next() % 5 == 0, random.Next() % 5 == 0);
 
                         EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
-                        query = engine.CreateQuery();
-                        query.AddAmongstPrimaryKeys(items.Take((items.Length / 2) + random.Next(items.Length / 2)).Select(item => item.Id));
-                        query.AddRandomFilterRangeParameter(someDateTimeCatalog, random.Next(), someDateTimeMax);
-                        query.AddRandomFilterRangeParameter(someIntCatalog, random.Next(), someIntMax);
-                        query.AddSortParameter(someStringCatalog, random.Next() % 2 == 0);
-                        query.AddSortParameter(someDateTimeCatalog, random.Next() % 2 == 0);
-                        query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
-                        query.AddFacetParameter(someIntCatalog);
-                        query.AddFacetParameter(someDateTimeCatalog);
-                        query.AddFacetParameter(someStringCatalog);
-                        query.AddFacetParameter(someTagsCatalog);
-                        query.FacetDisableParallel = random.Next() % 5 == 0;
-                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery()
+                            .Amongst(items.Take((items.Length / 2) + random.Next(items.Length / 2)).Select(item => item.Id))
+                            .Filter(engine.CreateRandomFilterRangeParameter(someDateTimeCatalog, random, someDateTimeMax),
+                                engine.CreateRandomFilterRangeParameter(someIntCatalog, random, someIntMax))
+                            .Sort(SortParameter.Create(someStringCatalog, random.Next() % 2 == 0),
+                                SortParameter.Create(someDateTimeCatalog, random.Next() % 2 == 0))
+                            .SortPrimaryKey(random.Next() % 2 == 0)
+                            .FacetAll()
+                            .WithFacetOptions(random.Next() % 5 == 0, random.Next() % 5 == 0);
 
                         EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
-                        query = engine.CreateQuery();
-                        query.AddRandomFilterRangeParameter(someIntCatalog, random.Next(), someIntMax);
-                        query.AddRandomFilterRangeParameter(someTagsCatalog, random.Next(), someTagsMax);
-                        query.AddRandomFilterRangeParameter(someTagsCatalog, random.Next(), someTagsMax);
-                        query.AddSortParameter("SomeDateTime", random.Next() % 2 == 0);
-                        query.AddSortParameter("SomeTags", random.Next() % 2 == 0);
-                        query.SortPrimaryKeyAscending = (random.Next() % 2 == 0);
-                        query.AddFacetParameter("SomeInt");
-                        query.AddFacetParameter("SomeDateTime");
-                        query.AddFacetParameter("SomeString");
-                        query.AddFacetParameter("SomeTags");
-                        query.FacetDisableParallel = random.Next() % 5 == 0;
-                        query.FacetShortCircuitCounting = random.Next() % 5 == 0;
+                        query = engine.CreateQuery()
+                            .Filter(engine.CreateRandomFilterRangeParameter(someIntCatalog, random, someIntMax),
+                                engine.CreateRandomFilterRangeParameter(someTagsCatalog, random, someTagsMax),
+                                engine.CreateRandomFilterRangeParameter(someTagsCatalog, random, someTagsMax))
+                            .Sort(SortParameter.Create(engine, "SomeDateTime", random.Next() % 2 == 0),
+                                SortParameter.Create(engine, "SomeTags", random.Next() % 2 == 0))
+                             .SortPrimaryKey(random.Next() % 2 == 0)
+                            .FacetAll()
+                            .WithFacetOptions(random.Next() % 5 == 0, random.Next() % 5 == 0);
 
                         EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
                     }
