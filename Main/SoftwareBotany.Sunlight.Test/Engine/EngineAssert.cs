@@ -9,10 +9,9 @@
 
     internal static class EngineAssert
     {
-        public static void ExecuteAndAssert(IEnumerable<EngineItem> source, Query<int> query, int skip, int take)
+        public static void ExecuteAndAssert(IEnumerable<EngineItem> source, Query<EngineItem, int> query, int skip, int take)
         {
-            int totalCount;
-            int[] primaryKeys = query.Execute(skip, take, out totalCount);
+            query.Execute(skip, take);
 
             HashSet<int> amongstPrimaryKeys = new HashSet<int>(query.AmongstPrimaryKeys);
 
@@ -26,8 +25,8 @@
 
             EngineItem[] sourceResults = source.ToArray();
 
-            Assert.AreEqual(sourceResults.Length, totalCount);
-            CollectionAssert.AreEqual(sourceResults.Skip(skip).Take(take).Select(item => item.Id).ToArray(), primaryKeys);
+            Assert.AreEqual(sourceResults.Length, query.ResultTotalCount);
+            CollectionAssert.AreEqual(sourceResults.Skip(skip).Take(take).Select(item => item.Id).ToArray(), query.ResultPrimaryKeys);
 
             foreach (var facetParam in query.FacetParametersInternal)
                 AssertFacet(sourceResults, facetParam, query.FacetShortCircuitCounting);
@@ -35,7 +34,7 @@
 
         #region Filter
 
-        private static IEnumerable<EngineItem> SourceFilter(IEnumerable<EngineItem> source, Query<int> query)
+        private static IEnumerable<EngineItem> SourceFilter(IEnumerable<EngineItem> source, Query<EngineItem, int> query)
         {
             foreach (IFilterParameter param in query.FilterParameters)
             {
@@ -82,7 +81,7 @@
 
         #region Sort
 
-        private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, Query<int> query)
+        private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, Query<EngineItem, int> query)
         {
             IOrderedEnumerable<EngineItem> sortedSource;
 

@@ -2,6 +2,20 @@
 {
     using System;
 
+    public static class SortParameter
+    {
+        public static SortParameter<TKey> Create<TKey>(ICatalogHandle<TKey> catalog, bool ascending)
+            where TKey : IEquatable<TKey>, IComparable<TKey>
+        {
+            return new SortParameter<TKey>(catalog, ascending);
+        }
+
+        public static ISortParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, bool ascending)
+        {
+            return ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateSortParameter(ascending));
+        }
+    }
+
     public sealed class SortParameter<TKey> : Parameter, ISortParameter
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {

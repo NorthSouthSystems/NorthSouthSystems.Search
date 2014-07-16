@@ -5,7 +5,7 @@
 
     internal class EngineItem
     {
-        public static EngineItem[] CreateItems(
+        internal static EngineItem[] CreateItems(
             Func<int, int> someIntGenerator,
             Func<int, DateTime> someDateTimeGenerator,
             Func<int, string> someStringGenerator,
@@ -26,7 +26,7 @@
                 .ToArray();
         }
 
-        public static EngineItem[] CreateItems(Random random, int count, out int someIntMax, out int someDateTimeMax, out int someStringMax, out int someTagsMax, out int someTagsMaxCount)
+        internal static EngineItem[] CreateItems(Random random, int count, out int someIntMax, out int someDateTimeMax, out int someStringMax, out int someTagsMax, out int someTagsMaxCount)
         {
             int someIntCardinality = someIntMax = GetCardinality(random, count);
             int someDateTimeCardinality = someDateTimeMax = GetCardinality(random, count);
@@ -52,11 +52,11 @@
             return Convert.ToInt32(cardinality);
         }
 
-        public int Id { get; private set; }
-        public int SomeInt { get; private set; }
-        public DateTime SomeDateTime { get; private set; }
-        public string SomeString { get; private set; }
-        public string[] SomeTags { get; private set; }
+        internal int Id { get; private set; }
+        internal int SomeInt { get; private set; }
+        internal DateTime SomeDateTime { get; private set; }
+        internal string SomeString { get; private set; }
+        internal string[] SomeTags { get; private set; }
 
         public override string ToString() { return Id.ToString(); }
     }
