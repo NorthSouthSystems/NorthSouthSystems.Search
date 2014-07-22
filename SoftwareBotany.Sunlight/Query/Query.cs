@@ -41,25 +41,19 @@
 
         #region Filter
 
-        public IEnumerable<IFilterParameter> FilterParameters { get { return _filterParameters; } }
-        private readonly List<IFilterParameter> _filterParameters = new List<IFilterParameter>();
+        public FilterClause FilterClause { get; private set; }
 
-        public Query<TItem, TPrimaryKey> Filter(params IFilterParameter[] filterParameters)
+        public Query<TItem, TPrimaryKey> Filter(FilterClause filterClause)
         {
             ThrowIfExecuted();
 
-            if (_filterParameters.Any())
+            if (FilterClause != null)
                 throw new NotSupportedException("Filter may only be called once.");
 
-            foreach (var filterParameter in (filterParameters ?? Enumerable.Empty<IFilterParameter>()).Where(p => p != null))
-            {
+            foreach (var filterParameter in (filterClause == null ? Enumerable.Empty<IFilterParameter>() : filterClause.AllFilterParameters()))
                 ThrowIfEngineMismatch(filterParameter.Catalog);
 
-                if (filterParameter.Catalog.IsOneToOne && _filterParameters.Any(parameter => parameter.Catalog == filterParameter.Catalog))
-                    throw new NotSupportedException("Can only add 1 Filter Parameter per one-to-one Catalog.");
-
-                _filterParameters.Add(filterParameter);
-            }
+            FilterClause = filterClause;
 
             return this;
         }

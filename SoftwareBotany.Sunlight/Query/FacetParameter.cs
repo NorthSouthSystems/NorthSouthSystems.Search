@@ -1,6 +1,7 @@
 ﻿namespace SoftwareBotany.Sunlight
 {
     using System;
+    using System.Diagnostics.Contracts;
 
     public static class FacetParameter
     {
@@ -10,18 +11,27 @@
             return new FacetParameter<TKey>(catalog);
         }
 
-        public static IFacetParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName)
+        internal static IFacetParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName)
         {
             return ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFacetParameter());
         }
     }
 
-    public sealed class FacetParameter<TKey> : Parameter, IFacetParameterInternal
+    public sealed class FacetParameter<TKey> : IFacetParameterInternal
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal FacetParameter(ICatalogHandle<TKey> catalog)
-            : base(catalog)
-        { }
+        {
+            if (catalog == null)
+                throw new ArgumentNullException("catalog");
+
+            Contract.EndContractBlock();
+
+            _catalog = catalog;
+        }
+
+        public ICatalogHandle Catalog { get { return _catalog; } }
+        private readonly ICatalogHandle _catalog;
 
         public Facet<TKey> Facet
         {

@@ -43,7 +43,7 @@
                     EngineAssert.ExecuteAndAssert(items, query, 0, 10);
 
                     query = engine.CreateQuery()
-                        .Filter(FilterParameter.Create(engine, "SomeInt", 0))
+                        .Filter((FilterClause)FilterParameter.Create(engine, "SomeInt", 0))
                         .Facet(FacetParameter.Create(engine, "SomeInt"),
                             FacetParameter.Create(engine, "SomeDateTime"),
                             FacetParameter.Create(engine, "SomeString"),
@@ -58,7 +58,7 @@
                     EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
                     query = engine.CreateQuery()
-                        .Filter(FilterParameter.Create(engine, "SomeInt", 1))
+                        .Filter((FilterClause)FilterParameter.Create(engine, "SomeInt", 1))
                         .Sort(SortParameter.Create(engine, "SomeInt", true),
                             SortParameter.Create(engine, "SomeString", true))
                         .FacetAll();
@@ -74,7 +74,7 @@
                     EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
                     query = engine.CreateQuery()
-                        .Filter(FilterParameter.Create(engine, "SomeInt", 1))
+                        .Filter((FilterClause)FilterParameter.Create(engine, "SomeInt", 1))
                         .SortPrimaryKey(false)
                         .FacetAll();
 
@@ -88,7 +88,7 @@
                     EngineAssert.ExecuteAndAssert(items, query, 0, 4);
 
                     query = engine.CreateQuery()
-                        .Filter(FilterParameter.Create(engine, "SomeInt", 1))
+                        .Filter((FilterClause)FilterParameter.Create(engine, "SomeInt", 1))
                         .Sort(SortParameter.Create(engine, "SomeString", false))
                         .FacetAll();
 
@@ -101,7 +101,7 @@
                     EngineAssert.ExecuteAndAssert(items, query, 0, 2);
 
                     query = engine.CreateQuery()
-                        .Filter(FilterParameter.Create(engine, "SomeString", "2", "3"))
+                        .Filter((FilterClause)FilterParameter.Create(engine, "SomeString", "2", "3"))
                         .FacetAll();
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 2);
@@ -114,7 +114,7 @@
                     EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
                     query = engine.CreateQuery()
-                        .Filter(FilterParameter.Create(engine, "SomeTags", "2"))
+                        .Filter((FilterClause)FilterParameter.Create(engine, "SomeTags", "2"))
                         .Sort(SortParameter.Create(engine, "SomeInt", false))
                         .FacetAll();
 
@@ -128,15 +128,15 @@
                     EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
                     query = engine.CreateQuery()
-                        .Filter(FilterParameter.Create(engine, "SomeString", "2"))
+                        .Filter((FilterClause)FilterParameter.Create(engine, "SomeString", "2"))
                         .Sort(SortParameter.Create(engine, "SomeTags", false))
                         .FacetAll();
 
                     EngineAssert.ExecuteAndAssert(items, query, 0, 5);
 
                     query = engine.CreateQuery()
-                        .Filter(FilterParameter.Create(someTagsCatalog, "2"),
-                            FilterParameter.Create(someTagsCatalog, "3"))
+                        .Filter(FilterParameter.Create(someTagsCatalog, "2")
+                            && FilterParameter.Create(someTagsCatalog, "3"))
                         .Sort(SortParameter.Create(someIntCatalog, false))
                         .FacetAll();
 
