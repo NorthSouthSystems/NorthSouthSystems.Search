@@ -173,8 +173,8 @@
                     else
                     {
                         query = engine.CreateQuery()
-                            .Filter(engine.CreateRandomFilterExactParameter(someStringCatalog, random, someStringMax),
-                                engine.CreateRandomFilterRangeParameter(someIntCatalog, random, someIntMax))
+                            .Filter(engine.CreateRandomFilterExactParameter(someStringCatalog, random, someStringMax)
+                                && engine.CreateRandomFilterRangeParameter(someIntCatalog, random, someIntMax))
                             .Sort(SortParameter.Create(someDateTimeCatalog, random.Next() % 2 == 0),
                                 SortParameter.Create(someIntCatalog, random.Next() % 2 == 0))
                             .SortPrimaryKey(random.Next() % 2 == 0)
@@ -184,8 +184,8 @@
                         EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
                         query = engine.CreateQuery()
-                            .Filter(engine.CreateRandomFilterEnumerableParameter(someStringCatalog, random, someStringMax),
-                                engine.CreateRandomFilterRangeParameter(someDateTimeCatalog, random, someDateTimeMax))
+                            .Filter(engine.CreateRandomFilterEnumerableParameter(someStringCatalog, random, someStringMax)
+                                && engine.CreateRandomFilterRangeParameter(someDateTimeCatalog, random, someDateTimeMax))
                             .Sort(SortParameter.Create(engine, "SomeInt", random.Next() % 2 == 0),
                                 SortParameter.Create(engine, "SomeDateTime", random.Next() % 2 == 0))
                             .SortPrimaryKey(random.Next() % 2 == 0)
@@ -196,8 +196,8 @@
 
                         query = engine.CreateQuery()
                             .Amongst(items.Take((items.Length / 2) + random.Next(items.Length / 2)).Select(item => item.Id))
-                            .Filter(engine.CreateRandomFilterRangeParameter(someDateTimeCatalog, random, someDateTimeMax),
-                                engine.CreateRandomFilterRangeParameter(someIntCatalog, random, someIntMax))
+                            .Filter(engine.CreateRandomFilterRangeParameter(someDateTimeCatalog, random, someDateTimeMax)
+                                && engine.CreateRandomFilterRangeParameter(someIntCatalog, random, someIntMax))
                             .Sort(SortParameter.Create(someStringCatalog, random.Next() % 2 == 0),
                                 SortParameter.Create(someDateTimeCatalog, random.Next() % 2 == 0))
                             .SortPrimaryKey(random.Next() % 2 == 0)
@@ -207,9 +207,9 @@
                         EngineAssert.ExecuteAndAssert(items, query, 0, random.Next(size));
 
                         query = engine.CreateQuery()
-                            .Filter(engine.CreateRandomFilterRangeParameter(someIntCatalog, random, someIntMax),
-                                engine.CreateRandomFilterRangeParameter(someTagsCatalog, random, someTagsMax),
-                                engine.CreateRandomFilterRangeParameter(someTagsCatalog, random, someTagsMax))
+                            .Filter(engine.CreateRandomFilterRangeParameter(someIntCatalog, random, someIntMax)
+                                && engine.CreateRandomFilterRangeParameter(someTagsCatalog, random, someTagsMax)
+                                && engine.CreateRandomFilterRangeParameter(someTagsCatalog, random, someTagsMax))
                             .Sort(SortParameter.Create(engine, "SomeDateTime", random.Next() % 2 == 0),
                                 SortParameter.Create(engine, "SomeTags", random.Next() % 2 == 0))
                              .SortPrimaryKey(random.Next() % 2 == 0)

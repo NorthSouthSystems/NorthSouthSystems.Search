@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.Contracts;
     using System.Globalization;
     using System.Linq;
@@ -373,7 +374,12 @@
                 _rwLock.EnterReadLock();
 
                 Vector result = InitializeResult(query.AmongstPrimaryKeys);
-                FilterCatalogs(result, query.FilterParameters);
+
+                // TODO : Support for nested boolean logic.
+                Trace.Assert(query.FilterClause == null || query.FilterClause.Operation == BooleanOperation.And);
+                Trace.Assert(query.FilterClause == null || query.FilterClause.SubClauses.All(clause => clause is IFilterParameter));
+
+                FilterCatalogs(result, query.FilterClause == null ? Enumerable.Empty<IFilterParameter>() : query.FilterClause.SubClauses.Cast<IFilterParameter>());
                 totalCount = result.Population;
 
                 Parallel.ForEach(query.FacetParametersInternal, new ParallelOptions { MaxDegreeOfParallelism = query.FacetDisableParallel ? 1 : -1 },

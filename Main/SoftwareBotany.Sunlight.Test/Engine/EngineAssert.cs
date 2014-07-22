@@ -36,7 +36,7 @@
 
         private static IEnumerable<EngineItem> SourceFilter(IEnumerable<EngineItem> source, Query<EngineItem, int> query)
         {
-            foreach (IFilterParameter param in query.FilterParameters)
+            foreach (IFilterParameter param in query.FilterClause == null ? Enumerable.Empty<IFilterParameter>() : query.FilterClause.SubClauses.Cast<IFilterParameter>())
             {
                 IFilterParameter closedParam = param;
 

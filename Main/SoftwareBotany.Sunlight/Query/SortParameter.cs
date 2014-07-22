@@ -1,6 +1,7 @@
 ﻿namespace SoftwareBotany.Sunlight
 {
     using System;
+    using System.Diagnostics.Contracts;
 
     public static class SortParameter
     {
@@ -10,20 +11,28 @@
             return new SortParameter<TKey>(catalog, ascending);
         }
 
-        public static ISortParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, bool ascending)
+        internal static ISortParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, bool ascending)
         {
             return ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateSortParameter(ascending));
         }
     }
 
-    public sealed class SortParameter<TKey> : Parameter, ISortParameter
+    public sealed class SortParameter<TKey> : ISortParameter
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal SortParameter(ICatalogHandle<TKey> catalog, bool ascending)
-            : base(catalog)
         {
+            if (catalog == null)
+                throw new ArgumentNullException("catalog");
+
+            Contract.EndContractBlock();
+
+            _catalog = catalog;
             _ascending = ascending;
         }
+
+        public ICatalogHandle Catalog { get { return _catalog; } }
+        private readonly ICatalogHandle _catalog;
 
         public bool Ascending { get { return _ascending; } }
         private readonly bool _ascending;

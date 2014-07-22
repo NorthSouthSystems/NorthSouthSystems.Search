@@ -25,23 +25,23 @@
             return new FilterParameter<TKey>(catalog, rangeMin, rangeMax);
         }
 
-        public static IFilterParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, object exact)
+        internal static IFilterParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, object exact)
         {
             return ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFilterParameter(exact));
         }
 
-        public static IFilterParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, IEnumerable enumerable)
+        internal static IFilterParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, IEnumerable enumerable)
         {
             return ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFilterParameter(enumerable));
         }
 
-        public static IFilterParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, object rangeMin, object rangeMax)
+        internal static IFilterParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, object rangeMin, object rangeMax)
         {
             return ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFilterParameter(rangeMin, rangeMax));
         }
     }
 
-    public sealed class FilterParameter<TKey> : Parameter, IFilterParameter
+    public sealed class FilterParameter<TKey> : FilterClause, IFilterParameter
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         internal FilterParameter(ICatalogHandle<TKey> catalog, TKey exact)
@@ -58,8 +58,10 @@
 
         private FilterParameter(ICatalogHandle<TKey> catalog, FilterParameterType parameterType,
             TKey exact = default(TKey), IEnumerable<TKey> enumerable = null, TKey rangeMin = default(TKey), TKey rangeMax = default(TKey))
-            : base(catalog)
         {
+            if (catalog == null)
+                throw new ArgumentNullException("catalog");
+
             if (parameterType == FilterParameterType.Range)
             {
                 if (rangeMin == null && rangeMax == null)
@@ -71,12 +73,16 @@
 
             Contract.EndContractBlock();
 
+            _catalog = catalog;
             _parameterType = parameterType;
             _exact = exact;
             _enumerable = enumerable;
             _rangeMin = rangeMin;
             _rangeMax = rangeMax;
         }
+
+        public ICatalogHandle Catalog { get { return _catalog; } }
+        private readonly ICatalogHandle _catalog;
 
         public FilterParameterType ParameterType { get { return _parameterType; } }
         private readonly FilterParameterType _parameterType;

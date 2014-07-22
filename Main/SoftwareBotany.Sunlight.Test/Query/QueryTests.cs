@@ -60,20 +60,6 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
-        public void DuplicateFilter()
-        {
-            using (var engine1 = new Engine<EngineItem, int>(false, item => item.Id))
-            {
-                var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-
-                var query = engine1.CreateQuery()
-                    .Filter(FilterParameter.Create(catalog1, 1),
-                        FilterParameter.Create(catalog1, 2));
-            }
-        }
-
-        [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void AddSortNull()
         {
