@@ -2,9 +2,9 @@
 {
     using System;
 
-    public static class CatalogTestExtensions
+    internal static class CatalogExtensions
     {
-        public static void Fill<TKey>(this Catalog<TKey> catalog, TKey key, int[] bitPositions, bool value)
+        internal static void Fill<TKey>(this Catalog<TKey> catalog, TKey key, int[] bitPositions, bool value)
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
             foreach (int bitPosition in bitPositions)

@@ -33,7 +33,7 @@
         [TestMethod]
         public void IsCompressibleFalseFullCoverage()
         {
-            for (uint i = 1; i < 0x7FFFFFFFu; i += WordTestExtensions.LARGEPRIME)
+            for (uint i = 1; i < 0x7FFFFFFFu; i += WordExtensions.LARGEPRIME)
             {
                 Word word = new Word(i);
                 Assert.AreEqual(false, word.IsCompressible);
@@ -73,7 +73,7 @@
         {
             foreach (bool fillBit in new bool[] { false, true })
             {
-                for (int i = 0; i < 0x02000000; i += WordTestExtensions.LARGEPRIME)
+                for (int i = 0; i < 0x02000000; i += WordExtensions.LARGEPRIME)
                 {
                     Word word = new Word(fillBit, i);
                     Assert.AreEqual((fillBit ? 0xC0000000 : 0x80000000) + i, word.Raw);

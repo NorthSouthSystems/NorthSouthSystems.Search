@@ -8,30 +8,30 @@
         [TestMethod]
         public void EqualityAndHashing()
         {
-            var facet1 = new FacetCategory<int>(1, 1);
-            var facet2 = new FacetCategory<int>(1, 1);
+            var category1 = new FacetCategory<int>(1, 1);
+            var category2 = new FacetCategory<int>(1, 1);
 
-            Assert.AreEqual(true, facet1.Equals(facet2));
-            Assert.AreEqual(true, facet1.Equals((object)facet2));
-            Assert.AreEqual(false, facet1.Equals(null));
-            Assert.AreEqual(false, facet1.Equals("test"));
-            Assert.AreEqual(true, facet1 == facet2);
-            Assert.AreEqual(false, facet1 != facet2);
-            Assert.AreEqual(facet1.GetHashCode(), facet2.GetHashCode());
+            Assert.AreEqual(true, category1.Equals(category2));
+            Assert.AreEqual(true, category1.Equals((object)category2));
+            Assert.AreEqual(false, category1.Equals(null));
+            Assert.AreEqual(false, category1.Equals("test"));
+            Assert.AreEqual(true, category1 == category2);
+            Assert.AreEqual(false, category1 != category2);
+            Assert.AreEqual(category1.GetHashCode(), category2.GetHashCode());
 
-            facet2 = new FacetCategory<int>(2, 1);
+            category2 = new FacetCategory<int>(2, 1);
 
-            Assert.AreEqual(false, facet1.Equals(facet2));
-            Assert.AreEqual(false, facet1.Equals((object)facet2));
-            Assert.AreEqual(false, facet1 == facet2);
-            Assert.AreEqual(true, facet1 != facet2);
+            Assert.AreEqual(false, category1.Equals(category2));
+            Assert.AreEqual(false, category1.Equals((object)category2));
+            Assert.AreEqual(false, category1 == category2);
+            Assert.AreEqual(true, category1 != category2);
 
-            facet2 = new FacetCategory<int>(1, 2);
+            category2 = new FacetCategory<int>(1, 2);
 
-            Assert.AreEqual(false, facet1.Equals(facet2));
-            Assert.AreEqual(false, facet1.Equals((object)facet2));
-            Assert.AreEqual(false, facet1 == facet2);
-            Assert.AreEqual(true, facet1 != facet2);
+            Assert.AreEqual(false, category1.Equals(category2));
+            Assert.AreEqual(false, category1.Equals((object)category2));
+            Assert.AreEqual(false, category1 == category2);
+            Assert.AreEqual(true, category1 != category2);
         }
     }
 }

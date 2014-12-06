@@ -102,6 +102,17 @@
             return this;
         }
 
+        public bool SortDisableParallel { get; private set; }
+
+        public Query<TItem, TPrimaryKey> WithSortOptions(bool sortDisableParallel = false)
+        {
+            ThrowIfExecuted();
+
+            SortDisableParallel = sortDisableParallel;
+
+            return this;
+        }
+
         #endregion
 
         #region Facet

@@ -5,7 +5,7 @@
 
     internal static class EngineExtensions
     {
-        public static FilterParameter<int> CreateRandomFilterExactParameter(this Engine<EngineItem, int> engine, ICatalogHandle<int> catalog, Random random, int max)
+        internal static FilterParameter<int> CreateRandomFilterExactParameter(this Engine<EngineItem, int> engine, ICatalogHandle<int> catalog, Random random, int max)
         {
             int exact = random.Next(max);
 
@@ -14,7 +14,7 @@
                 : (FilterParameter<int>)FilterParameter.Create(engine, catalog.Name, exact);
         }
 
-        public static FilterParameter<int> CreateRandomFilterEnumerableParameter(this Engine<EngineItem, int> engine, ICatalogHandle<int> catalog, Random random, int max)
+        internal static FilterParameter<int> CreateRandomFilterEnumerableParameter(this Engine<EngineItem, int> engine, ICatalogHandle<int> catalog, Random random, int max)
         {
             int[] enumerable = Enumerable.Range(0, random.Next(max))
                 .Select(i => random.Next(max))
@@ -26,7 +26,7 @@
                 : (FilterParameter<int>)FilterParameter.Create(engine, catalog.Name, enumerable);
         }
 
-        public static FilterParameter<int> CreateRandomFilterRangeParameter(this Engine<EngineItem, int> engine, ICatalogHandle<int> catalog, Random random, int max)
+        internal static FilterParameter<int> CreateRandomFilterRangeParameter(this Engine<EngineItem, int> engine, ICatalogHandle<int> catalog, Random random, int max)
         {
             int val1 = random.Next(max);
             int val2 = random.Next(max);
@@ -42,7 +42,7 @@
                 : (FilterParameter<int>)FilterParameter.Create(engine, catalog.Name, rangeMin, rangeMax);
         }
 
-        public static FilterParameter<DateTime> CreateRandomFilterExactParameter(this Engine<EngineItem, int> engine, ICatalogHandle<DateTime> catalog, Random random, int max)
+        internal static FilterParameter<DateTime> CreateRandomFilterExactParameter(this Engine<EngineItem, int> engine, ICatalogHandle<DateTime> catalog, Random random, int max)
         {
             DateTime exact = new DateTime(2011, 1, 1).AddDays(random.Next(max));
 
@@ -51,7 +51,7 @@
                 : (FilterParameter<DateTime>)FilterParameter.Create(engine, catalog.Name, exact);
         }
 
-        public static FilterParameter<DateTime> CreateRandomFilterEnumerableParameter(this Engine<EngineItem, int> engine, ICatalogHandle<DateTime> catalog, Random random, int max)
+        internal static FilterParameter<DateTime> CreateRandomFilterEnumerableParameter(this Engine<EngineItem, int> engine, ICatalogHandle<DateTime> catalog, Random random, int max)
         {
             DateTime[] enumerable = Enumerable.Range(0, random.Next(max))
                 .Select(i => random.Next(max))
@@ -64,7 +64,7 @@
                 : (FilterParameter<DateTime>)FilterParameter.Create(engine, catalog.Name, enumerable);
         }
 
-        public static FilterParameter<DateTime> CreateRandomFilterRangeParameter(this Engine<EngineItem, int> engine, ICatalogHandle<DateTime> catalog, Random random, int max)
+        internal static FilterParameter<DateTime> CreateRandomFilterRangeParameter(this Engine<EngineItem, int> engine, ICatalogHandle<DateTime> catalog, Random random, int max)
         {
             int val1 = random.Next(max);
             int val2 = random.Next(max);
@@ -80,7 +80,7 @@
                 : (FilterParameter<DateTime>)FilterParameter.Create(engine, catalog.Name, rangeMin, rangeMax);
         }
 
-        public static FilterParameter<string> CreateRandomFilterExactParameter(this Engine<EngineItem, int> engine, ICatalogHandle<string> catalog, Random random, int max)
+        internal static FilterParameter<string> CreateRandomFilterExactParameter(this Engine<EngineItem, int> engine, ICatalogHandle<string> catalog, Random random, int max)
         {
             string exact = random.Next(max).ToString();
 
@@ -102,7 +102,7 @@
                 : (FilterParameter<string>)FilterParameter.Create(engine, catalog.Name, enumerable);
         }
 
-        public static FilterParameter<string> CreateRandomFilterRangeParameter(this Engine<EngineItem, int> engine, ICatalogHandle<string> catalog, Random random, int max)
+        internal static FilterParameter<string> CreateRandomFilterRangeParameter(this Engine<EngineItem, int> engine, ICatalogHandle<string> catalog, Random random, int max)
         {
             int val1 = random.Next(max);
             int val2 = random.Next(max);

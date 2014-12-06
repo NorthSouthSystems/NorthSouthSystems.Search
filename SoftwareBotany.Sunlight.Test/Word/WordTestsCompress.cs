@@ -43,7 +43,7 @@
         [TestMethod]
         public void NotCompressibleFullCoverage()
         {
-            for (uint i = 1; i < 0x7FFFFFFF; i += WordTestExtensions.LARGEPRIME)
+            for (uint i = 1; i < 0x7FFFFFFF; i += WordExtensions.LARGEPRIME)
             {
                 Word word = new Word(i);
                 word.Compress();
@@ -56,7 +56,7 @@
         [TestMethod]
         public void CompressedFullCoverage()
         {
-            for (uint i = 0x80000000; i > 0x80000000 && i <= 0xFFFFFFFF; i += WordTestExtensions.LARGEPRIME)
+            for (uint i = 0x80000000; i > 0x80000000 && i <= 0xFFFFFFFF; i += WordExtensions.LARGEPRIME)
             {
                 Word word = new Word(i);
                 word.Compress();

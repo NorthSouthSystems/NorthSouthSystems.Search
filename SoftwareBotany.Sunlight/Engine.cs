@@ -375,22 +375,14 @@
 
                 Vector result = InitializeResult(query.AmongstPrimaryKeys);
 
-                // TODO : Support for nested boolean logic.
-                Trace.Assert(query.FilterClause == null || query.FilterClause.Operation == BooleanOperation.And);
-                Trace.Assert(query.FilterClause == null || query.FilterClause.SubClauses.All(clause => clause is IFilterParameter));
-
-                FilterCatalogs(result, query.FilterClause == null ? Enumerable.Empty<IFilterParameter>() : query.FilterClause.SubClauses.Cast<IFilterParameter>());
+                Filter(query, result);
                 totalCount = result.Population;
 
-                Parallel.ForEach(query.FacetParametersInternal, new ParallelOptions { MaxDegreeOfParallelism = query.FacetDisableParallel ? 1 : -1 },
-                    facetParameter => facetParameter.Facet = ((ICatalogInEngine)facetParameter.Catalog).Facet(result, query.FacetDisableParallel, query.FacetShortCircuitCounting));
-
-                IEnumerable<int> sortedBitPositions = (!query.SortParameters.Any() && !query.SortPrimaryKeyAscending.HasValue)
-                    ? result.GetBitPositions(true)
-                    : SortBitPositions(result, query.SortParameters.ToArray(), query.SortPrimaryKeyAscending);
+                Facet(query, result);
 
                 // Distinct is required because of Catalogs created from multi-key columns: e.g. think post/blog tags
-                return sortedBitPositions.Distinct()
+                return Sort(query, skip + take, result, totalCount)
+                    .Distinct()
                     .Skip(skip)
                     .Take(take)
                     .Select(bitPosition => _primaryKeys[bitPosition])
@@ -437,12 +429,13 @@
             return result;
         }
 
-        #endregion
-
-        #region Query Filter
-
-        private static void FilterCatalogs(Vector result, IEnumerable<IFilterParameter> filterParameters)
+        private static void Filter(Query<TItem, TPrimaryKey> query, Vector result)
         {
+            // TODO : Support for nested boolean logic.
+            Trace.Assert(query.FilterClause == null || query.FilterClause.Operation == BooleanOperation.And);
+            Trace.Assert(query.FilterClause == null || query.FilterClause.SubClauses.All(clause => clause is IFilterParameter));
+            var filterParameters = query.FilterClause == null ? Enumerable.Empty<IFilterParameter>() : query.FilterClause.SubClauses.Cast<IFilterParameter>();
+
             foreach (IFilterParameter filterParameter in filterParameters)
             {
                 var catalog = (ICatalogInEngine)filterParameter.Catalog;
@@ -464,56 +457,49 @@
             }
         }
 
-        #endregion
-
-        #region Query Sort
-
-        private IEnumerable<int> SortBitPositions(Vector result, ISortParameter[] sortParameters, bool? sortPrimaryKeyAscending)
+        private void Facet(Query<TItem, TPrimaryKey> query, Vector filterResult)
         {
+            Parallel.ForEach(query.FacetParametersInternal, new ParallelOptions { MaxDegreeOfParallelism = query.FacetDisableParallel ? 1 : -1 },
+                facetParameter => facetParameter.Facet = ((ICatalogInEngine)facetParameter.Catalog).Facet(filterResult, query.FacetDisableParallel, query.FacetShortCircuitCounting));
+        }
+
+        private IEnumerable<int> Sort(Query<TItem, TPrimaryKey> query, int skipPlusTake, Vector filterResult, int totalCount)
+        {
+            var sortParameters = query.SortParameters.ToArray();
+            int sortCount = sortParameters.Length + (query.SortPrimaryKeyAscending.HasValue ? 1 : 0);
+
             if (sortParameters.Any())
             {
-                IEnumerable<IEnumerable<int>> partialResults = null;
+                CatalogSortResult sortResult = null;
 
-                var firstSortParameter = sortParameters.First();
-                partialResults = ((ICatalogInEngine)firstSortParameter.Catalog).SortBitPositions(result, true, firstSortParameter.Ascending).PartialSortResultsBitPositions;
+                for (int sortParameterIndex = 0; sortParameterIndex < sortParameters.Length; sortParameterIndex++)
+                {
+                    // Disable parallel sorting if the user has specified to do so or if this is the last sort and we aren't going to have to iterate the entire result.
+                    var sortParameter = sortParameters[sortParameterIndex];
+                    bool sortDisableParallel = query.SortDisableParallel || (sortCount == (sortParameterIndex + 1) && skipPlusTake < totalCount);
 
-                for (int i = 1; i < sortParameters.Length; i++)
-                    partialResults = SortBitPositionsThenByParameter(_allowUnsafe, partialResults, sortParameters[i]);
+                    if (sortParameterIndex == 0)
+                        sortResult = ((ICatalogInEngine)sortParameter.Catalog).Sort(filterResult, true, sortParameter.Ascending, sortDisableParallel);
+                    else
+                        sortResult = ((ICatalogInEngine)sortParameter.Catalog).ThenSort(sortResult, true, sortParameter.Ascending, sortDisableParallel);
+                }
 
-                if (sortPrimaryKeyAscending.HasValue)
-                    return SortBitPositionsThenByPrimaryKey(partialResults, sortPrimaryKeyAscending.Value);
+                if (query.SortPrimaryKeyAscending.HasValue)
+                    return sortResult.PartialSorts.SelectMany(partialSort => SortBitPositionsByPrimaryKey(partialSort.GetBitPositions(true), query.SortPrimaryKeyAscending.Value));
                 else
-                    return partialResults.SelectMany(partialResult => partialResult);
+                    return sortResult.PartialSorts.SelectMany(partialSort => partialSort.GetBitPositions(true));
             }
+            else if (query.SortPrimaryKeyAscending.HasValue)
+                return SortBitPositionsByPrimaryKey(filterResult.GetBitPositions(true), query.SortPrimaryKeyAscending.Value);
             else
-                return SortBitPositionsByPrimaryKey(result.GetBitPositions(true), sortPrimaryKeyAscending.Value);
+                return filterResult.GetBitPositions(true);
         }
 
-        private static IEnumerable<IEnumerable<int>> SortBitPositionsThenByParameter(bool allowUnsafe, IEnumerable<IEnumerable<int>> partialResults, ISortParameter sortParameter)
-        {
-            return partialResults.SelectMany(partialResult =>
-            {
-                // AndFilterBitPositions does not support Compressed Vectors. Implementing that feature could
-                // possible offer significant performance gains here.
-                Vector partialResultVector = new Vector(allowUnsafe, VectorCompression.None);
-
-                foreach (int bitPosition in partialResult)
-                    partialResultVector[bitPosition] = true;
-
-                return ((ICatalogInEngine)sortParameter.Catalog).SortBitPositions(partialResultVector, true, sortParameter.Ascending).PartialSortResultsBitPositions;
-            });
-        }
-
-        private IEnumerable<int> SortBitPositionsByPrimaryKey(IEnumerable<int> result, bool ascending)
+        private IEnumerable<int> SortBitPositionsByPrimaryKey(IEnumerable<int> bitPositions, bool ascending)
         {
             return ascending
-                ? result.OrderBy(bitPosition => _primaryKeys[bitPosition])
-                : result.OrderByDescending(bitPosition => _primaryKeys[bitPosition]);
-        }
-
-        private IEnumerable<int> SortBitPositionsThenByPrimaryKey(IEnumerable<IEnumerable<int>> partialResults, bool ascending)
-        {
-            return partialResults.SelectMany(partialResult => SortBitPositionsByPrimaryKey(partialResult, ascending));
+                ? bitPositions.OrderBy(bitPosition => _primaryKeys[bitPosition])
+                : bitPositions.OrderByDescending(bitPosition => _primaryKeys[bitPosition]);
         }
 
         #endregion

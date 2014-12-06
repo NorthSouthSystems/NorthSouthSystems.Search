@@ -10,7 +10,7 @@
         [TestMethod]
         public void Uncompressed()
         {
-            Vector vector = new Vector(false, VectorCompression.None);
+            var vector = new Vector(false, VectorCompression.None);
 
             vector.AssertWordLogicalValues(0, 0, 0);
             vector.AssertWordCounts(1, 1);
@@ -54,65 +54,66 @@
         }
 
         [TestMethod]
-        public void CompressedZeroFillCodeCoverage() { SafetyVectorCompressionTuple.RunAll(CompressedZeroFillCodeCoverageBase); }
-
-        private void CompressedZeroFillCodeCoverageBase(SafetyVectorCompressionTuple safetyVectorCompression)
+        public void CompressedZeroFillCodeCoverage()
         {
-            if (safetyVectorCompression.Compression == VectorCompression.None)
-                return;
+            SafetyAndCompression.RunAll(safetyAndCompression =>
+            {
+                if (safetyAndCompression.Compression == VectorCompression.None)
+                    return;
 
-            Vector vector = new Vector(safetyVectorCompression.AllowUnsafe, safetyVectorCompression.Compression);
+                Vector vector = new Vector(safetyAndCompression.AllowUnsafe, safetyAndCompression.Compression);
 
-            vector.AssertWordLogicalValues(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            vector.AssertWordCounts(1, 1);
+                vector.AssertWordLogicalValues(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                vector.AssertWordCounts(1, 1);
 
-            // Ignore 0 Sets When ZeroFilling required
-            vector.SetWord(1, new Word(0));
-            vector.AssertWordLogicalValues(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            vector.AssertWordCounts(1, 1);
+                // Ignore 0 Sets When ZeroFilling required
+                vector.SetWord(1, new Word(0));
+                vector.AssertWordLogicalValues(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                vector.AssertWordCounts(1, 1);
 
-            // Force Compression of Word[0]
-            vector.SetWord(1, new Word(1));
-            vector.AssertWordLogicalValues(0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
-            vector.AssertWordCounts(2, 2);
+                // Force Compression of Word[0]
+                vector.SetWord(1, new Word(1));
+                vector.AssertWordLogicalValues(0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+                vector.AssertWordCounts(2, 2);
 
-            vector.SetWord(1, new Word(0));
-            vector.AssertWordLogicalValues(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            vector.AssertWordCounts(2, 2);
+                vector.SetWord(1, new Word(0));
+                vector.AssertWordLogicalValues(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                vector.AssertWordCounts(2, 2);
 
-            // Increment Compression on Word[0]
-            vector.SetWord(2, new Word(1));
-            vector.AssertWordLogicalValues(0, 0, 1, 0, 0, 0, 0, 0, 0, 0);
-            vector.AssertWordCounts(2, 3);
+                // Increment Compression on Word[0]
+                vector.SetWord(2, new Word(1));
+                vector.AssertWordLogicalValues(0, 0, 1, 0, 0, 0, 0, 0, 0, 0);
+                vector.AssertWordCounts(2, 3);
 
-            vector.SetWord(2, new Word(0));
-            vector.AssertWordLogicalValues(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            vector.AssertWordCounts(2, 3);
+                vector.SetWord(2, new Word(0));
+                vector.AssertWordLogicalValues(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                vector.AssertWordCounts(2, 3);
 
-            // End the 0's and have the tail compressed
-            vector.SetWord(3, new Word(1));
-            vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 0, 0, 0);
-            vector.AssertWordCounts(2, 4);
+                // End the 0's and have the tail compressed
+                vector.SetWord(3, new Word(1));
+                vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 0, 0, 0);
+                vector.AssertWordCounts(2, 4);
 
-            // Add a 1 and pack the tail
-            vector.SetWord(4, new Word(1));
-            vector.AssertWordLogicalValues(0, 0, 0, 1, 1, 0, 0, 0, 0, 0);
-            vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 2 : 3, 5);
+                // Add a 1 and pack the tail
+                vector.SetWord(4, new Word(1));
+                vector.AssertWordLogicalValues(0, 0, 0, 1, 1, 0, 0, 0, 0, 0);
+                vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 2 : 3, 5);
 
-            // Add a 0 Word
-            vector.SetWord(4, new Word(0));
-            vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 0, 0, 0);
-            vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 2 : 3, 5);
+                // Add a 0 Word
+                vector.SetWord(4, new Word(0));
+                vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 0, 0, 0);
+                vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 2 : 3, 5);
 
-            // Add a 1 Word far away, forcing a compression
-            vector.SetWord(7, new Word(1));
-            vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 1, 0, 0);
-            vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 3 : 4, 8);
+                // Add a 1 Word far away, forcing a compression
+                vector.SetWord(7, new Word(1));
+                vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 1, 0, 0);
+                vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 3 : 4, 8);
 
-            // Add a 1 Word two spaces away, forcing a pack and 2xZeroFill with overwrite
-            vector.SetWord(9, new Word(1));
-            vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 1, 0, 1);
-            vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 4 : 6, 10);
+                // Add a 1 Word two spaces away, forcing a pack and 2xZeroFill with overwrite
+                vector.SetWord(9, new Word(1));
+                vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 1, 0, 1);
+                vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 4 : 6, 10);
+            });
         }
 
         #region Exceptions
@@ -131,14 +132,6 @@
         {
             Vector vector = new Vector(false, VectorCompression.None);
             vector.SetWord(-1, new Word(0x11111111));
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
-        public void SetWordNotSupportedCompressed()
-        {
-            Vector vector = new Vector(false, VectorCompression.Compressed);
-            vector.SetWord(0, new Word(true, 1));
         }
 
         [TestMethod]

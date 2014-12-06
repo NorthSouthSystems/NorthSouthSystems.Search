@@ -11,7 +11,7 @@
         [TestMethod]
         public void Construction()
         {
-            using (Engine<SimpleItem, int> engine = new Engine<SimpleItem, int>(false, item => item.Id))
+            using (var engine = new Engine<SimpleItem, int>(false, item => item.Id))
             {
                 Assert.AreEqual(false, engine.AllowUnsafe);
             }
@@ -24,25 +24,26 @@
         }
 
         [TestMethod]
-        public void AmongstPrimaryKeyOutOfRange() { SafetyVectorCompressionTuple.RunAll(AmongstPrimaryKeyOutOfRangeBase); }
-
-        private static void AmongstPrimaryKeyOutOfRangeBase(SafetyVectorCompressionTuple safetyVectorCompression)
+        public void AmongstPrimaryKeyOutOfRange()
         {
-            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(safetyVectorCompression.AllowUnsafe, item => item.Id))
+            SafetyAndCompression.RunAll(safetyAndCompression =>
             {
-                var catalog1 = engine1.CreateCatalog("SomeInt", safetyVectorCompression.Compression, item => item.SomeInt);
+                using (var engine1 = new Engine<SimpleItem, int>(safetyAndCompression.AllowUnsafe, item => item.Id))
+                {
+                    var catalog1 = engine1.CreateCatalog("SomeInt", safetyAndCompression.Compression, item => item.SomeInt);
 
-                engine1.Add(new SimpleItem { Id = 43, SomeInt = 0 });
+                    engine1.Add(new SimpleItem { Id = 43, SomeInt = 0 });
 
-                var query = engine1.CreateQuery();
-                query.Amongst(new[] { 43, 44 });
+                    var query = engine1.CreateQuery();
+                    query.Amongst(new[] { 43, 44 });
 
-                query.Execute(0, 10);
+                    query.Execute(0, 10);
 
-                Assert.AreEqual(1, query.ResultTotalCount);
-                Assert.AreEqual(1, query.ResultPrimaryKeys.Length);
-                Assert.AreEqual(43, query.ResultPrimaryKeys[0]);
-            }
+                    Assert.AreEqual(1, query.ResultTotalCount);
+                    Assert.AreEqual(1, query.ResultPrimaryKeys.Length);
+                    Assert.AreEqual(43, query.ResultPrimaryKeys[0]);
+                }
+            });
         }
 
         #region Exceptions
@@ -51,7 +52,7 @@
         [ExpectedException(typeof(NotSupportedException))]
         public void CreateCatalogNotInitializing()
         {
-            using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
+            using (var engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
                 var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -65,7 +66,7 @@
         [ExpectedException(typeof(ArgumentException))]
         public void CreateCatalogDuplicateName()
         {
-            using (Engine<EngineItem, int> engine1 = new Engine<EngineItem, int>(false, item => item.Id))
+            using (var engine1 = new Engine<EngineItem, int>(false, item => item.Id))
             {
                 var catalog1 = engine1.CreateCatalog("Name", VectorCompression.None, item => item.SomeInt);
                 var catalog2 = engine1.CreateCatalog("Name", VectorCompression.None, item => item.SomeString);
@@ -76,7 +77,7 @@
         [ExpectedException(typeof(ArgumentException))]
         public void AddDuplicatePrimaryKey()
         {
-            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
+            using (var engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
             {
                 var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -100,7 +101,7 @@
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateNoPrimaryKey()
         {
-            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
+            using (var engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
             {
                 var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -113,7 +114,7 @@
         [ExpectedException(typeof(ArgumentNullException))]
         public void UpdateRangeNull()
         {
-            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
+            using (var engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
             {
                 var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
                 engine1.Update((SimpleItem[])null);
@@ -124,7 +125,7 @@
         [ExpectedException(typeof(ArgumentException))]
         public void RemoveNoPrimaryKey()
         {
-            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
+            using (var engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
             {
                 var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -136,7 +137,7 @@
         [TestMethod]
         public void RemoveReAddPrimaryKey()
         {
-            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
+            using (var engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
             {
                 var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -150,7 +151,7 @@
         [ExpectedException(typeof(ArgumentNullException))]
         public void RemoveRangeNull()
         {
-            using (Engine<SimpleItem, int> engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
+            using (var engine1 = new Engine<SimpleItem, int>(false, item => item.Id))
             {
                 var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
                 engine1.Remove((SimpleItem[])null);

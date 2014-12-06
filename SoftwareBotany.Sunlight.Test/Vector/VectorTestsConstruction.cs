@@ -11,7 +11,7 @@
         [TestMethod]
         public void ConstructCopy()
         {
-            int[] fillMaxBitPositions = new int[] { 100, 500 };
+            int[] fillMaxBitPositions = new int[] { 99, 499 };
             int[] fillCounts = new int[] { 0, 1, 2, 5, 10, 20, 30, 40, 50, 100, 200, 300, 400, 450, 460, 470, 480, 490, 495, 498, 499, 500 };
 
             var instructions =
@@ -20,7 +20,7 @@
                  from resultCompression in (int[])Enum.GetValues(typeof(VectorCompression))
                  from fillMaxBitPosition in fillMaxBitPositions
                  from fillCount in fillCounts
-                 where fillCount < fillMaxBitPosition
+                 where fillCount <= fillMaxBitPosition + 1
                  select new
                  {
                      AllowUnsafe = allowUnsafe,
@@ -32,12 +32,12 @@
 
             foreach (var instruction in instructions)
             {
-                Vector source = new Vector(instruction.AllowUnsafe, instruction.SourceCompression);
+                var source = new Vector(instruction.AllowUnsafe, instruction.SourceCompression);
                 Assert.AreEqual(instruction.AllowUnsafe, source.AllowUnsafe);
                 Assert.AreEqual(instruction.SourceCompression, source.Compression);
 
-                int[] bitPositions = source.RandomFill(instruction.FillMaxBitPosition, instruction.FillCount);
-                Vector result = new Vector(instruction.AllowUnsafe, instruction.ResultCompression, source);
+                int[] bitPositions = source.SetBitsRandom(instruction.FillMaxBitPosition, instruction.FillCount, true);
+                var result = new Vector(instruction.AllowUnsafe, instruction.ResultCompression, source);
                 Assert.AreEqual(instruction.AllowUnsafe, result.AllowUnsafe);
                 Assert.AreEqual(instruction.ResultCompression, result.Compression);
                 result.AssertBitPositions(bitPositions);

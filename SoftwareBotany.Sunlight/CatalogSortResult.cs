@@ -1,32 +1,15 @@
 ﻿namespace SoftwareBotany.Sunlight
 {
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
 
-    public sealed class CatalogSortResult<TKey> : IEnumerable<CatalogPartialSortResult<TKey>>, ICatalogInEngineSortResult
+    public sealed class CatalogSortResult
     {
-        internal CatalogSortResult(IEnumerable<CatalogPartialSortResult<TKey>> partialSortResults)
+        internal CatalogSortResult(IEnumerable<Vector> partialSorts)
         {
-            _partialSortResults = partialSortResults;
+            _partialSorts = partialSorts;
         }
 
-        private readonly IEnumerable<CatalogPartialSortResult<TKey>> _partialSortResults;
-
-        public IEnumerator<CatalogPartialSortResult<TKey>> GetEnumerator() { return _partialSortResults.GetEnumerator(); }
-
-        [ExcludeFromCodeCoverage]
-        IEnumerator IEnumerable.GetEnumerator() { return _partialSortResults.GetEnumerator(); }
-
-        IEnumerable<IEnumerable<int>> ICatalogInEngineSortResult.PartialSortResultsBitPositions
-        {
-            get { return _partialSortResults.Select(partial => (IEnumerable<int>)partial); }
-        }
-    }
-
-    internal interface ICatalogInEngineSortResult
-    {
-        IEnumerable<IEnumerable<int>> PartialSortResultsBitPositions { get; }
+        public IEnumerable<Vector> PartialSorts { get { return _partialSorts; } }
+        private readonly IEnumerable<Vector> _partialSorts;
     }
 }

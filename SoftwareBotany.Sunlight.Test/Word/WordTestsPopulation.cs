@@ -50,7 +50,7 @@
         {
             foreach (bool fillBit in new bool[] { false, true })
             {
-                for (int i = 0; i < 0x02000000; i += WordTestExtensions.LARGEPRIME)
+                for (int i = 0; i < 0x02000000; i += WordExtensions.LARGEPRIME)
                 {
                     Word word = new Word(fillBit, i);
                     Assert.AreEqual(fillBit ? (31 * i) : 0, word.Population, word.ToString());
