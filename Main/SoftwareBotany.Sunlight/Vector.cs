@@ -27,7 +27,7 @@
         private static readonly IVectorLogic _safeVectorLogic;
         private static readonly IVectorLogic _unsafeVectorLogic;
 
-        public static Vector CreateUnion(params Vector[] vectors)
+        public static Vector OrOutOfPlace(params Vector[] vectors)
         {
             if (vectors == null || vectors.Any(v => v == null))
                 throw new ArgumentNullException("vectors");
@@ -42,7 +42,7 @@
             Vector vector = new Vector(vectors[0]._allowUnsafe, VectorCompression.None, vectors[0], maxWordCountLogical);
 
             for (int i = 1; i < vectors.Length; i++)
-                vector.Or(vectors[i]);
+                vector.OrInPlace(vectors[i]);
 
             return vector;
         }
@@ -85,7 +85,7 @@
                 _wordCountPhysical = vector._wordCountLogical;
                 _wordCountLogical = vector._wordCountLogical;
 
-                VectorLogic.Decompress(this._words, vector._words, vector._wordCountPhysical);
+                VectorLogic.DecompressInPlaceNoneCompressedWithPackedPosition(_words, vector._words, vector._wordCountPhysical);
             }
             else
             {
@@ -96,6 +96,8 @@
                 Array.Copy(vector._words, _words, vector._wordCountPhysical);
             }
         }
+
+        internal bool IsUnused { get { return _wordCountLogical == 1 && _words[0].Raw == 0u; } }
 
         #endregion
 
@@ -293,15 +295,14 @@
             if (wordPositionLogical < 0)
                 throw new ArgumentOutOfRangeException("wordPositionLogical", wordPositionLogical, "Must be >= 0.");
 
-            if (word.IsCompressed)
-                throw new NotSupportedException("Compressed Words not supported.");
-
             Contract.EndContractBlock();
 
             if (_isCompressed && wordPositionLogical < (_wordCountLogical - 1))
                 throw new NotSupportedException("Writing is forward-only for a compressed Vector.");
 
-            if (word.Raw == 0 && ZeroFillCount(wordPositionLogical) > 0)
+            bool isZero = word.Raw == 0u || (word.IsCompressed && !word.FillBit);
+
+            if (isZero && ZeroFillCount(wordPositionLogical) > 0)
                 return;
 
             ZeroFill(wordPositionLogical);
@@ -309,7 +310,53 @@
             // IsPacked can be safely ignored here because of the LAW.
             bool isPacked;
             int wordPositionPhysical = WordPositionPhysical(wordPositionLogical, out isPacked);
-            _words[wordPositionPhysical] = word;
+
+            if (isZero)
+            {
+                _words[wordPositionPhysical].Raw = 0;
+            }
+            else if (!word.IsCompressed)
+            {
+                _words[wordPositionPhysical] = word;
+            }
+            else
+            {
+                if (!_isCompressed)
+                {
+                    WordsGrow(_wordCountPhysical + word.FillCount - 1);
+                    _wordCountPhysical += word.FillCount - 1;
+                    _wordCountLogical += word.FillCount - 1;
+
+                    for (int i = wordPositionPhysical; i < _wordCountPhysical; i++)
+                        _words[i].Raw = 0x7FFFFFFF;
+
+                    if (word.HasPackedWord)
+                    {
+                        WordsGrow(_wordCountPhysical + 1);
+                        _wordCountPhysical++;
+                        _wordCountLogical++;
+
+                        _words[_wordCountPhysical - 1] = word.PackedWord;
+                    }
+                }
+                else
+                {
+                    // We're breaking the LAW here; however, we will NOT enter any other Vector functions until it is restored.
+                    _words[wordPositionPhysical] = word;
+                    _wordCountLogical += word.FillCount - 1;
+
+                    if (word.HasPackedWord)
+                        _wordCountLogical++;
+
+                    // Immediately restore the LAW.
+                    WordsGrow(_wordCountPhysical + 1);
+                    _wordCountPhysical++;
+                    _wordCountLogical++;
+
+                    if (word.HasPackedWord && !_isPackedPositionEnabled)
+                        _words[_wordCountPhysical - 1] = _words[_wordCountPhysical - 2].Unpack();
+                }
+            }
         }
 
         private void SetBit(int bitPosition, bool value)
@@ -471,6 +518,8 @@
 
         #endregion
 
+        #region Population
+
         public int Population
         {
             get
@@ -483,6 +532,20 @@
                 return population;
             }
         }
+
+        public bool PopulationAny
+        {
+            get
+            {
+                for (int i = 0; i < _wordCountPhysical; i++)
+                    if (_words[i].Population > 0)
+                        return true;
+
+                return false;
+            }
+        }
+
+        #endregion
 
         #region Bit Positions
 
@@ -540,81 +603,11 @@
             }
         }
 
-        public IEnumerable<int> AndFilterBitPositions(Vector vector, bool value)
-        {
-            if (vector == null)
-                throw new ArgumentNullException("vector");
-
-            if (_isCompressed)
-                throw new NotSupportedException("Not supported for a compressed Vector.");
-
-            Contract.EndContractBlock();
-
-            int i = 0;
-            int iMax = _wordCountPhysical;
-
-            int j = 0;
-            int jMax = vector._wordCountPhysical;
-
-            while (i < iMax && j < jMax)
-            {
-                Word jWord = vector._words[j];
-
-                if (jWord.IsCompressed)
-                {
-                    if (jWord.FillBit == value)
-                    {
-                        int bitPositionOffset = i * (Word.SIZE - 1);
-
-                        for (int k = i; k < i + jWord.FillCount && k < iMax; k++)
-                        {
-                            Word kWord = _words[k];
-
-                            // PERF : Always check HasBitPositions before enumerating on GetBitPositions.
-                            if (kWord.HasBitPositions(value))
-                                foreach (int bitPosition in kWord.GetBitPositions(value))
-                                    yield return bitPosition + bitPositionOffset;
-
-                            bitPositionOffset += (Word.SIZE - 1);
-                        }
-                    }
-
-                    i += jWord.FillCount;
-
-                    if (jWord.HasPackedWord && i < iMax)
-                    {
-                        if (_words[i].Raw > 0 && _words[i][jWord.PackedPosition])
-                            yield return (i * (Word.SIZE - 1)) + jWord.PackedPosition;
-
-                        i++;
-                    }
-
-                    j++;
-                }
-                else
-                {
-                    Word word = new Word(_words[i].Raw & jWord.Raw);
-
-                    // PERF : Always check HasBitPositions before enumerating on GetBitPositions.
-                    if (word.HasBitPositions(value))
-                    {
-                        int bitPositionOffset = i * (Word.SIZE - 1);
-
-                        foreach (int bitPosition in word.GetBitPositions(value))
-                            yield return bitPositionOffset + bitPosition;
-                    }
-
-                    i++;
-                    j++;
-                }
-            }
-        }
-
         #endregion
 
         #region IVectorLogic
 
-        public void And(Vector vector)
+        public void AndInPlace(Vector vector)
         {
             if (vector == null)
                 throw new ArgumentNullException("vector");
@@ -624,7 +617,28 @@
 
             Contract.EndContractBlock();
 
-            VectorLogic.And(_words, ref _wordCountPhysical, ref _wordCountLogical, vector._isCompressed, vector._words, vector._wordCountPhysical);
+            if (!vector._isCompressed)
+                VectorLogic.AndInPlaceNoneNone(_words, ref _wordCountPhysical, ref _wordCountLogical, vector._words, vector._wordCountPhysical);
+            else
+                VectorLogic.AndInPlaceNoneCompressedWithPackedPosition(_words, ref _wordCountPhysical, ref _wordCountLogical, vector._words, vector._wordCountPhysical);
+        }
+
+        public Vector AndOutOfPlace(Vector vector, VectorCompression resultCompression)
+        {
+            if (vector == null)
+                throw new ArgumentNullException("vector");
+
+            Contract.EndContractBlock();
+
+            var lessCompression = Compression <= vector.Compression ? this : vector;
+            var moreCompression = (this == lessCompression) ? vector : this;
+
+            if (!moreCompression._isCompressed)
+                return VectorLogic.AndOutOfPlaceNoneNone(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical, resultCompression);
+            else if (!lessCompression._isCompressed)
+                return VectorLogic.AndOutOfPlaceNoneCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical, resultCompression);
+            else
+                return VectorLogic.AndOutOfPlaceCompressedWithPackedPositionCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical, resultCompression);
         }
 
         public int AndPopulation(Vector vector)
@@ -632,12 +646,20 @@
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
-            if (_isCompressed)
-                throw new NotSupportedException("Not supported for a compressed Vector.");
+            if (_isCompressed && vector._isCompressed)
+                throw new NotImplementedException("Not implemented for two compressed Vector.");
 
             Contract.EndContractBlock();
 
-            return VectorLogic.AndPopulation(_words, _wordCountPhysical, vector._isCompressed, vector._words, vector._wordCountPhysical);
+            var lessCompression = Compression <= vector.Compression ? this : vector;
+            var moreCompression = (this == lessCompression) ? vector : this;
+
+            if (!moreCompression._isCompressed)
+                return VectorLogic.AndPopulationNoneNone(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
+            else if (!lessCompression._isCompressed)
+                return VectorLogic.AndPopulationNoneCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
+            else
+                throw new NotImplementedException("See above. This code will never execute.");
         }
 
         public bool AndPopulationAny(Vector vector)
@@ -645,15 +667,23 @@
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
-            if (_isCompressed)
-                throw new NotSupportedException("Not supported for a compressed Vector.");
+            if (_isCompressed && vector._isCompressed)
+                throw new NotImplementedException("Not implemented for two compressed Vector.");
 
             Contract.EndContractBlock();
 
-            return VectorLogic.AndPopulationAny(_words, _wordCountPhysical, vector._isCompressed, vector._words, vector._wordCountPhysical);
+            var lessCompression = Compression <= vector.Compression ? this : vector;
+            var moreCompression = (this == lessCompression) ? vector : this;
+
+            if (!moreCompression._isCompressed)
+                return VectorLogic.AndPopulationAnyNoneNone(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
+            else if (!lessCompression._isCompressed)
+                return VectorLogic.AndPopulationAnyNoneCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
+            else
+                throw new NotImplementedException("See above. This code will never execute.");
         }
 
-        public void Or(Vector vector)
+        public void OrInPlace(Vector vector)
         {
             if (vector == null)
                 throw new ArgumentNullException("vector");
@@ -667,7 +697,10 @@
             _wordCountPhysical = Math.Max(_wordCountPhysical, vector._wordCountLogical);
             _wordCountLogical = Math.Max(_wordCountLogical, vector._wordCountLogical);
 
-            VectorLogic.Or(_words, _wordCountPhysical, vector._isCompressed, vector._words, vector._wordCountPhysical);
+            if (!vector._isCompressed)
+                VectorLogic.OrInPlaceNoneNone(_words, _wordCountPhysical, vector._words, vector._wordCountPhysical);
+            else
+                VectorLogic.OrInPlaceNoneCompressedWithPackedPosition(_words, _wordCountPhysical, vector._words, vector._wordCountPhysical);
         }
 
         #endregion
@@ -675,10 +708,22 @@
 
     internal interface IVectorLogic
     {
-        void Decompress(Word[] iWords, Word[] jWords, int jWordCountPhysical);
-        void And(Word[] iWords, ref int iWordCountPhysical, ref int iWordCountLogical, bool jIsCompressed, Word[] jWords, int jWordCountPhysical);
-        int AndPopulation(Word[] iWords, int iWordCountPhysical, bool jIsCompressed, Word[] jWords, int jWordCountPhysical);
-        bool AndPopulationAny(Word[] iWords, int iWordCountPhysical, bool jIsCompressed, Word[] jWords, int jWordCountPhysical);
-        void Or(Word[] iWords, int iWordCountPhysical, bool jIsCompressed, Word[] jWords, int jWordCountPhysical);
+        void DecompressInPlaceNoneCompressedWithPackedPosition(Word[] iWords, Word[] jWords, int jWordCountPhysical);
+
+        void AndInPlaceNoneNone(Word[] iWords, ref int iWordCountPhysical, ref int iWordCountLogical, Word[] jWords, int jWordCountPhysical);
+        void AndInPlaceNoneCompressedWithPackedPosition(Word[] iWords, ref int iWordCountPhysical, ref int iWordCountLogical, Word[] jWords, int jWordCountPhysical);
+
+        Vector AndOutOfPlaceNoneNone(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical, VectorCompression resultCompression);
+        Vector AndOutOfPlaceNoneCompressedWithPackedPosition(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical, VectorCompression resultCompression);
+        Vector AndOutOfPlaceCompressedWithPackedPositionCompressedWithPackedPosition(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical, VectorCompression resultCompression);
+
+        int AndPopulationNoneNone(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical);
+        int AndPopulationNoneCompressedWithPackedPosition(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical);
+
+        bool AndPopulationAnyNoneNone(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical);
+        bool AndPopulationAnyNoneCompressedWithPackedPosition(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical);
+
+        void OrInPlaceNoneNone(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical);
+        void OrInPlaceNoneCompressedWithPackedPosition(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical);
     }
 }

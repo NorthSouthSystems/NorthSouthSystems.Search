@@ -219,6 +219,23 @@
             Raw |= (packedPosition + 1) << (SIZE - 7);
         }
 
+        internal Word Unpack()
+        {
+            if (!IsCompressed)
+                throw new NotSupportedException("Cannot unpack a Word from an uncompressed Word.");
+
+            if (!HasPackedWord)
+                throw new NotSupportedException("Cannot unpack a Word from a Word that does not HasPackedWord.");
+
+            Contract.EndContractBlock();
+
+            var packedWord = PackedWord;
+
+            Raw &= ~PACKEDPOSITIONMASK;
+
+            return packedWord;
+        }
+
         #endregion
 
         #region Population

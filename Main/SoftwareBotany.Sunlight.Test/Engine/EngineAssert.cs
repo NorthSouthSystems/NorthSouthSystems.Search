@@ -9,11 +9,11 @@
 
     internal static class EngineAssert
     {
-        public static void ExecuteAndAssert(IEnumerable<EngineItem> source, Query<EngineItem, int> query, int skip, int take)
+        internal static void ExecuteAndAssert(IEnumerable<EngineItem> source, Query<EngineItem, int> query, int skip, int take)
         {
             query.Execute(skip, take);
 
-            HashSet<int> amongstPrimaryKeys = new HashSet<int>(query.AmongstPrimaryKeys);
+            var amongstPrimaryKeys = new HashSet<int>(query.AmongstPrimaryKeys);
 
             if (amongstPrimaryKeys.Count > 0)
                 source = source.Where(item => amongstPrimaryKeys.Contains(item.Id));

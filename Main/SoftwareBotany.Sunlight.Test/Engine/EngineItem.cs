@@ -28,28 +28,23 @@
 
         internal static EngineItem[] CreateItems(Random random, int count, out int someIntMax, out int someDateTimeMax, out int someStringMax, out int someTagsMax, out int someTagsMaxCount)
         {
-            int someIntCardinality = someIntMax = GetCardinality(random, count);
-            int someDateTimeCardinality = someDateTimeMax = GetCardinality(random, count);
-            int someStringCardinality = someStringMax = GetCardinality(random, count);
-            int someTagsCardinality = someTagsMax = GetCardinality(random, count);
-            someTagsMaxCount = Math.Max(random.Next(someTagsCardinality), 1);
-
-            int closableSomeTagsMaxCount = someTagsMaxCount;
+            // Cannot create closures around 'out' parameters.
+            int closableSomeIntMax = someIntMax = Math.Max(random.Next(count), 1);
+            int closableSomeDateTimeMax = someDateTimeMax = Math.Max(random.Next(count), 1);
+            int closableSomeStringMax = someStringMax = Math.Max(random.Next(count), 1);
+            int closableSomeTagsMax = someTagsMax = Math.Max(random.Next(count), 1);
+            int closableSomeTagsMaxCount = someTagsMaxCount = Math.Max(random.Next(closableSomeTagsMax), 1);
 
             return CreateItems(
-                id => random.Next(someIntCardinality),
-                id => new DateTime(2011, 1, 1).AddDays(random.Next(someDateTimeCardinality)),
-                id => random.Next(someStringCardinality).ToString(),
-                id => Enumerable.Range(0, random.Next(closableSomeTagsMaxCount)).Select(i => random.Next(someTagsCardinality)).Distinct().Select(tag => tag.ToString()).ToArray(),
+                id => random.Next(closableSomeIntMax),
+                id => new DateTime(2011, 1, 1).AddDays(random.Next(closableSomeDateTimeMax)),
+                id => random.Next(closableSomeStringMax).ToString(),
+                id => Enumerable.Range(0, random.Next(closableSomeTagsMaxCount))
+                    .Select(i => random.Next(closableSomeTagsMax))
+                    .Distinct()
+                    .Select(tag => tag.ToString())
+                    .ToArray(),
                 count);
-        }
-
-        private static int GetCardinality(Random random, int count)
-        {
-            double cardinality = random.Next(count);
-            cardinality = Math.Round(cardinality);
-            cardinality = Math.Max(cardinality, 1);
-            return Convert.ToInt32(cardinality);
         }
 
         internal int Id { get; private set; }

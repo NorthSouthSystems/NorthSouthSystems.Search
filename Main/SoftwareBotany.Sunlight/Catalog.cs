@@ -194,9 +194,9 @@
             if (lookupsArray.Length == 0)
                 vector.WordsClear();
             else if (lookupsArray.Length == 1)
-                vector.And(lookupsArray[0]);
+                vector.AndInPlace(lookupsArray[0]);
             else
-                vector.And(Vector.CreateUnion(lookupsArray));
+                vector.AndInPlace(Vector.OrOutOfPlace(lookupsArray));
         }
 
         private Vector Lookup(TKey key)
@@ -213,22 +213,53 @@
 
         ISortParameter ICatalogInEngine.CreateSortParameter(bool ascending) { return new SortParameter<TKey>(this, ascending); }
 
-        ICatalogInEngineSortResult ICatalogInEngine.SortBitPositions(Vector vector, bool value, bool ascending) { return SortBitPositions(vector, value, ascending); }
+        CatalogSortResult ICatalogInEngine.Sort(Vector vector, bool value, bool ascending, bool disableParallel) { return Sort(vector, value, ascending, disableParallel); }
 
-        public CatalogSortResult<TKey> SortBitPositions(Vector vector, bool value, bool ascending)
+        public CatalogSortResult Sort(Vector vector, bool value, bool ascending, bool disableParallel)
         {
             if (vector == null)
                 throw new ArgumentNullException("vector");
 
             Contract.EndContractBlock();
 
+            // TODO : Scope value entirely? Is value = false a legitimate use-case?
+            if (!value)
+                throw new NotImplementedException();
+
             // This uses SortedSet<T>.Reverse() and not the IEnumerable<T> extension method that suffers from greedy enumeration.
             var keys = ascending ? _keys : _keys.Reverse();
 
-            var partialSortResults = keys.Where(key => vector.AndPopulationAny(_keyToEntryMap[key].Vector))
-                .Select(key => new CatalogPartialSortResult<TKey>(key, vector.AndFilterBitPositions(_keyToEntryMap[key].Vector, value)));
+            // TODO : Support parallelization. In initial testing (with the admittedly small unit tests), parallelization was significantly slower.
+            // TODO : Optimize the resultCompression?
+            var partialSorts = keys.Select(key => vector.AndOutOfPlace(_keyToEntryMap[key].Vector, VectorCompression.Compressed))
+                .Where(partialSort => !partialSort.IsUnused);
 
-            return new CatalogSortResult<TKey>(partialSortResults);
+            return new CatalogSortResult(partialSorts);
+        }
+
+        CatalogSortResult ICatalogInEngine.ThenSort(CatalogSortResult sortResult, bool value, bool ascending, bool disableParallel) { return ThenSort(sortResult, value, ascending, disableParallel); }
+
+        public CatalogSortResult ThenSort(CatalogSortResult sortResult, bool value, bool ascending, bool disableParallel)
+        {
+            if (sortResult == null)
+                throw new ArgumentNullException("sortResult");
+
+            Contract.EndContractBlock();
+
+            // TODO : Scope value entirely? Is value = false a legitimate use-case?
+            if (!value)
+                throw new NotImplementedException();
+
+            // This uses SortedSet<T>.Reverse() and not the IEnumerable<T> extension method that suffers from greedy enumeration.
+            var keys = ascending ? _keys : _keys.Reverse();
+
+            // TODO : Support parallelization. In initial testing (with the admittedly small unit tests), parallelization was significantly slower.
+            // TODO : Optimize the resultCompression?
+            var partialSorts = sortResult.PartialSorts
+                .SelectMany(partialSort => keys.Select(key => partialSort.AndOutOfPlace(_keyToEntryMap[key].Vector, VectorCompression.Compressed)))
+                .Where(partialSort => !partialSort.IsUnused);
+
+            return new CatalogSortResult(partialSorts);
         }
 
         #endregion
@@ -278,7 +309,8 @@
 
         ISortParameter CreateSortParameter(bool ascending);
 
-        ICatalogInEngineSortResult SortBitPositions(Vector vector, bool value, bool ascending);
+        CatalogSortResult Sort(Vector vector, bool value, bool ascending, bool disableParallel);
+        CatalogSortResult ThenSort(CatalogSortResult sortResult, bool value, bool ascending, bool disableParallel);
 
         IFacetParameterInternal CreateFacetParameter();
 

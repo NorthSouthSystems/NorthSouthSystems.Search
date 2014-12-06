@@ -70,7 +70,6 @@
     </Compile>
     <Compile Include="CatalogSortResult.cs" />
     <Compile Include="Census.cs" />
-    <Compile Include="CatalogPartialSortResult.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Facet.cs" />
     <Compile Include="Query\FilterClause.cs" />
