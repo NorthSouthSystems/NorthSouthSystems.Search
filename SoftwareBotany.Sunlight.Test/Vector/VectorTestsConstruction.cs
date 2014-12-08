@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Reflection;
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -37,10 +38,19 @@
                 Assert.AreEqual(instruction.SourceCompression, source.Compression);
 
                 int[] bitPositions = source.SetBitsRandom(instruction.FillMaxBitPosition, instruction.FillCount, true);
+
                 var result = new Vector(instruction.AllowUnsafe, instruction.ResultCompression, source);
                 Assert.AreEqual(instruction.AllowUnsafe, result.AllowUnsafe);
                 Assert.AreEqual(instruction.ResultCompression, result.Compression);
+
                 result.AssertBitPositions(bitPositions);
+
+                var resultWords = (Word[])typeof(Vector).GetField("_words", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(result);
+
+                if (instruction.ResultCompression == VectorCompression.None)
+                    Assert.IsTrue(!resultWords.Any(word => word.IsCompressed));
+                else if (instruction.ResultCompression == VectorCompression.Compressed)
+                    Assert.IsTrue(!resultWords.Any(word => word.HasPackedWord));
 
                 source.WordsClear();
                 Assert.AreEqual(0, source.Population);

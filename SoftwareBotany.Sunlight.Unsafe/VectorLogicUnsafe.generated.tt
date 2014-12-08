@@ -1,0 +1,72 @@
+﻿<#@ template debug="true" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+namespace SoftwareBotany.Sunlight
+{
+    using System;
+
+    internal sealed partial class VectorLogicUnsafe : IVectorLogic
+    {
+        #region Decompress
+
+<# DecompressInPlaceNoneCompressed(false); #>
+
+<# DecompressInPlaceNoneCompressed(true); #>
+
+        #endregion
+    }
+}
+<#+
+public void DecompressInPlaceNoneCompressed(bool jWithPackedPosition)
+{
+#>
+        unsafe void IVectorLogic.DecompressInPlaceNoneCompressed<#= jWithPackedPosition ? "WithPackedPosition" : "" #>(Word[] iWords, Word[] jWords, int jWordCountPhysical)
+        {
+            fixed (Word* iFixed = iWords, jFixed = jWords)
+            {
+                Word* i = iFixed;
+                Word* j = jFixed;
+                Word* jMax = jFixed + jWordCountPhysical;
+
+                while (j < jMax)
+                {
+                    if (j->IsCompressed)
+                    {
+                        if (j->FillBit)
+                        {
+                            Word* k = i + j->FillCount;
+
+                            while (i < k)
+                            {
+                                i->Raw = 0x7FFFFFFF;
+                                i++;
+                            }
+                        }
+                        else
+                            i += j->FillCount;
+<#+
+    if (jWithPackedPosition)
+    {
+#>
+
+                        if (j->HasPackedWord)
+                        {
+                            i->Raw = j->PackedWord.Raw;
+                            i++;
+                        }
+<#+
+    }
+#>
+                    }
+                    else
+                    {
+                        i->Raw = j->Raw;
+                        i++;
+                    }
+
+                    j++;
+                }
+            }
+        }
+<#+
+}
+#>

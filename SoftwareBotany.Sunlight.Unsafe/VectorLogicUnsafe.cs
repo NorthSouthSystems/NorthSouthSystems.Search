@@ -2,54 +2,8 @@
 {
     using System;
 
-    internal sealed class VectorLogicUnsafe : IVectorLogic
+    internal sealed partial class VectorLogicUnsafe : IVectorLogic
     {
-        #region Construction
-
-        unsafe void IVectorLogic.DecompressInPlaceNoneCompressedWithPackedPosition(Word[] iWords, Word[] jWords, int jWordCountPhysical)
-        {
-            fixed (Word* iFixed = iWords, jFixed = jWords)
-            {
-                Word* i = iFixed;
-                Word* j = jFixed;
-                Word* jMax = jFixed + jWordCountPhysical;
-
-                while (j < jMax)
-                {
-                    if (j->IsCompressed)
-                    {
-                        if (j->FillBit)
-                        {
-                            Word* k = i + j->FillCount;
-
-                            while (i < k)
-                            {
-                                i->Raw = 0x7FFFFFFF;
-                                i++;
-                            }
-                        }
-                        else
-                            i += j->FillCount;
-
-                        if (j->HasPackedWord)
-                        {
-                            i->Raw = j->PackedWord.Raw;
-                            i++;
-                        }
-                    }
-                    else
-                    {
-                        i->Raw = j->Raw;
-                        i++;
-                    }
-
-                    j++;
-                }
-            }
-        }
-
-        #endregion
-
         #region And In-Place
 
         unsafe void IVectorLogic.AndInPlaceNoneNone(Word[] iWords, ref int iWordCountPhysical, ref int iWordCountLogical, Word[] jWords, int jWordCountPhysical)
