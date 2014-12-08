@@ -69,31 +69,68 @@
                 WordsGrow(wordsLength);
                 _wordCountPhysical = 1;
                 _wordCountLogical = 1;
-            }
-            else if (_isCompressed && !vector._isCompressed)
-            {
-                WordsGrow(wordsLength);
-                _wordCountPhysical = 1;
-                _wordCountLogical = 1;
 
-                for (int i = 0; i < vector._wordCountPhysical; i++)
-                    SetWord(i, vector._words[i]);
+                return;
             }
-            else if (!_isCompressed && vector._isCompressed)
-            {
-                WordsGrow(Math.Max(vector._wordCountLogical, wordsLength));
-                _wordCountPhysical = vector._wordCountLogical;
-                _wordCountLogical = vector._wordCountLogical;
 
-                VectorLogic.DecompressInPlaceNoneCompressedWithPackedPosition(_words, vector._words, vector._wordCountPhysical);
-            }
-            else
+            // There are 9 possible "copy" combinations: VectorCompression x VectorCompression
+            // 1. Handle the binary copies first.
+            //      N,      N
+            //      C,      C
+            //      CWPP,   CWPP
+            // 2. Use an optimized decompression algorithm next.
+            //      N,      C
+            //      N,      CWPP
+            // 3. The remainder are more complicated compressions or decompressions. An optimization we can make is to use WordsGrow smartly.
+            //      C,      N
+            //      C,      CWPP (WordsGrow to vector._wordCountPhysical because that is the minimum size [occurs when CWPP contains no PackedWords])
+            //      CWPP,   N
+            //      CWPP,   C    (WordsGrow to vector._wordCountPhysical / 2 because that is the minimum size [occurs when every other Word in C is uncompressed and can be Packed])
+            if (Compression == vector.Compression)
             {
                 WordsGrow(Math.Max(vector._wordCountPhysical, wordsLength));
                 _wordCountPhysical = vector._wordCountPhysical;
                 _wordCountLogical = vector._wordCountLogical;
 
                 Array.Copy(vector._words, _words, vector._wordCountPhysical);
+            }
+            else if (!_isCompressed)
+            {
+                WordsGrow(Math.Max(vector._wordCountLogical, wordsLength));
+                _wordCountPhysical = vector._wordCountLogical;
+                _wordCountLogical = vector._wordCountLogical;
+
+                if (!vector._isPackedPositionEnabled)
+                    VectorLogic.DecompressInPlaceNoneCompressed(_words, vector._words, vector._wordCountPhysical);
+                else
+                    VectorLogic.DecompressInPlaceNoneCompressedWithPackedPosition(_words, vector._words, vector._wordCountPhysical);
+            }
+            else
+            {
+                int wordCountPhysical = 0;
+
+                if (!_isPackedPositionEnabled && vector._isPackedPositionEnabled)
+                    wordCountPhysical = vector._wordCountPhysical;
+                else if (_isPackedPositionEnabled && vector._isCompressed)
+                    wordCountPhysical = vector._wordCountPhysical / 2;
+
+                WordsGrow(Math.Max(wordCountPhysical, wordsLength));
+                _wordCountPhysical = 1;
+                _wordCountLogical = 1;
+
+                // We must track vector's wordPositionLogical manually because SetWord is optimized to ignore 0's, thereby not increasing _wordCountLogical.
+                int wordPositionLogical = 0;
+
+                for (int i = 0; i < vector._wordCountPhysical; i++)
+                {
+                    Word word = vector._words[i];
+                    SetWord(wordPositionLogical, word);
+
+                    wordPositionLogical += word.IsCompressed ? word.FillCount : 1;
+
+                    if (word.HasPackedWord)
+                        wordPositionLogical++;
+                }
             }
         }
 
@@ -300,7 +337,7 @@
             if (_isCompressed && wordPositionLogical < (_wordCountLogical - 1))
                 throw new NotSupportedException("Writing is forward-only for a compressed Vector.");
 
-            bool isZero = word.Raw == 0u || (word.IsCompressed && !word.FillBit);
+            bool isZero = word.Raw == 0u || (word.IsCompressed && !word.FillBit && !word.HasPackedWord);
 
             if (isZero && ZeroFillCount(wordPositionLogical) > 0)
                 return;
@@ -327,8 +364,9 @@
                     _wordCountPhysical += word.FillCount - 1;
                     _wordCountLogical += word.FillCount - 1;
 
-                    for (int i = wordPositionPhysical; i < _wordCountPhysical; i++)
-                        _words[i].Raw = 0x7FFFFFFF;
+                    if (word.FillBit)
+                        for (int i = wordPositionPhysical; i < _wordCountPhysical; i++)
+                            _words[i].Raw = 0x7FFFFFFF;
 
                     if (word.HasPackedWord)
                     {
@@ -354,7 +392,10 @@
                     _wordCountLogical++;
 
                     if (word.HasPackedWord && !_isPackedPositionEnabled)
+                    {
                         _words[_wordCountPhysical - 1] = _words[_wordCountPhysical - 2].Unpack();
+                        _wordCountLogical--;
+                    }
                 }
             }
         }
@@ -708,6 +749,7 @@
 
     internal interface IVectorLogic
     {
+        void DecompressInPlaceNoneCompressed(Word[] iWords, Word[] jWords, int jWordCountPhysical);
         void DecompressInPlaceNoneCompressedWithPackedPosition(Word[] iWords, Word[] jWords, int jWordCountPhysical);
 
         void AndInPlaceNoneNone(Word[] iWords, ref int iWordCountPhysical, ref int iWordCountLogical, Word[] jWords, int jWordCountPhysical);
