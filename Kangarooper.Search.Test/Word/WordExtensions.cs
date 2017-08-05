@@ -1,4 +1,4 @@
-﻿namespace SoftwareBotany.Sunlight
+﻿namespace Kangarooper.Search
 {
     internal static class WordExtensions
     {

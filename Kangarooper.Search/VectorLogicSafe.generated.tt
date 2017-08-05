@@ -1,6 +1,6 @@
 ﻿<#@ template debug="true" hostspecific="false" language="C#" #>
 <#@ output extension=".cs" #>
-namespace SoftwareBotany.Sunlight
+namespace Kangarooper.Search
 {
     using System;
 

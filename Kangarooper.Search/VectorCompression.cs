@@ -1,4 +1,4 @@
-﻿namespace SoftwareBotany.Sunlight
+﻿namespace Kangarooper.Search
 {
     public enum VectorCompression
     {

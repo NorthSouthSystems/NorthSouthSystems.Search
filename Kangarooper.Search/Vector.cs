@@ -1,4 +1,4 @@
-﻿namespace SoftwareBotany.Sunlight
+﻿namespace Kangarooper.Search
 {
     using System;
     using System.Collections.Generic;
@@ -18,7 +18,7 @@
         {
             _safeVectorLogic = new VectorLogicSafe();
 
-            Type unsafeVectorLogicType = Type.GetType("SoftwareBotany.Sunlight.VectorLogicUnsafe, SoftwareBotany.Sunlight.Unsafe");
+            Type unsafeVectorLogicType = Type.GetType("Kangarooper.Search.VectorLogicUnsafe, Kangarooper.Search.Unsafe");
 
             if (unsafeVectorLogicType != null)
                 _unsafeVectorLogic = (IVectorLogic)Activator.CreateInstance(unsafeVectorLogicType);
@@ -58,7 +58,7 @@
         private Vector(bool allowUnsafe, VectorCompression compression, Vector vector, int wordsLength)
         {
             if (allowUnsafe && _unsafeVectorLogic == null)
-                throw new ArgumentException("Cannot create an unsafe Vector unless the SoftwareBotany.Sunlight.Unsafe Assembly is included in the project.");
+                throw new ArgumentException("Cannot create an unsafe Vector unless the Kangarooper.Search.Unsafe Assembly is included in the project.");
 
             _allowUnsafe = allowUnsafe;
             _isCompressed = (compression == VectorCompression.Compressed || compression == VectorCompression.CompressedWithPackedPosition);
