@@ -3,16 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareBotany.Sunlight", "SoftwareBotany.Sunlight\SoftwareBotany.Sunlight.csproj", "{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareBotany.Sunlight.Test", "SoftwareBotany.Sunlight.Test\SoftwareBotany.Sunlight.Test.csproj", "{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{339096F8-0550-4650-93B9-CB1242C43092}"
 	ProjectSection(SolutionItems) = preProject
 		AssemblyInfoShared.cs = AssemblyInfoShared.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareBotany.Sunlight.Unsafe", "SoftwareBotany.Sunlight.Unsafe\SoftwareBotany.Sunlight.Unsafe.csproj", "{D881789E-40E3-487F-9E54-344CE7C2F988}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kangarooper.Search", "Kangarooper.Search\Kangarooper.Search.csproj", "{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kangarooper.Search.Test", "Kangarooper.Search.Test\Kangarooper.Search.Test.csproj", "{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kangarooper.Search.Unsafe", "Kangarooper.Search.Unsafe\Kangarooper.Search.Unsafe.csproj", "{D881789E-40E3-487F-9E54-344CE7C2F988}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

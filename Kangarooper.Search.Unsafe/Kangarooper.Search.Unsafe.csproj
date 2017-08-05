@@ -63,7 +63,7 @@
     <Compile Include="VectorLogicUnsafe.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SoftwareBotany.Sunlight\SoftwareBotany.Sunlight.csproj">
+    <ProjectReference Include="..\Kangarooper.Search\Kangarooper.Search.csproj">
       <Project>{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}</Project>
       <Name>SoftwareBotany.Sunlight</Name>
     </ProjectReference>
