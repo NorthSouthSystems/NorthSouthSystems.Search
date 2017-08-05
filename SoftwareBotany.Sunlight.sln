@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareBotany.Sunlight", "SoftwareBotany.Sunlight\SoftwareBotany.Sunlight.csproj", "{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}"
 EndProject
@@ -10,28 +10,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{339096F8-0550-4650-93B9-CB1242C43092}"
 	ProjectSection(SolutionItems) = preProject
 		AssemblyInfoShared.cs = AssemblyInfoShared.cs
-		Local.testsettings = Local.testsettings
-		SoftwareBotany.Sunlight.Help\SoftwareBotany.Sunlight.Help.shfbproj = SoftwareBotany.Sunlight.Help\SoftwareBotany.Sunlight.Help.shfbproj
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareBotany.Sunlight.Unsafe", "SoftwareBotany.Sunlight.Unsafe\SoftwareBotany.Sunlight.Unsafe.csproj", "{D881789E-40E3-487F-9E54-344CE7C2F988}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs24
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = SoftwareBotany.Sunlight\\SoftwareBotany.Sunlight.csproj
-		SccProjectName1 = SoftwareBotany.Sunlight
-		SccLocalPath1 = SoftwareBotany.Sunlight
-		SccProjectUniqueName2 = SoftwareBotany.Sunlight.Test\\SoftwareBotany.Sunlight.Test.csproj
-		SccProjectName2 = SoftwareBotany.Sunlight.Test
-		SccLocalPath2 = SoftwareBotany.Sunlight.Test
-		SccProjectUniqueName3 = SoftwareBotany.Sunlight.Unsafe\\SoftwareBotany.Sunlight.Unsafe.csproj
-		SccProjectName3 = SoftwareBotany.Sunlight.Unsafe
-		SccLocalPath3 = SoftwareBotany.Sunlight.Unsafe
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
