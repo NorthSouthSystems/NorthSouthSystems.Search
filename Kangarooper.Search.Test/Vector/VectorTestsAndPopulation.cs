@@ -1,9 +1,8 @@
 ﻿namespace Kangarooper.Search
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
     using System.Collections.Generic;
-
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     public class VectorTestsAndPopulation

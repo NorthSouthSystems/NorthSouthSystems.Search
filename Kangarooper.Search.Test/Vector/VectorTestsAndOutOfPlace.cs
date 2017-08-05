@@ -1,8 +1,7 @@
 ﻿namespace Kangarooper.Search
 {
-    using System.Linq;
-
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Linq;
 
     [TestClass]
     public class VectorTestsAndOutOfPlace
