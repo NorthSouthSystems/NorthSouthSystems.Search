@@ -1,11 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
 
-[assembly: CLSCompliant(true)]
-
-[assembly: ComVisible(false)]
-[assembly: Guid("5c88b028-17b4-40f9-9d91-732cc764a1b1")]
-
-[assembly: InternalsVisibleTo("SoftwareBotany.Sunlight.Test")]
-[assembly: InternalsVisibleTo("SoftwareBotany.Sunlight.Unsafe")]
+[assembly: InternalsVisibleTo("Kangarooper.Search.Test")]
+[assembly: InternalsVisibleTo("Kangarooper.Search.Unsafe")]

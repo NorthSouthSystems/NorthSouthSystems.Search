@@ -1,12 +1,8 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("SoftwareBotany.Sunlight")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("Software Botany LLC.")]
-[assembly: AssemblyProduct("SoftwareBotany.Sunlight")]
-[assembly: AssemblyCopyright("Copyright © Software Botany LLC. 2011")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyCopyright("Copyright © Daniel J. Terry 2011-2017")]
 
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
@@ -14,4 +10,7 @@
 [assembly: AssemblyConfiguration("Release")]
 #endif
 
-[assembly: AssemblyVersion("0.9.0.*")]
+[assembly: AssemblyVersion("0.0.0.*")]
+
+[assembly: CLSCompliant(true)]
+[assembly: ComVisible(false)]
