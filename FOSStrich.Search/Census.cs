@@ -1,7 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System;
-
 /// <summary>
 /// Provides a method for computing the population (number of bits set to 1) of an
 /// unsigned integer.

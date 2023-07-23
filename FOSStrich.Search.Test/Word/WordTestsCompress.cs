@@ -1,8 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-
 [TestClass]
 public class WordTestsCompress
 {

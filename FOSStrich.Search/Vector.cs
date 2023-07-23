@@ -1,9 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 /// <summary>
 /// Word-aligned hybrid bit vector.
 /// </summary>

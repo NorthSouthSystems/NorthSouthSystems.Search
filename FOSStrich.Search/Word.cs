@@ -1,6 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System;
 using System.Globalization;
 
 internal struct Word

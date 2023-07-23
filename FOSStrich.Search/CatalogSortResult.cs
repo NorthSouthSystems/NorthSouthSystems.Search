@@ -1,7 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System.Collections.Generic;
-
 public sealed class CatalogSortResult
 {
     internal CatalogSortResult(IEnumerable<Vector> partialSorts)

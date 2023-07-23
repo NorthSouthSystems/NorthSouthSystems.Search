@@ -1,8 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System;
-using System.Linq;
-
 internal class EngineItem
 {
     internal static EngineItem[] CreateItems(

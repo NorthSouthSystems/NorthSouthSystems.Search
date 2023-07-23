@@ -1,7 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 [TestClass]
 public class WordTestsPopulation
 {

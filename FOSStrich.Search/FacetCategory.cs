@@ -1,7 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System;
-
 public struct FacetCategory<TKey> : IFacetCategory
         where TKey : IEquatable<TKey>, IComparable<TKey>
 {

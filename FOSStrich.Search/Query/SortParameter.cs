@@ -1,7 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System;
-
 public static class SortParameter
 {
     public static SortParameter<TKey> Create<TKey>(ICatalogHandle<TKey> catalog, bool ascending)

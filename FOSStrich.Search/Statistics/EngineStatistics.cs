@@ -1,7 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System.Linq;
-
 public sealed partial class Engine<TItem, TPrimaryKey>
 {
     public IEngineStatistics GenerateStatistics()

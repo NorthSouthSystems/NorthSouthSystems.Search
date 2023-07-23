@@ -1,8 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System;
-using System.Linq;
-
 internal class SafetyAndCompression
 {
     internal SafetyAndCompression(bool allowUnsafe, VectorCompression compression)

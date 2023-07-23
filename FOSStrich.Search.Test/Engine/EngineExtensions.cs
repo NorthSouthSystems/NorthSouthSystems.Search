@@ -1,8 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System;
-using System.Linq;
-
 internal static class EngineExtensions
 {
     internal static FilterParameter<int> CreateRandomFilterExactParameter(this Engine<EngineItem, int> engine, ICatalogHandle<int> catalog, Random random, int max)

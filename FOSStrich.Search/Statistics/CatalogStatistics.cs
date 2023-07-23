@@ -1,7 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System.Linq;
-
 public sealed partial class Catalog<TKey>
 {
     public ICatalogStatistics GenerateStatistics() { return new Statistics(this); }

@@ -1,7 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System;
-
 public interface IParameter
 {
     ICatalogHandle Catalog { get; }

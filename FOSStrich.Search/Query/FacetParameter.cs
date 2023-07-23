@@ -1,7 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System;
-
 public static class FacetParameter
 {
     public static FacetParameter<TKey> Create<TKey>(ICatalogHandle<TKey> catalog)

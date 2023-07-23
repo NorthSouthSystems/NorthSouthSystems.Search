@@ -1,9 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Linq;
-
 [TestClass]
 public class EngineTests
 {

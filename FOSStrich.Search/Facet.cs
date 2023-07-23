@@ -1,9 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 public sealed class Facet<TKey> : IFacet
         where TKey : IEquatable<TKey>, IComparable<TKey>
 {

@@ -1,7 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using System;
-
 internal sealed partial class VectorLogicSafe : IVectorLogic
 {
     #region Decompress

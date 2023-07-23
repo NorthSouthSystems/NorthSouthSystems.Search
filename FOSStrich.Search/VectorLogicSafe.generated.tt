@@ -1,71 +1,68 @@
 ﻿<#@ template debug="true" hostspecific="false" language="C#" #>
 <#@ output extension=".cs" #>
-namespace FOSStrich.Search
-{
-    using System;
+namespace FOSStrich.Search;
 
-    internal sealed partial class VectorLogicSafe : IVectorLogic
-    {
-        #region Decompress
+internal sealed partial class VectorLogicSafe : IVectorLogic
+{
+    #region Decompress
 
 <# DecompressInPlaceNoneCompressed(false); #>
 
 <# DecompressInPlaceNoneCompressed(true); #>
 
-        #endregion
-    }
+    #endregion
 }
 <#+
 public void DecompressInPlaceNoneCompressed(bool jWithPackedPosition)
 {
 #>
-        void IVectorLogic.DecompressInPlaceNoneCompressed<#= jWithPackedPosition ? "WithPackedPosition" : "" #>(Word[] iWords, Word[] jWords, int jWordCountPhysical)
+    void IVectorLogic.DecompressInPlaceNoneCompressed<#= jWithPackedPosition ? "WithPackedPosition" : "" #>(Word[] iWords, Word[] jWords, int jWordCountPhysical)
+    {
+        int i = 0;
+        int j = 0;
+        int jMax = jWordCountPhysical;
+
+        while (j < jMax)
         {
-            int i = 0;
-            int j = 0;
-            int jMax = jWordCountPhysical;
+            Word jWord = jWords[j];
 
-            while (j < jMax)
+            if (jWord.IsCompressed)
             {
-                Word jWord = jWords[j];
-
-                if (jWord.IsCompressed)
+                if (jWord.FillBit)
                 {
-                    if (jWord.FillBit)
-                    {
-                        int k = i + jWord.FillCount;
+                    int k = i + jWord.FillCount;
 
-                        while (i < k)
-                        {
-                            iWords[i].Raw = 0x7FFFFFFF;
-                            i++;
-                        }
+                    while (i < k)
+                    {
+                        iWords[i].Raw = 0x7FFFFFFF;
+                        i++;
                     }
-                    else
-                        i += jWord.FillCount;
+                }
+                else
+                    i += jWord.FillCount;
 <#+
     if (jWithPackedPosition)
     {
 #>
 
-                    if (jWord.HasPackedWord)
-                    {
-                        iWords[i].Raw = jWord.PackedWord.Raw;
-                        i++;
-                    }
+                if (jWord.HasPackedWord)
+                {
+                    iWords[i].Raw = jWord.PackedWord.Raw;
+                    i++;
+                }
 <#+
     }
 #>
-                }
-                else
-                {
-                    iWords[i].Raw = jWord.Raw;
-                    i++;
-                }
-
-                j++;
             }
+            else
+            {
+                iWords[i].Raw = jWord.Raw;
+                i++;
+            }
+
+            j++;
         }
+    }
 <#+
 }
 #>

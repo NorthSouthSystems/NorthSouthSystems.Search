@@ -1,72 +1,69 @@
 ﻿<#@ template debug="true" hostspecific="false" language="C#" #>
 <#@ output extension=".cs" #>
-namespace FOSStrich.Search
-{
-    using System;
+namespace FOSStrich.Search;
 
-    internal sealed partial class VectorLogicUnsafe : IVectorLogic
-    {
-        #region Decompress
+internal sealed partial class VectorLogicUnsafe : IVectorLogic
+{
+    #region Decompress
 
 <# DecompressInPlaceNoneCompressed(false); #>
 
 <# DecompressInPlaceNoneCompressed(true); #>
 
-        #endregion
-    }
+    #endregion
 }
 <#+
 public void DecompressInPlaceNoneCompressed(bool jWithPackedPosition)
 {
 #>
-        unsafe void IVectorLogic.DecompressInPlaceNoneCompressed<#= jWithPackedPosition ? "WithPackedPosition" : "" #>(Word[] iWords, Word[] jWords, int jWordCountPhysical)
+    unsafe void IVectorLogic.DecompressInPlaceNoneCompressed<#= jWithPackedPosition ? "WithPackedPosition" : "" #>(Word[] iWords, Word[] jWords, int jWordCountPhysical)
+    {
+        fixed (Word* iFixed = iWords, jFixed = jWords)
         {
-            fixed (Word* iFixed = iWords, jFixed = jWords)
+            Word* i = iFixed;
+            Word* j = jFixed;
+            Word* jMax = jFixed + jWordCountPhysical;
+
+            while (j < jMax)
             {
-                Word* i = iFixed;
-                Word* j = jFixed;
-                Word* jMax = jFixed + jWordCountPhysical;
-
-                while (j < jMax)
+                if (j->IsCompressed)
                 {
-                    if (j->IsCompressed)
+                    if (j->FillBit)
                     {
-                        if (j->FillBit)
-                        {
-                            Word* k = i + j->FillCount;
+                        Word* k = i + j->FillCount;
 
-                            while (i < k)
-                            {
-                                i->Raw = 0x7FFFFFFF;
-                                i++;
-                            }
+                        while (i < k)
+                        {
+                            i->Raw = 0x7FFFFFFF;
+                            i++;
                         }
-                        else
-                            i += j->FillCount;
+                    }
+                    else
+                        i += j->FillCount;
 <#+
     if (jWithPackedPosition)
     {
 #>
 
-                        if (j->HasPackedWord)
-                        {
-                            i->Raw = j->PackedWord.Raw;
-                            i++;
-                        }
+                    if (j->HasPackedWord)
+                    {
+                        i->Raw = j->PackedWord.Raw;
+                        i++;
+                    }
 <#+
     }
 #>
-                    }
-                    else
-                    {
-                        i->Raw = j->Raw;
-                        i++;
-                    }
-
-                    j++;
                 }
+                else
+                {
+                    i->Raw = j->Raw;
+                    i++;
+                }
+
+                j++;
             }
         }
+    }
 <#+
 }
 #>
