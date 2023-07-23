@@ -9,11 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CodeAnalysis.CustomDictionary.xml = CodeAnalysis.CustomDictionary.xml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeAndWithBeer.Search", "FreeAndWithBeer.Search\FreeAndWithBeer.Search.csproj", "{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOSStrich.Search", "FOSStrich.Search\FOSStrich.Search.csproj", "{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeAndWithBeer.Search.Test", "FreeAndWithBeer.Search.Test\FreeAndWithBeer.Search.Test.csproj", "{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOSStrich.Search.Test", "FOSStrich.Search.Test\FOSStrich.Search.Test.csproj", "{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeAndWithBeer.Search.Unsafe", "FreeAndWithBeer.Search.Unsafe\FreeAndWithBeer.Search.Unsafe.csproj", "{D881789E-40E3-487F-9E54-344CE7C2F988}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOSStrich.Search.Unsafe", "FOSStrich.Search.Unsafe\FOSStrich.Search.Unsafe.csproj", "{D881789E-40E3-487F-9E54-344CE7C2F988}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
