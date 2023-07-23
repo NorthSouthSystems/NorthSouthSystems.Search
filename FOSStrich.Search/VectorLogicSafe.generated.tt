@@ -1,6 +1,6 @@
 ﻿<#@ template debug="true" hostspecific="false" language="C#" #>
 <#@ output extension=".cs" #>
-namespace FreeAndWithBeer.Search
+namespace FOSStrich.Search
 {
     using System;
 

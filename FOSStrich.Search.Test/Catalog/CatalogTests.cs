@@ -1,4 +1,4 @@
-﻿namespace FreeAndWithBeer.Search
+﻿namespace FOSStrich.Search
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;

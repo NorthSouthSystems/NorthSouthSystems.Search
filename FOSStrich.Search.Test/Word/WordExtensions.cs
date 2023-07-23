@@ -1,4 +1,4 @@
-﻿namespace FreeAndWithBeer.Search
+﻿namespace FOSStrich.Search
 {
     internal static class WordExtensions
     {

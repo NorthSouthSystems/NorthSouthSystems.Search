@@ -1,4 +1,4 @@
-﻿namespace FreeAndWithBeer.Search
+﻿namespace FOSStrich.Search
 {
     using System;
     using System.Diagnostics.Contracts;
