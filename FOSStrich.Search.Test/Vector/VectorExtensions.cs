@@ -4,6 +4,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
 
     internal static class VectorExtensions
     {
@@ -11,10 +12,12 @@
 
         internal static void AssertWordCounts(this Vector vector, int expectedWordCountPhysical, int expectedWordCountLogical)
         {
-            PrivateObject poVector = new PrivateObject(vector);
-            Assert.AreEqual(expectedWordCountPhysical, (int)poVector.GetField("_wordCountPhysical"));
-            Assert.AreEqual(expectedWordCountLogical, (int)poVector.GetField("_wordCountLogical"));
+            Assert.AreEqual(expectedWordCountPhysical, (int)_wordCountPhysicalField.GetValue(vector));
+            Assert.AreEqual(expectedWordCountLogical, (int)_wordCountLogicalField.GetValue(vector));
         }
+
+        private static readonly FieldInfo _wordCountPhysicalField = typeof(Vector).GetField("_wordCountPhysical", BindingFlags.Public | BindingFlags.NonPublic);
+        private static readonly FieldInfo _wordCountLogicalField = typeof(Vector).GetField("_wordCountLogical", BindingFlags.Public | BindingFlags.NonPublic);
 
         internal static void AssertWordLogicalValues(this Vector vector, params uint[] expectedWordLogicalValues)
         {
