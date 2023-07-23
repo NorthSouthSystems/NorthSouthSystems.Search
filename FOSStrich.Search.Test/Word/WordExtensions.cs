@@ -1,7 +1,6 @@
-﻿namespace FOSStrich.Search
+﻿namespace FOSStrich.Search;
+
+internal static class WordExtensions
 {
-    internal static class WordExtensions
-    {
-        internal const int LARGEPRIME = 9973;
-    }
+    internal const int LARGEPRIME = 9973;
 }

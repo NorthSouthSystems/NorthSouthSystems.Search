@@ -1,48 +1,47 @@
-﻿namespace FOSStrich.Search
+﻿namespace FOSStrich.Search;
+
+using System.Linq;
+
+public sealed partial class Catalog<TKey>
 {
-    using System.Linq;
+    public ICatalogStatistics GenerateStatistics() { return new Statistics(this); }
 
-    public sealed partial class Catalog<TKey>
+    private sealed class Statistics : ICatalogStatistics
     {
-        public ICatalogStatistics GenerateStatistics() { return new Statistics(this); }
-
-        private sealed class Statistics : ICatalogStatistics
+        internal Statistics(Catalog<TKey> catalog)
         {
-            internal Statistics(Catalog<TKey> catalog)
+            foreach (IVectorStatistics vectorStats in catalog._keyToEntryMap.Values.Select(entry => entry.Vector.GenerateStatistics()))
             {
-                foreach (IVectorStatistics vectorStats in catalog._keyToEntryMap.Values.Select(entry => entry.Vector.GenerateStatistics()))
-                {
-                    _vectorCount++;
-                    _wordCount += vectorStats.WordCount;
-                    _packedWordCount += vectorStats.PackedWordCount;
-                    _oneBitPackableWordCount += vectorStats.OneBitPackableWordCount;
-                    _twoBitPackableWordCount += vectorStats.TwoBitPackableWordCount;
-                }
+                _vectorCount++;
+                _wordCount += vectorStats.WordCount;
+                _packedWordCount += vectorStats.PackedWordCount;
+                _oneBitPackableWordCount += vectorStats.OneBitPackableWordCount;
+                _twoBitPackableWordCount += vectorStats.TwoBitPackableWordCount;
             }
-
-            private readonly int _vectorCount;
-            public int VectorCount { get { return _vectorCount; } }
-
-            private readonly int _wordCount;
-            public int WordCount { get { return _wordCount; } }
-
-            private readonly int _packedWordCount;
-            public int PackedWordCount { get { return _packedWordCount; } }
-
-            private readonly int _oneBitPackableWordCount;
-            public int OneBitPackableWordCount { get { return _oneBitPackableWordCount; } }
-
-            private readonly int _twoBitPackableWordCount;
-            public int TwoBitPackableWordCount { get { return _twoBitPackableWordCount; } }
         }
-    }
 
-    public interface ICatalogStatistics
-    {
-        int VectorCount { get; }
-        int WordCount { get; }
-        int PackedWordCount { get; }
-        int OneBitPackableWordCount { get; }
-        int TwoBitPackableWordCount { get; }
+        private readonly int _vectorCount;
+        public int VectorCount { get { return _vectorCount; } }
+
+        private readonly int _wordCount;
+        public int WordCount { get { return _wordCount; } }
+
+        private readonly int _packedWordCount;
+        public int PackedWordCount { get { return _packedWordCount; } }
+
+        private readonly int _oneBitPackableWordCount;
+        public int OneBitPackableWordCount { get { return _oneBitPackableWordCount; } }
+
+        private readonly int _twoBitPackableWordCount;
+        public int TwoBitPackableWordCount { get { return _twoBitPackableWordCount; } }
     }
+}
+
+public interface ICatalogStatistics
+{
+    int VectorCount { get; }
+    int WordCount { get; }
+    int PackedWordCount { get; }
+    int OneBitPackableWordCount { get; }
+    int TwoBitPackableWordCount { get; }
 }

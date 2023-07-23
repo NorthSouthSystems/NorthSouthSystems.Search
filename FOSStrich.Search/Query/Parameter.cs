@@ -1,30 +1,29 @@
-﻿namespace FOSStrich.Search
+﻿namespace FOSStrich.Search;
+
+using System;
+using System.Diagnostics.Contracts;
+
+public interface IParameter
 {
-    using System;
-    using System.Diagnostics.Contracts;
+    ICatalogHandle Catalog { get; }
+}
 
-    public interface IParameter
+internal static class ParameterHelper
+{
+    internal static TIParameter CreateLooselyTyped<TItem, TPrimaryKey, TIParameter>(Engine<TItem, TPrimaryKey> engine, string catalogName,
+        Func<ICatalogInEngine, TIParameter> creator)
+        where TIParameter : IParameter
     {
-        ICatalogHandle Catalog { get; }
-    }
+        if (engine == null)
+            throw new ArgumentNullException("engine");
 
-    internal static class ParameterHelper
-    {
-        internal static TIParameter CreateLooselyTyped<TItem, TPrimaryKey, TIParameter>(Engine<TItem, TPrimaryKey> engine, string catalogName,
-            Func<ICatalogInEngine, TIParameter> creator)
-            where TIParameter : IParameter
-        {
-            if (engine == null)
-                throw new ArgumentNullException("engine");
+        if (string.IsNullOrWhiteSpace(catalogName))
+            throw new ArgumentNullException("catalogName");
 
-            if (string.IsNullOrWhiteSpace(catalogName))
-                throw new ArgumentNullException("catalogName");
+        Contract.EndContractBlock();
 
-            Contract.EndContractBlock();
+        var catalog = engine.GetCatalog(catalogName);
 
-            var catalog = engine.GetCatalog(catalogName);
-
-            return creator(catalog);
-        }
+        return creator(catalog);
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace FOSStrich.Search
+﻿namespace FOSStrich.Search;
+
+public enum VectorCompression
 {
-    public enum VectorCompression
-    {
-        None = 0,
-        Compressed = 1,
-        CompressedWithPackedPosition = 2
-    }
+    None = 0,
+    Compressed = 1,
+    CompressedWithPackedPosition = 2
 }

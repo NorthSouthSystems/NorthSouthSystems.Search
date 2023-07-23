@@ -1,14 +1,13 @@
-﻿namespace FOSStrich.Search
-{
-    using System;
+﻿namespace FOSStrich.Search;
 
-    internal static class CatalogExtensions
+using System;
+
+internal static class CatalogExtensions
+{
+    internal static void Fill<TKey>(this Catalog<TKey> catalog, TKey key, int[] bitPositions, bool value)
+        where TKey : IEquatable<TKey>, IComparable<TKey>
     {
-        internal static void Fill<TKey>(this Catalog<TKey> catalog, TKey key, int[] bitPositions, bool value)
-            where TKey : IEquatable<TKey>, IComparable<TKey>
-        {
-            foreach (int bitPosition in bitPositions)
-                catalog.Set(key, bitPosition, value);
-        }
+        foreach (int bitPosition in bitPositions)
+            catalog.Set(key, bitPosition, value);
     }
 }
