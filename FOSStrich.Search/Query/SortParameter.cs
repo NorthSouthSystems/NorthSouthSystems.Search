@@ -1,7 +1,6 @@
 ﻿namespace FOSStrich.Search;
 
 using System;
-using System.Diagnostics.Contracts;
 
 public static class SortParameter
 {
@@ -24,8 +23,6 @@ public sealed class SortParameter<TKey> : ISortParameter
     {
         if (catalog == null)
             throw new ArgumentNullException("catalog");
-
-        Contract.EndContractBlock();
 
         _catalog = catalog;
         _ascending = ascending;

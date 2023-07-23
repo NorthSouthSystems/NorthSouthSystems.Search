@@ -3,7 +3,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 
 public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngine
@@ -90,8 +89,6 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         if (key == null)
             throw new ArgumentNullException("key");
 
-        Contract.EndContractBlock();
-
         Entry entry;
 
         if (!_keyToEntryMap.TryGetValue(key, out entry))
@@ -113,8 +110,6 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
 
         if (_isOneToOne)
             throw new NotSupportedException("One-to-one Catalogs must use Set(TKey key, ...) instead.");
-
-        Contract.EndContractBlock();
 
         foreach (TKey key in keys)
             Set(key, bitPosition, value);
@@ -140,8 +135,6 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         if (key == null)
             throw new ArgumentNullException("key");
 
-        Contract.EndContractBlock();
-
         FilterImpl(vector, new[] { Lookup(key) });
     }
 
@@ -158,8 +151,6 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         if (keys.Any(key => key == null))
             throw new ArgumentNullException("keys", "All keys must be non-null.");
 
-        Contract.EndContractBlock();
-
         FilterImpl(vector, keys.Distinct().Select(key => Lookup(key)));
     }
 
@@ -175,8 +166,6 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
 
         if (keyMin != null && keyMax != null && keyMin.CompareTo(keyMax) > 0)
             throw new ArgumentOutOfRangeException("keyMin", "keyMin must be <= keyMax.");
-
-        Contract.EndContractBlock();
 
         if (keyMin == null)
             keyMin = _keys.Min;
@@ -220,8 +209,6 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         if (vector == null)
             throw new ArgumentNullException("vector");
 
-        Contract.EndContractBlock();
-
         // TODO : Scope value entirely? Is value = false a legitimate use-case?
         if (!value)
             throw new NotImplementedException();
@@ -243,8 +230,6 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
     {
         if (sortResult == null)
             throw new ArgumentNullException("sortResult");
-
-        Contract.EndContractBlock();
 
         // TODO : Scope value entirely? Is value = false a legitimate use-case?
         if (!value)
@@ -274,8 +259,6 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
     {
         if (vector == null)
             throw new ArgumentNullException("vector");
-
-        Contract.EndContractBlock();
 
         var keyAndEntries = _keyToEntryMap.AsParallel();
 

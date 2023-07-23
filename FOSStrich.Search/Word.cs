@@ -1,7 +1,6 @@
 ﻿namespace FOSStrich.Search;
 
 using System;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 
 internal struct Word
@@ -15,8 +14,6 @@ internal struct Word
         if (raw >= COMPRESSEDMASK)
             throw new ArgumentOutOfRangeException("raw", raw, string.Format(CultureInfo.InvariantCulture, "Must be < COMPRESSEDMASK : 0x{0:X}.", COMPRESSEDMASK));
 
-        Contract.EndContractBlock();
-
         Raw = raw;
     }
 
@@ -27,8 +24,6 @@ internal struct Word
 
         if (fillCount > FILLCOUNTMASK)
             throw new ArgumentOutOfRangeException("fillCount", fillCount, string.Format(CultureInfo.InvariantCulture, "Must be <= FILLCOUNTMASK : 0x{0:X}.", FILLCOUNTMASK));
-
-        Contract.EndContractBlock();
 
         Raw = COMPRESSEDMASK | (fillBit ? FILLBITMASK : 0u) | (uint)fillCount;
     }
@@ -67,8 +62,6 @@ internal struct Word
         if (position >= SIZE - 1)
             throw new ArgumentOutOfRangeException("position", position, string.Format(CultureInfo.InvariantCulture, "Must be < SIZE - 1 : {0}.", SIZE - 1));
 
-        Contract.EndContractBlock();
-
         return 1u << (30 - position);
     }
 
@@ -78,8 +71,6 @@ internal struct Word
         {
             if (IsCompressed)
                 throw new NotSupportedException("Not supported for compressed Words.");
-
-            Contract.EndContractBlock();
 
             bool[] bits = new bool[SIZE - 1];
             int current = 0;
@@ -101,8 +92,6 @@ internal struct Word
         if (IsCompressed)
             throw new NotSupportedException("Not supported for compressed Words.");
 
-        Contract.EndContractBlock();
-
         return (value && Raw != 0u) || (!value && Raw != COMPRESSIBLEMASK);
     }
 
@@ -110,8 +99,6 @@ internal struct Word
     {
         if (IsCompressed)
             throw new NotSupportedException("Not supported for compressed Words.");
-
-        Contract.EndContractBlock();
 
         if ((value && Raw == 0u) || (!value && Raw == COMPRESSIBLEMASK))
             return _emptyBitPositions;
@@ -180,8 +167,6 @@ internal struct Word
             if (!HasPackedWord)
                 throw new NotSupportedException("Cannot retrieve the PackedPosition for a Word that does not contain a Packed Word.");
 
-            Contract.EndContractBlock();
-
             return (int)((Raw & PACKEDPOSITIONMASK) >> (SIZE - 7)) - 1;
         }
     }
@@ -192,8 +177,6 @@ internal struct Word
         {
             if (!HasPackedWord)
                 throw new NotSupportedException("Cannot retrieve the PackedWord for a Word that does not contain a Packed Word.");
-
-            Contract.EndContractBlock();
 
             return new Word(1u << (SIZE - 2 - PackedPosition));
         }
@@ -213,8 +196,6 @@ internal struct Word
         if (word.Population != 1)
             throw new NotSupportedException("Can only pack a Word with exactly 1 bit set (Population = 1).");
 
-        Contract.EndContractBlock();
-
         uint packedPosition = (uint)word.GetBitPositions(true)[0];
         Raw |= (packedPosition + 1) << (SIZE - 7);
     }
@@ -226,8 +207,6 @@ internal struct Word
 
         if (!HasPackedWord)
             throw new NotSupportedException("Cannot unpack a Word from a Word that does not HasPackedWord.");
-
-        Contract.EndContractBlock();
 
         var packedWord = PackedWord;
 

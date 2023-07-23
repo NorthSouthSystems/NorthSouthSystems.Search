@@ -1,7 +1,6 @@
 ﻿namespace FOSStrich.Search;
 
 using System;
-using System.Diagnostics.Contracts;
 
 public interface IParameter
 {
@@ -19,8 +18,6 @@ internal static class ParameterHelper
 
         if (string.IsNullOrWhiteSpace(catalogName))
             throw new ArgumentNullException("catalogName");
-
-        Contract.EndContractBlock();
 
         var catalog = engine.GetCatalog(catalogName);
 

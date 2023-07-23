@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -65,8 +64,6 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentNullException("name");
-
-        Contract.EndContractBlock();
 
         Catalog<TKey> catalog;
 
@@ -205,8 +202,6 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
         if (items == null)
             throw new ArgumentNullException("items");
 
-        Contract.EndContractBlock();
-
         try
         {
             _rwLock.EnterWriteLock();
@@ -260,8 +255,6 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
     {
         if (items == null)
             throw new ArgumentNullException("items");
-
-        Contract.EndContractBlock();
 
         try
         {
@@ -317,8 +310,6 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
     {
         if (items == null)
             throw new ArgumentNullException("items");
-
-        Contract.EndContractBlock();
 
         try
         {

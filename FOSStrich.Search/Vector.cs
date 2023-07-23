@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 
 /// <summary>
@@ -34,8 +33,6 @@ public sealed partial class Vector
 
         if (vectors.Length < 2)
             throw new ArgumentOutOfRangeException("vectors", "At least 2 Vectors must be provided in order to CreateUnion.");
-
-        Contract.EndContractBlock();
 
         int maxWordCountLogical = vectors.Max(v => v._wordCountLogical);
 
@@ -223,8 +220,6 @@ public sealed partial class Vector
             if (bitPosition < 0)
                 throw new ArgumentOutOfRangeException("bitPosition", bitPosition, "Must be > 0.");
 
-            Contract.EndContractBlock();
-
             int wordPositionLogical = WordPositionLogical(bitPosition);
             Word word = GetWordLogical(wordPositionLogical);
             int wordBitPosition = WordBitPosition(bitPosition);
@@ -235,8 +230,6 @@ public sealed partial class Vector
             if (bitPosition < 0)
                 throw new ArgumentOutOfRangeException("bitPosition", bitPosition, "Must be > 0.");
 
-            Contract.EndContractBlock();
-
             SetBit(bitPosition, value);
         }
     }
@@ -245,8 +238,6 @@ public sealed partial class Vector
     {
         if (wordPositionLogical < 0)
             throw new ArgumentOutOfRangeException("wordPositionLogical", wordPositionLogical, "Must be > 0.");
-
-        Contract.EndContractBlock();
 
         if (wordPositionLogical >= _wordCountLogical)
             return new Word(0);
@@ -332,8 +323,6 @@ public sealed partial class Vector
         if (wordPositionLogical < 0)
             throw new ArgumentOutOfRangeException("wordPositionLogical", wordPositionLogical, "Must be >= 0.");
 
-        Contract.EndContractBlock();
-
         if (_isCompressed && wordPositionLogical < (_wordCountLogical - 1))
             throw new NotSupportedException("Writing is forward-only for a compressed Vector.");
 
@@ -404,8 +393,6 @@ public sealed partial class Vector
     {
         if (bitPosition < 0)
             throw new ArgumentOutOfRangeException("bitPosition", bitPosition, "Must be >= 0.");
-
-        Contract.EndContractBlock();
 
         int wordPositionLogical = WordPositionLogical(bitPosition);
         int wordBitPosition = WordBitPosition(bitPosition);
@@ -597,8 +584,6 @@ public sealed partial class Vector
             if (_isCompressed)
                 throw new NotSupportedException("Not supported for a compressed Vector.");
 
-            Contract.EndContractBlock();
-
             for (int i = 0; i < _wordCountPhysical; i++)
                 foreach (bool bit in _words[i].Bits)
                     yield return bit;
@@ -656,8 +641,6 @@ public sealed partial class Vector
         if (_isCompressed)
             throw new NotSupportedException("Not supported for a compressed Vector.");
 
-        Contract.EndContractBlock();
-
         if (!vector._isCompressed)
             VectorLogic.AndInPlaceNoneNone(_words, ref _wordCountPhysical, ref _wordCountLogical, vector._words, vector._wordCountPhysical);
         else
@@ -668,8 +651,6 @@ public sealed partial class Vector
     {
         if (vector == null)
             throw new ArgumentNullException("vector");
-
-        Contract.EndContractBlock();
 
         var lessCompression = Compression <= vector.Compression ? this : vector;
         var moreCompression = (this == lessCompression) ? vector : this;
@@ -690,8 +671,6 @@ public sealed partial class Vector
         if (_isCompressed && vector._isCompressed)
             throw new NotImplementedException("Not implemented for two compressed Vector.");
 
-        Contract.EndContractBlock();
-
         var lessCompression = Compression <= vector.Compression ? this : vector;
         var moreCompression = (this == lessCompression) ? vector : this;
 
@@ -711,8 +690,6 @@ public sealed partial class Vector
         if (_isCompressed && vector._isCompressed)
             throw new NotImplementedException("Not implemented for two compressed Vector.");
 
-        Contract.EndContractBlock();
-
         var lessCompression = Compression <= vector.Compression ? this : vector;
         var moreCompression = (this == lessCompression) ? vector : this;
 
@@ -731,8 +708,6 @@ public sealed partial class Vector
 
         if (_isCompressed)
             throw new NotSupportedException("Not supported for a compressed Vector.");
-
-        Contract.EndContractBlock();
 
         WordsGrow(vector._wordCountLogical);
         _wordCountPhysical = Math.Max(_wordCountPhysical, vector._wordCountLogical);

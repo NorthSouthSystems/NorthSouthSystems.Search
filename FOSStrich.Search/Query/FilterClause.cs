@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 
 public class FilterClause
@@ -49,8 +48,6 @@ public class FilterClause
         if (rightClause == null)
             throw new ArgumentNullException("rightClause");
 
-        Contract.EndContractBlock();
-
         // Flatten when possible
         switch (leftClause.Operation)
         {
@@ -79,8 +76,6 @@ public class FilterClause
         if (rightClause == null)
             throw new ArgumentNullException("rightClause");
 
-        Contract.EndContractBlock();
-
         // Flatten when possible
         switch (leftClause.Operation)
         {
@@ -104,8 +99,6 @@ public class FilterClause
     {
         if (clause == null)
             throw new ArgumentNullException("clause");
-
-        Contract.EndContractBlock();
 
         return new FilterClause(BooleanOperation.Not, new[] { clause });
     }

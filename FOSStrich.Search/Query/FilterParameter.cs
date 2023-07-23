@@ -3,7 +3,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 
 public static class FilterParameter
 {
@@ -70,8 +69,6 @@ public sealed class FilterParameter<TKey> : FilterClause, IFilterParameter
             if (rangeMin != null && rangeMax != null && rangeMin.CompareTo(rangeMax) > 0)
                 throw new ArgumentOutOfRangeException("rangeMin", "rangeMin must be <= rangeMax.");
         }
-
-        Contract.EndContractBlock();
 
         _catalog = catalog;
         _parameterType = parameterType;
