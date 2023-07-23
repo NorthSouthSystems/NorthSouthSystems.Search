@@ -16,8 +16,8 @@ internal static class VectorExtensions
         Assert.AreEqual(expectedWordCountLogical, (int)_wordCountLogicalField.GetValue(vector));
     }
 
-    private static readonly FieldInfo _wordCountPhysicalField = typeof(Vector).GetField("_wordCountPhysical", BindingFlags.Public | BindingFlags.NonPublic);
-    private static readonly FieldInfo _wordCountLogicalField = typeof(Vector).GetField("_wordCountLogical", BindingFlags.Public | BindingFlags.NonPublic);
+    private static readonly FieldInfo _wordCountPhysicalField = typeof(Vector).GetField("_wordCountPhysical", BindingFlags.Instance | BindingFlags.NonPublic);
+    private static readonly FieldInfo _wordCountLogicalField = typeof(Vector).GetField("_wordCountLogical", BindingFlags.Instance | BindingFlags.NonPublic);
 
     internal static void AssertWordLogicalValues(this Vector vector, params uint[] expectedWordLogicalValues)
     {
