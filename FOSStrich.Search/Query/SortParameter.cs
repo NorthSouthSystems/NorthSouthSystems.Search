@@ -22,10 +22,10 @@ public sealed class SortParameter<TKey> : ISortParameter
         _ascending = ascending;
     }
 
-    public ICatalogHandle Catalog { get { return _catalog; } }
+    public ICatalogHandle Catalog => _catalog;
     private readonly ICatalogHandle _catalog;
 
-    public bool Ascending { get { return _ascending; } }
+    public bool Ascending => _ascending;
     private readonly bool _ascending;
 }
 

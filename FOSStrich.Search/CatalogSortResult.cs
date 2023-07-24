@@ -7,6 +7,6 @@ public sealed class CatalogSortResult
         _partialSorts = partialSorts;
     }
 
-    public IEnumerable<Vector> PartialSorts { get { return _partialSorts; } }
+    public IEnumerable<Vector> PartialSorts => _partialSorts;
     private readonly IEnumerable<Vector> _partialSorts;
 }

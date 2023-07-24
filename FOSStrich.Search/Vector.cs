@@ -127,7 +127,7 @@ public sealed partial class Vector
         }
     }
 
-    internal bool IsUnused { get { return _wordCountLogical == 1 && _words[0].Raw == 0u; } }
+    internal bool IsUnused => _wordCountLogical == 1 && _words[0].Raw == 0u;
 
     #endregion
 
@@ -152,25 +152,20 @@ public sealed partial class Vector
 
     #region Words
 
-    public bool AllowUnsafe { get { return _allowUnsafe; } }
+    public bool AllowUnsafe => _allowUnsafe;
     private readonly bool _allowUnsafe;
 
-    private IVectorLogic VectorLogic { get { return _allowUnsafe ? _unsafeVectorLogic : _safeVectorLogic; } }
+    private IVectorLogic VectorLogic => _allowUnsafe ? _unsafeVectorLogic : _safeVectorLogic;
 
-    public VectorCompression Compression
-    {
-        get
-        {
-            return _isCompressed
-                ? (_isPackedPositionEnabled ? VectorCompression.CompressedWithPackedPosition : VectorCompression.Compressed)
-                : VectorCompression.None;
-        }
-    }
+    public VectorCompression Compression =>
+        _isCompressed
+            ? (_isPackedPositionEnabled ? VectorCompression.CompressedWithPackedPosition : VectorCompression.Compressed)
+            : VectorCompression.None;
 
-    public bool IsCompressed { get { return _isCompressed; } }
+    public bool IsCompressed => _isCompressed;
     private readonly bool _isCompressed;
 
-    public bool IsPackedPositionEnabled { get { return _isPackedPositionEnabled; } }
+    public bool IsPackedPositionEnabled => _isPackedPositionEnabled;
     private readonly bool _isPackedPositionEnabled;
 
     private Word[] _words;

@@ -31,22 +31,22 @@ public sealed partial class Engine<TItem, TPrimaryKey>
         }
 
         private readonly int _catalogCount;
-        public int CatalogCount { get { return _catalogCount; } }
+        public int CatalogCount => _catalogCount;
 
         private readonly int _vectorCount;
-        public int VectorCount { get { return _vectorCount; } }
+        public int VectorCount => _vectorCount;
 
         private readonly int _wordCount;
-        public int WordCount { get { return _wordCount; } }
+        public int WordCount => _wordCount;
 
         private readonly int _packedWordCount;
-        public int PackedWordCount { get { return _packedWordCount; } }
+        public int PackedWordCount => _packedWordCount;
 
         private readonly int _oneBitPackableWordCount;
-        public int OneBitPackableWordCount { get { return _oneBitPackableWordCount; } }
+        public int OneBitPackableWordCount => _oneBitPackableWordCount;
 
         private readonly int _twoBitPackableWordCount;
-        public int TwoBitPackableWordCount { get { return _twoBitPackableWordCount; } }
+        public int TwoBitPackableWordCount => _twoBitPackableWordCount;
     }
 }
 

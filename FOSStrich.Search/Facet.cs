@@ -8,12 +8,12 @@ public sealed class Facet<TKey> : IFacet
         _categories = categories.Where(category => category.Count > 0).ToArray();
     }
 
-    public IEnumerable<FacetCategory<TKey>> Categories { get { return _categories; } }
+    public IEnumerable<FacetCategory<TKey>> Categories => _categories;
     private readonly FacetCategory<TKey>[] _categories;
 
     #region IFacet
 
-    IEnumerable<IFacetCategory> IFacet.Categories { get { return _categories.Cast<IFacetCategory>(); } }
+    IEnumerable<IFacetCategory> IFacet.Categories => _categories.Cast<IFacetCategory>();
 
     #endregion
 }

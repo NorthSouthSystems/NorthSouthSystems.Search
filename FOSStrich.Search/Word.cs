@@ -35,10 +35,7 @@ internal struct Word
 
     public bool this[int position]
     {
-        get
-        {
-            return (Raw & ComputeIndexerMask(position)) > 0u;
-        }
+        get => (Raw & ComputeIndexerMask(position)) > 0u;
         set
         {
             uint mask = ComputeIndexerMask(position);
@@ -130,11 +127,11 @@ internal struct Word
     internal const uint FILLBITMASK = 0x40000000u;
     internal const uint FILLCOUNTMASK = 0x01FFFFFFu;
 
-    public bool IsCompressible { get { return Raw == 0u || Raw == COMPRESSIBLEMASK; } }
-    public bool CompressibleFillBit { get { return Raw != 0u; } }
-    public bool IsCompressed { get { return Raw >= COMPRESSEDMASK; } }
-    public bool FillBit { get { return (Raw & FILLBITMASK) > 0u; } }
-    public int FillCount { get { return (int)(Raw & FILLCOUNTMASK); } }
+    public bool IsCompressible => Raw == 0u || Raw == COMPRESSIBLEMASK;
+    public bool CompressibleFillBit => Raw != 0u;
+    public bool IsCompressed => Raw >= COMPRESSEDMASK;
+    public bool FillBit => (Raw & FILLBITMASK) > 0u;
+    public int FillCount => (int)(Raw & FILLCOUNTMASK);
 
     public void Compress()
     {
@@ -148,7 +145,7 @@ internal struct Word
 
     private const uint PACKEDPOSITIONMASK = 0x3E000000u;
 
-    public bool HasPackedWord { get { return IsCompressed && (Raw & PACKEDPOSITIONMASK) > 0u; } }
+    public bool HasPackedWord => IsCompressed && (Raw & PACKEDPOSITIONMASK) > 0u;
 
     /// <summary>
     /// Position is relative to the global bit position.  More specifically, it ignores the most significant bit which is

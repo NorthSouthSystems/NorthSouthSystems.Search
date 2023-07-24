@@ -21,7 +21,7 @@ public sealed class FacetParameter<TKey> : IFacetParameterInternal
         _catalog = catalog;
     }
 
-    public ICatalogHandle Catalog { get { return _catalog; } }
+    public ICatalogHandle Catalog => _catalog;
     private readonly ICatalogHandle _catalog;
 
     public Facet<TKey> Facet
@@ -47,15 +47,15 @@ public sealed class FacetParameter<TKey> : IFacetParameterInternal
 
     IFacet IFacetParameterInternal.Facet
     {
-        get { return Facet; }
-        set { Facet = (Facet<TKey>)value; }
+        get => Facet;
+        set => Facet = (Facet<TKey>)value;
     }
 
     #endregion
 
     #region IFacetParameter
 
-    IFacet IFacetParameter.Facet { get { return Facet; } }
+    IFacet IFacetParameter.Facet => Facet;
 
     #endregion
 }

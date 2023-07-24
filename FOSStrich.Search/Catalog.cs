@@ -13,16 +13,16 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         _compression = compression;
     }
 
-    public string Name { get { return _name; } }
+    public string Name => _name;
     private readonly string _name;
 
-    public bool IsOneToOne { get { return _isOneToOne; } }
+    public bool IsOneToOne => _isOneToOne;
     private readonly bool _isOneToOne;
 
-    public bool AllowUnsafe { get { return _allowUnsafe; } }
+    public bool AllowUnsafe => _allowUnsafe;
     private readonly bool _allowUnsafe;
 
-    public VectorCompression Compression { get { return _compression; } }
+    public VectorCompression Compression => _compression;
     private readonly VectorCompression _compression;
 
     private SortedSet<TKey> _keys = new SortedSet<TKey>();

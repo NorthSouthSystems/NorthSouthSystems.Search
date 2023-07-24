@@ -32,16 +32,16 @@ public sealed partial class Vector
         }
 
         private readonly int _wordCount;
-        public int WordCount { get { return _wordCount; } }
+        public int WordCount => _wordCount;
 
         private readonly int _packedWordCount;
-        public int PackedWordCount { get { return _packedWordCount; } }
+        public int PackedWordCount => _packedWordCount;
 
         private readonly int _oneBitPackableWordCount;
-        public int OneBitPackableWordCount { get { return _oneBitPackableWordCount; } }
+        public int OneBitPackableWordCount => _oneBitPackableWordCount;
 
         private readonly int _twoBitPackableWordCount;
-        public int TwoBitPackableWordCount { get { return _twoBitPackableWordCount; } }
+        public int TwoBitPackableWordCount => _twoBitPackableWordCount;
     }
 }
 

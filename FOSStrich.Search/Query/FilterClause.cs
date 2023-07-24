@@ -15,10 +15,10 @@ public class FilterClause
         _subClauses = subClauses;
     }
 
-    public BooleanOperation Operation { get { return _operation; } }
+    public BooleanOperation Operation => _operation;
     private readonly BooleanOperation _operation;
 
-    public IEnumerable<FilterClause> SubClauses { get { return _subClauses; } }
+    public IEnumerable<FilterClause> SubClauses => _subClauses;
     private readonly FilterClause[] _subClauses;
 
     internal IEnumerable<IFilterParameter> AllFilterParameters() =>

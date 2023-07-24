@@ -9,15 +9,15 @@ public struct FacetCategory<TKey> : IFacetCategory
         _count = count;
     }
 
-    public TKey Key { get { return _key; } }
+    public TKey Key => _key;
     private readonly TKey _key;
 
-    public int Count { get { return _count; } }
+    public int Count => _count;
     private readonly int _count;
 
     #region IFacetCategory
 
-    object IFacetCategory.Key { get { return Key; } }
+    object IFacetCategory.Key => Key;
 
     #endregion
 

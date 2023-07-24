@@ -17,7 +17,7 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
     private bool _configuring = true;
     private readonly ReaderWriterLockSlim _rwLock = new ReaderWriterLockSlim();
 
-    public bool AllowUnsafe { get { return _allowUnsafe; } }
+    public bool AllowUnsafe => _allowUnsafe;
     private readonly bool _allowUnsafe;
 
     private readonly Func<TItem, TPrimaryKey> _primaryKeyExtractor;

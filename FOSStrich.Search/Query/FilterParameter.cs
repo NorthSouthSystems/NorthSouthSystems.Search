@@ -64,30 +64,30 @@ public sealed class FilterParameter<TKey> : FilterClause, IFilterParameter
         _rangeMax = rangeMax;
     }
 
-    public ICatalogHandle Catalog { get { return _catalog; } }
+    public ICatalogHandle Catalog => _catalog;
     private readonly ICatalogHandle _catalog;
 
-    public FilterParameterType ParameterType { get { return _parameterType; } }
+    public FilterParameterType ParameterType => _parameterType;
     private readonly FilterParameterType _parameterType;
 
-    public TKey Exact { get { return _exact; } }
+    public TKey Exact => _exact;
     private readonly TKey _exact;
 
-    public IEnumerable<TKey> Enumerable { get { return _enumerable; } }
+    public IEnumerable<TKey> Enumerable => _enumerable;
     private readonly IEnumerable<TKey> _enumerable;
 
-    public TKey RangeMin { get { return _rangeMin; } }
+    public TKey RangeMin => _rangeMin;
     private readonly TKey _rangeMin;
 
-    public TKey RangeMax { get { return _rangeMax; } }
+    public TKey RangeMax => _rangeMax;
     private readonly TKey _rangeMax;
 
     #region IFilterParameter
 
-    object IFilterParameter.Exact { get { return Exact; } }
-    IEnumerable IFilterParameter.Enumerable { get { return Enumerable; } }
-    object IFilterParameter.RangeMin { get { return RangeMin; } }
-    object IFilterParameter.RangeMax { get { return RangeMax; } }
+    object IFilterParameter.Exact => Exact;
+    IEnumerable IFilterParameter.Enumerable => Enumerable;
+    object IFilterParameter.RangeMin => RangeMin;
+    object IFilterParameter.RangeMax => RangeMax;
 
     #endregion
 }
