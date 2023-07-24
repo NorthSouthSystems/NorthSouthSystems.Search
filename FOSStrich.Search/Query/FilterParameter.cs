@@ -44,9 +44,6 @@ public sealed class FilterParameter<TKey> : FilterClause, IFilterParameter
     private FilterParameter(ICatalogHandle<TKey> catalog, FilterParameterType parameterType,
         TKey exact = default(TKey), IEnumerable<TKey> enumerable = null, TKey rangeMin = default(TKey), TKey rangeMax = default(TKey))
     {
-        if (catalog == null)
-            throw new ArgumentNullException(nameof(catalog));
-
         if (parameterType == FilterParameterType.Range)
         {
             if (rangeMin == null && rangeMax == null)
@@ -56,7 +53,7 @@ public sealed class FilterParameter<TKey> : FilterClause, IFilterParameter
                 throw new ArgumentOutOfRangeException(nameof(rangeMin), "rangeMin must be <= rangeMax.");
         }
 
-        _catalog = catalog;
+        _catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
         _parameterType = parameterType;
         _exact = exact;
         _enumerable = enumerable;

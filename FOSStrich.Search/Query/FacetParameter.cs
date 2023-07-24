@@ -13,13 +13,8 @@ public static class FacetParameter
 public sealed class FacetParameter<TKey> : IFacetParameterInternal
     where TKey : IEquatable<TKey>, IComparable<TKey>
 {
-    internal FacetParameter(ICatalogHandle<TKey> catalog)
-    {
-        if (catalog == null)
-            throw new ArgumentNullException(nameof(catalog));
-
-        _catalog = catalog;
-    }
+    internal FacetParameter(ICatalogHandle<TKey> catalog) =>
+        _catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
 
     public ICatalogHandle Catalog => _catalog;
     private readonly ICatalogHandle _catalog;

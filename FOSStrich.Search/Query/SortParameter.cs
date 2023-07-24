@@ -15,10 +15,7 @@ public sealed class SortParameter<TKey> : ISortParameter
 {
     internal SortParameter(ICatalogHandle<TKey> catalog, bool ascending)
     {
-        if (catalog == null)
-            throw new ArgumentNullException(nameof(catalog));
-
-        _catalog = catalog;
+        _catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
         _ascending = ascending;
     }
 
