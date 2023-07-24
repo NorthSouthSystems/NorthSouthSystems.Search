@@ -42,7 +42,7 @@ public sealed class FilterParameter<TKey> : FilterClause, IFilterParameter
     { }
 
     private FilterParameter(ICatalogHandle<TKey> catalog, FilterParameterType parameterType,
-        TKey exact = default(TKey), IEnumerable<TKey> enumerable = null, TKey rangeMin = default(TKey), TKey rangeMax = default(TKey))
+        TKey exact = default, IEnumerable<TKey> enumerable = null, TKey rangeMin = default, TKey rangeMax = default)
     {
         if (parameterType == FilterParameterType.Range)
         {
@@ -53,31 +53,20 @@ public sealed class FilterParameter<TKey> : FilterClause, IFilterParameter
                 throw new ArgumentOutOfRangeException(nameof(rangeMin), "rangeMin must be <= rangeMax.");
         }
 
-        _catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
-        _parameterType = parameterType;
-        _exact = exact;
-        _enumerable = enumerable;
-        _rangeMin = rangeMin;
-        _rangeMax = rangeMax;
+        Catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
+        ParameterType = parameterType;
+        Exact = exact;
+        Enumerable = enumerable;
+        RangeMin = rangeMin;
+        RangeMax = rangeMax;
     }
 
-    public ICatalogHandle Catalog => _catalog;
-    private readonly ICatalogHandle _catalog;
-
-    public FilterParameterType ParameterType => _parameterType;
-    private readonly FilterParameterType _parameterType;
-
-    public TKey Exact => _exact;
-    private readonly TKey _exact;
-
-    public IEnumerable<TKey> Enumerable => _enumerable;
-    private readonly IEnumerable<TKey> _enumerable;
-
-    public TKey RangeMin => _rangeMin;
-    private readonly TKey _rangeMin;
-
-    public TKey RangeMax => _rangeMax;
-    private readonly TKey _rangeMax;
+    public ICatalogHandle Catalog { get; }
+    public FilterParameterType ParameterType { get; }
+    public TKey Exact { get; }
+    public IEnumerable<TKey> Enumerable { get; }
+    public TKey RangeMin { get; }
+    public TKey RangeMax { get; }
 
     #region IFilterParameter
 

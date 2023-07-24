@@ -20,7 +20,7 @@ public sealed class Query<TItem, TPrimaryKey>
     #region Amongst
 
     public IEnumerable<TPrimaryKey> AmongstPrimaryKeys => _amongstPrimaryKeys;
-    private readonly List<TPrimaryKey> _amongstPrimaryKeys = new List<TPrimaryKey>();
+    private readonly List<TPrimaryKey> _amongstPrimaryKeys = new();
 
     public Query<TItem, TPrimaryKey> Amongst(IEnumerable<TPrimaryKey> primaryKeys)
     {
@@ -60,7 +60,7 @@ public sealed class Query<TItem, TPrimaryKey>
     #region Sort
 
     public IEnumerable<ISortParameter> SortParameters => _sortParameters;
-    private readonly List<ISortParameter> _sortParameters = new List<ISortParameter>();
+    private readonly List<ISortParameter> _sortParameters = new();
 
     public Query<TItem, TPrimaryKey> Sort(params ISortParameter[] sortParameters)
     {
@@ -116,7 +116,7 @@ public sealed class Query<TItem, TPrimaryKey>
 
     public IEnumerable<IFacetParameter> FacetParameters => _facetParameters;
     internal IEnumerable<IFacetParameterInternal> FacetParametersInternal => _facetParameters;
-    private readonly List<IFacetParameterInternal> _facetParameters = new List<IFacetParameterInternal>();
+    private readonly List<IFacetParameterInternal> _facetParameters = new();
 
     public Query<TItem, TPrimaryKey> FacetAll()
     {

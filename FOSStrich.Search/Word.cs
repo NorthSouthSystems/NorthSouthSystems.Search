@@ -116,7 +116,7 @@ internal struct Word
         return bitPositions;
     }
 
-    private static readonly int[] _emptyBitPositions = new int[0];
+    private static readonly int[] _emptyBitPositions = Array.Empty<int>();
 
     #endregion
 

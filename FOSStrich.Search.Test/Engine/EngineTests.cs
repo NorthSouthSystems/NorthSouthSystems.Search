@@ -49,7 +49,7 @@ public class EngineTests
         {
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-            engine1.Add(EngineItem.CreateItems(id => id, id => DateTime.Now, id => id.ToString(), id => new string[0], 1).Single());
+            engine1.Add(EngineItem.CreateItems(id => id, id => DateTime.Now, id => id.ToString(), id => Array.Empty<string>(), 1).Single());
 
             var catalog2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
         }

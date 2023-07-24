@@ -10,28 +10,19 @@ public sealed partial class Catalog<TKey>
         {
             foreach (IVectorStatistics vectorStats in catalog._keyToEntryMap.Values.Select(entry => entry.Vector.GenerateStatistics()))
             {
-                _vectorCount++;
-                _wordCount += vectorStats.WordCount;
-                _packedWordCount += vectorStats.PackedWordCount;
-                _oneBitPackableWordCount += vectorStats.OneBitPackableWordCount;
-                _twoBitPackableWordCount += vectorStats.TwoBitPackableWordCount;
+                VectorCount++;
+                WordCount += vectorStats.WordCount;
+                PackedWordCount += vectorStats.PackedWordCount;
+                OneBitPackableWordCount += vectorStats.OneBitPackableWordCount;
+                TwoBitPackableWordCount += vectorStats.TwoBitPackableWordCount;
             }
         }
 
-        private readonly int _vectorCount;
-        public int VectorCount => _vectorCount;
-
-        private readonly int _wordCount;
-        public int WordCount => _wordCount;
-
-        private readonly int _packedWordCount;
-        public int PackedWordCount => _packedWordCount;
-
-        private readonly int _oneBitPackableWordCount;
-        public int OneBitPackableWordCount => _oneBitPackableWordCount;
-
-        private readonly int _twoBitPackableWordCount;
-        public int TwoBitPackableWordCount => _twoBitPackableWordCount;
+        public int VectorCount { get; }
+        public int WordCount { get; }
+        public int PackedWordCount { get; }
+        public int OneBitPackableWordCount { get; }
+        public int TwoBitPackableWordCount { get; }
     }
 }
 

@@ -28,7 +28,7 @@ internal static class VectorExtensions
             .OrderBy(bitPosition => bitPosition)
             .ToArray();
 
-        bool[] expectedBits = expectedBitPositions.Length == 0 ? new bool[0] : new bool[expectedBitPositions.Max() + 1];
+        bool[] expectedBits = expectedBitPositions.Length == 0 ? Array.Empty<bool>() : new bool[expectedBitPositions.Max() + 1];
 
         foreach (int expectedBitPosition in expectedBitPositions)
             expectedBits[expectedBitPosition] = true;

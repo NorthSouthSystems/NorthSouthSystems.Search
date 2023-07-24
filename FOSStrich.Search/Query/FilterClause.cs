@@ -4,25 +4,22 @@ public class FilterClause
 {
     protected internal FilterClause()
     {
-        _operation = BooleanOperation.And;
-        _subClauses = new[] { this };
+        Operation = BooleanOperation.And;
+        SubClauses = new[] { this };
     }
 
     // TODO : De-duplication of identical FilterParameters.
     private FilterClause(BooleanOperation operation, FilterClause[] subClauses)
     {
-        _operation = operation;
-        _subClauses = subClauses;
+        Operation = operation;
+        SubClauses = subClauses;
     }
 
-    public BooleanOperation Operation => _operation;
-    private readonly BooleanOperation _operation;
-
-    public IEnumerable<FilterClause> SubClauses => _subClauses;
-    private readonly FilterClause[] _subClauses;
+    public BooleanOperation Operation { get; }
+    public IEnumerable<FilterClause> SubClauses { get; }
 
     internal IEnumerable<IFilterParameter> AllFilterParameters() =>
-        _subClauses.SelectMany(clause =>
+        SubClauses.SelectMany(clause =>
         {
             var parameter = clause as IFilterParameter;
 

@@ -15,15 +15,12 @@ public sealed class SortParameter<TKey> : ISortParameter
 {
     internal SortParameter(ICatalogHandle<TKey> catalog, bool ascending)
     {
-        _catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
-        _ascending = ascending;
+        Catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
+        Ascending = ascending;
     }
 
-    public ICatalogHandle Catalog => _catalog;
-    private readonly ICatalogHandle _catalog;
-
-    public bool Ascending => _ascending;
-    private readonly bool _ascending;
+    public ICatalogHandle Catalog { get; }
+    public bool Ascending { get; }
 }
 
 public interface ISortParameter : IParameter

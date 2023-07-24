@@ -9,24 +9,23 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
 {
     public Engine(bool allowUnsafe, Func<TItem, TPrimaryKey> primaryKeyExtractor)
     {
-        _allowUnsafe = allowUnsafe;
+        AllowUnsafe = allowUnsafe;
         _primaryKeyExtractor = primaryKeyExtractor;
-        _activeItems = new Vector(_allowUnsafe, VectorCompression.None);
+        _activeItems = new Vector(AllowUnsafe, VectorCompression.None);
     }
 
     private bool _configuring = true;
-    private readonly ReaderWriterLockSlim _rwLock = new ReaderWriterLockSlim();
+    private readonly ReaderWriterLockSlim _rwLock = new();
 
-    public bool AllowUnsafe => _allowUnsafe;
-    private readonly bool _allowUnsafe;
+    public bool AllowUnsafe { get; }
 
     private readonly Func<TItem, TPrimaryKey> _primaryKeyExtractor;
-    private List<TPrimaryKey> _primaryKeys = new List<TPrimaryKey>();
-    private Dictionary<TPrimaryKey, int> _primaryKeyToActiveBitPositionMap = new Dictionary<TPrimaryKey, int>();
+    private List<TPrimaryKey> _primaryKeys = new();
+    private Dictionary<TPrimaryKey, int> _primaryKeyToActiveBitPositionMap = new();
 
     private Vector _activeItems;
 
-    private List<CatalogPlusExtractor> _catalogsPlusExtractors = new List<CatalogPlusExtractor>();
+    private List<CatalogPlusExtractor> _catalogsPlusExtractors = new();
 
     private class CatalogPlusExtractor
     {
@@ -70,7 +69,7 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
             if (_catalogsPlusExtractors.Any(cpe => cpe.Catalog.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "A Catalog already exists with the case-insensitive name : {0}.", name));
 
-            catalog = new Catalog<TKey>(name, isOneToOne, _allowUnsafe, compression);
+            catalog = new Catalog<TKey>(name, isOneToOne, AllowUnsafe, compression);
             _catalogsPlusExtractors.Add(new CatalogPlusExtractor(catalog, keyOrKeysExtractor));
         }
         finally
@@ -382,7 +381,7 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
 
         if (amongstPrimaryKeys.Any())
         {
-            result = new Vector(_allowUnsafe, VectorCompression.None);
+            result = new Vector(AllowUnsafe, VectorCompression.None);
 
             // No benchmarking was done to justify the OrderByDescending; however, the rationale
             // is that if we start by setting the maximum position, the Vector's underlying Array
@@ -406,7 +405,7 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
             }
         }
         else
-            result = new Vector(_allowUnsafe, VectorCompression.None, _activeItems);
+            result = new Vector(AllowUnsafe, VectorCompression.None, _activeItems);
 
         return result;
     }

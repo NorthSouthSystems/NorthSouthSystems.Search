@@ -7,32 +7,25 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
 {
     public Catalog(string name, bool isOneToOne, bool allowUnsafe, VectorCompression compression)
     {
-        _name = name;
-        _isOneToOne = isOneToOne;
-        _allowUnsafe = allowUnsafe;
-        _compression = compression;
+        Name = name;
+        IsOneToOne = isOneToOne;
+        AllowUnsafe = allowUnsafe;
+        Compression = compression;
     }
 
-    public string Name => _name;
-    private readonly string _name;
+    public string Name { get; }
+    public bool IsOneToOne { get; }
+    public bool AllowUnsafe { get; }
+    public VectorCompression Compression { get; }
 
-    public bool IsOneToOne => _isOneToOne;
-    private readonly bool _isOneToOne;
-
-    public bool AllowUnsafe => _allowUnsafe;
-    private readonly bool _allowUnsafe;
-
-    public VectorCompression Compression => _compression;
-    private readonly VectorCompression _compression;
-
-    private SortedSet<TKey> _keys = new SortedSet<TKey>();
-    private Dictionary<TKey, Entry> _keyToEntryMap = new Dictionary<TKey, Entry>();
+    private SortedSet<TKey> _keys = new();
+    private Dictionary<TKey, Entry> _keyToEntryMap = new();
 
     // TODO : Better OOP... right now this is just serving as a mutable Tuple which is probably
     // not the best design.
     private class Entry
     {
-        internal Entry(Vector vector) { Vector = vector; }
+        internal Entry(Vector vector) => Vector = vector;
 
         internal Vector Vector;
         internal Vector VectorOptimized;
@@ -91,7 +84,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         if (!_keyToEntryMap.TryGetValue(key, out entry))
         {
             // TODO : This will use a VectorFactory pattern shortly.
-            entry = new Entry(new Vector(_allowUnsafe, _compression));
+            entry = new Entry(new Vector(AllowUnsafe, Compression));
 
             _keys.Add(key);
             _keyToEntryMap.Add(key, entry);
@@ -105,7 +98,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         if (keys == null)
             throw new ArgumentNullException(nameof(keys));
 
-        if (_isOneToOne)
+        if (IsOneToOne)
             throw new NotSupportedException("One-to-one Catalogs must use Set(TKey key, ...) instead.");
 
         foreach (TKey key in keys)
@@ -153,7 +146,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         if (keys.Any(key => key == null))
             throw new ArgumentNullException(nameof(keys), "All keys must be non-null.");
 
-        FilterImpl(vector, keys.Distinct().Select(key => Lookup(key)));
+        FilterImpl(vector, keys.Distinct().Select(Lookup));
     }
 
     void ICatalogInEngine.FilterRange(Vector vector, object keyMin, object keyMax) => Filter(vector, (TKey)keyMin, (TKey)keyMax);
@@ -175,7 +168,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         if (keyMax == null)
             keyMax = _keys.Max;
 
-        FilterImpl(vector, _keys.Count == 0 ? new Vector[0] : _keys.GetViewBetween(keyMin, keyMax).Select(key => _keyToEntryMap[key].Vector));
+        FilterImpl(vector, _keys.Count == 0 ? Array.Empty<Vector>() : _keys.GetViewBetween(keyMin, keyMax).Select(key => _keyToEntryMap[key].Vector));
     }
 
     private static void FilterImpl(Vector vector, IEnumerable<Vector> lookups)

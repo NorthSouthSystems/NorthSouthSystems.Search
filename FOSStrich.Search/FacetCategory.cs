@@ -1,19 +1,16 @@
 ﻿namespace FOSStrich.Search;
 
 public struct FacetCategory<TKey> : IFacetCategory
-        where TKey : IEquatable<TKey>, IComparable<TKey>
+    where TKey : IEquatable<TKey>, IComparable<TKey>
 {
     internal FacetCategory(TKey key, int count)
     {
-        _key = key;
-        _count = count;
+        Key = key;
+        Count = count;
     }
 
-    public TKey Key => _key;
-    private readonly TKey _key;
-
-    public int Count => _count;
-    private readonly int _count;
+    public TKey Key { get; }
+    public int Count { get; }
 
     #region IFacetCategory
 
@@ -24,7 +21,7 @@ public struct FacetCategory<TKey> : IFacetCategory
     #region Equality & Hashing
 
     public bool Equals(FacetCategory<TKey> other) =>
-        _key.Equals(other._key) && _count.Equals(other._count);
+        Key.Equals(other.Key) && Count.Equals(other.Count);
 
     public override bool Equals(object obj) =>
         obj != null && obj.GetType() == typeof(FacetCategory<TKey>) && Equals((FacetCategory<TKey>)obj);
@@ -32,7 +29,7 @@ public struct FacetCategory<TKey> : IFacetCategory
     public static bool operator ==(FacetCategory<TKey> left, FacetCategory<TKey> right) => left.Equals(right);
     public static bool operator !=(FacetCategory<TKey> left, FacetCategory<TKey> right) => !left.Equals(right);
 
-    public override int GetHashCode() => _key.GetHashCode() ^ _count.GetHashCode();
+    public override int GetHashCode() => Key.GetHashCode() ^ Count.GetHashCode();
 
     #endregion
 }

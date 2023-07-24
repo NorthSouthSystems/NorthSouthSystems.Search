@@ -3,17 +3,14 @@
 public sealed class Facet<TKey> : IFacet
         where TKey : IEquatable<TKey>, IComparable<TKey>
 {
-    internal Facet(IEnumerable<FacetCategory<TKey>> categories)
-    {
-        _categories = categories.Where(category => category.Count > 0).ToArray();
-    }
+    internal Facet(IEnumerable<FacetCategory<TKey>> categories) =>
+        Categories = categories.Where(category => category.Count > 0).ToArray();
 
-    public IEnumerable<FacetCategory<TKey>> Categories => _categories;
-    private readonly FacetCategory<TKey>[] _categories;
+    public IEnumerable<FacetCategory<TKey>> Categories { get; }
 
     #region IFacet
 
-    IEnumerable<IFacetCategory> IFacet.Categories => _categories.Cast<IFacetCategory>();
+    IEnumerable<IFacetCategory> IFacet.Categories => Categories.Cast<IFacetCategory>();
 
     #endregion
 }

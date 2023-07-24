@@ -21,32 +21,21 @@ public sealed partial class Engine<TItem, TPrimaryKey>
         {
             foreach (ICatalogStatistics catalogStats in engine._catalogsPlusExtractors.Select(cpe => cpe.Catalog.GenerateStatistics()))
             {
-                _catalogCount++;
-                _vectorCount += catalogStats.VectorCount;
-                _wordCount += catalogStats.WordCount;
-                _packedWordCount += catalogStats.PackedWordCount;
-                _oneBitPackableWordCount += catalogStats.OneBitPackableWordCount;
-                _twoBitPackableWordCount += catalogStats.TwoBitPackableWordCount;
+                CatalogCount++;
+                VectorCount += catalogStats.VectorCount;
+                WordCount += catalogStats.WordCount;
+                PackedWordCount += catalogStats.PackedWordCount;
+                OneBitPackableWordCount += catalogStats.OneBitPackableWordCount;
+                TwoBitPackableWordCount += catalogStats.TwoBitPackableWordCount;
             }
         }
 
-        private readonly int _catalogCount;
-        public int CatalogCount => _catalogCount;
-
-        private readonly int _vectorCount;
-        public int VectorCount => _vectorCount;
-
-        private readonly int _wordCount;
-        public int WordCount => _wordCount;
-
-        private readonly int _packedWordCount;
-        public int PackedWordCount => _packedWordCount;
-
-        private readonly int _oneBitPackableWordCount;
-        public int OneBitPackableWordCount => _oneBitPackableWordCount;
-
-        private readonly int _twoBitPackableWordCount;
-        public int TwoBitPackableWordCount => _twoBitPackableWordCount;
+        public int CatalogCount { get; }
+        public int VectorCount { get; }
+        public int WordCount { get; }
+        public int PackedWordCount { get; }
+        public int OneBitPackableWordCount { get; }
+        public int TwoBitPackableWordCount { get; }
     }
 }
 

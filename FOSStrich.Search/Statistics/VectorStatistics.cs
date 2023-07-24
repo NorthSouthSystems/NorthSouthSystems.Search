@@ -8,7 +8,7 @@ public sealed partial class Vector
     {
         internal Statistics(Vector vector)
         {
-            _wordCount = vector._wordCountPhysical;
+            WordCount = vector._wordCountPhysical;
 
             bool lastWordCompressed = false;
 
@@ -17,31 +17,24 @@ public sealed partial class Vector
                 Word word = vector._words[i];
 
                 if (word.HasPackedWord)
-                    _packedWordCount++;
+                    PackedWordCount++;
 
                 if (!word.IsCompressed && lastWordCompressed && i < vector._wordCountPhysical - 1)
                 {
                     if (word.Population == 1)
-                        _oneBitPackableWordCount++;
+                        OneBitPackableWordCount++;
                     else if (word.Population == 2)
-                        _twoBitPackableWordCount++;
+                        TwoBitPackableWordCount++;
                 }
 
                 lastWordCompressed = word.IsCompressed;
             }
         }
 
-        private readonly int _wordCount;
-        public int WordCount => _wordCount;
-
-        private readonly int _packedWordCount;
-        public int PackedWordCount => _packedWordCount;
-
-        private readonly int _oneBitPackableWordCount;
-        public int OneBitPackableWordCount => _oneBitPackableWordCount;
-
-        private readonly int _twoBitPackableWordCount;
-        public int TwoBitPackableWordCount => _twoBitPackableWordCount;
+        public int WordCount { get; }
+        public int PackedWordCount { get; }
+        public int OneBitPackableWordCount { get; }
+        public int TwoBitPackableWordCount { get; }
     }
 }
 

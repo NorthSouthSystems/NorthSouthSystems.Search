@@ -20,7 +20,7 @@ public class EngineTestsStatistics
                 Assert.AreEqual(0, stats.OneBitPackableWordCount);
                 Assert.AreEqual(0, stats.TwoBitPackableWordCount);
 
-                var items = EngineItem.CreateItems(id => IsIdZero(id) ? 0 : 1, id => DateTime.Now, id => IsIdZero(id) ? "0" : "1", id => new string[0], 249);
+                var items = EngineItem.CreateItems(id => IsIdZero(id) ? 0 : 1, id => DateTime.Now, id => IsIdZero(id) ? "0" : "1", id => Array.Empty<string>(), 249);
                 engine.Add(items.Take(63));
 
                 stats = engine.GenerateStatistics();
