@@ -84,7 +84,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
     public void Set(TKey key, int bitPosition, bool value)
     {
         if (key == null)
-            throw new ArgumentNullException("key");
+            throw new ArgumentNullException(nameof(key));
 
         Entry entry;
 
@@ -103,7 +103,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
     public void Set(IEnumerable<TKey> keys, int bitPosition, bool value)
     {
         if (keys == null)
-            throw new ArgumentNullException("keys");
+            throw new ArgumentNullException(nameof(keys));
 
         if (_isOneToOne)
             throw new NotSupportedException("One-to-one Catalogs must use Set(TKey key, ...) instead.");
@@ -127,10 +127,10 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
     public void Filter(Vector vector, TKey key)
     {
         if (vector == null)
-            throw new ArgumentNullException("vector");
+            throw new ArgumentNullException(nameof(vector));
 
         if (key == null)
-            throw new ArgumentNullException("key");
+            throw new ArgumentNullException(nameof(key));
 
         FilterImpl(vector, new[] { Lookup(key) });
     }
@@ -140,13 +140,13 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
     public void Filter(Vector vector, IEnumerable<TKey> keys)
     {
         if (vector == null)
-            throw new ArgumentNullException("vector");
+            throw new ArgumentNullException(nameof(vector));
 
         if (keys == null)
-            throw new ArgumentNullException("keys");
+            throw new ArgumentNullException(nameof(keys));
 
         if (keys.Any(key => key == null))
-            throw new ArgumentNullException("keys", "All keys must be non-null.");
+            throw new ArgumentNullException(nameof(keys), "All keys must be non-null.");
 
         FilterImpl(vector, keys.Distinct().Select(key => Lookup(key)));
     }
@@ -156,13 +156,13 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
     public void Filter(Vector vector, TKey keyMin, TKey keyMax)
     {
         if (vector == null)
-            throw new ArgumentNullException("vector");
+            throw new ArgumentNullException(nameof(vector));
 
         if (keyMin == null && keyMax == null)
-            throw new ArgumentNullException("keyMin", "Either keyMin or keyMax must be non-null.");
+            throw new ArgumentNullException(nameof(keyMin), "Either keyMin or keyMax must be non-null.");
 
         if (keyMin != null && keyMax != null && keyMin.CompareTo(keyMax) > 0)
-            throw new ArgumentOutOfRangeException("keyMin", "keyMin must be <= keyMax.");
+            throw new ArgumentOutOfRangeException(nameof(keyMin), "keyMin must be <= keyMax.");
 
         if (keyMin == null)
             keyMin = _keys.Min;
@@ -204,7 +204,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
     public CatalogSortResult Sort(Vector vector, bool value, bool ascending, bool disableParallel)
     {
         if (vector == null)
-            throw new ArgumentNullException("vector");
+            throw new ArgumentNullException(nameof(vector));
 
         // TODO : Scope value entirely? Is value = false a legitimate use-case?
         if (!value)
@@ -226,7 +226,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
     public CatalogSortResult ThenSort(CatalogSortResult sortResult, bool value, bool ascending, bool disableParallel)
     {
         if (sortResult == null)
-            throw new ArgumentNullException("sortResult");
+            throw new ArgumentNullException(nameof(sortResult));
 
         // TODO : Scope value entirely? Is value = false a legitimate use-case?
         if (!value)
@@ -255,7 +255,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
     public Facet<TKey> Facet(Vector vector, bool disableParallel = false, bool shortCircuitCounting = false)
     {
         if (vector == null)
-            throw new ArgumentNullException("vector");
+            throw new ArgumentNullException(nameof(vector));
 
         var keyAndEntries = _keyToEntryMap.AsParallel();
 

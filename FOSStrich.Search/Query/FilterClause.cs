@@ -39,10 +39,10 @@ public class FilterClause
     public static FilterClause operator &(FilterClause leftClause, FilterClause rightClause)
     {
         if (leftClause == null)
-            throw new ArgumentNullException("leftClause");
+            throw new ArgumentNullException(nameof(leftClause));
 
         if (rightClause == null)
-            throw new ArgumentNullException("rightClause");
+            throw new ArgumentNullException(nameof(rightClause));
 
         // Flatten when possible
         switch (leftClause.Operation)
@@ -67,10 +67,10 @@ public class FilterClause
     public static FilterClause operator |(FilterClause leftClause, FilterClause rightClause)
     {
         if (leftClause == null)
-            throw new ArgumentNullException("leftClause");
+            throw new ArgumentNullException(nameof(leftClause));
 
         if (rightClause == null)
-            throw new ArgumentNullException("rightClause");
+            throw new ArgumentNullException(nameof(rightClause));
 
         // Flatten when possible
         switch (leftClause.Operation)
@@ -94,7 +94,7 @@ public class FilterClause
     public static FilterClause operator !(FilterClause clause)
     {
         if (clause == null)
-            throw new ArgumentNullException("clause");
+            throw new ArgumentNullException(nameof(clause));
 
         return new FilterClause(BooleanOperation.Not, new[] { clause });
     }

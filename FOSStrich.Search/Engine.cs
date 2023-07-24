@@ -60,7 +60,7 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentNullException("name");
+            throw new ArgumentNullException(nameof(name));
 
         Catalog<TKey> catalog;
 
@@ -197,7 +197,7 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
     public void Add(IEnumerable<TItem> items)
     {
         if (items == null)
-            throw new ArgumentNullException("items");
+            throw new ArgumentNullException(nameof(items));
 
         try
         {
@@ -251,7 +251,7 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
     public void Update(IEnumerable<TItem> items)
     {
         if (items == null)
-            throw new ArgumentNullException("items");
+            throw new ArgumentNullException(nameof(items));
 
         try
         {
@@ -306,7 +306,7 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
     public void Remove(IEnumerable<TItem> items)
     {
         if (items == null)
-            throw new ArgumentNullException("items");
+            throw new ArgumentNullException(nameof(items));
 
         try
         {

@@ -14,7 +14,7 @@ public sealed class Query<TItem, TPrimaryKey>
     private void ThrowIfEngineMismatch(ICatalogHandle catalog)
     {
         if (!_engine.HasCatalog(catalog))
-            throw new ArgumentException("Catalog belongs to a different Engine.", "catalog");
+            throw new ArgumentException("Catalog belongs to a different Engine.", nameof(catalog));
     }
 
     #region Amongst

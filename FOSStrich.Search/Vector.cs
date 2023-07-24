@@ -25,10 +25,10 @@ public sealed partial class Vector
     public static Vector OrOutOfPlace(params Vector[] vectors)
     {
         if (vectors == null || vectors.Any(v => v == null))
-            throw new ArgumentNullException("vectors");
+            throw new ArgumentNullException(nameof(vectors));
 
         if (vectors.Length < 2)
-            throw new ArgumentOutOfRangeException("vectors", "At least 2 Vectors must be provided in order to CreateUnion.");
+            throw new ArgumentOutOfRangeException(nameof(vectors), "At least 2 Vectors must be provided in order to CreateUnion.");
 
         int maxWordCountLogical = vectors.Max(v => v._wordCountLogical);
 
@@ -214,7 +214,7 @@ public sealed partial class Vector
         get
         {
             if (bitPosition < 0)
-                throw new ArgumentOutOfRangeException("bitPosition", bitPosition, "Must be > 0.");
+                throw new ArgumentOutOfRangeException(nameof(bitPosition), bitPosition, "Must be > 0.");
 
             int wordPositionLogical = WordPositionLogical(bitPosition);
             Word word = GetWordLogical(wordPositionLogical);
@@ -224,7 +224,7 @@ public sealed partial class Vector
         set
         {
             if (bitPosition < 0)
-                throw new ArgumentOutOfRangeException("bitPosition", bitPosition, "Must be > 0.");
+                throw new ArgumentOutOfRangeException(nameof(bitPosition), bitPosition, "Must be > 0.");
 
             SetBit(bitPosition, value);
         }
@@ -233,7 +233,7 @@ public sealed partial class Vector
     internal Word GetWordLogical(int wordPositionLogical)
     {
         if (wordPositionLogical < 0)
-            throw new ArgumentOutOfRangeException("wordPositionLogical", wordPositionLogical, "Must be > 0.");
+            throw new ArgumentOutOfRangeException(nameof(wordPositionLogical), wordPositionLogical, "Must be > 0.");
 
         if (wordPositionLogical >= _wordCountLogical)
             return new Word(0);
@@ -317,7 +317,7 @@ public sealed partial class Vector
     internal void SetWord(int wordPositionLogical, Word word)
     {
         if (wordPositionLogical < 0)
-            throw new ArgumentOutOfRangeException("wordPositionLogical", wordPositionLogical, "Must be >= 0.");
+            throw new ArgumentOutOfRangeException(nameof(wordPositionLogical), wordPositionLogical, "Must be >= 0.");
 
         if (_isCompressed && wordPositionLogical < (_wordCountLogical - 1))
             throw new NotSupportedException("Writing is forward-only for a compressed Vector.");
@@ -388,7 +388,7 @@ public sealed partial class Vector
     private void SetBit(int bitPosition, bool value)
     {
         if (bitPosition < 0)
-            throw new ArgumentOutOfRangeException("bitPosition", bitPosition, "Must be >= 0.");
+            throw new ArgumentOutOfRangeException(nameof(bitPosition), bitPosition, "Must be >= 0.");
 
         int wordPositionLogical = WordPositionLogical(bitPosition);
         int wordBitPosition = WordBitPosition(bitPosition);
@@ -632,7 +632,7 @@ public sealed partial class Vector
     public void AndInPlace(Vector vector)
     {
         if (vector == null)
-            throw new ArgumentNullException("vector");
+            throw new ArgumentNullException(nameof(vector));
 
         if (_isCompressed)
             throw new NotSupportedException("Not supported for a compressed Vector.");
@@ -646,7 +646,7 @@ public sealed partial class Vector
     public Vector AndOutOfPlace(Vector vector, VectorCompression resultCompression)
     {
         if (vector == null)
-            throw new ArgumentNullException("vector");
+            throw new ArgumentNullException(nameof(vector));
 
         var lessCompression = Compression <= vector.Compression ? this : vector;
         var moreCompression = (this == lessCompression) ? vector : this;
@@ -662,7 +662,7 @@ public sealed partial class Vector
     public int AndPopulation(Vector vector)
     {
         if (vector == null)
-            throw new ArgumentNullException("vector");
+            throw new ArgumentNullException(nameof(vector));
 
         if (_isCompressed && vector._isCompressed)
             throw new NotImplementedException("Not implemented for two compressed Vector.");
@@ -681,7 +681,7 @@ public sealed partial class Vector
     public bool AndPopulationAny(Vector vector)
     {
         if (vector == null)
-            throw new ArgumentNullException("vector");
+            throw new ArgumentNullException(nameof(vector));
 
         if (_isCompressed && vector._isCompressed)
             throw new NotImplementedException("Not implemented for two compressed Vector.");
@@ -700,7 +700,7 @@ public sealed partial class Vector
     public void OrInPlace(Vector vector)
     {
         if (vector == null)
-            throw new ArgumentNullException("vector");
+            throw new ArgumentNullException(nameof(vector));
 
         if (_isCompressed)
             throw new NotSupportedException("Not supported for a compressed Vector.");

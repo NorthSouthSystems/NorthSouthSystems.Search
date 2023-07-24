@@ -20,7 +20,7 @@ public sealed class FacetParameter<TKey> : IFacetParameterInternal
     internal FacetParameter(ICatalogHandle<TKey> catalog)
     {
         if (catalog == null)
-            throw new ArgumentNullException("catalog");
+            throw new ArgumentNullException(nameof(catalog));
 
         _catalog = catalog;
     }

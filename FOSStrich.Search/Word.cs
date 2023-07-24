@@ -11,7 +11,7 @@ internal struct Word
     public Word(uint raw)
     {
         if (raw >= COMPRESSEDMASK)
-            throw new ArgumentOutOfRangeException("raw", raw, string.Format(CultureInfo.InvariantCulture, "Must be < COMPRESSEDMASK : 0x{0:X}.", COMPRESSEDMASK));
+            throw new ArgumentOutOfRangeException(nameof(raw), raw, string.Format(CultureInfo.InvariantCulture, "Must be < COMPRESSEDMASK : 0x{0:X}.", COMPRESSEDMASK));
 
         Raw = raw;
     }
@@ -19,10 +19,10 @@ internal struct Word
     public Word(bool fillBit, int fillCount)
     {
         if (fillCount < 0)
-            throw new ArgumentOutOfRangeException("fillCount", fillCount, "Must be >= 0.");
+            throw new ArgumentOutOfRangeException(nameof(fillCount), fillCount, "Must be >= 0.");
 
         if (fillCount > FILLCOUNTMASK)
-            throw new ArgumentOutOfRangeException("fillCount", fillCount, string.Format(CultureInfo.InvariantCulture, "Must be <= FILLCOUNTMASK : 0x{0:X}.", FILLCOUNTMASK));
+            throw new ArgumentOutOfRangeException(nameof(fillCount), fillCount, string.Format(CultureInfo.InvariantCulture, "Must be <= FILLCOUNTMASK : 0x{0:X}.", FILLCOUNTMASK));
 
         Raw = COMPRESSEDMASK | (fillBit ? FILLBITMASK : 0u) | (uint)fillCount;
     }
@@ -56,10 +56,10 @@ internal struct Word
             throw new NotSupportedException("Not supported for compressed Words.");
 
         if (position < 0)
-            throw new ArgumentOutOfRangeException("position", position, "Must be >= 0.");
+            throw new ArgumentOutOfRangeException(nameof(position), position, "Must be >= 0.");
 
         if (position >= SIZE - 1)
-            throw new ArgumentOutOfRangeException("position", position, string.Format(CultureInfo.InvariantCulture, "Must be < SIZE - 1 : {0}.", SIZE - 1));
+            throw new ArgumentOutOfRangeException(nameof(position), position, string.Format(CultureInfo.InvariantCulture, "Must be < SIZE - 1 : {0}.", SIZE - 1));
 
         return 1u << (30 - position);
     }
