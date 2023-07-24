@@ -4,8 +4,7 @@
 public class VectorTestsGetSetBits
 {
     [TestMethod]
-    public void Full()
-    {
+    public void Full() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
             var vector = new Vector(safetyAndCompression.AllowUnsafe, safetyAndCompression.Compression);
@@ -13,7 +12,6 @@ public class VectorTestsGetSetBits
             vector[2000] = false;
             vector.AssertBitPositions(bitPositions);
         });
-    }
 
     #region Exceptions
 

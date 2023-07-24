@@ -253,15 +253,9 @@ public sealed partial class Vector
             return word;
     }
 
-    private static int WordPositionLogical(int bitPosition)
-    {
-        return bitPosition / (Word.SIZE - 1);
-    }
+    private static int WordPositionLogical(int bitPosition) => bitPosition / (Word.SIZE - 1);
 
-    private static int WordBitPosition(int bitPosition)
-    {
-        return bitPosition % (Word.SIZE - 1);
-    }
+    private static int WordBitPosition(int bitPosition) => bitPosition % (Word.SIZE - 1);
 
     private int WordPositionPhysical(int wordPositionLogical, out bool isPacked)
     {
@@ -411,10 +405,7 @@ public sealed partial class Vector
 
     #region Zero Filling
 
-    private int ZeroFillCount(int wordPositionLogical)
-    {
-        return wordPositionLogical - (_wordCountLogical - 1);
-    }
+    private int ZeroFillCount(int wordPositionLogical) => wordPositionLogical - (_wordCountLogical - 1);
 
     private void ZeroFill(int wordPositionLogical)
     {

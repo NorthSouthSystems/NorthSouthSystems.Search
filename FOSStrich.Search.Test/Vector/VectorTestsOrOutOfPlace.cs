@@ -4,8 +4,7 @@
 public class VectorTestsOrOutOfPlace
 {
     [TestMethod]
-    public void OrOutOfPlace()
-    {
+    public void OrOutOfPlace() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
             int[] bitPositionsA = new int[] { 0, 12, 16, 22, 34, 55, 110 };
@@ -24,7 +23,6 @@ public class VectorTestsOrOutOfPlace
             Vector.OrOutOfPlace(vectorA, vectorB).AssertBitPositions(bitPositionsA, bitPositionsB);
             Vector.OrOutOfPlace(vectorA, vectorB, vectorC).AssertBitPositions(bitPositionsA, bitPositionsB, bitPositionsC);
         });
-    }
 
     #region Exceptions
 

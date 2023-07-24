@@ -4,8 +4,7 @@
 public class CatalogTestsStatistics
 {
     [TestMethod]
-    public void Full()
-    {
+    public void Full() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
             var catalog = new Catalog<int>("SomeInt", true, safetyAndCompression.AllowUnsafe, safetyAndCompression.Compression);
@@ -178,5 +177,4 @@ public class CatalogTestsStatistics
                     break;
             }
         });
-    }
 }

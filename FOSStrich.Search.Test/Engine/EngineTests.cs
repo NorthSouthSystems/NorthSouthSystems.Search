@@ -19,8 +19,7 @@ public class EngineTests
     }
 
     [TestMethod]
-    public void AmongstPrimaryKeyOutOfRange()
-    {
+    public void AmongstPrimaryKeyOutOfRange() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
             using (var engine1 = new Engine<SimpleItem, int>(safetyAndCompression.AllowUnsafe, item => item.Id))
@@ -39,7 +38,6 @@ public class EngineTests
                 Assert.AreEqual(43, query.ResultPrimaryKeys[0]);
             }
         });
-    }
 
     #region Exceptions
 

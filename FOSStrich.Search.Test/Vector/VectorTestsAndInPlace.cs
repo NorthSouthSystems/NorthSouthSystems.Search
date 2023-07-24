@@ -5,13 +5,9 @@ public class VectorTestsAndInPlace
 {
     [TestMethod]
     [TestProperty("Duration", "Long")]
-    public void AndInPlaceRandom()
-    {
+    public void AndInPlaceRandom() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
-        {
-            VectorTestsRandom.LogicInPlaceBase(22, (Word.SIZE - 1) * 10 + 1, safetyAndCompression, (left, right) => left.AndInPlace(right), Enumerable.Intersect);
-        });
-    }
+            VectorTestsRandom.LogicInPlaceBase(22, (Word.SIZE - 1) * 10 + 1, safetyAndCompression, (left, right) => left.AndInPlace(right), Enumerable.Intersect));
 
     #region Exceptions
 

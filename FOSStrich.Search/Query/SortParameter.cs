@@ -3,15 +3,11 @@
 public static class SortParameter
 {
     public static SortParameter<TKey> Create<TKey>(ICatalogHandle<TKey> catalog, bool ascending)
-        where TKey : IEquatable<TKey>, IComparable<TKey>
-    {
-        return new SortParameter<TKey>(catalog, ascending);
-    }
+            where TKey : IEquatable<TKey>, IComparable<TKey> =>
+        new(catalog, ascending);
 
-    internal static ISortParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, bool ascending)
-    {
-        return ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateSortParameter(ascending));
-    }
+    internal static ISortParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, bool ascending) =>
+        ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateSortParameter(ascending));
 }
 
 public sealed class SortParameter<TKey> : ISortParameter

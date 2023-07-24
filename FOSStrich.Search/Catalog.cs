@@ -116,13 +116,18 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
 
     #region Filter
 
-    IFilterParameter ICatalogInEngine.CreateFilterParameter(object exact) { return new FilterParameter<TKey>(this, ConvertToTKey(exact)); }
-    IFilterParameter ICatalogInEngine.CreateFilterParameter(IEnumerable enumerable) { return new FilterParameter<TKey>(this, enumerable.Cast<object>().Select(ConvertToTKey)); }
-    IFilterParameter ICatalogInEngine.CreateFilterParameter(object rangeMin, object rangeMax) { return new FilterParameter<TKey>(this, ConvertToTKey(rangeMin), ConvertToTKey(rangeMax)); }
+    IFilterParameter ICatalogInEngine.CreateFilterParameter(object exact) =>
+        new FilterParameter<TKey>(this, ConvertToTKey(exact));
 
-    private static TKey ConvertToTKey(object obj) { return (TKey)Convert.ChangeType(obj, typeof(TKey)); }
+    IFilterParameter ICatalogInEngine.CreateFilterParameter(IEnumerable enumerable) =>
+        new FilterParameter<TKey>(this, enumerable.Cast<object>().Select(ConvertToTKey));
 
-    void ICatalogInEngine.FilterExact(Vector vector, object key) { Filter(vector, (TKey)key); }
+    IFilterParameter ICatalogInEngine.CreateFilterParameter(object rangeMin, object rangeMax) =>
+        new FilterParameter<TKey>(this, ConvertToTKey(rangeMin), ConvertToTKey(rangeMax));
+
+    private static TKey ConvertToTKey(object obj) => (TKey)Convert.ChangeType(obj, typeof(TKey));
+
+    void ICatalogInEngine.FilterExact(Vector vector, object key) => Filter(vector, (TKey)key);
 
     public void Filter(Vector vector, TKey key)
     {
@@ -135,7 +140,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         FilterImpl(vector, new[] { Lookup(key) });
     }
 
-    void ICatalogInEngine.FilterEnumerable(Vector vector, IEnumerable keys) { Filter(vector, (IEnumerable<TKey>)keys); }
+    void ICatalogInEngine.FilterEnumerable(Vector vector, IEnumerable keys) => Filter(vector, (IEnumerable<TKey>)keys);
 
     public void Filter(Vector vector, IEnumerable<TKey> keys)
     {
@@ -151,7 +156,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         FilterImpl(vector, keys.Distinct().Select(key => Lookup(key)));
     }
 
-    void ICatalogInEngine.FilterRange(Vector vector, object keyMin, object keyMax) { Filter(vector, (TKey)keyMin, (TKey)keyMax); }
+    void ICatalogInEngine.FilterRange(Vector vector, object keyMin, object keyMax) => Filter(vector, (TKey)keyMin, (TKey)keyMax);
 
     public void Filter(Vector vector, TKey keyMin, TKey keyMax)
     {
@@ -197,9 +202,10 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
 
     #region Sort
 
-    ISortParameter ICatalogInEngine.CreateSortParameter(bool ascending) { return new SortParameter<TKey>(this, ascending); }
+    ISortParameter ICatalogInEngine.CreateSortParameter(bool ascending) => new SortParameter<TKey>(this, ascending);
 
-    CatalogSortResult ICatalogInEngine.Sort(Vector vector, bool value, bool ascending, bool disableParallel) { return Sort(vector, value, ascending, disableParallel); }
+    CatalogSortResult ICatalogInEngine.Sort(Vector vector, bool value, bool ascending, bool disableParallel) =>
+        Sort(vector, value, ascending, disableParallel);
 
     public CatalogSortResult Sort(Vector vector, bool value, bool ascending, bool disableParallel)
     {
@@ -221,7 +227,8 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         return new CatalogSortResult(partialSorts);
     }
 
-    CatalogSortResult ICatalogInEngine.ThenSort(CatalogSortResult sortResult, bool value, bool ascending, bool disableParallel) { return ThenSort(sortResult, value, ascending, disableParallel); }
+    CatalogSortResult ICatalogInEngine.ThenSort(CatalogSortResult sortResult, bool value, bool ascending, bool disableParallel) =>
+        ThenSort(sortResult, value, ascending, disableParallel);
 
     public CatalogSortResult ThenSort(CatalogSortResult sortResult, bool value, bool ascending, bool disableParallel)
     {
@@ -248,9 +255,9 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
 
     #region Facet
 
-    IFacetParameterInternal ICatalogInEngine.CreateFacetParameter() { return new FacetParameter<TKey>(this); }
+    IFacetParameterInternal ICatalogInEngine.CreateFacetParameter() => new FacetParameter<TKey>(this);
 
-    IFacet ICatalogInEngine.Facet(Vector vector, bool disableParallel, bool shortCircuitCounting) { return Facet(vector, disableParallel, shortCircuitCounting); }
+    IFacet ICatalogInEngine.Facet(Vector vector, bool disableParallel, bool shortCircuitCounting) => Facet(vector, disableParallel, shortCircuitCounting);
 
     public Facet<TKey> Facet(Vector vector, bool disableParallel = false, bool shortCircuitCounting = false)
     {

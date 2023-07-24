@@ -4,8 +4,7 @@
 public class VectorTestsOrInPlace
 {
     [TestMethod]
-    public void OrInPlaceCompressedWithCompressedTrueInput()
-    {
+    public void OrInPlaceCompressedWithCompressedTrueInput() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
             Vector vector = new Vector(safetyAndCompression.AllowUnsafe, VectorCompression.None);
@@ -18,7 +17,6 @@ public class VectorTestsOrInPlace
 
             vector.AssertBitPositions(Enumerable.Range(0, 32), new[] { 100 });
         });
-    }
 
     #region Exceptions
 

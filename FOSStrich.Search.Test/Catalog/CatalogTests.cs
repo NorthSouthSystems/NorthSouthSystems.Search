@@ -4,8 +4,7 @@
 public class CatalogTests
 {
     [TestMethod]
-    public void SortBitPositions()
-    {
+    public void SortBitPositions() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
             var catalog = new Catalog<int>("SomeInt", true, safetyAndCompression.AllowUnsafe, safetyAndCompression.Compression);
@@ -37,7 +36,6 @@ public class CatalogTests
                     Assert.AreEqual(9 - i, partialSorts[i].GetBitPositions(true).Single());
             }
         });
-    }
 
     #region Exceptions
 

@@ -21,9 +21,8 @@ public class FilterClause
     public IEnumerable<FilterClause> SubClauses { get { return _subClauses; } }
     private readonly FilterClause[] _subClauses;
 
-    internal IEnumerable<IFilterParameter> AllFilterParameters()
-    {
-        return _subClauses.SelectMany(clause =>
+    internal IEnumerable<IFilterParameter> AllFilterParameters() =>
+        _subClauses.SelectMany(clause =>
         {
             var parameter = clause as IFilterParameter;
 
@@ -31,7 +30,6 @@ public class FilterClause
                 ? new[] { parameter }
                 : clause.AllFilterParameters();
         });
-    }
 
     // http://stackoverflow.com/questions/15439864/how-do-i-override-logical-and-operator
     public static bool operator false(FilterClause clause) { return false; }

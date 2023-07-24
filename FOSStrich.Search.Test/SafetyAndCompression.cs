@@ -20,12 +20,10 @@ internal class SafetyAndCompression
         return vectorCompressions.Skip(random.Next(vectorCompressions.Length)).First();
     }
 
-    internal static void RunAll(Action<SafetyAndCompression> test)
-    {
+    internal static void RunAll(Action<SafetyAndCompression> test) =>
         RunAllSafeties(allowUnsafe =>
             RunAllCompressions(compression =>
                 test(new SafetyAndCompression(allowUnsafe, compression))));
-    }
 
     internal static void RunAllSafeties(Action<bool> test)
     {

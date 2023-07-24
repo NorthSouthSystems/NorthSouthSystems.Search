@@ -23,23 +23,16 @@ public struct FacetCategory<TKey> : IFacetCategory
 
     #region Equality & Hashing
 
-    public bool Equals(FacetCategory<TKey> other)
-    {
-        return _key.Equals(other._key) && _count.Equals(other._count);
-    }
+    public bool Equals(FacetCategory<TKey> other) =>
+        _key.Equals(other._key) && _count.Equals(other._count);
 
-    public override bool Equals(object obj)
-    {
-        return obj != null && obj.GetType() == typeof(FacetCategory<TKey>) && Equals((FacetCategory<TKey>)obj);
-    }
+    public override bool Equals(object obj) =>
+        obj != null && obj.GetType() == typeof(FacetCategory<TKey>) && Equals((FacetCategory<TKey>)obj);
 
-    public static bool operator ==(FacetCategory<TKey> left, FacetCategory<TKey> right) { return left.Equals(right); }
-    public static bool operator !=(FacetCategory<TKey> left, FacetCategory<TKey> right) { return !left.Equals(right); }
+    public static bool operator ==(FacetCategory<TKey> left, FacetCategory<TKey> right) => left.Equals(right);
+    public static bool operator !=(FacetCategory<TKey> left, FacetCategory<TKey> right) => !left.Equals(right);
 
-    public override int GetHashCode()
-    {
-        return _key.GetHashCode() ^ _count.GetHashCode();
-    }
+    public override int GetHashCode() => _key.GetHashCode() ^ _count.GetHashCode();
 
     #endregion
 }

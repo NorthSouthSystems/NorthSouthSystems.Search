@@ -20,22 +20,22 @@ public class WordTestsPopulation
     }
 
     [TestMethod]
-    public void CompressedFillBitFalseNoFill() { CompressedBase(false, 0x00000000); }
+    public void CompressedFillBitFalseNoFill() => CompressedBase(false, 0x00000000);
 
     [TestMethod]
-    public void CompressedFillBitFalse1Fill() { CompressedBase(false, 0x00000001); }
+    public void CompressedFillBitFalse1Fill() => CompressedBase(false, 0x00000001);
 
     [TestMethod]
-    public void CompressedFillBitFalseMaxFill() { CompressedBase(false, 0x01FFFFFF); }
+    public void CompressedFillBitFalseMaxFill() => CompressedBase(false, 0x01FFFFFF);
 
     [TestMethod]
-    public void CompressedFillBitTrueNoFill() { CompressedBase(true, 0x00000000); }
+    public void CompressedFillBitTrueNoFill() => CompressedBase(true, 0x00000000);
 
     [TestMethod]
-    public void CompressedFillBitTrue1Fill() { CompressedBase(true, 0x00000001); }
+    public void CompressedFillBitTrue1Fill() => CompressedBase(true, 0x00000001);
 
     [TestMethod]
-    public void CompressedFillBitTrueMaxFill() { CompressedBase(true, 0x01FFFFFF); }
+    public void CompressedFillBitTrueMaxFill() => CompressedBase(true, 0x01FFFFFF);
 
     private void CompressedBase(bool fillBit, int fillCount)
     {

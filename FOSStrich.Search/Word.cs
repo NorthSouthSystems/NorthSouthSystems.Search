@@ -244,8 +244,5 @@ internal struct Word
 
     #endregion
 
-    public override string ToString()
-    {
-        return string.Format(CultureInfo.InvariantCulture, "0x{0:X}", Raw);
-    }
+    public override string ToString() => string.Format(CultureInfo.InvariantCulture, "0x{0:X}", Raw);
 }

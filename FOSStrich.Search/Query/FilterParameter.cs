@@ -5,37 +5,25 @@ using System.Collections;
 public static class FilterParameter
 {
     public static FilterParameter<TKey> Create<TKey>(ICatalogHandle<TKey> catalog, TKey exact)
-        where TKey : IEquatable<TKey>, IComparable<TKey>
-    {
-        return new FilterParameter<TKey>(catalog, exact);
-    }
+            where TKey : IEquatable<TKey>, IComparable<TKey> =>
+        new(catalog, exact);
 
     public static FilterParameter<TKey> Create<TKey>(ICatalogHandle<TKey> catalog, IEnumerable<TKey> enumerable)
-        where TKey : IEquatable<TKey>, IComparable<TKey>
-    {
-        return new FilterParameter<TKey>(catalog, enumerable);
-    }
+            where TKey : IEquatable<TKey>, IComparable<TKey> =>
+        new(catalog, enumerable);
 
     public static FilterParameter<TKey> Create<TKey>(ICatalogHandle<TKey> catalog, TKey rangeMin, TKey rangeMax)
-        where TKey : IEquatable<TKey>, IComparable<TKey>
-    {
-        return new FilterParameter<TKey>(catalog, rangeMin, rangeMax);
-    }
+            where TKey : IEquatable<TKey>, IComparable<TKey> =>
+        new(catalog, rangeMin, rangeMax);
 
-    internal static IFilterParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, object exact)
-    {
-        return ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFilterParameter(exact));
-    }
+    internal static IFilterParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, object exact) =>
+        ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFilterParameter(exact));
 
-    internal static IFilterParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, IEnumerable enumerable)
-    {
-        return ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFilterParameter(enumerable));
-    }
+    internal static IFilterParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, IEnumerable enumerable) =>
+        ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFilterParameter(enumerable));
 
-    internal static IFilterParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, object rangeMin, object rangeMax)
-    {
-        return ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFilterParameter(rangeMin, rangeMax));
-    }
+    internal static IFilterParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, object rangeMin, object rangeMax) =>
+        ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFilterParameter(rangeMin, rangeMax));
 }
 
 public sealed class FilterParameter<TKey> : FilterClause, IFilterParameter

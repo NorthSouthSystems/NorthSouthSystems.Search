@@ -40,22 +40,22 @@ public class WordTestsCompressionProperties
     }
 
     [TestMethod]
-    public void CompressedFillBitFalseNoFill() { CompressedBase(false, 0x00000000, 0x80000000u); }
+    public void CompressedFillBitFalseNoFill() => CompressedBase(false, 0x00000000, 0x80000000u);
 
     [TestMethod]
-    public void CompressedFillBitFalse1Fill() { CompressedBase(false, 0x00000001, 0x80000001u); }
+    public void CompressedFillBitFalse1Fill() => CompressedBase(false, 0x00000001, 0x80000001u);
 
     [TestMethod]
-    public void CompressedFillBitFalseMaxFill() { CompressedBase(false, 0x01FFFFFF, 0x81FFFFFFu); }
+    public void CompressedFillBitFalseMaxFill() => CompressedBase(false, 0x01FFFFFF, 0x81FFFFFFu);
 
     [TestMethod]
-    public void CompressedFillBitTrueNoFill() { CompressedBase(true, 0x00000000, 0xC0000000u); }
+    public void CompressedFillBitTrueNoFill() => CompressedBase(true, 0x00000000, 0xC0000000u);
 
     [TestMethod]
-    public void CompressedFillBitTrue1Fill() { CompressedBase(true, 0x00000001, 0xC0000001u); }
+    public void CompressedFillBitTrue1Fill() => CompressedBase(true, 0x00000001, 0xC0000001u);
 
     [TestMethod]
-    public void CompressedFillBitTrueMaxFill() { CompressedBase(true, 0x01FFFFFF, 0xC1FFFFFFu); }
+    public void CompressedFillBitTrueMaxFill() => CompressedBase(true, 0x01FFFFFF, 0xC1FFFFFFu);
 
     private void CompressedBase(bool fillBit, int fillCount, uint wordValue)
     {

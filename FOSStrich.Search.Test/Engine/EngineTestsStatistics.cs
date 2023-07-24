@@ -4,8 +4,7 @@
 public class EngineTestsStatistics
 {
     [TestMethod]
-    public void Full()
-    {
+    public void Full() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
             using (var engine = new Engine<EngineItem, int>(safetyAndCompression.AllowUnsafe, item => item.Id))
@@ -131,11 +130,9 @@ public class EngineTestsStatistics
                 }
             }
         });
-    }
 
-    private static bool IsIdZero(int id)
-    {
-        return (id >= 0 && id < 32)
+    private static bool IsIdZero(int id) =>
+        (id >= 0 && id < 32)
             || id == 62
             || (id >= 63 && id < 94)
             || id == 124
@@ -143,5 +140,4 @@ public class EngineTestsStatistics
             || id == 186
             || (id >= 187 && id < 219)
             || id == 248;
-    }
 }

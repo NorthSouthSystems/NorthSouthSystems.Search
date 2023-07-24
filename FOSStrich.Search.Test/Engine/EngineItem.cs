@@ -3,13 +3,12 @@
 internal class EngineItem
 {
     internal static EngineItem[] CreateItems(
-        Func<int, int> someIntGenerator,
-        Func<int, DateTime> someDateTimeGenerator,
-        Func<int, string> someStringGenerator,
-        Func<int, string[]> someTagGenerator,
-        int count)
-    {
-        return Enumerable.Range(0, count)
+            Func<int, int> someIntGenerator,
+            Func<int, DateTime> someDateTimeGenerator,
+            Func<int, string> someStringGenerator,
+            Func<int, string[]> someTagGenerator,
+            int count) =>
+        Enumerable.Range(0, count)
             .Select(id =>
             {
                 EngineItem item = new EngineItem();
@@ -21,7 +20,6 @@ internal class EngineItem
                 return item;
             })
             .ToArray();
-    }
 
     internal static EngineItem[] CreateItems(Random random, int count, out int someIntMax, out int someDateTimeMax, out int someStringMax, out int someTagsMax, out int someTagsMaxCount)
     {
@@ -50,5 +48,5 @@ internal class EngineItem
     internal string SomeString { get; private set; }
     internal string[] SomeTags { get; private set; }
 
-    public override string ToString() { return Id.ToString(); }
+    public override string ToString() => Id.ToString();
 }

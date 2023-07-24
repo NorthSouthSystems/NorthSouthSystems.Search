@@ -40,21 +40,17 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
         internal readonly Func<TItem, object> KeysOrKeyExtractor;
     }
 
-    public void Dispose() { _rwLock.Dispose(); }
+    public void Dispose() => _rwLock.Dispose();
 
     #region Catalog Management
 
     public ICatalogHandle<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, TKey> keyExtractor)
-        where TKey : IEquatable<TKey>, IComparable<TKey>
-    {
-        return CreateCatalogImpl<TKey>(name, compression, true, item => (object)keyExtractor(item));
-    }
+            where TKey : IEquatable<TKey>, IComparable<TKey> =>
+        CreateCatalogImpl<TKey>(name, compression, true, item => (object)keyExtractor(item));
 
     public ICatalogHandle<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, IEnumerable<TKey>> keysExtractor)
-        where TKey : IEquatable<TKey>, IComparable<TKey>
-    {
-        return CreateCatalogImpl<TKey>(name, compression, false, item => (object)keysExtractor(item));
-    }
+            where TKey : IEquatable<TKey>, IComparable<TKey> =>
+        CreateCatalogImpl<TKey>(name, compression, false, item => (object)keysExtractor(item));
 
     private ICatalogHandle<TKey> CreateCatalogImpl<TKey>(string name, VectorCompression compression, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
         where TKey : IEquatable<TKey>, IComparable<TKey>
@@ -87,14 +83,12 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
 
     // NOTE : No locking is necessary for the following Catalog methods because they are only called from the Query class, and in order to CreateQuery,
     // _configuring is stopped which prevents the addition of Catalogs.
-    internal bool HasCatalog(ICatalogHandle catalog) { return _catalogsPlusExtractors.Any(cpe => cpe.Catalog == catalog); }
+    internal bool HasCatalog(ICatalogHandle catalog) => _catalogsPlusExtractors.Any(cpe => cpe.Catalog == catalog);
 
-    internal IEnumerable<ICatalogInEngine> GetCatalogs() { return _catalogsPlusExtractors.Select(cpe => cpe.Catalog); }
+    internal IEnumerable<ICatalogInEngine> GetCatalogs() => _catalogsPlusExtractors.Select(cpe => cpe.Catalog);
 
-    internal ICatalogInEngine GetCatalog(string name)
-    {
-        return _catalogsPlusExtractors.Single(cpe => cpe.Catalog.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).Catalog;
-    }
+    internal ICatalogInEngine GetCatalog(string name) =>
+        _catalogsPlusExtractors.Single(cpe => cpe.Catalog.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).Catalog;
 
     #endregion
 
@@ -445,11 +439,9 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
         }
     }
 
-    private void Facet(Query<TItem, TPrimaryKey> query, Vector filterResult)
-    {
+    private void Facet(Query<TItem, TPrimaryKey> query, Vector filterResult) =>
         Parallel.ForEach(query.FacetParametersInternal, new ParallelOptions { MaxDegreeOfParallelism = query.FacetDisableParallel ? 1 : -1 },
             facetParameter => facetParameter.Facet = ((ICatalogInEngine)facetParameter.Catalog).Facet(filterResult, query.FacetDisableParallel, query.FacetShortCircuitCounting));
-    }
 
     private IEnumerable<int> Sort(Query<TItem, TPrimaryKey> query, int skipPlusTake, Vector filterResult, int totalCount)
     {
@@ -483,12 +475,10 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
             return filterResult.GetBitPositions(true);
     }
 
-    private IEnumerable<int> SortBitPositionsByPrimaryKey(IEnumerable<int> bitPositions, bool ascending)
-    {
-        return ascending
+    private IEnumerable<int> SortBitPositionsByPrimaryKey(IEnumerable<int> bitPositions, bool ascending) =>
+        ascending
             ? bitPositions.OrderBy(bitPosition => _primaryKeys[bitPosition])
             : bitPositions.OrderByDescending(bitPosition => _primaryKeys[bitPosition]);
-    }
 
     #endregion
 }

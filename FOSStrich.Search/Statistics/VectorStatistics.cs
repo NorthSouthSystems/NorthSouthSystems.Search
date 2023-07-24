@@ -2,7 +2,7 @@
 
 public sealed partial class Vector
 {
-    public IVectorStatistics GenerateStatistics() { return new Statistics(this); }
+    public IVectorStatistics GenerateStatistics() => new Statistics(this);
 
     private sealed class Statistics : IVectorStatistics
     {

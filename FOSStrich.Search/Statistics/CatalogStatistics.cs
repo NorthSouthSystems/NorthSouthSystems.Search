@@ -2,7 +2,7 @@
 
 public sealed partial class Catalog<TKey>
 {
-    public ICatalogStatistics GenerateStatistics() { return new Statistics(this); }
+    public ICatalogStatistics GenerateStatistics() => new Statistics(this);
 
     private sealed class Statistics : ICatalogStatistics
     {

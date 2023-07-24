@@ -50,8 +50,7 @@ public class VectorTestsGetSetWord
     }
 
     [TestMethod]
-    public void CompressedZeroFillCodeCoverage()
-    {
+    public void CompressedZeroFillCodeCoverage() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
             if (safetyAndCompression.Compression == VectorCompression.None)
@@ -110,7 +109,6 @@ public class VectorTestsGetSetWord
             vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 1, 0, 1);
             vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 4 : 6, 10);
         });
-    }
 
     #region Exceptions
 

@@ -4,8 +4,7 @@
 public class VectorTestsAndPopulation
 {
     [TestMethod]
-    public void AndPopulation()
-    {
+    public void AndPopulation() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
             int[] fillCounts = new[] { 0, 1, 5, 10, 20, 30, 40, 50, 100, 200, 300, 400, 450, 460, 470, 480, 490, 495, 499, 500 };
@@ -28,7 +27,6 @@ public class VectorTestsAndPopulation
                 }
             }
         });
-    }
 
     #region Exceptions
 
