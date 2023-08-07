@@ -27,7 +27,7 @@ public class CatalogTests
             {
                 var result = catalog.Sort(vector, true, false, disableParallel);
                 int[] bitPositions = result.PartialSorts.SelectMany(partial => partial.GetBitPositions(true)).ToArray();
-                bitPositions.Should().Equal(new[] { 9, 8, 7, 6, 5 });
+                bitPositions.Should().Equal(9, 8, 7, 6, 5);
 
                 var partialSorts = result.PartialSorts.ToArray();
                 partialSorts.Length.Should().Be(5);
