@@ -7,7 +7,7 @@ public class VectorTestsOrInPlace
     public void OrInPlaceCompressedWithCompressedTrueInput() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
-            Vector vector = new Vector(safetyAndCompression.AllowUnsafe, VectorCompression.None);
+            var vector = new Vector(safetyAndCompression.AllowUnsafe, VectorCompression.None);
             vector[100] = true;
 
             Vector compressedTrue = new Vector(safetyAndCompression.AllowUnsafe, safetyAndCompression.Compression);

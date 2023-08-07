@@ -39,7 +39,7 @@ public class WordTestsPopulation
 
     private void CompressedBase(bool fillBit, int fillCount)
     {
-        Word word = new Word(fillBit, fillCount);
+        var word = new Word(fillBit, fillCount);
         word.Population.Should().Be(fillBit ? (31 * fillCount) : 0);
     }
 
@@ -50,7 +50,7 @@ public class WordTestsPopulation
         {
             for (int i = 0; i < 0x02000000; i += WordExtensions.LARGEPRIME)
             {
-                Word word = new Word(fillBit, i);
+                var word = new Word(fillBit, i);
                 word.Population.Should().Be(fillBit ? (31 * i) : 0, because: word.ToString());
             }
         }
@@ -59,7 +59,7 @@ public class WordTestsPopulation
     [TestMethod]
     public void Packed()
     {
-        Word word = new Word(false, 1);
+        var word = new Word(false, 1);
         word.Population.Should().Be(0);
         word.Pack(new Word(1));
         word.Population.Should().Be(1);

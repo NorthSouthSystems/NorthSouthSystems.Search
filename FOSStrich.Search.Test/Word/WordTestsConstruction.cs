@@ -6,14 +6,14 @@ public class WordTestsConstruction
     [TestMethod]
     public void Bounds()
     {
-        Word word = new Word(0);
+        var word = new Word(0);
         word = new Word(Word.COMPRESSEDMASK - 1);
     }
 
     [TestMethod]
     public void Compressed()
     {
-        Word word = new Word(false, 0);
+        var word = new Word(false, 0);
         word.FillBit.Should().BeFalse();
         word.FillCount.Should().Be(0);
 
@@ -44,21 +44,21 @@ public class WordTestsConstruction
     [ExpectedException(typeof(ArgumentOutOfRangeException))]
     public void RawArgumentOutOfRange()
     {
-        Word word = new Word(Word.COMPRESSEDMASK);
+        var word = new Word(Word.COMPRESSEDMASK);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentOutOfRangeException))]
     public void FillCountOutOfRange1()
     {
-        Word word = new Word(true, -1);
+        var word = new Word(true, -1);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentOutOfRangeException))]
     public void FillCountOutOfRange2()
     {
-        Word word = new Word(true, 0x02000000);
+        var word = new Word(true, 0x02000000);
     }
 
     #endregion

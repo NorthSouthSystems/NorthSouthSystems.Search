@@ -6,7 +6,7 @@ public class WordTestsCompressionProperties
     [TestMethod]
     public void IsCompressibleTrue()
     {
-        Word word = new Word(0x00000000u);
+        var word = new Word(0x00000000u);
         word.IsCompressible.Should().BeTrue();
         word.CompressibleFillBit.Should().BeFalse();
         word.IsCompressed.Should().BeFalse();
@@ -22,7 +22,7 @@ public class WordTestsCompressionProperties
     {
         foreach (uint u in new uint[] { 0x00000001u, 0x40000000u, 0x7FFFFFFEu, 0x3FFFFFFFu, 0x12345678u, 0x7FEDCBA9u })
         {
-            Word word = new Word(u);
+            var word = new Word(u);
             word.IsCompressible.Should().BeFalse();
             word.IsCompressed.Should().BeFalse();
         }
@@ -33,7 +33,7 @@ public class WordTestsCompressionProperties
     {
         for (uint i = 1; i < 0x7FFFFFFFu; i += WordExtensions.LARGEPRIME)
         {
-            Word word = new Word(i);
+            var word = new Word(i);
             word.IsCompressible.Should().BeFalse();
             word.IsCompressed.Should().BeFalse();
         }
@@ -59,7 +59,7 @@ public class WordTestsCompressionProperties
 
     private void CompressedBase(bool fillBit, int fillCount, uint wordValue)
     {
-        Word word = new Word(fillBit, fillCount);
+        var word = new Word(fillBit, fillCount);
         word.Raw.Should().Be(wordValue);
         word.IsCompressed.Should().BeTrue();
         word.FillBit.Should().Be(fillBit);
@@ -73,7 +73,7 @@ public class WordTestsCompressionProperties
         {
             for (int i = 0; i < 0x02000000; i += WordExtensions.LARGEPRIME)
             {
-                Word word = new Word(fillBit, i);
+                var word = new Word(fillBit, i);
                 word.Raw.Should().Be((fillBit ? 0xC0000000 : 0x80000000) + (uint)i);
                 word.IsCompressed.Should().BeTrue(because: word.ToString());
                 word.FillBit.Should().Be(fillBit, because: word.ToString());

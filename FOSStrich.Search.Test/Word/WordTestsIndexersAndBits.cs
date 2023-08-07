@@ -6,7 +6,7 @@ public class WordTestsIndexersAndBits
     [TestMethod]
     public void GetSetPositionsSimple()
     {
-        Word word = new Word();
+        var word = new Word();
 
         for (int i = 0; i < Word.SIZE - 1; i++)
         {
@@ -32,7 +32,7 @@ public class WordTestsIndexersAndBits
 
     private void BitsBase(int[] bitPositions, bool value)
     {
-        Word word = new Word();
+        var word = new Word();
 
         for (int i = 0; i < Word.SIZE - 1; i++)
             word[i] = bitPositions.Contains(i) ? value : !value;
@@ -55,7 +55,7 @@ public class WordTestsIndexersAndBits
 
     private void GetBitPositionsBase(int[] bitPositions, bool value)
     {
-        Word word = new Word();
+        var word = new Word();
 
         for (int i = 0; i < Word.SIZE - 1; i++)
             word[i] = bitPositions.Contains(i) ? value : !value;
@@ -74,7 +74,7 @@ public class WordTestsIndexersAndBits
     [ExpectedException(typeof(NotSupportedException))]
     public void ComputeIndexerMaskNotSupported()
     {
-        Word word = new Word(true, 1);
+        var word = new Word(true, 1);
         bool bit = word[0];
     }
 
@@ -82,7 +82,7 @@ public class WordTestsIndexersAndBits
     [ExpectedException(typeof(ArgumentOutOfRangeException))]
     public void ComputeIndexerMaskArgumentOutOfRange1()
     {
-        Word word = new Word(0);
+        var word = new Word(0);
         bool bit = word[-1];
     }
 
@@ -90,7 +90,7 @@ public class WordTestsIndexersAndBits
     [ExpectedException(typeof(ArgumentOutOfRangeException))]
     public void ComputeIndexerMaskArgumentOutOfRange2()
     {
-        Word word = new Word(0);
+        var word = new Word(0);
         bool bit = word[Word.SIZE - 1];
     }
 
@@ -98,7 +98,7 @@ public class WordTestsIndexersAndBits
     [ExpectedException(typeof(NotSupportedException))]
     public void BitsNotSupported()
     {
-        Word word = new Word(true, 1);
+        var word = new Word(true, 1);
         bool[] bits = word.Bits;
     }
 
@@ -106,7 +106,7 @@ public class WordTestsIndexersAndBits
     [ExpectedException(typeof(NotSupportedException))]
     public void GetBitPositionsNotSupported()
     {
-        Word word = new Word(true, 1);
+        var word = new Word(true, 1);
         int[] bitPositions = word.GetBitPositions(true);
     }
 
