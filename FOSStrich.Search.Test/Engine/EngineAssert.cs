@@ -20,8 +20,8 @@ internal static class EngineAssert
 
         EngineItem[] sourceResults = source.ToArray();
 
-        Assert.AreEqual(sourceResults.Length, query.ResultTotalCount);
-        CollectionAssert.AreEqual(sourceResults.Skip(skip).Take(take).Select(item => item.Id).ToArray(), query.ResultPrimaryKeys);
+        query.ResultTotalCount.Should().Be(sourceResults.Length);
+        query.ResultPrimaryKeys.Should().Equal(sourceResults.Skip(skip).Take(take).Select(item => item.Id).ToArray());
 
         foreach (var facetParam in query.FacetParametersInternal)
             AssertFacet(sourceResults, facetParam, query.FacetShortCircuitCounting);
@@ -203,12 +203,12 @@ internal static class EngineAssert
     private static void AssertFacet<T>(this FacetCategory<T>[] categories, FacetCategory<T>[] compare, bool shortCircuitCounting)
         where T : IEquatable<T>, IComparable<T>
     {
-        Assert.AreEqual(categories.Length, compare.Length);
+        compare.Length.Should().Be(categories.Length);
 
         for (int i = 0; i < categories.Length; i++)
         {
-            Assert.AreEqual(categories[i].Key, compare[i].Key);
-            Assert.AreEqual(shortCircuitCounting ? 1 : categories[i].Count, compare[i].Count);
+            compare[i].Key.Should().Be(categories[i].Key);
+            compare[i].Count.Should().Be(shortCircuitCounting ? 1 : categories[i].Count);
         }
     }
 

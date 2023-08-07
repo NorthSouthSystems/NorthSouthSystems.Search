@@ -23,7 +23,7 @@ public class VectorTestsAndPopulation
 
                     int andPopulation = vector1.AndPopulation(vector2);
 
-                    Assert.AreEqual(bitPositions.Count, andPopulation);
+                    andPopulation.Should().Be(bitPositions.Count);
                 }
             }
         });

@@ -7,20 +7,20 @@ public class WordTestsCompress
     public void Compressible()
     {
         Word word = new Word(0);
-        Assert.AreEqual(true, word.IsCompressible);
+        word.IsCompressible.Should().Be(true);
         word.Compress();
-        Assert.AreEqual(0x80000001, word.Raw);
-        Assert.AreEqual(true, word.IsCompressed);
-        Assert.AreEqual(false, word.FillBit);
-        Assert.AreEqual(1, word.FillCount);
+        word.Raw.Should().Be(0x80000001);
+        word.IsCompressed.Should().Be(true);
+        word.FillBit.Should().Be(false);
+        word.FillCount.Should().Be(1);
 
         word = new Word(Word.COMPRESSIBLEMASK);
-        Assert.AreEqual(true, word.IsCompressible);
+        word.IsCompressible.Should().Be(true);
         word.Compress();
-        Assert.AreEqual(0xC0000001, word.Raw);
-        Assert.AreEqual(true, word.IsCompressed);
-        Assert.AreEqual(true, word.FillBit);
-        Assert.AreEqual(1, word.FillCount);
+        word.Raw.Should().Be(0xC0000001);
+        word.IsCompressed.Should().Be(true);
+        word.FillBit.Should().Be(true);
+        word.FillCount.Should().Be(1);
     }
 
     [TestMethod]
@@ -30,9 +30,9 @@ public class WordTestsCompress
         {
             Word word = new Word(wordValue);
             word.Compress();
-            Assert.AreEqual(wordValue, word.Raw);
-            Assert.AreEqual(false, word.IsCompressible);
-            Assert.AreEqual(false, word.IsCompressed);
+            word.Raw.Should().Be(wordValue);
+            word.IsCompressible.Should().Be(false);
+            word.IsCompressed.Should().Be(false);
         }
     }
 
@@ -43,9 +43,9 @@ public class WordTestsCompress
         {
             Word word = new Word(i);
             word.Compress();
-            Assert.AreEqual(i, word.Raw);
-            Assert.AreEqual(false, word.IsCompressible);
-            Assert.AreEqual(false, word.IsCompressed);
+            word.Raw.Should().Be(i);
+            word.IsCompressible.Should().Be(false);
+            word.IsCompressed.Should().Be(false);
         }
     }
 
@@ -56,8 +56,8 @@ public class WordTestsCompress
         {
             Word word = new Word(i);
             word.Compress();
-            Assert.AreEqual(i, word.Raw, word.ToString());
-            Assert.AreEqual(true, word.IsCompressed, word.ToString());
+            word.Raw.Should().Be(i, because: word.ToString());
+            word.IsCompressed.Should().BeTrue(because: word.ToString());
         }
     }
 
@@ -68,33 +68,33 @@ public class WordTestsCompress
 
         Assert.IsTrue(word.IsCompressed);
         Assert.IsTrue(word.FillBit);
-        Assert.AreEqual(1, word.FillCount);
+        word.FillCount.Should().Be(1);
         Assert.IsFalse(word.HasPackedWord);
 
         word.Pack(new Word(1));
 
         Assert.IsTrue(word.IsCompressed);
         Assert.IsTrue(word.FillBit);
-        Assert.AreEqual(1, word.FillCount);
+        word.FillCount.Should().Be(1);
         Assert.IsTrue(word.HasPackedWord);
-        Assert.AreEqual(30, word.PackedPosition);
-        Assert.AreEqual((uint)1, word.PackedWord.Raw);
+        word.PackedPosition.Should().Be(30);
+        word.PackedWord.Raw.Should().Be((uint)1);
 
         word = new Word(true, 1);
 
         Assert.IsTrue(word.IsCompressed);
         Assert.IsTrue(word.FillBit);
-        Assert.AreEqual(1, word.FillCount);
+        word.FillCount.Should().Be(1);
         Assert.IsFalse(word.HasPackedWord);
 
         word.Pack(new Word(1 << 30));
 
         Assert.IsTrue(word.IsCompressed);
         Assert.IsTrue(word.FillBit);
-        Assert.AreEqual(1, word.FillCount);
+        word.FillCount.Should().Be(1);
         Assert.IsTrue(word.HasPackedWord);
-        Assert.AreEqual(0, word.PackedPosition);
-        Assert.AreEqual((uint)1 << 30, word.PackedWord.Raw);
+        word.PackedPosition.Should().Be(0);
+        word.PackedWord.Raw.Should().Be((uint)1 << 30);
     }
 
     #region Exceptions

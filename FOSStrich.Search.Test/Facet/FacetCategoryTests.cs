@@ -9,26 +9,26 @@ public class FacetCategoryTests
         var category1 = new FacetCategory<int>(1, 1);
         var category2 = new FacetCategory<int>(1, 1);
 
-        Assert.AreEqual(true, category1.Equals(category2));
-        Assert.AreEqual(true, category1.Equals((object)category2));
-        Assert.AreEqual(false, category1.Equals(null));
-        Assert.AreEqual(false, category1.Equals("test"));
-        Assert.AreEqual(true, category1 == category2);
-        Assert.AreEqual(false, category1 != category2);
-        Assert.AreEqual(category1.GetHashCode(), category2.GetHashCode());
+        category1.Equals(category2).Should().Be(true);
+        category1.Equals((object)category2).Should().Be(true);
+        category1.Equals(null).Should().Be(false);
+        category1.Equals("test").Should().Be(false);
+        (category1 == category2).Should().Be(true);
+        (category1 != category2).Should().Be(false);
+        category2.GetHashCode().Should().Be(category1.GetHashCode());
 
         category2 = new FacetCategory<int>(2, 1);
 
-        Assert.AreEqual(false, category1.Equals(category2));
-        Assert.AreEqual(false, category1.Equals((object)category2));
-        Assert.AreEqual(false, category1 == category2);
-        Assert.AreEqual(true, category1 != category2);
+        category1.Equals(category2).Should().Be(false);
+        category1.Equals((object)category2).Should().Be(false);
+        (category1 == category2).Should().Be(false);
+        (category1 != category2).Should().Be(true);
 
         category2 = new FacetCategory<int>(1, 2);
 
-        Assert.AreEqual(false, category1.Equals(category2));
-        Assert.AreEqual(false, category1.Equals((object)category2));
-        Assert.AreEqual(false, category1 == category2);
-        Assert.AreEqual(true, category1 != category2);
+        category1.Equals(category2).Should().Be(false);
+        category1.Equals((object)category2).Should().Be(false);
+        (category1 == category2).Should().Be(false);
+        (category1 != category2).Should().Be(true);
     }
 }

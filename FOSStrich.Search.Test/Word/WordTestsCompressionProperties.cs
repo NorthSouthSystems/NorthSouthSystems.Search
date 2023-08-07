@@ -7,14 +7,14 @@ public class WordTestsCompressionProperties
     public void IsCompressibleTrue()
     {
         Word word = new Word(0x00000000u);
-        Assert.AreEqual(true, word.IsCompressible);
-        Assert.AreEqual(false, word.CompressibleFillBit);
-        Assert.AreEqual(false, word.IsCompressed);
+        word.IsCompressible.Should().Be(true);
+        word.CompressibleFillBit.Should().Be(false);
+        word.IsCompressed.Should().Be(false);
 
         word = new Word(Word.COMPRESSIBLEMASK);
-        Assert.AreEqual(true, word.IsCompressible);
-        Assert.AreEqual(true, word.CompressibleFillBit);
-        Assert.AreEqual(false, word.IsCompressed);
+        word.IsCompressible.Should().Be(true);
+        word.CompressibleFillBit.Should().Be(true);
+        word.IsCompressed.Should().Be(false);
     }
 
     [TestMethod]
@@ -23,8 +23,8 @@ public class WordTestsCompressionProperties
         foreach (uint u in new uint[] { 0x00000001u, 0x40000000u, 0x7FFFFFFEu, 0x3FFFFFFFu, 0x12345678u, 0x7FEDCBA9u })
         {
             Word word = new Word(u);
-            Assert.AreEqual(false, word.IsCompressible);
-            Assert.AreEqual(false, word.IsCompressed);
+            word.IsCompressible.Should().Be(false);
+            word.IsCompressed.Should().Be(false);
         }
     }
 
@@ -34,8 +34,8 @@ public class WordTestsCompressionProperties
         for (uint i = 1; i < 0x7FFFFFFFu; i += WordExtensions.LARGEPRIME)
         {
             Word word = new Word(i);
-            Assert.AreEqual(false, word.IsCompressible);
-            Assert.AreEqual(false, word.IsCompressed);
+            word.IsCompressible.Should().Be(false);
+            word.IsCompressed.Should().Be(false);
         }
     }
 
@@ -60,10 +60,10 @@ public class WordTestsCompressionProperties
     private void CompressedBase(bool fillBit, int fillCount, uint wordValue)
     {
         Word word = new Word(fillBit, fillCount);
-        Assert.AreEqual(wordValue, word.Raw);
-        Assert.AreEqual(true, word.IsCompressed);
-        Assert.AreEqual(fillBit, word.FillBit);
-        Assert.AreEqual(fillCount, word.FillCount);
+        word.Raw.Should().Be(wordValue);
+        word.IsCompressed.Should().Be(true);
+        word.FillBit.Should().Be(fillBit);
+        word.FillCount.Should().Be(fillCount);
     }
 
     [TestMethod]
@@ -74,10 +74,10 @@ public class WordTestsCompressionProperties
             for (int i = 0; i < 0x02000000; i += WordExtensions.LARGEPRIME)
             {
                 Word word = new Word(fillBit, i);
-                Assert.AreEqual((fillBit ? 0xC0000000 : 0x80000000) + i, word.Raw);
-                Assert.AreEqual(true, word.IsCompressed, word.ToString());
-                Assert.AreEqual(fillBit, word.FillBit, word.ToString());
-                Assert.AreEqual(i, word.FillCount, word.ToString());
+                word.Raw.Should().Be((fillBit ? 0xC0000000 : 0x80000000) + (uint)i);
+                word.IsCompressed.Should().BeTrue(because: word.ToString());
+                word.FillBit.Should().Be(fillBit, because: word.ToString());
+                word.FillCount.Should().Be(i, because: word.ToString());
             }
         }
     }

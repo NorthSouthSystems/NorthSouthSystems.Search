@@ -8,7 +8,7 @@ public class EngineTests
     {
         using var engine = new Engine<SimpleItem, int>(false, item => item.Id);
 
-        Assert.AreEqual(false, engine.AllowUnsafe);
+        engine.AllowUnsafe.Should().Be(false);
     }
 
     private class SimpleItem
@@ -32,9 +32,9 @@ public class EngineTests
 
             query.Execute(0, 10);
 
-            Assert.AreEqual(1, query.ResultTotalCount);
-            Assert.AreEqual(1, query.ResultPrimaryKeys.Length);
-            Assert.AreEqual(43, query.ResultPrimaryKeys[0]);
+            query.ResultTotalCount.Should().Be(1);
+            query.ResultPrimaryKeys.Length.Should().Be(1);
+            query.ResultPrimaryKeys[0].Should().Be(43);
         });
 
     #region Exceptions

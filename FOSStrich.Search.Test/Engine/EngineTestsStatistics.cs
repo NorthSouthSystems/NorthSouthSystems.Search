@@ -13,19 +13,19 @@ public class EngineTestsStatistics
             engine.CreateCatalog("SomeString", safetyAndCompression.Compression, item => item.SomeString);
 
             var stats = engine.GenerateStatistics();
-            Assert.AreEqual(2, stats.CatalogCount);
-            Assert.AreEqual(0, stats.VectorCount);
-            Assert.AreEqual(0, stats.WordCount);
-            Assert.AreEqual(0, stats.PackedWordCount);
-            Assert.AreEqual(0, stats.OneBitPackableWordCount);
-            Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+            stats.CatalogCount.Should().Be(2);
+            stats.VectorCount.Should().Be(0);
+            stats.WordCount.Should().Be(0);
+            stats.PackedWordCount.Should().Be(0);
+            stats.OneBitPackableWordCount.Should().Be(0);
+            stats.TwoBitPackableWordCount.Should().Be(0);
 
             var items = EngineItem.CreateItems(id => IsIdZero(id) ? 0 : 1, id => DateTime.Now, id => IsIdZero(id) ? "0" : "1", id => Array.Empty<string>(), 249);
             engine.Add(items.Take(63));
 
             stats = engine.GenerateStatistics();
-            Assert.AreEqual(2, stats.CatalogCount);
-            Assert.AreEqual(4, stats.VectorCount);
+            stats.CatalogCount.Should().Be(2);
+            stats.VectorCount.Should().Be(4);
 
             switch (safetyAndCompression.Compression)
             {
@@ -34,25 +34,25 @@ public class EngineTestsStatistics
                     break;
 
                 case VectorCompression.Compressed:
-                    Assert.AreEqual(10, stats.WordCount);
-                    Assert.AreEqual(0, stats.PackedWordCount);
-                    Assert.AreEqual(2, stats.OneBitPackableWordCount);
-                    Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+                    stats.WordCount.Should().Be(10);
+                    stats.PackedWordCount.Should().Be(0);
+                    stats.OneBitPackableWordCount.Should().Be(2);
+                    stats.TwoBitPackableWordCount.Should().Be(0);
                     break;
 
                 case VectorCompression.CompressedWithPackedPosition:
-                    Assert.AreEqual(8, stats.WordCount);
-                    Assert.AreEqual(2, stats.PackedWordCount);
-                    Assert.AreEqual(0, stats.OneBitPackableWordCount);
-                    Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+                    stats.WordCount.Should().Be(8);
+                    stats.PackedWordCount.Should().Be(2);
+                    stats.OneBitPackableWordCount.Should().Be(0);
+                    stats.TwoBitPackableWordCount.Should().Be(0);
                     break;
             }
 
             engine.Add(items.Skip(63).Take(62));
 
             stats = engine.GenerateStatistics();
-            Assert.AreEqual(2, stats.CatalogCount);
-            Assert.AreEqual(4, stats.VectorCount);
+            stats.CatalogCount.Should().Be(2);
+            stats.VectorCount.Should().Be(4);
 
             switch (safetyAndCompression.Compression)
             {
@@ -61,25 +61,25 @@ public class EngineTestsStatistics
                     break;
 
                 case VectorCompression.Compressed:
-                    Assert.AreEqual(18, stats.WordCount);
-                    Assert.AreEqual(0, stats.PackedWordCount);
-                    Assert.AreEqual(4, stats.OneBitPackableWordCount);
-                    Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+                    stats.WordCount.Should().Be(18);
+                    stats.PackedWordCount.Should().Be(0);
+                    stats.OneBitPackableWordCount.Should().Be(4);
+                    stats.TwoBitPackableWordCount.Should().Be(0);
                     break;
 
                 case VectorCompression.CompressedWithPackedPosition:
-                    Assert.AreEqual(14, stats.WordCount);
-                    Assert.AreEqual(4, stats.PackedWordCount);
-                    Assert.AreEqual(0, stats.OneBitPackableWordCount);
-                    Assert.AreEqual(0, stats.TwoBitPackableWordCount);
+                    stats.WordCount.Should().Be(14);
+                    stats.PackedWordCount.Should().Be(4);
+                    stats.OneBitPackableWordCount.Should().Be(0);
+                    stats.TwoBitPackableWordCount.Should().Be(0);
                     break;
             }
 
             engine.Add(items.Skip(125).Take(62));
 
             stats = engine.GenerateStatistics();
-            Assert.AreEqual(2, stats.CatalogCount);
-            Assert.AreEqual(4, stats.VectorCount);
+            stats.CatalogCount.Should().Be(2);
+            stats.VectorCount.Should().Be(4);
 
             switch (safetyAndCompression.Compression)
             {
@@ -88,25 +88,25 @@ public class EngineTestsStatistics
                     break;
 
                 case VectorCompression.Compressed:
-                    Assert.AreEqual(26, stats.WordCount);
-                    Assert.AreEqual(0, stats.PackedWordCount);
-                    Assert.AreEqual(4, stats.OneBitPackableWordCount);
-                    Assert.AreEqual(2, stats.TwoBitPackableWordCount);
+                    stats.WordCount.Should().Be(26);
+                    stats.PackedWordCount.Should().Be(0);
+                    stats.OneBitPackableWordCount.Should().Be(4);
+                    stats.TwoBitPackableWordCount.Should().Be(2);
                     break;
 
                 case VectorCompression.CompressedWithPackedPosition:
-                    Assert.AreEqual(22, stats.WordCount);
-                    Assert.AreEqual(4, stats.PackedWordCount);
-                    Assert.AreEqual(0, stats.OneBitPackableWordCount);
-                    Assert.AreEqual(2, stats.TwoBitPackableWordCount);
+                    stats.WordCount.Should().Be(22);
+                    stats.PackedWordCount.Should().Be(4);
+                    stats.OneBitPackableWordCount.Should().Be(0);
+                    stats.TwoBitPackableWordCount.Should().Be(2);
                     break;
             }
 
             engine.Add(items.Skip(187).Take(62));
 
             stats = engine.GenerateStatistics();
-            Assert.AreEqual(2, stats.CatalogCount);
-            Assert.AreEqual(4, stats.VectorCount);
+            stats.CatalogCount.Should().Be(2);
+            stats.VectorCount.Should().Be(4);
 
             switch (safetyAndCompression.Compression)
             {
@@ -115,17 +115,17 @@ public class EngineTestsStatistics
                     break;
 
                 case VectorCompression.Compressed:
-                    Assert.AreEqual(34, stats.WordCount);
-                    Assert.AreEqual(0, stats.PackedWordCount);
-                    Assert.AreEqual(4, stats.OneBitPackableWordCount);
-                    Assert.AreEqual(4, stats.TwoBitPackableWordCount);
+                    stats.WordCount.Should().Be(34);
+                    stats.PackedWordCount.Should().Be(0);
+                    stats.OneBitPackableWordCount.Should().Be(4);
+                    stats.TwoBitPackableWordCount.Should().Be(4);
                     break;
 
                 case VectorCompression.CompressedWithPackedPosition:
-                    Assert.AreEqual(30, stats.WordCount);
-                    Assert.AreEqual(4, stats.PackedWordCount);
-                    Assert.AreEqual(0, stats.OneBitPackableWordCount);
-                    Assert.AreEqual(4, stats.TwoBitPackableWordCount);
+                    stats.WordCount.Should().Be(30);
+                    stats.PackedWordCount.Should().Be(4);
+                    stats.OneBitPackableWordCount.Should().Be(0);
+                    stats.TwoBitPackableWordCount.Should().Be(4);
                     break;
             }
         });

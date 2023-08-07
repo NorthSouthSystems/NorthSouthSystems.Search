@@ -8,8 +8,8 @@ internal static class VectorExtensions
 
     internal static void AssertWordCounts(this Vector vector, int expectedWordCountPhysical, int expectedWordCountLogical)
     {
-        Assert.AreEqual(expectedWordCountPhysical, (int)_wordCountPhysicalField.GetValue(vector));
-        Assert.AreEqual(expectedWordCountLogical, (int)_wordCountLogicalField.GetValue(vector));
+        ((int)_wordCountPhysicalField.GetValue(vector)).Should().Be(expectedWordCountPhysical);
+        ((int)_wordCountLogicalField.GetValue(vector)).Should().Be(expectedWordCountLogical);
     }
 
     private static readonly FieldInfo _wordCountPhysicalField = typeof(Vector).GetField("_wordCountPhysical", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -18,7 +18,7 @@ internal static class VectorExtensions
     internal static void AssertWordLogicalValues(this Vector vector, params uint[] expectedWordLogicalValues)
     {
         for (int i = 0; i < expectedWordLogicalValues.Length; i++)
-            Assert.AreEqual(expectedWordLogicalValues[i], vector.GetWordLogical(i).Raw, "i=" + i.ToString());
+            vector.GetWordLogical(i).Raw.Should().Be(expectedWordLogicalValues[i], because: "i=" + i.ToString());
     }
 
     internal static void AssertBitPositions(this Vector vector, params IEnumerable<int>[] expectedBitPositionses)
@@ -33,16 +33,16 @@ internal static class VectorExtensions
         foreach (int expectedBitPosition in expectedBitPositions)
             expectedBits[expectedBitPosition] = true;
 
-        CollectionAssert.AreEqual(expectedBitPositions, vector.GetBitPositions(true).ToArray());
+        vector.GetBitPositions(true).ToArray().Should().Equal(expectedBitPositions);
 
         if (!vector.IsCompressed)
-            CollectionAssert.AreEqual(expectedBits, vector.Bits.Reverse().SkipWhile(bit => !bit).Reverse().ToArray());
+            vector.Bits.Reverse().SkipWhile(bit => !bit).Reverse().ToArray().Should().Equal(expectedBits);
 
         foreach (int expectedBitPosition in expectedBitPositions)
             Assert.IsTrue(vector[expectedBitPosition]);
 
-        Assert.AreEqual(expectedBitPositions.Length, vector.Population);
-        Assert.AreEqual(expectedBitPositions.Length > 0, vector.PopulationAny);
+        vector.Population.Should().Be(expectedBitPositions.Length);
+        vector.PopulationAny.Should().Be(expectedBitPositions.Length > 0);
     }
 
     #endregion

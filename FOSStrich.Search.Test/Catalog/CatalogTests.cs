@@ -27,13 +27,13 @@ public class CatalogTests
             {
                 var result = catalog.Sort(vector, true, false, disableParallel);
                 int[] bitPositions = result.PartialSorts.SelectMany(partial => partial.GetBitPositions(true)).ToArray();
-                CollectionAssert.AreEqual(new[] { 9, 8, 7, 6, 5 }, bitPositions);
+                bitPositions.Should().Equal(new[] { 9, 8, 7, 6, 5 });
 
                 var partialSorts = result.PartialSorts.ToArray();
-                Assert.AreEqual(5, partialSorts.Length);
+                partialSorts.Length.Should().Be(5);
 
                 for (int i = 0; i < 5; i++)
-                    Assert.AreEqual(9 - i, partialSorts[i].GetBitPositions(true).Single());
+                    partialSorts[i].GetBitPositions(true).Single().Should().Be(9 - i);
             }
         });
 

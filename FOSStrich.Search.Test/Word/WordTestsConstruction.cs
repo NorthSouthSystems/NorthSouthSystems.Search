@@ -14,28 +14,28 @@ public class WordTestsConstruction
     public void Compressed()
     {
         Word word = new Word(false, 0);
-        Assert.AreEqual(false, word.FillBit);
-        Assert.AreEqual(0, word.FillCount);
+        word.FillBit.Should().Be(false);
+        word.FillCount.Should().Be(0);
 
         word = new Word(false, 1);
-        Assert.AreEqual(false, word.FillBit);
-        Assert.AreEqual(1, word.FillCount);
+        word.FillBit.Should().Be(false);
+        word.FillCount.Should().Be(1);
 
         word = new Word(false, 22);
-        Assert.AreEqual(false, word.FillBit);
-        Assert.AreEqual(22, word.FillCount);
+        word.FillBit.Should().Be(false);
+        word.FillCount.Should().Be(22);
 
         word = new Word(true, 0);
-        Assert.AreEqual(true, word.FillBit);
-        Assert.AreEqual(0, word.FillCount);
+        word.FillBit.Should().Be(true);
+        word.FillCount.Should().Be(0);
 
         word = new Word(true, 1);
-        Assert.AreEqual(true, word.FillBit);
-        Assert.AreEqual(1, word.FillCount);
+        word.FillBit.Should().Be(true);
+        word.FillCount.Should().Be(1);
 
         word = new Word(true, 22);
-        Assert.AreEqual(true, word.FillBit);
-        Assert.AreEqual(22, word.FillCount);
+        word.FillBit.Should().Be(true);
+        word.FillCount.Should().Be(22);
     }
 
     #region Exceptions

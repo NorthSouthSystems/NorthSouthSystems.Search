@@ -13,12 +13,12 @@ public class WordTestsIndexersAndBits
             word[i] = true;
 
             for (int j = 0; j < Word.SIZE - 1; j++)
-                Assert.AreEqual(i == j, word[j]);
+                word[j].Should().Be(i == j);
 
             word[i] = false;
 
             for (int j = 0; j < Word.SIZE - 1; j++)
-                Assert.AreEqual(false, word[j]);
+                word[j].Should().Be(false);
         }
     }
 
@@ -39,10 +39,10 @@ public class WordTestsIndexersAndBits
 
         bool[] bits = word.Bits;
 
-        Assert.AreEqual(bitPositions.Length, bits.Count(bit => value ? bit : !bit));
+        bits.Count(bit => value ? bit : !bit).Should().Be(bitPositions.Length);
 
         for (int i = 0; i < Word.SIZE - 1; i++)
-            Assert.AreEqual(bitPositions.Contains(i), value ? bits[i] : !bits[i]);
+            (value ? bits[i] : !bits[i]).Should().Be(bitPositions.Contains(i));
     }
 
     [TestMethod]
@@ -62,10 +62,10 @@ public class WordTestsIndexersAndBits
 
         int[] getBitPositions = word.GetBitPositions(value);
 
-        Assert.AreEqual(bitPositions.Length, getBitPositions.Length);
+        getBitPositions.Length.Should().Be(bitPositions.Length);
 
         for (int i = 0; i < bitPositions.Length; i++)
-            Assert.AreEqual(bitPositions[i], getBitPositions[i]);
+            getBitPositions[i].Should().Be(bitPositions[i]);
     }
 
     #region Exceptions

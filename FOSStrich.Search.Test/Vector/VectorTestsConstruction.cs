@@ -30,14 +30,14 @@ public class VectorTestsConstruction
         foreach (var instruction in instructions)
         {
             var source = new Vector(instruction.AllowUnsafe, instruction.SourceCompression);
-            Assert.AreEqual(instruction.AllowUnsafe, source.AllowUnsafe);
-            Assert.AreEqual(instruction.SourceCompression, source.Compression);
+            source.AllowUnsafe.Should().Be(instruction.AllowUnsafe);
+            source.Compression.Should().Be(instruction.SourceCompression);
 
             int[] bitPositions = source.SetBitsRandom(instruction.FillMaxBitPosition, instruction.FillCount, true);
 
             var result = new Vector(instruction.AllowUnsafe, instruction.ResultCompression, source);
-            Assert.AreEqual(instruction.AllowUnsafe, result.AllowUnsafe);
-            Assert.AreEqual(instruction.ResultCompression, result.Compression);
+            result.AllowUnsafe.Should().Be(instruction.AllowUnsafe);
+            result.Compression.Should().Be(instruction.ResultCompression);
 
             result.AssertBitPositions(bitPositions);
 
@@ -49,11 +49,11 @@ public class VectorTestsConstruction
                 Assert.IsTrue(!resultWords.Any(word => word.HasPackedWord));
 
             source.WordsClear();
-            Assert.AreEqual(0, source.Population);
+            source.Population.Should().Be(0);
             source.AssertBitPositions();
 
             result.WordsClear();
-            Assert.AreEqual(0, result.Population);
+            result.Population.Should().Be(0);
             result.AssertBitPositions();
         }
     }
