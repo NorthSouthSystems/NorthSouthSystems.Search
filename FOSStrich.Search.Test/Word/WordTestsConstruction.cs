@@ -14,27 +14,27 @@ public class WordTestsConstruction
     public void Compressed()
     {
         Word word = new Word(false, 0);
-        word.FillBit.Should().Be(false);
+        word.FillBit.Should().BeFalse();
         word.FillCount.Should().Be(0);
 
         word = new Word(false, 1);
-        word.FillBit.Should().Be(false);
+        word.FillBit.Should().BeFalse();
         word.FillCount.Should().Be(1);
 
         word = new Word(false, 22);
-        word.FillBit.Should().Be(false);
+        word.FillBit.Should().BeFalse();
         word.FillCount.Should().Be(22);
 
         word = new Word(true, 0);
-        word.FillBit.Should().Be(true);
+        word.FillBit.Should().BeTrue();
         word.FillCount.Should().Be(0);
 
         word = new Word(true, 1);
-        word.FillBit.Should().Be(true);
+        word.FillBit.Should().BeTrue();
         word.FillCount.Should().Be(1);
 
         word = new Word(true, 22);
-        word.FillBit.Should().Be(true);
+        word.FillBit.Should().BeTrue();
         word.FillCount.Should().Be(22);
     }
 

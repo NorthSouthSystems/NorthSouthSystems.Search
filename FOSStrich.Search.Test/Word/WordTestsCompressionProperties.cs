@@ -7,14 +7,14 @@ public class WordTestsCompressionProperties
     public void IsCompressibleTrue()
     {
         Word word = new Word(0x00000000u);
-        word.IsCompressible.Should().Be(true);
-        word.CompressibleFillBit.Should().Be(false);
-        word.IsCompressed.Should().Be(false);
+        word.IsCompressible.Should().BeTrue();
+        word.CompressibleFillBit.Should().BeFalse();
+        word.IsCompressed.Should().BeFalse();
 
         word = new Word(Word.COMPRESSIBLEMASK);
-        word.IsCompressible.Should().Be(true);
-        word.CompressibleFillBit.Should().Be(true);
-        word.IsCompressed.Should().Be(false);
+        word.IsCompressible.Should().BeTrue();
+        word.CompressibleFillBit.Should().BeTrue();
+        word.IsCompressed.Should().BeFalse();
     }
 
     [TestMethod]
@@ -23,8 +23,8 @@ public class WordTestsCompressionProperties
         foreach (uint u in new uint[] { 0x00000001u, 0x40000000u, 0x7FFFFFFEu, 0x3FFFFFFFu, 0x12345678u, 0x7FEDCBA9u })
         {
             Word word = new Word(u);
-            word.IsCompressible.Should().Be(false);
-            word.IsCompressed.Should().Be(false);
+            word.IsCompressible.Should().BeFalse();
+            word.IsCompressed.Should().BeFalse();
         }
     }
 
@@ -34,8 +34,8 @@ public class WordTestsCompressionProperties
         for (uint i = 1; i < 0x7FFFFFFFu; i += WordExtensions.LARGEPRIME)
         {
             Word word = new Word(i);
-            word.IsCompressible.Should().Be(false);
-            word.IsCompressed.Should().Be(false);
+            word.IsCompressible.Should().BeFalse();
+            word.IsCompressed.Should().BeFalse();
         }
     }
 
@@ -61,7 +61,7 @@ public class WordTestsCompressionProperties
     {
         Word word = new Word(fillBit, fillCount);
         word.Raw.Should().Be(wordValue);
-        word.IsCompressed.Should().Be(true);
+        word.IsCompressed.Should().BeTrue();
         word.FillBit.Should().Be(fillBit);
         word.FillCount.Should().Be(fillCount);
     }

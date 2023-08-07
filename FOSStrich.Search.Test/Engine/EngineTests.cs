@@ -8,7 +8,7 @@ public class EngineTests
     {
         using var engine = new Engine<SimpleItem, int>(false, item => item.Id);
 
-        engine.AllowUnsafe.Should().Be(false);
+        engine.AllowUnsafe.Should().BeFalse();
     }
 
     private class SimpleItem

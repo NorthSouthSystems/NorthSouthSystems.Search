@@ -8,7 +8,7 @@ public class CatalogTestsConstruction
     {
         var catalog = new Catalog<int>("SomeInt", true, false, VectorCompression.None);
         catalog.Name.Should().Be("SomeInt");
-        catalog.AllowUnsafe.Should().Be(false);
+        catalog.AllowUnsafe.Should().BeFalse();
         catalog.Compression.Should().Be(VectorCompression.None);
     }
 }

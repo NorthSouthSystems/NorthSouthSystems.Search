@@ -18,7 +18,7 @@ public class WordTestsIndexersAndBits
             word[i] = false;
 
             for (int j = 0; j < Word.SIZE - 1; j++)
-                word[j].Should().Be(false);
+                word[j].Should().BeFalse();
         }
     }
 

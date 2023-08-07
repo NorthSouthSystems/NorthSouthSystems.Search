@@ -7,19 +7,19 @@ public class WordTestsCompress
     public void Compressible()
     {
         Word word = new Word(0);
-        word.IsCompressible.Should().Be(true);
+        word.IsCompressible.Should().BeTrue();
         word.Compress();
         word.Raw.Should().Be(0x80000001);
-        word.IsCompressed.Should().Be(true);
-        word.FillBit.Should().Be(false);
+        word.IsCompressed.Should().BeTrue();
+        word.FillBit.Should().BeFalse();
         word.FillCount.Should().Be(1);
 
         word = new Word(Word.COMPRESSIBLEMASK);
-        word.IsCompressible.Should().Be(true);
+        word.IsCompressible.Should().BeTrue();
         word.Compress();
         word.Raw.Should().Be(0xC0000001);
-        word.IsCompressed.Should().Be(true);
-        word.FillBit.Should().Be(true);
+        word.IsCompressed.Should().BeTrue();
+        word.FillBit.Should().BeTrue();
         word.FillCount.Should().Be(1);
     }
 
@@ -31,8 +31,8 @@ public class WordTestsCompress
             Word word = new Word(wordValue);
             word.Compress();
             word.Raw.Should().Be(wordValue);
-            word.IsCompressible.Should().Be(false);
-            word.IsCompressed.Should().Be(false);
+            word.IsCompressible.Should().BeFalse();
+            word.IsCompressed.Should().BeFalse();
         }
     }
 
@@ -44,8 +44,8 @@ public class WordTestsCompress
             Word word = new Word(i);
             word.Compress();
             word.Raw.Should().Be(i);
-            word.IsCompressible.Should().Be(false);
-            word.IsCompressed.Should().Be(false);
+            word.IsCompressible.Should().BeFalse();
+            word.IsCompressed.Should().BeFalse();
         }
     }
 
