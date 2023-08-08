@@ -3,19 +3,20 @@
 [TestClass]
 public class FacetParameterTests
 {
-    #region Exceptions
-
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void FacetQueryNotExecuted()
+    public void Exceptions()
     {
-        var engine = new Engine<EngineItem, int>(false, item => item.Id);
-        var someIntCatalog = engine.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+        Action act;
 
-        var someIntFacet = FacetParameter.Create(someIntCatalog);
+        act = () =>
+        {
+            var engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var someIntCatalog = engine.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-        var facet = someIntFacet.Facet;
+            var someIntFacet = FacetParameter.Create(someIntCatalog);
+
+            var facet = someIntFacet.Facet;
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "FacetQueryNotExecuted");
     }
-
-    #endregion
 }

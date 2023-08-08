@@ -37,108 +37,102 @@ public class EngineTests
             query.ResultPrimaryKeys[0].Should().Be(43);
         });
 
-    #region Exceptions
-
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void CreateCatalogNotInitializing()
+    public void Exceptions()
     {
-        using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+        Action act;
 
-        var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+        act = () =>
+        {
+            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
 
-        engine1.Add(EngineItem.CreateItems(id => id, id => DateTime.Now, id => id.ToString(), id => Array.Empty<string>(), 1).Single());
+            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
-        var catalog2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+            engine1.Add(EngineItem.CreateItems(id => id, id => DateTime.Now, id => id.ToString(), id => Array.Empty<string>(), 1).Single());
+
+            var catalog2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "CreateCatalogNotInitializing");
+
+        act = () =>
+        {
+            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+
+            var catalog1 = engine1.CreateCatalog("Name", VectorCompression.None, item => item.SomeInt);
+            var catalog2 = engine1.CreateCatalog("Name", VectorCompression.None, item => item.SomeString);
+        };
+        act.Should().ThrowExactly<ArgumentException>(because: "CreateCatalogDuplicateName");
+
+        act = () =>
+        {
+            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+
+            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+
+            engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
+            engine1.Add(new SimpleItem { Id = 0, SomeInt = 1 });
+        };
+        act.Should().ThrowExactly<ArgumentException>(because: "AddDuplicatePrimaryKey");
+
+        act = () =>
+        {
+            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+
+            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            engine1.Add((SimpleItem[])null);
+        };
+        act.Should().ThrowExactly<ArgumentNullException>(because: "AddRangeNull");
+
+        act = () =>
+        {
+            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+
+            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+
+            engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
+            engine1.Update(new SimpleItem { Id = 1, SomeInt = 1 });
+        };
+        act.Should().ThrowExactly<ArgumentException>(because: "UpdateNoPrimaryKey");
+
+        act = () =>
+        {
+            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+
+            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            engine1.Update((SimpleItem[])null);
+        };
+        act.Should().ThrowExactly<ArgumentNullException>(because: "UpdateRangeNull");
+
+        act = () =>
+        {
+            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+
+            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+
+            engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
+            engine1.Remove(new SimpleItem { Id = 1, SomeInt = 1 });
+        };
+        act.Should().ThrowExactly<ArgumentException>(because: "RemoveNoPrimaryKey");
+
+        act = () =>
+        {
+            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+
+            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+
+            engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
+            engine1.Remove(new SimpleItem { Id = 0, SomeInt = 0 });
+            engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
+        };
+        act.Should().NotThrow(because: "RemoveReAddPrimaryKey");
+
+        act = () =>
+        {
+            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+
+            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            engine1.Remove((SimpleItem[])null);
+        };
+        act.Should().ThrowExactly<ArgumentNullException>(because: "RemoveRangeNull");
     }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void CreateCatalogDuplicateName()
-    {
-        using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
-
-        var catalog1 = engine1.CreateCatalog("Name", VectorCompression.None, item => item.SomeInt);
-        var catalog2 = engine1.CreateCatalog("Name", VectorCompression.None, item => item.SomeString);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void AddDuplicatePrimaryKey()
-    {
-        using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
-
-        var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-
-        engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
-        engine1.Add(new SimpleItem { Id = 0, SomeInt = 1 });
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void AddRangeNull()
-    {
-        using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
-
-        var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-        engine1.Add((SimpleItem[])null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void UpdateNoPrimaryKey()
-    {
-        using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
-
-        var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-
-        engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
-        engine1.Update(new SimpleItem { Id = 1, SomeInt = 1 });
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void UpdateRangeNull()
-    {
-        using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
-
-        var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-        engine1.Update((SimpleItem[])null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void RemoveNoPrimaryKey()
-    {
-        using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
-
-        var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-
-        engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
-        engine1.Remove(new SimpleItem { Id = 1, SomeInt = 1 });
-    }
-
-    [TestMethod]
-    public void RemoveReAddPrimaryKey()
-    {
-        using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
-
-        var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-
-        engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
-        engine1.Remove(new SimpleItem { Id = 0, SomeInt = 0 });
-        engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void RemoveRangeNull()
-    {
-        using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
-
-        var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-        engine1.Remove((SimpleItem[])null);
-    }
-
-    #endregion
 }

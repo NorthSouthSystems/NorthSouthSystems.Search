@@ -13,49 +13,47 @@ public class VectorTestsGetSetBits
             vector.AssertBitPositions(bitPositions);
         });
 
-    #region Exceptions
-
     [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void IndexArgumentOutOfRange1()
+    public void Exceptions()
     {
-        var vector = new Vector(false, VectorCompression.None);
-        vector[-1] = true;
-    }
+        Action act;
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void IndexArgumentOutOfRange2()
-    {
-        var vector = new Vector(false, VectorCompression.None);
-        bool value = vector[-1];
-    }
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.None);
+            vector[-1] = true;
+        };
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "IndexArgumentOutOfRange1");
 
-    [TestMethod]
-    public void SetBitSupportedForwardOnly()
-    {
-        var vector = new Vector(false, VectorCompression.Compressed);
-        vector[30] = true;
-        vector[61] = true;
-    }
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.None);
+            bool value = vector[-1];
+        };
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "IndexArgumentOutOfRange2");
 
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void SetBitNotSupportedForwardOnly()
-    {
-        var vector = new Vector(false, VectorCompression.Compressed);
-        vector[30] = true;
-        vector[31] = true;
-        vector[30] = true;
-    }
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.Compressed);
+            vector[30] = true;
+            vector[61] = true;
+        };
+        act.Should().NotThrow(because: "SetBitSupportedForwardOnly");
 
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void GetBitsCompressedNotSupported()
-    {
-        var vector = new Vector(false, VectorCompression.Compressed);
-        vector.Bits.ToArray();
-    }
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.Compressed);
+            vector[30] = true;
+            vector[31] = true;
+            vector[30] = true;
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "SetBitNotSupportedForwardOnly");
 
-    #endregion
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.Compressed);
+            vector.Bits.ToArray();
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "GetBitsCompressedNotSupported");
+    }
 }

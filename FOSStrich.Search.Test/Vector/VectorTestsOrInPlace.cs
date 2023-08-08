@@ -18,24 +18,24 @@ public class VectorTestsOrInPlace
             vector.AssertBitPositions(Enumerable.Range(0, 32), new[] { 100 });
         });
 
-    #region Exceptions
-
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void OrInPlaceArgumentNull()
+    public void Exceptions()
     {
-        var vector = new Vector(false, VectorCompression.None);
-        vector.OrInPlace(null);
-    }
+        Action act;
 
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void OrInPlaceNotSupported()
-    {
-        var vector = new Vector(false, VectorCompression.Compressed);
-        var input = new Vector(false, VectorCompression.None);
-        vector.OrInPlace(input);
-    }
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.None);
+            vector.OrInPlace(null);
+        };
+        act.Should().ThrowExactly<ArgumentNullException>(because: "OrInPlaceArgumentNull");
 
-    #endregion
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.Compressed);
+            var input = new Vector(false, VectorCompression.None);
+            vector.OrInPlace(input);
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "OrInPlaceNotSupported");
+    }
 }

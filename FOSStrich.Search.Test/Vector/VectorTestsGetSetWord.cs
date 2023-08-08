@@ -110,40 +110,39 @@ public class VectorTestsGetSetWord
             vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 4 : 6, 10);
         });
 
-    #region Exceptions
-
     [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void GetWordLogicalArgumentOutOfRange()
+    public void Exceptions()
     {
-        var vector = new Vector(false, VectorCompression.None);
-        vector.GetWordLogical(-1);
-    }
+        Action act;
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void SetWordArgumentOutOfRange()
-    {
-        var vector = new Vector(false, VectorCompression.None);
-        vector.SetWord(-1, new Word(0x11111111));
-    }
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.None);
+            vector.GetWordLogical(-1);
+        };
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "GetWordLogicalArgumentOutOfRange");
 
-    [TestMethod]
-    public void SetWordSupportedForwardOnly()
-    {
-        var vector = new Vector(false, VectorCompression.Compressed);
-        vector[30] = true;
-        vector.SetWord(0, new Word(0x00000001u));
-    }
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.None);
+            vector.SetWord(-1, new Word(0x11111111));
+        };
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "SetWordArgumentOutOfRange");
 
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void SetWordNotSupportedForwardOnly()
-    {
-        var vector = new Vector(false, VectorCompression.Compressed);
-        vector[31] = true;
-        vector.SetWord(0, new Word(0x00000001u));
-    }
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.Compressed);
+            vector[30] = true;
+            vector.SetWord(0, new Word(0x00000001u));
+        };
+        act.Should().NotThrow(because: "SetWordSupportedForwardOnly");
 
-    #endregion
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.Compressed);
+            vector[31] = true;
+            vector.SetWord(0, new Word(0x00000001u));
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "SetWordNotSupportedForwardOnly");
+    }
 }

@@ -38,28 +38,18 @@ public class WordTestsConstruction
         word.FillCount.Should().Be(22);
     }
 
-    #region Exceptions
-
     [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void RawArgumentOutOfRange()
+    public void Exceptions()
     {
-        var word = new Word(Word.COMPRESSEDMASK);
-    }
+        Action act;
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void FillCountOutOfRange1()
-    {
-        var word = new Word(true, -1);
-    }
+        act = () => new Word(Word.COMPRESSEDMASK);
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "RawArgumentOutOfRange");
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void FillCountOutOfRange2()
-    {
-        var word = new Word(true, 0x02000000);
-    }
+        act = () => new Word(true, -1);
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "FillCountOutOfRange1");
 
-    #endregion
+        act = () => new Word(true, 0x02000000);
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "FillCountOutOfRange2");
+    }
 }

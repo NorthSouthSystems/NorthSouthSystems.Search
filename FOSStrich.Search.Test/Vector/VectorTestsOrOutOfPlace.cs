@@ -24,38 +24,36 @@ public class VectorTestsOrOutOfPlace
             Vector.OrOutOfPlace(vectorA, vectorB, vectorC).AssertBitPositions(bitPositionsA, bitPositionsB, bitPositionsC);
         });
 
-    #region Exceptions
-
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void OrOutOfPlaceArgumentNull1()
+    public void Exceptions()
     {
-        Vector[] vectors = null;
-        Vector.OrOutOfPlace(vectors);
-    }
+        Action act;
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void OrOutOfPlaceArgumentNull2()
-    {
-        var vector = new Vector(false, VectorCompression.None);
-        Vector.OrOutOfPlace(vector, null);
-    }
+        act = () =>
+        {
+            Vector[] vectors = null;
+            Vector.OrOutOfPlace(vectors);
+        };
+        act.Should().ThrowExactly<ArgumentNullException>(because: "OrOutOfPlaceArgumentNull1");
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void OrOutOfPlaceArgumentOutOfRange1()
-    {
-        var vector = Vector.OrOutOfPlace();
-    }
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.None);
+            Vector.OrOutOfPlace(vector, null);
+        };
+        act.Should().ThrowExactly<ArgumentNullException>(because: "OrOutOfPlaceArgumentNull2");
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void OrOutOfPlaceArgumentOutOfRange2()
-    {
-        var vector1 = new Vector(false, VectorCompression.None);
-        var vector = Vector.OrOutOfPlace(vector1);
-    }
+        act = () =>
+        {
+            var vector = Vector.OrOutOfPlace();
+        };
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "OrOutOfPlaceArgumentOutOfRange1");
 
-    #endregion
+        act = () =>
+        {
+            var vector1 = new Vector(false, VectorCompression.None);
+            var vector = Vector.OrOutOfPlace(vector1);
+        };
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "OrOutOfPlaceArgumentOutOfRange2");
+    }
 }

@@ -28,24 +28,24 @@ public class VectorTestsAndPopulation
             }
         });
 
-    #region Exceptions
-
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void AndPopulationArgumentNull()
+    public void Exceptions()
     {
-        var vector = new Vector(false, VectorCompression.None);
-        vector.AndPopulation(null);
-    }
+        Action act;
 
-    [TestMethod]
-    [ExpectedException(typeof(NotImplementedException))]
-    public void AndPopulationNotSupported()
-    {
-        var vector = new Vector(false, VectorCompression.Compressed);
-        var input = new Vector(false, VectorCompression.Compressed);
-        vector.AndPopulation(input);
-    }
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.None);
+            vector.AndPopulation(null);
+        };
+        act.Should().ThrowExactly<ArgumentNullException>(because: "AndPopulationArgumentNull");
 
-    #endregion
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.Compressed);
+            var input = new Vector(false, VectorCompression.Compressed);
+            vector.AndPopulation(input);
+        };
+        act.Should().ThrowExactly<NotImplementedException>(because: "AndPopulationNotSupported");
+    }
 }

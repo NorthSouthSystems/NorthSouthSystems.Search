@@ -9,24 +9,24 @@ public class VectorTestsAndInPlace
         SafetyAndCompression.RunAll(safetyAndCompression =>
             VectorTestsRandom.LogicInPlaceBase(22, (Word.SIZE - 1) * 10 + 1, safetyAndCompression, (left, right) => left.AndInPlace(right), Enumerable.Intersect));
 
-    #region Exceptions
-
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void AndInPlaceArgumentNull()
+    public void Exceptions()
     {
-        var vector = new Vector(false, VectorCompression.None);
-        vector.AndInPlace(null);
-    }
+        Action act;
 
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void AndInPlaceNotSupported()
-    {
-        var vector = new Vector(false, VectorCompression.Compressed);
-        var input = new Vector(false, VectorCompression.None);
-        vector.AndInPlace(input);
-    }
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.None);
+            vector.AndInPlace(null);
+        };
+        act.Should().ThrowExactly<ArgumentNullException>(because: "AndInPlaceArgumentNull");
 
-    #endregion
+        act = () =>
+        {
+            var vector = new Vector(false, VectorCompression.Compressed);
+            var input = new Vector(false, VectorCompression.None);
+            vector.AndInPlace(input);
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "AndInPlaceNotSupported");
+    }
 }

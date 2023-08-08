@@ -97,71 +97,66 @@ public class WordTestsCompress
         word.PackedWord.Raw.Should().Be((uint)1 << 30);
     }
 
-    #region Exceptions
-
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void PackedPositionNotSupported()
+    public void Exceptions()
     {
-        var word = new Word(0);
-        int packedPositions = word.PackedPosition;
-    }
+        Action act;
 
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void PackedWordNotSupported()
-    {
-        var word = new Word(0);
-        Word packedWord = word.PackedWord;
-    }
+        act = () =>
+        {
+            var word = new Word(0);
+            int packedPositions = word.PackedPosition;
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "PackedPositionNotSupported");
 
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void PackNotSupported1()
-    {
-        var word = new Word(0);
-        word.Pack(new Word(1));
-    }
+        act = () =>
+        {
+            var word = new Word(0);
+            Word packedWord = word.PackedWord;
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "PackedWordNotSupported");
 
-    [TestMethod]
-    public void PackNotSupported2OK()
-    {
-        var word = new Word(true, 1);
-        word.Pack(new Word(1));
-    }
+        act = () =>
+        {
+            var word = new Word(0);
+            word.Pack(new Word(1));
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "PackNotSupported1");
 
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void PackNotSupported2()
-    {
-        var word = new Word(true, 1);
-        word.Pack(new Word(1));
-        word.Pack(new Word(1));
-    }
+        act = () =>
+        {
+            var word = new Word(true, 1);
+            word.Pack(new Word(1));
+        };
+        act.Should().NotThrow(because: "PackNotSupported2OK");
 
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void PackNotSupported3()
-    {
-        var word = new Word(true, 1);
-        word.Pack(new Word(true, 1));
-    }
+        act = () =>
+        {
+            var word = new Word(true, 1);
+            word.Pack(new Word(1));
+            word.Pack(new Word(1));
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "PackNotSupported2");
 
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void PackNotSupported4_1()
-    {
-        var word = new Word(true, 1);
-        word.Pack(new Word(0));
-    }
+        act = () =>
+        {
+            var word = new Word(true, 1);
+            word.Pack(new Word(true, 1));
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "PackNotSupported3");
 
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void PackNotSupported4_2()
-    {
-        var word = new Word(true, 1);
-        word.Pack(new Word(3));
-    }
+        act = () =>
+        {
+            var word = new Word(true, 1);
+            word.Pack(new Word(0));
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "PackNotSupported4_1");
 
-    #endregion
+        act = () =>
+        {
+            var word = new Word(true, 1);
+            word.Pack(new Word(3));
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "PackNotSupported4_2");
+    }
 }

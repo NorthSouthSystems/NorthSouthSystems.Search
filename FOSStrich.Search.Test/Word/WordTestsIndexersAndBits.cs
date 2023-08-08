@@ -68,47 +68,44 @@ public class WordTestsIndexersAndBits
             getBitPositions[i].Should().Be(bitPositions[i]);
     }
 
-    #region Exceptions
-
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void ComputeIndexerMaskNotSupported()
+    public void Exceptions()
     {
-        var word = new Word(true, 1);
-        bool bit = word[0];
-    }
+        Action act;
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void ComputeIndexerMaskArgumentOutOfRange1()
-    {
-        var word = new Word(0);
-        bool bit = word[-1];
-    }
+        act = () =>
+        {
+            var word = new Word(true, 1);
+            bool bit = word[0];
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "ComputeIndexerMaskNotSupported");
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void ComputeIndexerMaskArgumentOutOfRange2()
-    {
-        var word = new Word(0);
-        bool bit = word[Word.SIZE - 1];
-    }
+        act = () =>
+        {
+            var word = new Word(0);
+            bool bit = word[-1];
+        };
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "ComputeIndexerMaskArgumentOutOfRange1");
 
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void BitsNotSupported()
-    {
-        var word = new Word(true, 1);
-        bool[] bits = word.Bits;
-    }
+        act = () =>
+        {
+            var word = new Word(0);
+            bool bit = word[Word.SIZE - 1];
+        };
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "ComputeIndexerMaskArgumentOutOfRange2");
 
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void GetBitPositionsNotSupported()
-    {
-        var word = new Word(true, 1);
-        int[] bitPositions = word.GetBitPositions(true);
-    }
+        act = () =>
+        {
+            var word = new Word(true, 1);
+            bool[] bits = word.Bits;
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "BitsNotSupported");
 
-    #endregion
+        act = () =>
+        {
+            var word = new Word(true, 1);
+            int[] bitPositions = word.GetBitPositions(true);
+        };
+        act.Should().ThrowExactly<NotSupportedException>(because: "GetBitPositionsNotSupported");
+    }
 }

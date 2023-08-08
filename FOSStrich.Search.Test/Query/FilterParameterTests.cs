@@ -3,37 +3,37 @@
 [TestClass]
 public class FilterParameterTests
 {
-    #region Exceptions
-
     [TestMethod]
-    public void FilterParameterRangeArgumentNullOK()
+    public void Exceptions()
     {
-        var engine = new Engine<EngineItem, int>(false, item => item.Id);
-        var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+        Action act;
 
-        var someStringParameter = FilterParameter.Create(someStringCatalog, null, "A");
-        someStringParameter = FilterParameter.Create(someStringCatalog, "A", null);
+        act = () =>
+        {
+            var engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+
+            var someStringParameter = FilterParameter.Create(someStringCatalog, null, "A");
+            someStringParameter = FilterParameter.Create(someStringCatalog, "A", null);
+        };
+        act.Should().NotThrow(because: "FilterParameterRangeArgumentNullOK");
+
+        act = () =>
+        {
+            var engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+
+            var someStringParameter = FilterParameter.Create(someStringCatalog, null, null);
+        };
+        act.Should().ThrowExactly<ArgumentNullException>(because: "FilterParameterRangeArgumentNull");
+
+        act = () =>
+        {
+            var engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+
+            var someStringParameter = FilterParameter.Create(someStringCatalog, "B", "A");
+        };
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "FilterParameterRangeArgumentOutOfRange");
     }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void FilterParameterRangeArgumentNull()
-    {
-        var engine = new Engine<EngineItem, int>(false, item => item.Id);
-        var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
-
-        var someStringParameter = FilterParameter.Create(someStringCatalog, null, null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void FilterParameterRangeArgumentOutOfRange()
-    {
-        var engine = new Engine<EngineItem, int>(false, item => item.Id);
-        var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
-
-        var someStringParameter = FilterParameter.Create(someStringCatalog, "B", "A");
-    }
-
-    #endregion
 }
