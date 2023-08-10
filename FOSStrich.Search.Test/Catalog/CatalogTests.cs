@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class CatalogTests
 {
-    [TestMethod]
+    [Fact]
     public void SortBitPositions() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
@@ -37,7 +36,7 @@ public class CatalogTests
             }
         });
 
-    [TestMethod]
+    [Fact]
     public void Exceptions()
     {
         Action act;

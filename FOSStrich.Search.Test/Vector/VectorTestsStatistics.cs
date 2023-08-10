@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class VectorTestsStatistics
 {
-    [TestMethod]
+    [Fact]
     public void FullCompressed()
     {
         var vector = new Vector(false, VectorCompression.Compressed);
@@ -51,7 +50,7 @@ public class VectorTestsStatistics
         stats.TwoBitPackableWordCount.Should().Be(2);
     }
 
-    [TestMethod]
+    [Fact]
     public void FullCompressedWithPackedPosition()
     {
         var vector = new Vector(false, VectorCompression.CompressedWithPackedPosition);
@@ -99,7 +98,7 @@ public class VectorTestsStatistics
         stats.TwoBitPackableWordCount.Should().Be(2);
     }
 
-    [TestMethod]
+    [Fact]
     public void PackedPositionOneBitPackable()
     {
         var vector = new Vector(false, VectorCompression.CompressedWithPackedPosition);

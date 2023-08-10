@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class EngineTestsStatistics
 {
-    [TestMethod]
+    [Fact]
     public void Full() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {

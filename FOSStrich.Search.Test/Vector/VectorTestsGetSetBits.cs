@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class VectorTestsGetSetBits
 {
-    [TestMethod]
+    [Fact]
     public void Full() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
@@ -13,7 +12,7 @@ public class VectorTestsGetSetBits
             vector.AssertBitPositions(bitPositions);
         });
 
-    [TestMethod]
+    [Fact]
     public void Exceptions()
     {
         Action act;

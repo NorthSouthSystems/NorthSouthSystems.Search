@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class CatalogTestsConstruction
 {
-    [TestMethod]
+    [Fact]
     public void Public()
     {
         var catalog = new Catalog<int>("SomeInt", true, false, VectorCompression.None);

@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class WordTestsCompressionProperties
 {
-    [TestMethod]
+    [Fact]
     public void IsCompressibleTrue()
     {
         var word = new Word(0x00000000u);
@@ -17,7 +16,7 @@ public class WordTestsCompressionProperties
         word.IsCompressed.Should().BeFalse();
     }
 
-    [TestMethod]
+    [Fact]
     public void IsCompressibleFalse()
     {
         foreach (uint u in new uint[] { 0x00000001u, 0x40000000u, 0x7FFFFFFEu, 0x3FFFFFFFu, 0x12345678u, 0x7FEDCBA9u })
@@ -28,7 +27,7 @@ public class WordTestsCompressionProperties
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void IsCompressibleFalseFullCoverage()
     {
         for (uint i = 1; i < 0x7FFFFFFFu; i += WordExtensions.LARGEPRIME)
@@ -39,22 +38,22 @@ public class WordTestsCompressionProperties
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void CompressedFillBitFalseNoFill() => CompressedBase(false, 0x00000000, 0x80000000u);
 
-    [TestMethod]
+    [Fact]
     public void CompressedFillBitFalse1Fill() => CompressedBase(false, 0x00000001, 0x80000001u);
 
-    [TestMethod]
+    [Fact]
     public void CompressedFillBitFalseMaxFill() => CompressedBase(false, 0x01FFFFFF, 0x81FFFFFFu);
 
-    [TestMethod]
+    [Fact]
     public void CompressedFillBitTrueNoFill() => CompressedBase(true, 0x00000000, 0xC0000000u);
 
-    [TestMethod]
+    [Fact]
     public void CompressedFillBitTrue1Fill() => CompressedBase(true, 0x00000001, 0xC0000001u);
 
-    [TestMethod]
+    [Fact]
     public void CompressedFillBitTrueMaxFill() => CompressedBase(true, 0x01FFFFFF, 0xC1FFFFFFu);
 
     private void CompressedBase(bool fillBit, int fillCount, uint wordValue)
@@ -66,7 +65,7 @@ public class WordTestsCompressionProperties
         word.FillCount.Should().Be(fillCount);
     }
 
-    [TestMethod]
+    [Fact]
     public void CompressedFullCoverage()
     {
         foreach (bool fillBit in new bool[] { false, true })

@@ -1,15 +1,13 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class VectorTestsAndInPlace
 {
-    [TestMethod]
-    [TestProperty("Duration", "Long")]
+    [Fact]
     public void AndInPlaceRandom() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
             VectorTestsRandom.LogicInPlaceBase(22, (Word.SIZE - 1) * 10 + 1, safetyAndCompression, (left, right) => left.AndInPlace(right), Enumerable.Intersect));
 
-    [TestMethod]
+    [Fact]
     public void Exceptions()
     {
         Action act;

@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class VectorTestsGetSetWord
 {
-    [TestMethod]
+    [Fact]
     public void Uncompressed()
     {
         var vector = new Vector(false, VectorCompression.None);
@@ -49,7 +48,7 @@ public class VectorTestsGetSetWord
         vector.AssertWordCounts(3, 3);
     }
 
-    [TestMethod]
+    [Fact]
     public void CompressedZeroFillCodeCoverage() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
@@ -110,7 +109,7 @@ public class VectorTestsGetSetWord
             vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 4 : 6, 10);
         });
 
-    [TestMethod]
+    [Fact]
     public void Exceptions()
     {
         Action act;

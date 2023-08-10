@@ -1,10 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class VectorTestsAndOutOfPlace
 {
-    [TestMethod]
-    [TestProperty("Duration", "Long")]
+    [Fact]
     public void AndOutOfPlaceRandom()
     {
         const int randomSeed = 22;

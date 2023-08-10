@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class WordTestsIndexersAndBits
 {
-    [TestMethod]
+    [Fact]
     public void GetSetPositionsSimple()
     {
         var word = new Word();
@@ -22,7 +21,7 @@ public class WordTestsIndexersAndBits
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void BitsSimple()
     {
         int[] bitPositions = new int[] { 0, 3, 8, 12, 19, 24, 30 };
@@ -45,7 +44,7 @@ public class WordTestsIndexersAndBits
             (value ? bits[i] : !bits[i]).Should().Be(bitPositions.Contains(i));
     }
 
-    [TestMethod]
+    [Fact]
     public void GetBitPositionsSimple()
     {
         int[] bitPositions = new int[] { 0, 3, 8, 12, 19, 24, 30 };
@@ -68,7 +67,7 @@ public class WordTestsIndexersAndBits
             getBitPositions[i].Should().Be(bitPositions[i]);
     }
 
-    [TestMethod]
+    [Fact]
     public void Exceptions()
     {
         Action act;

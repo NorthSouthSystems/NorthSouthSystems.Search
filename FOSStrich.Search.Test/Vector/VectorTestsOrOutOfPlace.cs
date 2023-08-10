@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class VectorTestsOrOutOfPlace
 {
-    [TestMethod]
+    [Fact]
     public void OrOutOfPlace() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
@@ -24,7 +23,7 @@ public class VectorTestsOrOutOfPlace
             Vector.OrOutOfPlace(vectorA, vectorB, vectorC).AssertBitPositions(bitPositionsA, bitPositionsB, bitPositionsC);
         });
 
-    [TestMethod]
+    [Fact]
     public void Exceptions()
     {
         Action act;

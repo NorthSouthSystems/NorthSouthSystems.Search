@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class CensusTests
 {
-    [TestMethod]
+    [Fact]
     public void ComputePopulation()
     {
         0u.Population().Should().Be(0); // Simple0

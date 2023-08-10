@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class VectorTestsAndPopulation
 {
-    [TestMethod]
+    [Fact]
     public void AndPopulation() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
@@ -28,7 +27,7 @@ public class VectorTestsAndPopulation
             }
         });
 
-    [TestMethod]
+    [Fact]
     public void Exceptions()
     {
         Action act;

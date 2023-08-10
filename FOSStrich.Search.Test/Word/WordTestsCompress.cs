@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class WordTestsCompress
 {
-    [TestMethod]
+    [Fact]
     public void Compressible()
     {
         var word = new Word(0);
@@ -23,7 +22,7 @@ public class WordTestsCompress
         word.FillCount.Should().Be(1);
     }
 
-    [TestMethod]
+    [Fact]
     public void NotCompressible()
     {
         foreach (uint wordValue in new uint[] { 0x00000001u, 0x40000000u, 0x7FFFFFFEu, 0x3FFFFFFFu, 0x12345678u, 0x7FEDCBA9u })
@@ -36,7 +35,7 @@ public class WordTestsCompress
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void NotCompressibleFullCoverage()
     {
         for (uint i = 1; i < 0x7FFFFFFF; i += WordExtensions.LARGEPRIME)
@@ -49,7 +48,7 @@ public class WordTestsCompress
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void CompressedFullCoverage()
     {
         for (uint i = 0x80000000; i > 0x80000000 && i <= 0xFFFFFFFF; i += WordExtensions.LARGEPRIME)
@@ -61,7 +60,7 @@ public class WordTestsCompress
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void Pack()
     {
         var word = new Word(true, 1);
@@ -97,7 +96,7 @@ public class WordTestsCompress
         word.PackedWord.Raw.Should().Be((uint)1 << 30);
     }
 
-    [TestMethod]
+    [Fact]
     public void Exceptions()
     {
         Action act;

@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class WordTestsPopulation
 {
-    [TestMethod]
+    [Fact]
     public void NotCompressed()
     {
         new Word(0x00000000u).Population.Should().Be(0);
@@ -19,22 +18,22 @@ public class WordTestsPopulation
             new Word(1u << i).Population.Should().Be(1);
     }
 
-    [TestMethod]
+    [Fact]
     public void CompressedFillBitFalseNoFill() => CompressedBase(false, 0x00000000);
 
-    [TestMethod]
+    [Fact]
     public void CompressedFillBitFalse1Fill() => CompressedBase(false, 0x00000001);
 
-    [TestMethod]
+    [Fact]
     public void CompressedFillBitFalseMaxFill() => CompressedBase(false, 0x01FFFFFF);
 
-    [TestMethod]
+    [Fact]
     public void CompressedFillBitTrueNoFill() => CompressedBase(true, 0x00000000);
 
-    [TestMethod]
+    [Fact]
     public void CompressedFillBitTrue1Fill() => CompressedBase(true, 0x00000001);
 
-    [TestMethod]
+    [Fact]
     public void CompressedFillBitTrueMaxFill() => CompressedBase(true, 0x01FFFFFF);
 
     private void CompressedBase(bool fillBit, int fillCount)
@@ -43,7 +42,7 @@ public class WordTestsPopulation
         word.Population.Should().Be(fillBit ? (31 * fillCount) : 0);
     }
 
-    [TestMethod]
+    [Fact]
     public void CompressedFullCoverage()
     {
         foreach (bool fillBit in new bool[] { false, true })
@@ -56,7 +55,7 @@ public class WordTestsPopulation
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void Packed()
     {
         var word = new Word(false, 1);

@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class FacetCategoryTests
 {
-    [TestMethod]
+    [Fact]
     public void EqualityAndHashing()
     {
         var category1 = new FacetCategory<int>(1, 1);

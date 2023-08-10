@@ -1,14 +1,11 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class EngineTestsRandom
 {
-    [TestMethod]
-    [TestProperty("Duration", "Long")]
+    [Fact]
     public void EngineTestsRandomSafe() => Base(false);
 
-    [TestMethod]
-    [TestProperty("Duration", "Long")]
+    [Fact]
     public void EngineTestsRandomUnsafe() => Base(true);
 
     private static readonly int[] _randomSeeds = new[] { 18873, -76, 5992, 917773, -6320001 };

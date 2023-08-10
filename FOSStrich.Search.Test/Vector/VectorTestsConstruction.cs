@@ -2,10 +2,9 @@
 
 using System.Reflection;
 
-[TestClass]
 public class VectorTestsConstruction
 {
-    [TestMethod]
+    [Fact]
     public void ConstructCopy()
     {
         int[] fillMaxBitPositions = new int[] { 99, 499 };

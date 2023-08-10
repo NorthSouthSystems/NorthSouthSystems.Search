@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class VectorTestsOrInPlace
 {
-    [TestMethod]
+    [Fact]
     public void OrInPlaceCompressedWithCompressedTrueInput() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
@@ -18,7 +17,7 @@ public class VectorTestsOrInPlace
             vector.AssertBitPositions(Enumerable.Range(0, 32), new[] { 100 });
         });
 
-    [TestMethod]
+    [Fact]
     public void Exceptions()
     {
         Action act;

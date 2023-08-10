@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class EngineTests
 {
-    [TestMethod]
+    [Fact]
     public void Construction()
     {
         using var engine = new Engine<SimpleItem, int>(false, item => item.Id);
@@ -17,7 +16,7 @@ public class EngineTests
         public int SomeInt;
     }
 
-    [TestMethod]
+    [Fact]
     public void AmongstPrimaryKeyOutOfRange() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
@@ -37,7 +36,7 @@ public class EngineTests
             query.ResultPrimaryKeys[0].Should().Be(43);
         });
 
-    [TestMethod]
+    [Fact]
     public void Exceptions()
     {
         Action act;

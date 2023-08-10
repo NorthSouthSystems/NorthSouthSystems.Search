@@ -1,16 +1,15 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class WordTestsConstruction
 {
-    [TestMethod]
+    [Fact]
     public void Bounds()
     {
         var word = new Word(0);
         word = new Word(Word.COMPRESSEDMASK - 1);
     }
 
-    [TestMethod]
+    [Fact]
     public void Compressed()
     {
         var word = new Word(false, 0);
@@ -38,7 +37,7 @@ public class WordTestsConstruction
         word.FillCount.Should().Be(22);
     }
 
-    [TestMethod]
+    [Fact]
     public void Exceptions()
     {
         Action act;

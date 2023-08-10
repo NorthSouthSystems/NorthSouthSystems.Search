@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Search;
 
-[TestClass]
 public class FilterParameterTests
 {
-    [TestMethod]
+    [Fact]
     public void Exceptions()
     {
         Action act;
