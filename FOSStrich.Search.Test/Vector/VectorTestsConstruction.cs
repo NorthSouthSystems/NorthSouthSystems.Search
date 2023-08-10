@@ -44,9 +44,9 @@ public class VectorTestsConstruction
             var resultWords = (Word[])typeof(Vector).GetField("_words", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(result);
 
             if (instruction.ResultCompression == VectorCompression.None)
-                Assert.IsTrue(!resultWords.Any(word => word.IsCompressed));
+                resultWords.Any(word => word.IsCompressed).Should().BeFalse();
             else if (instruction.ResultCompression == VectorCompression.Compressed)
-                Assert.IsTrue(!resultWords.Any(word => word.HasPackedWord));
+                resultWords.Any(word => word.HasPackedWord).Should().BeFalse();
 
             source.WordsClear();
             source.Population.Should().Be(0);

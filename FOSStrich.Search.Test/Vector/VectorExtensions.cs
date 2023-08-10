@@ -39,7 +39,7 @@ internal static class VectorExtensions
             vector.Bits.Reverse().SkipWhile(bit => !bit).Reverse().ToArray().Should().Equal(expectedBits);
 
         foreach (int expectedBitPosition in expectedBitPositions)
-            Assert.IsTrue(vector[expectedBitPosition]);
+            vector[expectedBitPosition].Should().BeTrue();
 
         vector.Population.Should().Be(expectedBitPositions.Length);
         vector.PopulationAny.Should().Be(expectedBitPositions.Length > 0);

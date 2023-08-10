@@ -66,33 +66,33 @@ public class WordTestsCompress
     {
         var word = new Word(true, 1);
 
-        Assert.IsTrue(word.IsCompressed);
-        Assert.IsTrue(word.FillBit);
+        word.IsCompressed.Should().BeTrue();
+        word.FillBit.Should().BeTrue();
         word.FillCount.Should().Be(1);
-        Assert.IsFalse(word.HasPackedWord);
+        word.HasPackedWord.Should().BeFalse();
 
         word.Pack(new Word(1));
 
-        Assert.IsTrue(word.IsCompressed);
-        Assert.IsTrue(word.FillBit);
+        word.IsCompressed.Should().BeTrue();
+        word.FillBit.Should().BeTrue();
         word.FillCount.Should().Be(1);
-        Assert.IsTrue(word.HasPackedWord);
+        word.HasPackedWord.Should().BeTrue();
         word.PackedPosition.Should().Be(30);
         word.PackedWord.Raw.Should().Be((uint)1);
 
         word = new Word(true, 1);
 
-        Assert.IsTrue(word.IsCompressed);
-        Assert.IsTrue(word.FillBit);
+        word.IsCompressed.Should().BeTrue();
+        word.FillBit.Should().BeTrue();
         word.FillCount.Should().Be(1);
-        Assert.IsFalse(word.HasPackedWord);
+        word.HasPackedWord.Should().BeFalse();
 
         word.Pack(new Word(1 << 30));
 
-        Assert.IsTrue(word.IsCompressed);
-        Assert.IsTrue(word.FillBit);
+        word.IsCompressed.Should().BeTrue();
+        word.FillBit.Should().BeTrue();
         word.FillCount.Should().Be(1);
-        Assert.IsTrue(word.HasPackedWord);
+        word.HasPackedWord.Should().BeTrue();
         word.PackedPosition.Should().Be(0);
         word.PackedWord.Raw.Should().Be((uint)1 << 30);
     }
