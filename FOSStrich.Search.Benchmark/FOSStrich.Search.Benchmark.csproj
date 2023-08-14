@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\FOSStrich.Search\FOSStrich.Search.csproj" />
+        <ProjectReference Include="..\FOSStrich.Search.Unsafe\FOSStrich.Search.Unsafe.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="System" />
+        <Using Include="System.Collections.Generic" />
+        <Using Include="System.Linq" />
+        <Using Include="BenchmarkDotNet.Attributes" />
+    </ItemGroup>
+
+</Project>

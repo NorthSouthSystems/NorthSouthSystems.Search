@@ -8,11 +8,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CodeAnalysis.CustomDictionary.xml = CodeAnalysis.CustomDictionary.xml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOSStrich.Search", "FOSStrich.Search\FOSStrich.Search.csproj", "{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FOSStrich.Search", "FOSStrich.Search\FOSStrich.Search.csproj", "{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOSStrich.Search.Test", "FOSStrich.Search.Test\FOSStrich.Search.Test.csproj", "{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FOSStrich.Search.Test", "FOSStrich.Search.Test\FOSStrich.Search.Test.csproj", "{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOSStrich.Search.Unsafe", "FOSStrich.Search.Unsafe\FOSStrich.Search.Unsafe.csproj", "{D881789E-40E3-487F-9E54-344CE7C2F988}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FOSStrich.Search.Unsafe", "FOSStrich.Search.Unsafe\FOSStrich.Search.Unsafe.csproj", "{D881789E-40E3-487F-9E54-344CE7C2F988}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOSStrich.Search.Benchmark", "FOSStrich.Search.Benchmark\FOSStrich.Search.Benchmark.csproj", "{589DDA5E-2A77-4788-9686-31E93AF2839E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,8 +34,15 @@ Global
 		{D881789E-40E3-487F-9E54-344CE7C2F988}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D881789E-40E3-487F-9E54-344CE7C2F988}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D881789E-40E3-487F-9E54-344CE7C2F988}.Release|Any CPU.Build.0 = Release|Any CPU
+		{589DDA5E-2A77-4788-9686-31E93AF2839E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{589DDA5E-2A77-4788-9686-31E93AF2839E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{589DDA5E-2A77-4788-9686-31E93AF2839E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{589DDA5E-2A77-4788-9686-31E93AF2839E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C99FD4A7-7B39-455F-B9C5-98D7A83551EA}
 	EndGlobalSection
 EndGlobal
