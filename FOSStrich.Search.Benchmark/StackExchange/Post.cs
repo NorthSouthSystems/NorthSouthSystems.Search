@@ -15,7 +15,7 @@ public partial class Post
         PostTypeId = (byte)(uint)xe.Attribute(nameof(PostTypeId));
         CreationDate = (DateTime)xe.Attribute(nameof(CreationDate));
         LastActivityDate = (DateTime)xe.Attribute(nameof(LastActivityDate));
-        ViewCount = (int)xe.Attribute(nameof(ViewCount));
+        ViewCount = ((int?)xe.Attribute(nameof(ViewCount))).GetValueOrDefault();
         OwnerUserId = ((int?)xe.Attribute(nameof(OwnerUserId))).GetValueOrDefault(-1);
         Title = (string)xe.Attribute(nameof(Title));
         Tags = ((string)xe.Attribute(nameof(Tags)) ?? string.Empty).TrimStart('<').TrimEnd('>').Split(new[] { "><" }, StringSplitOptions.RemoveEmptyEntries);
