@@ -1,20 +1,12 @@
 ﻿namespace FOSStrich.Search;
 
+using BenchmarkDotNet.Running;
+
 internal class Program
 {
-    private static void Main(string[] args)
-    {
-        if (args.Length == 0)
-        {
-            BenchmarkDotNet.Running.BenchmarkRunner.Run<EngineBenchmarks>();
-            return;
-        }
+    internal const string StackExchangeDirectory = @"C:\StackExchange\2023-06-14";
+    internal const string StackExchangeSite = "stackoverflow.com";
 
-        switch (args[0].ToLowerInvariant())
-        {
-            case "convert":
-                SevenZippedXmlToMemoryPack.ExtractAndConvert(args[1], args[2]);
-                break;
-        }
-    }
+    private static void Main(string[] args) =>
+        BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
 }

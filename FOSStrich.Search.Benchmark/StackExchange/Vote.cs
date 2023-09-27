@@ -19,10 +19,10 @@ public partial class Vote
         BountyAmount = (int?)xe.Attribute(nameof(BountyAmount));
     }
 
-    public int Id { get; }
-    public int PostId { get; }
-    public byte VoteTypeId { get; }
-    public DateTime CreationDate { get; }
-    public int? UserId { get; }
-    public int? BountyAmount { get; }
+    public int Id { get; init; }
+    public int PostId { get; init; }
+    public byte VoteTypeId { get; init; }
+    public DateTime CreationDate { get; init; }
+    public int? UserId { get; init; }
+    public int? BountyAmount { get; init; }
 }

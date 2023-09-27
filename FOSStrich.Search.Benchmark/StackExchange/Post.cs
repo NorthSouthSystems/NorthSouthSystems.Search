@@ -24,16 +24,16 @@ public partial class Post
         FavoriteCount = ((int?)xe.Attribute(nameof(FavoriteCount))).GetValueOrDefault();
     }
 
-    public int Id { get; }
-    public byte PostTypeId { get; }
-    public DateTime CreationDate { get; }
-    public DateTime LastActivityDate { get; }
-    public int Score { get; }
-    public int ViewCount { get; }
-    public int OwnerUserId { get; }
-    public string Title { get; }
-    public IReadOnlyCollection<string> Tags { get; }
-    public int AnswerCount { get; }
-    public int CommentCount { get; }
-    public int FavoriteCount { get; }
+    public int Id { get; init; }
+    public byte PostTypeId { get; init; }
+    public DateTime CreationDate { get; init; }
+    public DateTime LastActivityDate { get; init; }
+    public int Score { get; init; }
+    public int ViewCount { get; init; }
+    public int OwnerUserId { get; init; }
+    public string Title { get; init; }
+    public IReadOnlyCollection<string> Tags { get; init; }
+    public int AnswerCount { get; init; }
+    public int CommentCount { get; init; }
+    public int FavoriteCount { get; init; }
 }

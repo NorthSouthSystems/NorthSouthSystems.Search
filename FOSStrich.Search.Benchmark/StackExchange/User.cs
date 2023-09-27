@@ -21,12 +21,12 @@ public partial class User
         DownVotes = (int)xe.Attribute(nameof(DownVotes));
     }
 
-    public int Id { get; }
-    public int Reputation { get; }
-    public DateTime CreationDate { get; }
-    public string DisplayName { get; }
-    public DateTime LastAccessDate { get; }
-    public int Views { get; }
-    public int UpVotes { get; }
-    public int DownVotes { get; }
+    public int Id { get; init; }
+    public int Reputation { get; init; }
+    public DateTime CreationDate { get; init; }
+    public string DisplayName { get; init; }
+    public DateTime LastAccessDate { get; init; }
+    public int Views { get; init; }
+    public int UpVotes { get; init; }
+    public int DownVotes { get; init; }
 }
