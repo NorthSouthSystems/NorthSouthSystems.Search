@@ -1,5 +1,7 @@
 ﻿namespace FOSStrich.Search;
 
+using System.Buffers;
+
 /// <summary>
 /// Word-aligned hybrid bit vector.
 /// </summary>
@@ -170,6 +172,9 @@ public sealed partial class Vector
 
     public void WordsClear()
     {
+        if (_words != null)
+            ArrayPool<Word>.Shared.Return(_words);
+
         _words = null;
         WordsGrow(0);
         _wordCountPhysical = 1;
@@ -182,15 +187,27 @@ public sealed partial class Vector
 
         if (_words == null)
         {
-            _words = new Word[length];
+            _words = ArrayPool<Word>.Shared.Rent(length);
+
+            // We choose to explicitly Clear (rather than use the Rent overload) so that in the "else if" case below
+            // we don't waste cycles Clearing parts of the Array that are going to receive a Copy.
+            Array.Clear(_words, 0, _words.Length);
         }
         else if (_words.Length < length)
         {
             length = Convert.ToInt32(length * WORDGROWTHFACTOR);
 
             Word[] tempWords = _words;
-            _words = new Word[length];
+            _words = ArrayPool<Word>.Shared.Rent(length);
             Array.Copy(tempWords, _words, _wordCountPhysical);
+
+            // We choose to explicitly Clear (rather than use the Rent overload) so that
+            // we don't waste cycles Clearing parts of the Array that received a Copy.
+            //
+            // We know that _wordCountPhysical < _words.Length <= length, so we don't need to check it here.
+            Array.Clear(_words, _wordCountPhysical, _words.Length - _wordCountPhysical);
+
+            ArrayPool<Word>.Shared.Return(tempWords);
         }
     }
 
