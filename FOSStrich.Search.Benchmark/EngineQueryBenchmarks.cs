@@ -1,5 +1,7 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.StackExchange;
+
 [MemoryDiagnoser]
 public class EngineQueryBenchmarks : EngineBenchmarksBase
 {

@@ -11,9 +11,7 @@
 
     <ItemGroup>
         <PackageReference Include="BenchmarkDotNet" Version="0.13.7" />
-        <PackageReference Include="FOSStrich.BCL.Opinions" Version="1.1.4" />
-        <PackageReference Include="MemoryPack" Version="1.9.16" />
-        <PackageReference Include="morelinq" Version="3.4.2" />
+        <PackageReference Include="FOSStrich.StackExchange.Opinions" Version="1.2.4" />
     </ItemGroup>
 
     <ItemGroup>
@@ -26,18 +24,6 @@
         <Using Include="System.Collections.Generic" />
         <Using Include="System.Linq" />
         <Using Include="BenchmarkDotNet.Attributes" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Update="SevenZip\7za.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="SevenZip\7za.exe">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="SevenZip\7zxa.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 
 </Project>

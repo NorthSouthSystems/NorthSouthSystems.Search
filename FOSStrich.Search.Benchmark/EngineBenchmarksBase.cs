@@ -1,5 +1,7 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.StackExchange;
+
 public abstract class EngineBenchmarksBase
 {
     private static readonly int[] _powersOfTen = new[] { 1, 10, 100, 1_000, 10_000, 100_000, 1_000_000 };
