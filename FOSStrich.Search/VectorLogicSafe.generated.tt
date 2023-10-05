@@ -16,13 +16,13 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
 public void DecompressInPlaceNoneCompressed(bool jWithPackedPosition)
 {
 #>
-    void IVectorLogic.DecompressInPlaceNoneCompressed<#= jWithPackedPosition ? "WithPackedPosition" : "" #>(Word[] iWords, Word[] jWords, int jWordCountPhysical)
+    void IVectorLogic.DecompressInPlaceNoneCompressed<#= jWithPackedPosition ? "WithPackedPosition" : "" #>(Word[] iWords, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int i = 0;
         int j = 0;
-        int jMax = jWordCountPhysical;
+        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
 
-        while (j < jMax)
+        while (j < jWords.Length)
         {
             Word jWord = jWords[j];
 

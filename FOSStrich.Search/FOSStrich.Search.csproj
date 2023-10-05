@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFrameworks>netstandard2.0;net5.0</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <ImplicitUsings>disable</ImplicitUsings>
@@ -13,6 +13,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="System.Buffers" Version="4.5.1" />
+        <PackageReference Include="System.Memory" Version="4.5.5" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
     </ItemGroup>
 
     <ItemGroup>

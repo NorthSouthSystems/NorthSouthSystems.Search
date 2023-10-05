@@ -4,13 +4,13 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
 {
     #region Decompress
 
-    void IVectorLogic.DecompressInPlaceNoneCompressed(Word[] iWords, Word[] jWords, int jWordCountPhysical)
+    void IVectorLogic.DecompressInPlaceNoneCompressed(Word[] iWords, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int i = 0;
         int j = 0;
-        int jMax = jWordCountPhysical;
+        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
 
-        while (j < jMax)
+        while (j < jWords.Length)
         {
             Word jWord = jWords[j];
 
@@ -39,13 +39,13 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
         }
     }
 
-    void IVectorLogic.DecompressInPlaceNoneCompressedWithPackedPosition(Word[] iWords, Word[] jWords, int jWordCountPhysical)
+    void IVectorLogic.DecompressInPlaceNoneCompressedWithPackedPosition(Word[] iWords, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int i = 0;
         int j = 0;
-        int jMax = jWordCountPhysical;
+        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
 
-        while (j < jMax)
+        while (j < jWords.Length)
         {
             Word jWord = jWords[j];
 
