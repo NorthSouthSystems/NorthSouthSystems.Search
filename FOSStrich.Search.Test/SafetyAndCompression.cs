@@ -2,13 +2,9 @@
 
 internal class SafetyAndCompression
 {
-    internal SafetyAndCompression(bool allowUnsafe, VectorCompression compression)
-    {
-        AllowUnsafe = allowUnsafe;
+    internal SafetyAndCompression(VectorCompression compression) =>
         Compression = compression;
-    }
 
-    internal bool AllowUnsafe { get; private set; }
     internal VectorCompression Compression { get; private set; }
 
     internal static VectorCompression RandomCompression(Random random)
@@ -21,15 +17,8 @@ internal class SafetyAndCompression
     }
 
     internal static void RunAll(Action<SafetyAndCompression> test) =>
-        RunAllSafeties(allowUnsafe =>
-            RunAllCompressions(compression =>
-                test(new SafetyAndCompression(allowUnsafe, compression))));
-
-    internal static void RunAllSafeties(Action<bool> test)
-    {
-        test(false);
-        test(true);
-    }
+        RunAllCompressions(compression =>
+            test(new SafetyAndCompression(compression)));
 
     internal static void RunAllCompressions(Action<VectorCompression> test)
     {

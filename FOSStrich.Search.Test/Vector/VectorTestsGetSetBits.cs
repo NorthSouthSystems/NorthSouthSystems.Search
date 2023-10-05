@@ -6,7 +6,7 @@ public class VectorTestsGetSetBits
     public void Full() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
-            var vector = new Vector(safetyAndCompression.AllowUnsafe, safetyAndCompression.Compression);
+            var vector = new Vector(safetyAndCompression.Compression);
             int[] bitPositions = vector.SetBitsRandom(999, 100, true);
             vector[2000] = false;
             vector.AssertBitPositions(bitPositions);
@@ -19,21 +19,21 @@ public class VectorTestsGetSetBits
 
         act = () =>
         {
-            var vector = new Vector(false, VectorCompression.None);
+            var vector = new Vector(VectorCompression.None);
             vector[-1] = true;
         };
         act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "IndexArgumentOutOfRange1");
 
         act = () =>
         {
-            var vector = new Vector(false, VectorCompression.None);
+            var vector = new Vector(VectorCompression.None);
             bool value = vector[-1];
         };
         act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "IndexArgumentOutOfRange2");
 
         act = () =>
         {
-            var vector = new Vector(false, VectorCompression.Compressed);
+            var vector = new Vector(VectorCompression.Compressed);
             vector[30] = true;
             vector[61] = true;
         };
@@ -41,7 +41,7 @@ public class VectorTestsGetSetBits
 
         act = () =>
         {
-            var vector = new Vector(false, VectorCompression.Compressed);
+            var vector = new Vector(VectorCompression.Compressed);
             vector[30] = true;
             vector[31] = true;
             vector[30] = true;
@@ -50,7 +50,7 @@ public class VectorTestsGetSetBits
 
         act = () =>
         {
-            var vector = new Vector(false, VectorCompression.Compressed);
+            var vector = new Vector(VectorCompression.Compressed);
             vector.Bits.ToArray();
         };
         act.Should().ThrowExactly<NotSupportedException>(because: "GetBitsCompressedNotSupported");

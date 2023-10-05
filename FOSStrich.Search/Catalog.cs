@@ -5,17 +5,15 @@ using System.Collections;
 public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngine
       where TKey : IEquatable<TKey>, IComparable<TKey>
 {
-    public Catalog(string name, bool isOneToOne, bool allowUnsafe, VectorCompression compression)
+    public Catalog(string name, bool isOneToOne, VectorCompression compression)
     {
         Name = name;
         IsOneToOne = isOneToOne;
-        AllowUnsafe = allowUnsafe;
         Compression = compression;
     }
 
     public string Name { get; }
     public bool IsOneToOne { get; }
-    public bool AllowUnsafe { get; }
     public VectorCompression Compression { get; }
 
     private SortedSet<TKey> _keys = new();
@@ -84,7 +82,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         if (!_keyToEntryMap.TryGetValue(key, out entry))
         {
             // TODO : This will use a VectorFactory pattern shortly.
-            entry = new Entry(new Vector(AllowUnsafe, Compression));
+            entry = new Entry(new Vector(Compression));
 
             _keys.Add(key);
             _keyToEntryMap.Add(key, entry);

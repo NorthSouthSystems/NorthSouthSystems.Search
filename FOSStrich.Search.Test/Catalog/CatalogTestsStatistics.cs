@@ -6,7 +6,7 @@ public class CatalogTestsStatistics
     public void Full() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
-            var catalog = new Catalog<int>("SomeInt", true, safetyAndCompression.AllowUnsafe, safetyAndCompression.Compression);
+            var catalog = new Catalog<int>("SomeInt", true, safetyAndCompression.Compression);
             var stats = catalog.GenerateStatistics();
             stats.VectorCount.Should().Be(0);
             stats.WordCount.Should().Be(0);

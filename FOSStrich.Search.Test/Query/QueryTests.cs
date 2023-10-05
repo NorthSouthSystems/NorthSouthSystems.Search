@@ -9,8 +9,8 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
-            using var engine2 = new Engine<EngineItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
+            using var engine2 = new Engine<EngineItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
             var catalog2 = engine2.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
@@ -21,7 +21,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -31,7 +31,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -41,7 +41,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -51,7 +51,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -61,7 +61,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -74,7 +74,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -87,7 +87,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -97,7 +97,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
             var catalog2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
@@ -110,7 +110,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -123,7 +123,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
             var catalog2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);

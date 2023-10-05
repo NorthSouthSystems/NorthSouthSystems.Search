@@ -2,15 +2,10 @@
 
 public class EngineTestsRandom
 {
-    [Fact]
-    public void EngineTestsRandomSafe() => Base(false);
-
-    [Fact]
-    public void EngineTestsRandomUnsafe() => Base(true);
-
     private static readonly int[] _randomSeeds = new[] { 18873, -76, 5992, 917773, -6320001 };
 
-    private static void Base(bool allowUnsafe)
+    [Fact]
+    public void Full()
     {
         foreach (int randomSeed in _randomSeeds)
         {
@@ -18,7 +13,7 @@ public class EngineTestsRandom
 
             foreach (int size in Enumerable.Range(1, (Word.SIZE - 1) * 10 + 1))
             {
-                using var engine = new Engine<EngineItem, int>(allowUnsafe, item => item.Id);
+                using var engine = new Engine<EngineItem, int>(item => item.Id);
 
                 var someIntCatalog = engine.CreateCatalog("SomeInt", SafetyAndCompression.RandomCompression(random), item => item.SomeInt);
                 var someDateTimeCatalog = engine.CreateCatalog("SomeDateTime", SafetyAndCompression.RandomCompression(random), item => item.SomeDateTime);

@@ -9,7 +9,7 @@ public class FilterParameterTests
 
         act = () =>
         {
-            var engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var engine = new Engine<EngineItem, int>(item => item.Id);
             var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
             var someStringParameter = FilterParameter.Create(someStringCatalog, null, "A");
@@ -19,7 +19,7 @@ public class FilterParameterTests
 
         act = () =>
         {
-            var engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var engine = new Engine<EngineItem, int>(item => item.Id);
             var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
             var someStringParameter = FilterParameter.Create(someStringCatalog, null, null);
@@ -28,7 +28,7 @@ public class FilterParameterTests
 
         act = () =>
         {
-            var engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var engine = new Engine<EngineItem, int>(item => item.Id);
             var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
 
             var someStringParameter = FilterParameter.Create(someStringCatalog, "B", "A");

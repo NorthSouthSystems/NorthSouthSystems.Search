@@ -12,9 +12,9 @@ public class VectorTestsAndPopulation
             {
                 foreach (int fillCount2 in fillCounts)
                 {
-                    var vector1 = new Vector(safetyAndCompression.AllowUnsafe, VectorCompression.None);
+                    var vector1 = new Vector(VectorCompression.None);
                     int[] bitPositions1 = vector1.SetBitsRandom(499, fillCount1, true);
-                    var vector2 = new Vector(safetyAndCompression.AllowUnsafe, safetyAndCompression.Compression);
+                    var vector2 = new Vector(safetyAndCompression.Compression);
                     int[] bitPositions2 = vector2.SetBitsRandom(499, fillCount2, true);
 
                     var bitPositions = new HashSet<int>(bitPositions1);
@@ -34,15 +34,15 @@ public class VectorTestsAndPopulation
 
         act = () =>
         {
-            var vector = new Vector(false, VectorCompression.None);
+            var vector = new Vector(VectorCompression.None);
             vector.AndPopulation(null);
         };
         act.Should().ThrowExactly<ArgumentNullException>(because: "AndPopulationArgumentNull");
 
         act = () =>
         {
-            var vector = new Vector(false, VectorCompression.Compressed);
-            var input = new Vector(false, VectorCompression.Compressed);
+            var vector = new Vector(VectorCompression.Compressed);
+            var input = new Vector(VectorCompression.Compressed);
             vector.AndPopulation(input);
         };
         act.Should().ThrowExactly<NotImplementedException>(because: "AndPopulationNotSupported");

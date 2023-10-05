@@ -6,7 +6,7 @@ public class EngineTestsStatistics
     public void Full() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
-            using var engine = new Engine<EngineItem, int>(safetyAndCompression.AllowUnsafe, item => item.Id);
+            using var engine = new Engine<EngineItem, int>(item => item.Id);
 
             engine.CreateCatalog("SomeInt", safetyAndCompression.Compression, item => item.SomeInt);
             engine.CreateCatalog("SomeString", safetyAndCompression.Compression, item => item.SomeString);

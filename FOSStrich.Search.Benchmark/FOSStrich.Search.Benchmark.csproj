@@ -16,7 +16,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\FOSStrich.Search\FOSStrich.Search.csproj" />
-        <ProjectReference Include="..\FOSStrich.Search.Unsafe\FOSStrich.Search.Unsafe.csproj" />
     </ItemGroup>
 
     <ItemGroup>

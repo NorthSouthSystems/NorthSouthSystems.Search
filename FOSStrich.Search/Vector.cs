@@ -11,18 +11,10 @@ using System.Buffers;
 /// </remarks>
 public sealed partial class Vector
 {
-    static Vector()
-    {
+    static Vector() =>
         _safeVectorLogic = new VectorLogicSafe();
 
-        Type unsafeVectorLogicType = Type.GetType("FOSStrich.Search.VectorLogicUnsafe, FOSStrich.Search.Unsafe");
-
-        if (unsafeVectorLogicType != null)
-            _unsafeVectorLogic = (IVectorLogic)Activator.CreateInstance(unsafeVectorLogicType);
-    }
-
     private static readonly IVectorLogic _safeVectorLogic;
-    private static readonly IVectorLogic _unsafeVectorLogic;
 
     public static Vector OrOutOfPlace(params Vector[] vectors)
     {
@@ -34,7 +26,7 @@ public sealed partial class Vector
 
         int maxWordCountLogical = vectors.Max(v => v._wordCountLogical);
 
-        var vector = new Vector(vectors[0].AllowUnsafe, VectorCompression.None, vectors[0], maxWordCountLogical);
+        var vector = new Vector(VectorCompression.None, vectors[0], maxWordCountLogical);
 
         for (int i = 1; i < vectors.Length; i++)
             vector.OrInPlace(vectors[i]);
@@ -44,18 +36,14 @@ public sealed partial class Vector
 
     #region Construction
 
-    public Vector(bool allowUnsafe, VectorCompression compression)
-        : this(allowUnsafe, compression, null) { }
+    public Vector(VectorCompression compression)
+        : this(compression, null) { }
 
-    public Vector(bool allowUnsafe, VectorCompression compression, Vector vector)
-        : this(allowUnsafe, compression, vector, 0) { }
+    public Vector(VectorCompression compression, Vector vector)
+        : this(compression, vector, 0) { }
 
-    private Vector(bool allowUnsafe, VectorCompression compression, Vector vector, int wordsLength)
+    private Vector(VectorCompression compression, Vector vector, int wordsLength)
     {
-        if (allowUnsafe && _unsafeVectorLogic == null)
-            throw new ArgumentException("Cannot create an unsafe Vector unless the FOSStrich.Search.Unsafe Assembly is included in the project.");
-
-        AllowUnsafe = allowUnsafe;
         IsCompressed = (compression == VectorCompression.Compressed || compression == VectorCompression.CompressedWithPackedPosition);
         IsPackedPositionEnabled = compression == VectorCompression.CompressedWithPackedPosition;
 
@@ -96,9 +84,9 @@ public sealed partial class Vector
             _wordCountLogical = vector._wordCountLogical;
 
             if (!vector.IsPackedPositionEnabled)
-                VectorLogic.DecompressInPlaceNoneCompressed(_words, vector._words, vector._wordCountPhysical);
+                _safeVectorLogic.DecompressInPlaceNoneCompressed(_words, vector._words, vector._wordCountPhysical);
             else
-                VectorLogic.DecompressInPlaceNoneCompressedWithPackedPosition(_words, vector._words, vector._wordCountPhysical);
+                _safeVectorLogic.DecompressInPlaceNoneCompressedWithPackedPosition(_words, vector._words, vector._wordCountPhysical);
         }
         else
         {
@@ -137,7 +125,7 @@ public sealed partial class Vector
 
     internal bool OptimizeReadPhase(int[] bitPositionShifts, out Vector optimized)
     {
-        optimized = new Vector(AllowUnsafe, Compression);
+        optimized = new Vector(Compression);
 
         foreach (int bitPosition in GetBitPositions(true))
         {
@@ -153,10 +141,6 @@ public sealed partial class Vector
     #endregion
 
     #region Words
-
-    public bool AllowUnsafe { get; }
-
-    private IVectorLogic VectorLogic => AllowUnsafe ? _unsafeVectorLogic : _safeVectorLogic;
 
     public VectorCompression Compression =>
         IsCompressed
@@ -635,9 +619,9 @@ public sealed partial class Vector
             throw new NotSupportedException("Not supported for a compressed Vector.");
 
         if (!vector.IsCompressed)
-            VectorLogic.AndInPlaceNoneNone(_words, ref _wordCountPhysical, ref _wordCountLogical, vector._words, vector._wordCountPhysical);
+            _safeVectorLogic.AndInPlaceNoneNone(_words, ref _wordCountPhysical, ref _wordCountLogical, vector._words, vector._wordCountPhysical);
         else
-            VectorLogic.AndInPlaceNoneCompressedWithPackedPosition(_words, ref _wordCountPhysical, ref _wordCountLogical, vector._words, vector._wordCountPhysical);
+            _safeVectorLogic.AndInPlaceNoneCompressedWithPackedPosition(_words, ref _wordCountPhysical, ref _wordCountLogical, vector._words, vector._wordCountPhysical);
     }
 
     public Vector AndOutOfPlace(Vector vector, VectorCompression resultCompression)
@@ -649,11 +633,11 @@ public sealed partial class Vector
         var moreCompression = (this == lessCompression) ? vector : this;
 
         if (!moreCompression.IsCompressed)
-            return VectorLogic.AndOutOfPlaceNoneNone(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical, resultCompression);
+            return _safeVectorLogic.AndOutOfPlaceNoneNone(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical, resultCompression);
         else if (!lessCompression.IsCompressed)
-            return VectorLogic.AndOutOfPlaceNoneCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical, resultCompression);
+            return _safeVectorLogic.AndOutOfPlaceNoneCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical, resultCompression);
         else
-            return VectorLogic.AndOutOfPlaceCompressedWithPackedPositionCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical, resultCompression);
+            return _safeVectorLogic.AndOutOfPlaceCompressedWithPackedPositionCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical, resultCompression);
     }
 
     public int AndPopulation(Vector vector)
@@ -668,9 +652,9 @@ public sealed partial class Vector
         var moreCompression = (this == lessCompression) ? vector : this;
 
         if (!moreCompression.IsCompressed)
-            return VectorLogic.AndPopulationNoneNone(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
+            return _safeVectorLogic.AndPopulationNoneNone(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
         else if (!lessCompression.IsCompressed)
-            return VectorLogic.AndPopulationNoneCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
+            return _safeVectorLogic.AndPopulationNoneCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
         else
             throw new NotImplementedException("See above. This code will never execute.");
     }
@@ -687,9 +671,9 @@ public sealed partial class Vector
         var moreCompression = (this == lessCompression) ? vector : this;
 
         if (!moreCompression.IsCompressed)
-            return VectorLogic.AndPopulationAnyNoneNone(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
+            return _safeVectorLogic.AndPopulationAnyNoneNone(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
         else if (!lessCompression.IsCompressed)
-            return VectorLogic.AndPopulationAnyNoneCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
+            return _safeVectorLogic.AndPopulationAnyNoneCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
         else
             throw new NotImplementedException("See above. This code will never execute.");
     }
@@ -707,9 +691,9 @@ public sealed partial class Vector
         _wordCountLogical = Math.Max(_wordCountLogical, vector._wordCountLogical);
 
         if (!vector.IsCompressed)
-            VectorLogic.OrInPlaceNoneNone(_words, _wordCountPhysical, vector._words, vector._wordCountPhysical);
+            _safeVectorLogic.OrInPlaceNoneNone(_words, _wordCountPhysical, vector._words, vector._wordCountPhysical);
         else
-            VectorLogic.OrInPlaceNoneCompressedWithPackedPosition(_words, _wordCountPhysical, vector._words, vector._wordCountPhysical);
+            _safeVectorLogic.OrInPlaceNoneCompressedWithPackedPosition(_words, _wordCountPhysical, vector._words, vector._wordCountPhysical);
     }
 
     #endregion

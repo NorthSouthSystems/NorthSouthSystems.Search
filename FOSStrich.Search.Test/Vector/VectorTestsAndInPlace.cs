@@ -14,15 +14,15 @@ public class VectorTestsAndInPlace
 
         act = () =>
         {
-            var vector = new Vector(false, VectorCompression.None);
+            var vector = new Vector(VectorCompression.None);
             vector.AndInPlace(null);
         };
         act.Should().ThrowExactly<ArgumentNullException>(because: "AndInPlaceArgumentNull");
 
         act = () =>
         {
-            var vector = new Vector(false, VectorCompression.Compressed);
-            var input = new Vector(false, VectorCompression.None);
+            var vector = new Vector(VectorCompression.Compressed);
+            var input = new Vector(VectorCompression.None);
             vector.AndInPlace(input);
         };
         act.Should().ThrowExactly<NotSupportedException>(because: "AndInPlaceNotSupported");

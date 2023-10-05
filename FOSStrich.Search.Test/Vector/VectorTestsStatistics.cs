@@ -5,7 +5,7 @@ public class VectorTestsStatistics
     [Fact]
     public void FullCompressed()
     {
-        var vector = new Vector(false, VectorCompression.Compressed);
+        var vector = new Vector(VectorCompression.Compressed);
 
         var stats = vector.GenerateStatistics();
         stats.WordCount.Should().Be(1);
@@ -53,7 +53,7 @@ public class VectorTestsStatistics
     [Fact]
     public void FullCompressedWithPackedPosition()
     {
-        var vector = new Vector(false, VectorCompression.CompressedWithPackedPosition);
+        var vector = new Vector(VectorCompression.CompressedWithPackedPosition);
 
         var stats = vector.GenerateStatistics();
         stats.WordCount.Should().Be(1);
@@ -101,7 +101,7 @@ public class VectorTestsStatistics
     [Fact]
     public void PackedPositionOneBitPackable()
     {
-        var vector = new Vector(false, VectorCompression.CompressedWithPackedPosition);
+        var vector = new Vector(VectorCompression.CompressedWithPackedPosition);
 
         var stats = vector.GenerateStatistics();
         stats.WordCount.Should().Be(1);

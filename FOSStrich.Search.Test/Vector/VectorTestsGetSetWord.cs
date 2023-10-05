@@ -5,7 +5,7 @@ public class VectorTestsGetSetWord
     [Fact]
     public void Uncompressed()
     {
-        var vector = new Vector(false, VectorCompression.None);
+        var vector = new Vector(VectorCompression.None);
 
         vector.AssertWordLogicalValues(0, 0, 0);
         vector.AssertWordCounts(1, 1);
@@ -55,7 +55,7 @@ public class VectorTestsGetSetWord
             if (safetyAndCompression.Compression == VectorCompression.None)
                 return;
 
-            var vector = new Vector(safetyAndCompression.AllowUnsafe, safetyAndCompression.Compression);
+            var vector = new Vector(safetyAndCompression.Compression);
 
             vector.AssertWordLogicalValues(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
             vector.AssertWordCounts(1, 1);
@@ -116,21 +116,21 @@ public class VectorTestsGetSetWord
 
         act = () =>
         {
-            var vector = new Vector(false, VectorCompression.None);
+            var vector = new Vector(VectorCompression.None);
             vector.GetWordLogical(-1);
         };
         act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "GetWordLogicalArgumentOutOfRange");
 
         act = () =>
         {
-            var vector = new Vector(false, VectorCompression.None);
+            var vector = new Vector(VectorCompression.None);
             vector.SetWord(-1, new Word(0x11111111));
         };
         act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "SetWordArgumentOutOfRange");
 
         act = () =>
         {
-            var vector = new Vector(false, VectorCompression.Compressed);
+            var vector = new Vector(VectorCompression.Compressed);
             vector[30] = true;
             vector.SetWord(0, new Word(0x00000001u));
         };
@@ -138,7 +138,7 @@ public class VectorTestsGetSetWord
 
         act = () =>
         {
-            var vector = new Vector(false, VectorCompression.Compressed);
+            var vector = new Vector(VectorCompression.Compressed);
             vector[31] = true;
             vector.SetWord(0, new Word(0x00000001u));
         };

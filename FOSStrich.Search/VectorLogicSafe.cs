@@ -96,7 +96,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
 
     Vector IVectorLogic.AndOutOfPlaceNoneNone(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical, VectorCompression resultCompression)
     {
-        Vector result = new Vector(false, resultCompression);
+        Vector result = new Vector(resultCompression);
 
         int i = 0;
         var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
@@ -120,7 +120,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
 
     Vector IVectorLogic.AndOutOfPlaceNoneCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical, VectorCompression resultCompression)
     {
-        Vector result = new Vector(false, resultCompression);
+        Vector result = new Vector(resultCompression);
 
         int i = 0;
         var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
@@ -175,7 +175,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
 
     Vector IVectorLogic.AndOutOfPlaceCompressedWithPackedPositionCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical, VectorCompression resultCompression)
     {
-        Vector result = new Vector(false, resultCompression);
+        Vector result = new Vector(resultCompression);
 
         int i = 0;
         var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);

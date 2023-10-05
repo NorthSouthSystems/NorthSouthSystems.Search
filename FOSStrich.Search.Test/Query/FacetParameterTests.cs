@@ -9,7 +9,7 @@ public class FacetParameterTests
 
         act = () =>
         {
-            var engine = new Engine<EngineItem, int>(false, item => item.Id);
+            var engine = new Engine<EngineItem, int>(item => item.Id);
             var someIntCatalog = engine.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
             var someIntFacet = FacetParameter.Create(someIntCatalog);

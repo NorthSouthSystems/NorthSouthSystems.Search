@@ -2,14 +2,6 @@
 
 public class EngineTests
 {
-    [Fact]
-    public void Construction()
-    {
-        using var engine = new Engine<SimpleItem, int>(false, item => item.Id);
-
-        engine.AllowUnsafe.Should().BeFalse();
-    }
-
     private class SimpleItem
     {
         public int Id;
@@ -20,7 +12,7 @@ public class EngineTests
     public void AmongstPrimaryKeyOutOfRange() =>
         SafetyAndCompression.RunAll(safetyAndCompression =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(safetyAndCompression.AllowUnsafe, item => item.Id);
+            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", safetyAndCompression.Compression, item => item.SomeInt);
 
@@ -43,7 +35,7 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -55,7 +47,7 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("Name", VectorCompression.None, item => item.SomeInt);
             var catalog2 = engine1.CreateCatalog("Name", VectorCompression.None, item => item.SomeString);
@@ -64,7 +56,7 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -75,7 +67,7 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
             engine1.Add((SimpleItem[])null);
@@ -84,7 +76,7 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -95,7 +87,7 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
             engine1.Update((SimpleItem[])null);
@@ -104,7 +96,7 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -115,7 +107,7 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
 
@@ -127,7 +119,7 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(false, item => item.Id);
+            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
             engine1.Remove((SimpleItem[])null);

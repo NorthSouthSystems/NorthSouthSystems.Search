@@ -7,14 +7,13 @@ public class VectorTestsAndOutOfPlace
     {
         const int randomSeed = 22;
 
-        SafetyAndCompression.RunAllSafeties(allowUnsafe =>
-            SafetyAndCompression.RunAllCompressions(leftCompression =>
-                SafetyAndCompression.RunAllCompressions(rightCompression =>
-                    SafetyAndCompression.RunAllCompressions(resultCompression =>
-                    {
-                        VectorTestsRandom.LogicOutOfPlaceBase(randomSeed, (Word.SIZE - 1) * 10 + 1,
-                            allowUnsafe, leftCompression, rightCompression,
-                            (left, right) => left.AndOutOfPlace(right, resultCompression), Enumerable.Intersect);
-                    }))));
+        SafetyAndCompression.RunAllCompressions(leftCompression =>
+            SafetyAndCompression.RunAllCompressions(rightCompression =>
+                SafetyAndCompression.RunAllCompressions(resultCompression =>
+                {
+                    VectorTestsRandom.LogicOutOfPlaceBase(randomSeed, (Word.SIZE - 1) * 10 + 1,
+                        leftCompression, rightCompression,
+                        (left, right) => left.AndOutOfPlace(right, resultCompression), Enumerable.Intersect);
+                })));
     }
 }
