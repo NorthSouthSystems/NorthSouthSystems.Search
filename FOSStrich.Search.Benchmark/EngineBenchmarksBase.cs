@@ -6,9 +6,9 @@ public abstract class EngineBenchmarksBase
 {
     private static readonly int[] _powersOfTen = new[] { 1, 10, 100, 1_000, 10_000, 100_000, 1_000_000 };
 
-    protected Engine<Post, int> ConstructEngine(bool allowUnsafe, VectorCompression compression)
+    protected Engine<Post, int> ConstructEngine(VectorCompression compression)
     {
-        Engine = new Engine<Post, int>(allowUnsafe, post => post.Id);
+        Engine = new Engine<Post, int>(post => post.Id);
 
         PostTypeCatalog = Engine.CreateCatalog(nameof(Post.PostTypeId), compression, post => post.PostTypeId);
         CreationDateCatalog = Engine.CreateCatalog(nameof(Post.CreationDate), compression, post => YearMonth(post.CreationDate));

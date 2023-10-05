@@ -5,16 +5,13 @@ using FOSStrich.StackExchange;
 [MemoryDiagnoser]
 public class EngineQueryBenchmarks : EngineBenchmarksBase
 {
-    [Params(true, false)]
-    public bool AllowUnsafe { get; set; }
-
     [Params(VectorCompression.Compressed, VectorCompression.CompressedWithPackedPosition)]
     public VectorCompression Compression { get; set; }
 
     [GlobalSetup]
     public void GlobalSetup()
     {
-        ConstructEngine(AllowUnsafe, Compression);
+        ConstructEngine(Compression);
 
         var posts = new StackExchangeSiteSerializer(Program.StackExchangeDirectory, Program.StackExchangeSite)
             .DeserializeMemoryPack<Post>();

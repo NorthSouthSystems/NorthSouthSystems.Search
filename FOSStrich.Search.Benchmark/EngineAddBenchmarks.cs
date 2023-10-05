@@ -5,9 +5,6 @@ using FOSStrich.StackExchange;
 [MemoryDiagnoser]
 public class EngineAddBenchmarks : EngineBenchmarksBase
 {
-    [Params(true)]
-    public bool AllowUnsafe { get; set; }
-
     [Params(VectorCompression.Compressed, VectorCompression.CompressedWithPackedPosition)]
     public VectorCompression Compression { get; set; }
 
@@ -23,7 +20,7 @@ public class EngineAddBenchmarks : EngineBenchmarksBase
     [Benchmark]
     public void Add()
     {
-        using var engine = ConstructEngine(AllowUnsafe, Compression);
+        using var engine = ConstructEngine(Compression);
 
         engine.Add(_posts);
     }
