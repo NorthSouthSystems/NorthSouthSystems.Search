@@ -1,5 +1,7 @@
 ﻿namespace FOSStrich.Search;
 
+using System.Numerics;
+
 internal sealed partial class VectorLogicSafe : IVectorLogic
 {
     #region And In-Place
@@ -350,7 +352,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
             uint word = iWords[i].Raw & jWords[j].Raw;
 
             if (word > 0)
-                population += word.Population();
+                population += BitOperations.PopCount(word);
 
             i++;
             j++;
@@ -406,7 +408,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
                 uint word = iWords[i].Raw & jWord.Raw;
 
                 if (word > 0)
-                    population += word.Population();
+                    population += BitOperations.PopCount(word);
 
                 i++;
             }
@@ -535,7 +537,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
                             uint word = iWord.Raw & (jUsePackedWord ? jWord.PackedWord.Raw : jWord.Raw);
 
                             if (word > 0)
-                                population += word.Population();
+                                population += BitOperations.PopCount(word);
                         }
 
                         jLogical++;

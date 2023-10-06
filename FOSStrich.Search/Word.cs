@@ -1,6 +1,7 @@
 ﻿namespace FOSStrich.Search;
 
 using System.Globalization;
+using System.Numerics;
 
 internal struct Word
 {
@@ -222,20 +223,20 @@ internal struct Word
             if (Raw == 0u)
                 return 0;
 
-            int population = 0;
-
             if (IsCompressed)
             {
+                int population = 0;
+
                 if (FillBit)
                     population = FillCount * (SIZE - 1);
 
                 if (HasPackedWord)
                     population++;
+
+                return population;
             }
             else
-                population = Raw.Population();
-
-            return population;
+                return BitOperations.PopCount(Raw);
         }
     }
 
