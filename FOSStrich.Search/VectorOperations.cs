@@ -6,11 +6,16 @@ public sealed partial class Vector
 {
     #region Decompress
 
-    void DecompressInPlaceNoneCompressed(Word[] iWords, Word[] jWordsBuffer, int jWordCountPhysical)
+    // TODO : These DecompressInPlace methods rely on the Constructor (their only current caller)
+    // to properly size iVector. Move code from Constructor to helper (similar to OrInPlace?).
+
+    private void DecompressInPlaceNoneCompressed(Vector iVector, Vector jVector)
     {
         int i = 0;
+        var iWords = iVector.GetWordsSpanPhysical();
+
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
 
         while (j < jWords.Length)
         {
@@ -41,11 +46,13 @@ public sealed partial class Vector
         }
     }
 
-    void DecompressInPlaceNoneCompressedWithPackedPosition(Word[] iWords, Word[] jWordsBuffer, int jWordCountPhysical)
+    private void DecompressInPlaceNoneCompressedWithPackedPosition(Vector iVector, Vector jVector)
     {
         int i = 0;
+        var iWords = iVector.GetWordsSpanPhysical();
+
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
 
         while (j < jWords.Length)
         {
@@ -86,13 +93,13 @@ public sealed partial class Vector
 
     #region And In-Place
 
-    void AndInPlaceNoneNone(Word[] iWordsBuffer, ref int iWordCountPhysical, ref int iWordCountLogical, Word[] jWordsBuffer, int jWordCountPhysical)
+    private void AndInPlaceNoneNone(Vector iVector, Vector jVector)
     {
         int i = 0;
-        var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
+        var iWords = iVector.GetWordsSpanPhysical();
 
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
 
         while (i < iWords.Length && j < jWords.Length)
         {
@@ -103,8 +110,8 @@ public sealed partial class Vector
 
         if (i < iWords.Length)
         {
-            iWordCountPhysical = i;
-            iWordCountLogical = i;
+            iVector._wordCountPhysical = i;
+            iVector._wordCountLogical = i;
 
             while (i < iWords.Length)
             {
@@ -114,13 +121,13 @@ public sealed partial class Vector
         }
     }
 
-    void AndInPlaceNoneCompressedWithPackedPosition(Word[] iWordsBuffer, ref int iWordCountPhysical, ref int iWordCountLogical, Word[] jWordsBuffer, int jWordCountPhysical)
+    private void AndInPlaceNoneCompressedWithPackedPosition(Vector iVector, Vector jVector)
     {
         int i = 0;
-        var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
+        var iWords = iVector.GetWordsSpanPhysical();
 
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
 
         while (i < iWords.Length && j < jWords.Length)
         {
@@ -161,8 +168,8 @@ public sealed partial class Vector
 
         if (i < iWords.Length)
         {
-            iWordCountPhysical = i;
-            iWordCountLogical = i;
+            iVector._wordCountPhysical = i;
+            iVector._wordCountLogical = i;
 
             while (i < iWords.Length)
             {
@@ -176,15 +183,15 @@ public sealed partial class Vector
 
     #region And Out-of-Place
 
-    Vector AndOutOfPlaceNoneNone(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical, VectorCompression resultCompression)
+    private Vector AndOutOfPlaceNoneNone(Vector iVector, Vector jVector, VectorCompression resultCompression)
     {
-        Vector result = new Vector(resultCompression);
+        var result = new Vector(resultCompression);
 
         int i = 0;
-        var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
+        var iWords = iVector.GetWordsSpanPhysical();
 
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
 
         while (i < iWords.Length && j < jWords.Length)
         {
@@ -200,15 +207,15 @@ public sealed partial class Vector
         return result;
     }
 
-    Vector AndOutOfPlaceNoneCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical, VectorCompression resultCompression)
+    private Vector AndOutOfPlaceNoneCompressedWithPackedPosition(Vector iVector, Vector jVector, VectorCompression resultCompression)
     {
-        Vector result = new Vector(resultCompression);
+        var result = new Vector(resultCompression);
 
         int i = 0;
-        var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
+        var iWords = iVector.GetWordsSpanPhysical();
 
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
 
         while (i < iWords.Length && j < jWords.Length)
         {
@@ -255,16 +262,16 @@ public sealed partial class Vector
         return result;
     }
 
-    Vector AndOutOfPlaceCompressedWithPackedPositionCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical, VectorCompression resultCompression)
+    private Vector AndOutOfPlaceCompressedWithPackedPositionCompressedWithPackedPosition(Vector iVector, Vector jVector, VectorCompression resultCompression)
     {
-        Vector result = new Vector(resultCompression);
+        var result = new Vector(resultCompression);
 
         int i = 0;
-        var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
+        var iWords = iVector.GetWordsSpanPhysical();
         int iLogical = 0;
 
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
         int jLogical = 0;
 
         Word jWord = jWords[j];
@@ -417,15 +424,15 @@ public sealed partial class Vector
 
     #region AndPopulation
 
-    int AndPopulationNoneNone(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    private int AndPopulationNoneNone(Vector iVector, Vector jVector)
     {
         int population = 0;
 
         int i = 0;
-        var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
+        var iWords = iVector.GetWordsSpanPhysical();
 
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
 
         while (i < iWords.Length && j < jWords.Length)
         {
@@ -441,15 +448,15 @@ public sealed partial class Vector
         return population;
     }
 
-    int AndPopulationNoneCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    private int AndPopulationNoneCompressedWithPackedPosition(Vector iVector, Vector jVector)
     {
         int population = 0;
 
         int i = 0;
-        var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
+        var iWords = iVector.GetWordsSpanPhysical();
 
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
 
         while (i < iWords.Length && j < jWords.Length)
         {
@@ -499,16 +506,16 @@ public sealed partial class Vector
         return population;
     }
 
-    int AndPopulationCompressedWithPackedPositionCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    private int AndPopulationCompressedWithPackedPositionCompressedWithPackedPosition(Vector iVector, Vector jVector)
     {
         int population = 0;
 
         int i = 0;
-        var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
+        var iWords = iVector.GetWordsSpanPhysical();
         int iLogical = 0;
 
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
         int jLogical = 0;
 
         Word jWord = jWords[j];
@@ -661,13 +668,13 @@ public sealed partial class Vector
 
     #region AndPopulationAny
 
-    bool AndPopulationAnyNoneNone(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    private bool AndPopulationAnyNoneNone(Vector iVector, Vector jVector)
     {
         int i = 0;
-        var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
+        var iWords = iVector.GetWordsSpanPhysical();
 
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
 
         while (i < iWords.Length && j < jWords.Length)
         {
@@ -683,13 +690,13 @@ public sealed partial class Vector
         return false;
     }
 
-    bool AndPopulationAnyNoneCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    private bool AndPopulationAnyNoneCompressedWithPackedPosition(Vector iVector, Vector jVector)
     {
         int i = 0;
-        var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
+        var iWords = iVector.GetWordsSpanPhysical();
 
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
 
         while (i < iWords.Length && j < jWords.Length)
         {
@@ -745,13 +752,13 @@ public sealed partial class Vector
 
     #region Or In-Place
 
-    void OrInPlaceNoneNone(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    private void OrInPlaceNoneNone(Vector iVector, Vector jVector)
     {
         int i = 0;
-        var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
+        var iWords = iVector.GetWordsSpanPhysical();
 
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
 
         while (i < iWords.Length && j < jWords.Length)
         {
@@ -761,13 +768,13 @@ public sealed partial class Vector
         }
     }
 
-    void OrInPlaceNoneCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    private void OrInPlaceNoneCompressedWithPackedPosition(Vector iVector, Vector jVector)
     {
         int i = 0;
-        var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
+        var iWords = iVector.GetWordsSpanPhysical();
 
         int j = 0;
-        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        var jWords = jVector.GetWordsSpanPhysical();
 
         while (i < iWords.Length && j < jWords.Length)
         {

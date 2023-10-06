@@ -61,9 +61,9 @@ public sealed partial class Vector
             _wordCountLogical = vector._wordCountLogical;
 
             if (!vector.IsPackedPositionEnabled)
-                DecompressInPlaceNoneCompressed(_words, vector._words, vector._wordCountPhysical);
+                DecompressInPlaceNoneCompressed(this, vector);
             else
-                DecompressInPlaceNoneCompressedWithPackedPosition(_words, vector._words, vector._wordCountPhysical);
+                DecompressInPlaceNoneCompressedWithPackedPosition(this, vector);
         }
         else
         {
@@ -173,6 +173,8 @@ public sealed partial class Vector
     }
 
     private const double WORDGROWTHFACTOR = 1.1;
+
+    private Span<Word> GetWordsSpanPhysical() => new(_words, 0, _wordCountPhysical);
 
     #endregion
 
@@ -596,9 +598,9 @@ public sealed partial class Vector
             throw new NotSupportedException("Not supported for a compressed Vector.");
 
         if (!vector.IsCompressed)
-            AndInPlaceNoneNone(_words, ref _wordCountPhysical, ref _wordCountLogical, vector._words, vector._wordCountPhysical);
+            AndInPlaceNoneNone(this, vector);
         else
-            AndInPlaceNoneCompressedWithPackedPosition(_words, ref _wordCountPhysical, ref _wordCountLogical, vector._words, vector._wordCountPhysical);
+            AndInPlaceNoneCompressedWithPackedPosition(this, vector);
     }
 
     public Vector AndOutOfPlace(Vector vector, VectorCompression resultCompression)
@@ -606,15 +608,14 @@ public sealed partial class Vector
         if (vector == null)
             throw new ArgumentNullException(nameof(vector));
 
-        var lessCompression = Compression <= vector.Compression ? this : vector;
-        var moreCompression = (this == lessCompression) ? vector : this;
+        var (lessCompression, moreCompression) = OrderByCompression(vector);
 
         if (!moreCompression.IsCompressed)
-            return AndOutOfPlaceNoneNone(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical, resultCompression);
+            return AndOutOfPlaceNoneNone(lessCompression, moreCompression, resultCompression);
         else if (!lessCompression.IsCompressed)
-            return AndOutOfPlaceNoneCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical, resultCompression);
+            return AndOutOfPlaceNoneCompressedWithPackedPosition(lessCompression, moreCompression, resultCompression);
         else
-            return AndOutOfPlaceCompressedWithPackedPositionCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical, resultCompression);
+            return AndOutOfPlaceCompressedWithPackedPositionCompressedWithPackedPosition(lessCompression, moreCompression, resultCompression);
     }
 
     public int AndPopulation(Vector vector)
@@ -622,15 +623,14 @@ public sealed partial class Vector
         if (vector == null)
             throw new ArgumentNullException(nameof(vector));
 
-        var lessCompression = Compression <= vector.Compression ? this : vector;
-        var moreCompression = (this == lessCompression) ? vector : this;
+        var (lessCompression, moreCompression) = OrderByCompression(vector);
 
         if (!moreCompression.IsCompressed)
-            return AndPopulationNoneNone(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
+            return AndPopulationNoneNone(lessCompression, moreCompression);
         else if (!lessCompression.IsCompressed)
-            return AndPopulationNoneCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
+            return AndPopulationNoneCompressedWithPackedPosition(lessCompression, moreCompression);
         else
-            return AndPopulationCompressedWithPackedPositionCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
+            return AndPopulationCompressedWithPackedPositionCompressedWithPackedPosition(lessCompression, moreCompression);
     }
 
     public bool AndPopulationAny(Vector vector)
@@ -641,13 +641,12 @@ public sealed partial class Vector
         if (IsCompressed && vector.IsCompressed)
             throw new NotImplementedException("Not implemented for two compressed Vector.");
 
-        var lessCompression = Compression <= vector.Compression ? this : vector;
-        var moreCompression = (this == lessCompression) ? vector : this;
+        var (lessCompression, moreCompression) = OrderByCompression(vector);
 
         if (!moreCompression.IsCompressed)
-            return AndPopulationAnyNoneNone(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
+            return AndPopulationAnyNoneNone(lessCompression, moreCompression);
         else if (!lessCompression.IsCompressed)
-            return AndPopulationAnyNoneCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
+            return AndPopulationAnyNoneCompressedWithPackedPosition(lessCompression, moreCompression);
         else
             throw new NotImplementedException("See above. This code will never execute.");
     }
@@ -665,10 +664,13 @@ public sealed partial class Vector
         _wordCountLogical = Math.Max(_wordCountLogical, vector._wordCountLogical);
 
         if (!vector.IsCompressed)
-            OrInPlaceNoneNone(_words, _wordCountPhysical, vector._words, vector._wordCountPhysical);
+            OrInPlaceNoneNone(this, vector);
         else
-            OrInPlaceNoneCompressedWithPackedPosition(_words, _wordCountPhysical, vector._words, vector._wordCountPhysical);
+            OrInPlaceNoneCompressedWithPackedPosition(this, vector);
     }
+
+    private (Vector LessCompression, Vector MoreCompression) OrderByCompression(Vector vector) =>
+        Compression <= vector.Compression ? (this, vector) : (vector, this);
 
     #endregion
 }
