@@ -603,7 +603,7 @@ public sealed partial class Vector
 
     #endregion
 
-    #region IVectorLogic
+    #region VectorOperations
 
     public void AndInPlace(Vector vector)
     {
