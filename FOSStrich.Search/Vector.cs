@@ -11,24 +11,6 @@ using System.Buffers;
 /// </remarks>
 public sealed partial class Vector
 {
-    public static Vector OrOutOfPlace(params Vector[] vectors)
-    {
-        if (vectors == null || vectors.Any(v => v == null))
-            throw new ArgumentNullException(nameof(vectors));
-
-        if (vectors.Length < 2)
-            throw new ArgumentOutOfRangeException(nameof(vectors), "At least 2 Vectors must be provided in order to CreateUnion.");
-
-        int maxWordCountLogical = vectors.Max(v => v._wordCountLogical);
-
-        var vector = new Vector(VectorCompression.None, vectors[0], maxWordCountLogical);
-
-        for (int i = 1; i < vectors.Length; i++)
-            vector.OrInPlace(vectors[i]);
-
-        return vector;
-    }
-
     #region Construction
 
     public Vector(VectorCompression compression)
