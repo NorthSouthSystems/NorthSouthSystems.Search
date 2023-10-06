@@ -645,9 +645,6 @@ public sealed partial class Vector
         if (vector == null)
             throw new ArgumentNullException(nameof(vector));
 
-        if (IsCompressed && vector.IsCompressed)
-            throw new NotImplementedException("Not implemented for two compressed Vector.");
-
         var lessCompression = Compression <= vector.Compression ? this : vector;
         var moreCompression = (this == lessCompression) ? vector : this;
 
@@ -656,7 +653,7 @@ public sealed partial class Vector
         else if (!lessCompression.IsCompressed)
             return _safeVectorLogic.AndPopulationNoneCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
         else
-            throw new NotImplementedException("See above. This code will never execute.");
+            return _safeVectorLogic.AndPopulationCompressedWithPackedPositionCompressedWithPackedPosition(lessCompression._words, lessCompression._wordCountPhysical, moreCompression._words, moreCompression._wordCountPhysical);
     }
 
     public bool AndPopulationAny(Vector vector)
@@ -713,6 +710,7 @@ internal interface IVectorLogic
 
     int AndPopulationNoneNone(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical);
     int AndPopulationNoneCompressedWithPackedPosition(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical);
+    int AndPopulationCompressedWithPackedPositionCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical);
 
     bool AndPopulationAnyNoneNone(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical);
     bool AndPopulationAnyNoneCompressedWithPackedPosition(Word[] iWords, int iWordCountPhysical, Word[] jWords, int jWordCountPhysical);

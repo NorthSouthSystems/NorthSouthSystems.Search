@@ -417,6 +417,164 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
         return population;
     }
 
+    int IVectorLogic.AndPopulationCompressedWithPackedPositionCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    {
+        int population = 0;
+
+        int i = 0;
+        var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
+        int iLogical = 0;
+
+        int j = 0;
+        var jWords = new Span<Word>(jWordsBuffer, 0, jWordCountPhysical);
+        int jLogical = 0;
+
+        Word jWord = jWords[j];
+        bool jUsePackedWord = false;
+
+        while (i < iWords.Length)
+        {
+            Word iWord = iWords[i];
+
+            if (iWord.IsCompressed)
+            {
+                if (iWord.FillBit)
+                {
+                    while (jLogical < iLogical + iWord.FillCount)
+                    {
+                        if (jUsePackedWord || !jWord.IsCompressed)
+                        {
+                            if (jLogical >= iLogical)
+                                population += (jUsePackedWord ? jWord.PackedWord : jWord).Population;
+
+                            jLogical++;
+                        }
+                        else
+                        {
+                            if (jWord.FillBit)
+                            {
+                                int logical = Math.Max(iLogical, jLogical);
+                                int fillCount = Math.Min(iLogical + iWord.FillCount, jLogical + jWord.FillCount) - logical;
+
+                                population += fillCount * (Word.SIZE - 1);
+                            }
+
+                            if (jLogical + jWord.FillCount <= iLogical + iWord.FillCount)
+                            {
+                                jLogical += jWord.FillCount;
+
+                                if (jWord.HasPackedWord)
+                                {
+                                    jUsePackedWord = true;
+                                    continue;
+                                }
+                            }
+                            else
+                                break;
+                        }
+
+                        if (++j >= jWords.Length)
+                            return population;
+
+                        jWord = jWords[j];
+                        jUsePackedWord = false;
+                    }
+                }
+
+                iLogical += iWord.FillCount;
+
+                if (iWord.HasPackedWord)
+                {
+                    while (jLogical <= iLogical)
+                    {
+                        if (jUsePackedWord || !jWord.IsCompressed)
+                        {
+                            if (jLogical == iLogical)
+                                if ((iWord.PackedWord.Raw & (jUsePackedWord ? jWord.PackedWord.Raw : jWord.Raw)) > 0)
+                                    population++;
+
+                            jLogical++;
+                        }
+                        else
+                        {
+                            if (jWord.FillBit && (jLogical + jWord.FillCount) > iLogical)
+                                population++;
+
+                            if (jLogical + jWord.FillCount <= iLogical + 1)
+                            {
+                                jLogical += jWord.FillCount;
+
+                                if (jWord.HasPackedWord)
+                                {
+                                    jUsePackedWord = true;
+                                    continue;
+                                }
+                            }
+                            else
+                                break;
+                        }
+
+                        if (++j >= jWords.Length)
+                            return population;
+
+                        jWord = jWords[j];
+                        jUsePackedWord = false;
+                    }
+
+                    iLogical++;
+                }
+            }
+            else
+            {
+                while (jLogical <= iLogical)
+                {
+                    if (jUsePackedWord || !jWord.IsCompressed)
+                    {
+                        if (jLogical == iLogical)
+                        {
+                            uint word = iWord.Raw & (jUsePackedWord ? jWord.PackedWord.Raw : jWord.Raw);
+
+                            if (word > 0)
+                                population += word.Population();
+                        }
+
+                        jLogical++;
+                    }
+                    else
+                    {
+                        if (jWord.FillBit && jLogical + jWord.FillCount > iLogical)
+                            population += iWord.Population;
+
+                        if (jLogical + jWord.FillCount <= iLogical + 1)
+                        {
+                            jLogical += jWord.FillCount;
+
+                            if (jWord.HasPackedWord)
+                            {
+                                jUsePackedWord = true;
+                                continue;
+                            }
+                        }
+                        else
+                            break;
+                    }
+
+                    if (++j >= jWords.Length)
+                        return population;
+
+                    jWord = jWords[j];
+                    jUsePackedWord = false;
+                }
+
+                iLogical++;
+            }
+
+            i++;
+        }
+
+        return population;
+    }
+
     #endregion
 
     #region AndPopulationAny
