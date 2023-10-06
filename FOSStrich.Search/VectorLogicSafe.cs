@@ -2,11 +2,11 @@
 
 using System.Numerics;
 
-internal sealed partial class VectorLogicSafe : IVectorLogic
+public sealed partial class Vector
 {
     #region Decompress
 
-    void IVectorLogic.DecompressInPlaceNoneCompressed(Word[] iWords, Word[] jWordsBuffer, int jWordCountPhysical)
+    void DecompressInPlaceNoneCompressed(Word[] iWords, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int i = 0;
         int j = 0;
@@ -41,7 +41,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
         }
     }
 
-    void IVectorLogic.DecompressInPlaceNoneCompressedWithPackedPosition(Word[] iWords, Word[] jWordsBuffer, int jWordCountPhysical)
+    void DecompressInPlaceNoneCompressedWithPackedPosition(Word[] iWords, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int i = 0;
         int j = 0;
@@ -86,7 +86,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
 
     #region And In-Place
 
-    void IVectorLogic.AndInPlaceNoneNone(Word[] iWordsBuffer, ref int iWordCountPhysical, ref int iWordCountLogical, Word[] jWordsBuffer, int jWordCountPhysical)
+    void AndInPlaceNoneNone(Word[] iWordsBuffer, ref int iWordCountPhysical, ref int iWordCountLogical, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int i = 0;
         var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
@@ -114,7 +114,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
         }
     }
 
-    void IVectorLogic.AndInPlaceNoneCompressedWithPackedPosition(Word[] iWordsBuffer, ref int iWordCountPhysical, ref int iWordCountLogical, Word[] jWordsBuffer, int jWordCountPhysical)
+    void AndInPlaceNoneCompressedWithPackedPosition(Word[] iWordsBuffer, ref int iWordCountPhysical, ref int iWordCountLogical, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int i = 0;
         var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
@@ -176,7 +176,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
 
     #region And Out-of-Place
 
-    Vector IVectorLogic.AndOutOfPlaceNoneNone(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical, VectorCompression resultCompression)
+    Vector AndOutOfPlaceNoneNone(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical, VectorCompression resultCompression)
     {
         Vector result = new Vector(resultCompression);
 
@@ -200,7 +200,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
         return result;
     }
 
-    Vector IVectorLogic.AndOutOfPlaceNoneCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical, VectorCompression resultCompression)
+    Vector AndOutOfPlaceNoneCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical, VectorCompression resultCompression)
     {
         Vector result = new Vector(resultCompression);
 
@@ -255,7 +255,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
         return result;
     }
 
-    Vector IVectorLogic.AndOutOfPlaceCompressedWithPackedPositionCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical, VectorCompression resultCompression)
+    Vector AndOutOfPlaceCompressedWithPackedPositionCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical, VectorCompression resultCompression)
     {
         Vector result = new Vector(resultCompression);
 
@@ -417,7 +417,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
 
     #region AndPopulation
 
-    int IVectorLogic.AndPopulationNoneNone(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    int AndPopulationNoneNone(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int population = 0;
 
@@ -441,7 +441,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
         return population;
     }
 
-    int IVectorLogic.AndPopulationNoneCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    int AndPopulationNoneCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int population = 0;
 
@@ -499,7 +499,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
         return population;
     }
 
-    int IVectorLogic.AndPopulationCompressedWithPackedPositionCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    int AndPopulationCompressedWithPackedPositionCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int population = 0;
 
@@ -661,7 +661,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
 
     #region AndPopulationAny
 
-    bool IVectorLogic.AndPopulationAnyNoneNone(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    bool AndPopulationAnyNoneNone(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int i = 0;
         var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
@@ -683,7 +683,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
         return false;
     }
 
-    bool IVectorLogic.AndPopulationAnyNoneCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    bool AndPopulationAnyNoneCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int i = 0;
         var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
@@ -745,7 +745,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
 
     #region Or In-Place
 
-    void IVectorLogic.OrInPlaceNoneNone(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    void OrInPlaceNoneNone(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int i = 0;
         var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
@@ -761,7 +761,7 @@ internal sealed partial class VectorLogicSafe : IVectorLogic
         }
     }
 
-    void IVectorLogic.OrInPlaceNoneCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
+    void OrInPlaceNoneCompressedWithPackedPosition(Word[] iWordsBuffer, int iWordCountPhysical, Word[] jWordsBuffer, int jWordCountPhysical)
     {
         int i = 0;
         var iWords = new Span<Word>(iWordsBuffer, 0, iWordCountPhysical);
