@@ -6,9 +6,6 @@ public sealed partial class Vector
 {
     #region Decompress
 
-    // TODO : These DecompressInPlace methods rely on the Constructor (their only current caller)
-    // to properly size iVector. Move code from Constructor to helper (similar to OrInPlace?).
-
     private void DecompressInPlaceNoneCompressed(Vector iVector, Vector jVector)
     {
         int i = 0;

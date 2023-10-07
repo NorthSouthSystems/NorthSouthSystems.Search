@@ -19,14 +19,14 @@ public sealed partial class Vector
     public Vector(VectorCompression compression, Vector vector)
         : this(compression, vector, 0) { }
 
-    private Vector(VectorCompression compression, Vector vector, int wordsLength)
+    private Vector(VectorCompression compression, Vector vector, int wordsLengthHint)
     {
         IsCompressed = (compression == VectorCompression.Compressed || compression == VectorCompression.CompressedWithPackedPosition);
         IsPackedPositionEnabled = compression == VectorCompression.CompressedWithPackedPosition;
 
         if (vector == null)
         {
-            WordsGrow(wordsLength);
+            WordsGrow(wordsLengthHint);
             _wordCountPhysical = 1;
             _wordCountLogical = 1;
 
@@ -48,7 +48,7 @@ public sealed partial class Vector
         //      CWPP,   C    (WordsGrow to vector._wordCountPhysical / 2 because that is the minimum size [occurs when every other Word in C is uncompressed and can be Packed])
         if (Compression == vector.Compression)
         {
-            WordsGrow(Math.Max(vector._wordCountPhysical, wordsLength));
+            WordsGrow(Math.Max(vector._wordCountPhysical, wordsLengthHint));
             _wordCountPhysical = vector._wordCountPhysical;
             _wordCountLogical = vector._wordCountLogical;
 
@@ -56,14 +56,11 @@ public sealed partial class Vector
         }
         else if (!IsCompressed)
         {
-            WordsGrow(Math.Max(vector._wordCountLogical, wordsLength));
+            WordsGrow(Math.Max(vector._wordCountLogical, wordsLengthHint));
             _wordCountPhysical = vector._wordCountLogical;
             _wordCountLogical = vector._wordCountLogical;
 
-            if (!vector.IsPackedPositionEnabled)
-                DecompressInPlaceNoneCompressed(this, vector);
-            else
-                DecompressInPlaceNoneCompressedWithPackedPosition(this, vector);
+            DecompressInPlace(vector);
         }
         else
         {
@@ -74,7 +71,7 @@ public sealed partial class Vector
             else if (IsPackedPositionEnabled && vector.IsCompressed)
                 wordCountPhysical = vector._wordCountPhysical / 2;
 
-            WordsGrow(Math.Max(wordCountPhysical, wordsLength));
+            WordsGrow(Math.Max(wordCountPhysical, wordsLengthHint));
             _wordCountPhysical = 1;
             _wordCountLogical = 1;
 
@@ -588,6 +585,27 @@ public sealed partial class Vector
     #endregion
 
     #region VectorOperations
+
+    public void DecompressInPlace(Vector vector)
+    {
+        if (vector == null)
+            throw new ArgumentNullException(nameof(vector));
+
+        if (IsCompressed)
+            throw new NotSupportedException("Not supported for a compressed Vector.");
+
+        if (!vector.IsCompressed)
+            throw new NotSupportedException("Not supported for two uncompressed Vectors.");
+
+        WordsGrow(vector._wordCountLogical);
+        _wordCountPhysical = vector._wordCountLogical;
+        _wordCountLogical = vector._wordCountLogical;
+
+        if (!vector.IsPackedPositionEnabled)
+            DecompressInPlaceNoneCompressed(this, vector);
+        else
+            DecompressInPlaceNoneCompressedWithPackedPosition(this, vector);
+    }
 
     public void AndInPlace(Vector vector)
     {
