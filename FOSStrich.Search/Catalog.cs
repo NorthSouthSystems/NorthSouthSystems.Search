@@ -293,8 +293,6 @@ internal interface ICatalogInEngine : ICatalogHandle
     IFacetParameterInternal CreateFacetParameter();
 
     IFacet Facet(Vector vector, bool disableParallel, bool shortCircuitCounting);
-
-    ICatalogStatistics GenerateStatistics();
 }
 
 public interface ICatalogHandle<TKey> : ICatalogHandle { }
