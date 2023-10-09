@@ -5,7 +5,7 @@ namespace FOSStrich.Search;
 /// Provides a method for computing the population (number of bits set to 1) of an
 /// unsigned integer.
 /// </summary>
-internal static class BitOperations
+public static class BitOperations
 {
     /// <summary>
     /// Compute the number of bits set to 1 for an unsigned integer value.
@@ -14,7 +14,7 @@ internal static class BitOperations
     /// Originally found at <a href="http://www.hackersdelight.org/HDcode/newCode/pop_arrayHS.c.txt">Hacker's Delight</a>.
     /// </remarks>
     [CLSCompliant(false)]
-    internal static int PopCount(uint word)
+    public static int PopCount(uint word)
     {
         word = word - ((word >> 1) & 0x55555555u);
         word = (word & 0x33333333u) + ((word >> 2) & 0x33333333u);
