@@ -1,6 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using BenchmarkDotNet.Loggers;
 using FOSStrich.StackExchange;
 
 [MemoryDiagnoser]
@@ -18,8 +17,6 @@ public class EngineQueryBenchmarks : EngineBenchmarksBase
             .DeserializeMemoryPack<Post>();
 
         Engine.Add(posts);
-
-        ConsoleLogger.Default.WriteLineStatistic($"WordCount: {Engine.GenerateStatistics().WordCount}");
     }
 
     [GlobalCleanup]
