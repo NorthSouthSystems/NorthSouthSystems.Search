@@ -1,4 +1,4 @@
-﻿namespace FOSStrich.Search;
+﻿namespace FOSStrich.BitVectors;
 
 using System.Numerics;
 

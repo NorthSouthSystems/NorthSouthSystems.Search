@@ -1,12 +1,15 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.BitVectors;
+
 public static class SortParameter
 {
     public static SortParameter<TKey> Create<TKey>(ICatalogHandle<TKey> catalog, bool ascending)
             where TKey : IEquatable<TKey>, IComparable<TKey> =>
         new(catalog, ascending);
 
-    internal static ISortParameter Create<TItem, TPrimaryKey>(Engine<TItem, TPrimaryKey> engine, string catalogName, bool ascending) =>
+    internal static ISortParameter Create<TBitVector, TItem, TPrimaryKey>(Engine<TBitVector, TItem, TPrimaryKey> engine, string catalogName, bool ascending)
+            where TBitVector : IBitVector<TBitVector> =>
         ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateSortParameter(ascending));
 }
 

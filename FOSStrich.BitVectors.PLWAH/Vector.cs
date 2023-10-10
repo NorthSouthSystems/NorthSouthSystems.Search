@@ -1,6 +1,5 @@
-﻿namespace FOSStrich.Search;
+﻿namespace FOSStrich.BitVectors.PLWAH;
 
-using FOSStrich.BitVectors;
 using System.Buffers;
 
 /// <summary>
@@ -92,13 +91,13 @@ public sealed partial class Vector : IBitVector<Vector>
         }
     }
 
-    internal bool IsUnused => _wordCountLogical == 1 && _words[0].Raw == 0u;
+    public bool IsUnused => _wordCountLogical == 1 && _words[0].Raw == 0u;
 
     #endregion
 
     #region Optimize
 
-    internal bool OptimizeReadPhase(int[] bitPositionShifts, out Vector optimized)
+    public bool OptimizeReadPhase(int[] bitPositionShifts, out Vector optimized)
     {
         optimized = new Vector(Compression);
 
@@ -128,6 +127,8 @@ public sealed partial class Vector : IBitVector<Vector>
     private Word[] _words;
     private int _wordCountPhysical;
     private int _wordCountLogical;
+
+    void IBitVector<Vector>.Clear() => WordsClear();
 
     public void WordsClear()
     {

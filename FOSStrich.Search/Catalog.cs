@@ -1,20 +1,24 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.BitVectors;
 using System.Collections;
 
-public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngine
-      where TKey : IEquatable<TKey>, IComparable<TKey>
+public sealed partial class Catalog<TBitVector, TKey> : ICatalogHandle<TKey>, ICatalogInEngine<TBitVector>
+    where TBitVector : IBitVector<TBitVector>
+    where TKey : IEquatable<TKey>, IComparable<TKey>
 {
-    public Catalog(string name, bool isOneToOne, VectorCompression compression)
+    public Catalog(IBitVectorFactory<TBitVector> bitVectorFactory, string name, bool isOneToOne)
     {
+        _bitVectorFactory = bitVectorFactory;
+
         Name = name;
         IsOneToOne = isOneToOne;
-        Compression = compression;
     }
+
+    private readonly IBitVectorFactory<TBitVector> _bitVectorFactory;
 
     public string Name { get; }
     public bool IsOneToOne { get; }
-    public VectorCompression Compression { get; }
 
     private SortedSet<TKey> _keys = new();
     private Dictionary<TKey, Entry> _keyToEntryMap = new();
@@ -23,24 +27,24 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
     // not the best design.
     private class Entry
     {
-        internal Entry(Vector vector) => Vector = vector;
+        internal Entry(TBitVector vector) => Vector = vector;
 
-        internal Vector Vector;
-        internal Vector VectorOptimized;
+        internal TBitVector Vector;
+        internal TBitVector VectorOptimized;
         internal bool IsVectorOptimizedAlive;
     }
 
     #region Optimize
 
-    void ICatalogInEngine.OptimizeReadPhase(int[] bitPositionShifts)
+    void ICatalogInEngine<TBitVector>.OptimizeReadPhase(int[] bitPositionShifts)
     {
         foreach (Entry entry in _keyToEntryMap.Values)
             entry.IsVectorOptimizedAlive = entry.Vector.OptimizeReadPhase(bitPositionShifts, out entry.VectorOptimized);
     }
 
-    void ICatalogInEngine.OptimizeWritePhase()
+    void ICatalogInEngine<TBitVector>.OptimizeWritePhase()
     {
-        List<TKey> deadKeys = new List<TKey>();
+        var deadKeys = new List<TKey>();
 
         foreach (var keyAndEntry in _keyToEntryMap)
         {
@@ -49,7 +53,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
             else
                 deadKeys.Add(keyAndEntry.Key);
 
-            keyAndEntry.Value.VectorOptimized = null;
+            keyAndEntry.Value.VectorOptimized = default;
             keyAndEntry.Value.IsVectorOptimizedAlive = false;
         }
 
@@ -64,7 +68,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
 
     #region Set
 
-    void ICatalogInEngine.Set(object key, int bitPosition, bool value)
+    void ICatalogInEngine<TBitVector>.Set(object key, int bitPosition, bool value)
     {
         if (key is TKey)
             Set((TKey)key, bitPosition, value);
@@ -82,7 +86,7 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         if (!_keyToEntryMap.TryGetValue(key, out entry))
         {
             // TODO : This will use a VectorFactory pattern shortly.
-            entry = new Entry(new Vector(Compression));
+            entry = new Entry(_bitVectorFactory.Create(true));
 
             _keys.Add(key);
             _keyToEntryMap.Add(key, entry);
@@ -107,20 +111,20 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
 
     #region Filter
 
-    IFilterParameter ICatalogInEngine.CreateFilterParameter(object exact) =>
+    IFilterParameter ICatalogInEngine<TBitVector>.CreateFilterParameter(object exact) =>
         new FilterParameter<TKey>(this, ConvertToTKey(exact));
 
-    IFilterParameter ICatalogInEngine.CreateFilterParameter(IEnumerable enumerable) =>
+    IFilterParameter ICatalogInEngine<TBitVector>.CreateFilterParameter(IEnumerable enumerable) =>
         new FilterParameter<TKey>(this, enumerable.Cast<object>().Select(ConvertToTKey));
 
-    IFilterParameter ICatalogInEngine.CreateFilterParameter(object rangeMin, object rangeMax) =>
+    IFilterParameter ICatalogInEngine<TBitVector>.CreateFilterParameter(object rangeMin, object rangeMax) =>
         new FilterParameter<TKey>(this, ConvertToTKey(rangeMin), ConvertToTKey(rangeMax));
 
     private static TKey ConvertToTKey(object obj) => (TKey)Convert.ChangeType(obj, typeof(TKey));
 
-    void ICatalogInEngine.FilterExact(Vector vector, object key) => Filter(vector, (TKey)key);
+    void ICatalogInEngine<TBitVector>.FilterExact(TBitVector vector, object key) => Filter(vector, (TKey)key);
 
-    public void Filter(Vector vector, TKey key)
+    public void Filter(TBitVector vector, TKey key)
     {
         if (vector == null)
             throw new ArgumentNullException(nameof(vector));
@@ -131,9 +135,9 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         FilterImpl(vector, new[] { Lookup(key) });
     }
 
-    void ICatalogInEngine.FilterEnumerable(Vector vector, IEnumerable keys) => Filter(vector, (IEnumerable<TKey>)keys);
+    void ICatalogInEngine<TBitVector>.FilterEnumerable(TBitVector vector, IEnumerable keys) => Filter(vector, (IEnumerable<TKey>)keys);
 
-    public void Filter(Vector vector, IEnumerable<TKey> keys)
+    public void Filter(TBitVector vector, IEnumerable<TKey> keys)
     {
         if (vector == null)
             throw new ArgumentNullException(nameof(vector));
@@ -147,9 +151,9 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         FilterImpl(vector, keys.Distinct().Select(Lookup));
     }
 
-    void ICatalogInEngine.FilterRange(Vector vector, object keyMin, object keyMax) => Filter(vector, (TKey)keyMin, (TKey)keyMax);
+    void ICatalogInEngine<TBitVector>.FilterRange(TBitVector vector, object keyMin, object keyMax) => Filter(vector, (TKey)keyMin, (TKey)keyMax);
 
-    public void Filter(Vector vector, TKey keyMin, TKey keyMax)
+    public void Filter(TBitVector vector, TKey keyMin, TKey keyMax)
     {
         if (vector == null)
             throw new ArgumentNullException(nameof(vector));
@@ -166,39 +170,39 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         if (keyMax == null)
             keyMax = _keys.Max;
 
-        FilterImpl(vector, _keys.Count == 0 ? Array.Empty<Vector>() : _keys.GetViewBetween(keyMin, keyMax).Select(key => _keyToEntryMap[key].Vector));
+        FilterImpl(vector, _keys.Count == 0 ? Array.Empty<TBitVector>() : _keys.GetViewBetween(keyMin, keyMax).Select(key => _keyToEntryMap[key].Vector));
     }
 
-    private static void FilterImpl(Vector vector, IEnumerable<Vector> lookups)
+    private void FilterImpl(TBitVector vector, IEnumerable<TBitVector> lookups)
     {
-        Vector[] lookupsArray = lookups.Where(lookup => lookup != null).ToArray();
+        TBitVector[] lookupsArray = lookups.Where(lookup => lookup != null).ToArray();
 
         if (lookupsArray.Length == 0)
-            vector.WordsClear();
+            vector.Clear();
         else if (lookupsArray.Length == 1)
             vector.AndInPlace(lookupsArray[0]);
         else
-            vector.AndInPlace(Vector.OrOutOfPlace(lookupsArray));
+            vector.AndInPlace(_bitVectorFactory.CreateUncompressedUnion(lookupsArray));
     }
 
-    private Vector Lookup(TKey key)
+    private TBitVector Lookup(TKey key)
     {
         Entry entry;
         _keyToEntryMap.TryGetValue(key, out entry);
 
-        return entry == null ? null : entry.Vector;
+        return entry == null ? default : entry.Vector;
     }
 
     #endregion
 
     #region Sort
 
-    ISortParameter ICatalogInEngine.CreateSortParameter(bool ascending) => new SortParameter<TKey>(this, ascending);
+    ISortParameter ICatalogInEngine<TBitVector>.CreateSortParameter(bool ascending) => new SortParameter<TKey>(this, ascending);
 
-    CatalogSortResult ICatalogInEngine.Sort(Vector vector, bool value, bool ascending, bool disableParallel) =>
+    CatalogSortResult<TBitVector> ICatalogInEngine<TBitVector>.Sort(TBitVector vector, bool value, bool ascending, bool disableParallel) =>
         Sort(vector, value, ascending, disableParallel);
 
-    public CatalogSortResult Sort(Vector vector, bool value, bool ascending, bool disableParallel)
+    public CatalogSortResult<TBitVector> Sort(TBitVector vector, bool value, bool ascending, bool disableParallel)
     {
         if (vector == null)
             throw new ArgumentNullException(nameof(vector));
@@ -212,16 +216,16 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
 
         // TODO : Support parallelization. In initial testing (with the admittedly small unit tests), parallelization was significantly slower.
         // TODO : Optimize the resultCompression?
-        var partialSorts = keys.Select(key => vector.AndOutOfPlace(_keyToEntryMap[key].Vector, VectorCompression.Compressed))
+        var partialSorts = keys.Select(key => vector.AndOutOfPlace(_keyToEntryMap[key].Vector, true))
             .Where(partialSort => !partialSort.IsUnused);
 
-        return new CatalogSortResult(partialSorts);
+        return new CatalogSortResult<TBitVector>(partialSorts);
     }
 
-    CatalogSortResult ICatalogInEngine.ThenSort(CatalogSortResult sortResult, bool value, bool ascending, bool disableParallel) =>
+    CatalogSortResult<TBitVector> ICatalogInEngine<TBitVector>.ThenSort(CatalogSortResult<TBitVector> sortResult, bool value, bool ascending, bool disableParallel) =>
         ThenSort(sortResult, value, ascending, disableParallel);
 
-    public CatalogSortResult ThenSort(CatalogSortResult sortResult, bool value, bool ascending, bool disableParallel)
+    public CatalogSortResult<TBitVector> ThenSort(CatalogSortResult<TBitVector> sortResult, bool value, bool ascending, bool disableParallel)
     {
         if (sortResult == null)
             throw new ArgumentNullException(nameof(sortResult));
@@ -236,21 +240,21 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
         // TODO : Support parallelization. In initial testing (with the admittedly small unit tests), parallelization was significantly slower.
         // TODO : Optimize the resultCompression?
         var partialSorts = sortResult.PartialSorts
-            .SelectMany(partialSort => keys.Select(key => partialSort.AndOutOfPlace(_keyToEntryMap[key].Vector, VectorCompression.Compressed)))
+            .SelectMany(partialSort => keys.Select(key => partialSort.AndOutOfPlace(_keyToEntryMap[key].Vector, true)))
             .Where(partialSort => !partialSort.IsUnused);
 
-        return new CatalogSortResult(partialSorts);
+        return new CatalogSortResult<TBitVector>(partialSorts);
     }
 
     #endregion
 
     #region Facet
 
-    IFacetParameterInternal ICatalogInEngine.CreateFacetParameter() => new FacetParameter<TKey>(this);
+    IFacetParameterInternal ICatalogInEngine<TBitVector>.CreateFacetParameter() => new FacetParameter<TBitVector, TKey>(this);
 
-    IFacet ICatalogInEngine.Facet(Vector vector, bool disableParallel, bool shortCircuitCounting) => Facet(vector, disableParallel, shortCircuitCounting);
+    IFacet ICatalogInEngine<TBitVector>.Facet(TBitVector vector, bool disableParallel, bool shortCircuitCounting) => Facet(vector, disableParallel, shortCircuitCounting);
 
-    public Facet<TKey> Facet(Vector vector, bool disableParallel = false, bool shortCircuitCounting = false)
+    public Facet<TKey> Facet(TBitVector vector, bool disableParallel = false, bool shortCircuitCounting = false)
     {
         if (vector == null)
             throw new ArgumentNullException(nameof(vector));
@@ -270,7 +274,8 @@ public sealed partial class Catalog<TKey> : ICatalogHandle<TKey>, ICatalogInEngi
     #endregion
 }
 
-internal interface ICatalogInEngine : ICatalogHandle
+internal interface ICatalogInEngine<TBitVector> : ICatalogHandle
+    where TBitVector : IBitVector<TBitVector>
 {
     void OptimizeReadPhase(int[] bitPositionShifts);
     void OptimizeWritePhase();
@@ -281,18 +286,18 @@ internal interface ICatalogInEngine : ICatalogHandle
     IFilterParameter CreateFilterParameter(IEnumerable enumerable);
     IFilterParameter CreateFilterParameter(object rangeMin, object rangeMax);
 
-    void FilterExact(Vector vector, object key);
-    void FilterEnumerable(Vector vector, IEnumerable keys);
-    void FilterRange(Vector vector, object keyMin, object keyMax);
+    void FilterExact(TBitVector vector, object key);
+    void FilterEnumerable(TBitVector vector, IEnumerable keys);
+    void FilterRange(TBitVector vector, object keyMin, object keyMax);
 
     ISortParameter CreateSortParameter(bool ascending);
 
-    CatalogSortResult Sort(Vector vector, bool value, bool ascending, bool disableParallel);
-    CatalogSortResult ThenSort(CatalogSortResult sortResult, bool value, bool ascending, bool disableParallel);
+    CatalogSortResult<TBitVector> Sort(TBitVector vector, bool value, bool ascending, bool disableParallel);
+    CatalogSortResult<TBitVector> ThenSort(CatalogSortResult<TBitVector> sortResult, bool value, bool ascending, bool disableParallel);
 
     IFacetParameterInternal CreateFacetParameter();
 
-    IFacet Facet(Vector vector, bool disableParallel, bool shortCircuitCounting);
+    IFacet Facet(TBitVector vector, bool disableParallel, bool shortCircuitCounting);
 }
 
 public interface ICatalogHandle<TKey> : ICatalogHandle { }

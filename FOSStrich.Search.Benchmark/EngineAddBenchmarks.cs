@@ -5,9 +5,6 @@ using FOSStrich.StackExchange;
 [MemoryDiagnoser]
 public class EngineAddBenchmarks : EngineBenchmarksBase
 {
-    [Params(VectorCompression.Compressed, VectorCompression.CompressedWithPackedPosition)]
-    public VectorCompression Compression { get; set; }
-
     [GlobalSetup]
     public void GlobalSetup() =>
         _posts = new StackExchangeSiteSerializer(Program.StackExchangeDirectory, Program.StackExchangeSite)
@@ -20,7 +17,7 @@ public class EngineAddBenchmarks : EngineBenchmarksBase
     [Benchmark]
     public void Add()
     {
-        using var engine = ConstructEngine(Compression);
+        using var engine = ConstructEngine();
 
         engine.Add(_posts);
     }

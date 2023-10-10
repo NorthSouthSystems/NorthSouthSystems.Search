@@ -1,9 +1,12 @@
 ﻿namespace FOSStrich.Search;
 
-public sealed class CatalogSortResult
+using FOSStrich.BitVectors;
+
+public sealed class CatalogSortResult<TBitVector>
+    where TBitVector : IBitVector<TBitVector>
 {
-    internal CatalogSortResult(IEnumerable<Vector> partialSorts) =>
+    internal CatalogSortResult(IEnumerable<TBitVector> partialSorts) =>
         PartialSorts = partialSorts;
 
-    public IEnumerable<Vector> PartialSorts { get; }
+    public IEnumerable<TBitVector> PartialSorts { get; }
 }

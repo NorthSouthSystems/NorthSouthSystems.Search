@@ -1,4 +1,4 @@
-﻿namespace FOSStrich.Search;
+﻿namespace FOSStrich.BitVectors.PLWAH;
 
 using System.Globalization;
 using System.Numerics;

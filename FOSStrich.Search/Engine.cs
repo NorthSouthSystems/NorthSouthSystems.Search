@@ -1,38 +1,42 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.BitVectors;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
-public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
+public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IDisposable
+    where TBitVector : IBitVector<TBitVector>
 {
-    public Engine(Func<TItem, TPrimaryKey> primaryKeyExtractor)
+    public Engine(IBitVectorFactory<TBitVector> bitVectorFactory, Func<TItem, TPrimaryKey> primaryKeyExtractor)
     {
+        _bitVectorFactory = bitVectorFactory;
         _primaryKeyExtractor = primaryKeyExtractor;
-        _activeItems = new Vector(VectorCompression.None);
+        _activeItems = _bitVectorFactory.Create(false);
     }
 
     private bool _configuring = true;
     private readonly ReaderWriterLockSlim _rwLock = new();
 
+    private readonly IBitVectorFactory<TBitVector> _bitVectorFactory;
     private readonly Func<TItem, TPrimaryKey> _primaryKeyExtractor;
     private List<TPrimaryKey> _primaryKeys = new();
     private Dictionary<TPrimaryKey, int> _primaryKeyToActiveBitPositionMap = new();
 
-    private Vector _activeItems;
+    private TBitVector _activeItems;
 
     private List<CatalogPlusExtractor> _catalogsPlusExtractors = new();
 
     private class CatalogPlusExtractor
     {
-        internal CatalogPlusExtractor(ICatalogInEngine catalog, Func<TItem, object> keysOrKeyExtractor)
+        internal CatalogPlusExtractor(ICatalogInEngine<TBitVector> catalog, Func<TItem, object> keysOrKeyExtractor)
         {
             Catalog = catalog;
             KeysOrKeyExtractor = keysOrKeyExtractor;
         }
 
-        internal readonly ICatalogInEngine Catalog;
+        internal readonly ICatalogInEngine<TBitVector> Catalog;
         internal readonly Func<TItem, object> KeysOrKeyExtractor;
     }
 
@@ -40,21 +44,21 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
 
     #region Catalog Management
 
-    public ICatalogHandle<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, TKey> keyExtractor)
+    public ICatalogHandle<TKey> CreateCatalog<TKey>(string name, Func<TItem, TKey> keyExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey> =>
-        CreateCatalogImpl<TKey>(name, compression, true, item => (object)keyExtractor(item));
+        CreateCatalogImpl<TKey>(name, true, item => (object)keyExtractor(item));
 
-    public ICatalogHandle<TKey> CreateCatalog<TKey>(string name, VectorCompression compression, Func<TItem, IEnumerable<TKey>> keysExtractor)
+    public ICatalogHandle<TKey> CreateCatalog<TKey>(string name, Func<TItem, IEnumerable<TKey>> keysExtractor)
             where TKey : IEquatable<TKey>, IComparable<TKey> =>
-        CreateCatalogImpl<TKey>(name, compression, false, item => (object)keysExtractor(item));
+        CreateCatalogImpl<TKey>(name, false, item => (object)keysExtractor(item));
 
-    private ICatalogHandle<TKey> CreateCatalogImpl<TKey>(string name, VectorCompression compression, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
+    private ICatalogHandle<TKey> CreateCatalogImpl<TKey>(string name, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentNullException(nameof(name));
 
-        Catalog<TKey> catalog;
+        Catalog<TBitVector, TKey> catalog;
 
         try
         {
@@ -66,7 +70,7 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
             if (_catalogsPlusExtractors.Any(cpe => cpe.Catalog.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "A Catalog already exists with the case-insensitive name : {0}.", name));
 
-            catalog = new Catalog<TKey>(name, isOneToOne, compression);
+            catalog = new Catalog<TBitVector, TKey>(_bitVectorFactory, name, isOneToOne);
             _catalogsPlusExtractors.Add(new CatalogPlusExtractor(catalog, keyOrKeysExtractor));
         }
         finally
@@ -81,9 +85,9 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
     // _configuring is stopped which prevents the addition of Catalogs.
     internal bool HasCatalog(ICatalogHandle catalog) => _catalogsPlusExtractors.Any(cpe => cpe.Catalog == catalog);
 
-    internal IEnumerable<ICatalogInEngine> GetCatalogs() => _catalogsPlusExtractors.Select(cpe => cpe.Catalog);
+    internal IEnumerable<ICatalogInEngine<TBitVector>> GetCatalogs() => _catalogsPlusExtractors.Select(cpe => cpe.Catalog);
 
-    internal ICatalogInEngine GetCatalog(string name) =>
+    internal ICatalogInEngine<TBitVector> GetCatalog(string name) =>
         _catalogsPlusExtractors.Single(cpe => cpe.Catalog.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).Catalog;
 
     #endregion
@@ -122,15 +126,15 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
 
             // A potential optimization would be to construct this Vector in an efficient manner able to leverage
             // the fact that we need exactly _activeItems.Population consecutive 1's.
-            Vector optimizedActiveItems = null;
+            TBitVector optimizedActiveItems = default;
 
-            List<Action> readActions = new List<Action>();
+            var readActions = new List<Action>();
             readActions.Add(() => _activeItems.OptimizeReadPhase(bitPositionShifts, out optimizedActiveItems));
             readActions.AddRange(_catalogsPlusExtractors.Select(cpe => new Action(() => cpe.Catalog.OptimizeReadPhase(bitPositionShifts))));
 
             Parallel.Invoke(readActions.ToArray());
 
-            List<Action> writeActions = new List<Action>();
+            var writeActions = new List<Action>();
             writeActions.Add(() => OptimizePrimaryKeys(bitPositionShifts));
             writeActions.AddRange(_catalogsPlusExtractors.Select(cpe => new Action(() => cpe.Catalog.OptimizeWritePhase())));
 
@@ -327,7 +331,7 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
 
     #region Query
 
-    public Query<TItem, TPrimaryKey> CreateQuery()
+    public Query<TBitVector, TItem, TPrimaryKey> CreateQuery()
     {
         if (_configuring)
         {
@@ -342,16 +346,16 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
             }
         }
 
-        return new Query<TItem, TPrimaryKey>(this);
+        return new Query<TBitVector, TItem, TPrimaryKey>(this);
     }
 
-    internal TPrimaryKey[] ExecuteQuery(Query<TItem, TPrimaryKey> query, int skip, int take, out int totalCount)
+    internal TPrimaryKey[] ExecuteQuery(Query<TBitVector, TItem, TPrimaryKey> query, int skip, int take, out int totalCount)
     {
         try
         {
             _rwLock.EnterReadLock();
 
-            Vector result = InitializeResult(query.AmongstPrimaryKeys);
+            var result = InitializeResult(query.AmongstPrimaryKeys);
 
             Filter(query, result);
             totalCount = result.Population;
@@ -372,13 +376,13 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
         }
     }
 
-    private Vector InitializeResult(IEnumerable<TPrimaryKey> amongstPrimaryKeys)
+    private TBitVector InitializeResult(IEnumerable<TPrimaryKey> amongstPrimaryKeys)
     {
-        Vector result;
+        TBitVector result;
 
         if (amongstPrimaryKeys.Any())
         {
-            result = new Vector(VectorCompression.None);
+            result = _bitVectorFactory.Create(false);
 
             // No benchmarking was done to justify the OrderByDescending; however, the rationale
             // is that if we start by setting the maximum position, the Vector's underlying Array
@@ -402,12 +406,12 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
             }
         }
         else
-            result = new Vector(VectorCompression.None, _activeItems);
+            result = _bitVectorFactory.Create(false, _activeItems);
 
         return result;
     }
 
-    private static void Filter(Query<TItem, TPrimaryKey> query, Vector result)
+    private static void Filter(Query<TBitVector, TItem, TPrimaryKey> query, TBitVector result)
     {
         // TODO : Support for nested boolean logic.
         Trace.Assert(query.FilterClause == null || query.FilterClause.Operation == BooleanOperation.And);
@@ -416,7 +420,7 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
 
         foreach (IFilterParameter filterParameter in filterParameters)
         {
-            var catalog = (ICatalogInEngine)filterParameter.Catalog;
+            var catalog = (ICatalogInEngine<TBitVector>)filterParameter.Catalog;
 
             switch (filterParameter.ParameterType)
             {
@@ -435,18 +439,18 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
         }
     }
 
-    private void Facet(Query<TItem, TPrimaryKey> query, Vector filterResult) =>
+    private void Facet(Query<TBitVector, TItem, TPrimaryKey> query, TBitVector filterResult) =>
         Parallel.ForEach(query.FacetParametersInternal, new ParallelOptions { MaxDegreeOfParallelism = query.FacetDisableParallel ? 1 : -1 },
-            facetParameter => facetParameter.Facet = ((ICatalogInEngine)facetParameter.Catalog).Facet(filterResult, query.FacetDisableParallel, query.FacetShortCircuitCounting));
+            facetParameter => facetParameter.Facet = ((ICatalogInEngine<TBitVector>)facetParameter.Catalog).Facet(filterResult, query.FacetDisableParallel, query.FacetShortCircuitCounting));
 
-    private IEnumerable<int> Sort(Query<TItem, TPrimaryKey> query, int skipPlusTake, Vector filterResult, int totalCount)
+    private IEnumerable<int> Sort(Query<TBitVector, TItem, TPrimaryKey> query, int skipPlusTake, TBitVector filterResult, int totalCount)
     {
         var sortParameters = query.SortParameters.ToArray();
         int sortCount = sortParameters.Length + (query.SortPrimaryKeyAscending.HasValue ? 1 : 0);
 
         if (sortParameters.Any())
         {
-            CatalogSortResult sortResult = null;
+            CatalogSortResult<TBitVector> sortResult = null;
 
             for (int sortParameterIndex = 0; sortParameterIndex < sortParameters.Length; sortParameterIndex++)
             {
@@ -455,9 +459,9 @@ public sealed partial class Engine<TItem, TPrimaryKey> : IDisposable
                 bool sortDisableParallel = query.SortDisableParallel || (sortCount == (sortParameterIndex + 1) && skipPlusTake < totalCount);
 
                 if (sortParameterIndex == 0)
-                    sortResult = ((ICatalogInEngine)sortParameter.Catalog).Sort(filterResult, true, sortParameter.Ascending, sortDisableParallel);
+                    sortResult = ((ICatalogInEngine<TBitVector>)sortParameter.Catalog).Sort(filterResult, true, sortParameter.Ascending, sortDisableParallel);
                 else
-                    sortResult = ((ICatalogInEngine)sortParameter.Catalog).ThenSort(sortResult, true, sortParameter.Ascending, sortDisableParallel);
+                    sortResult = ((ICatalogInEngine<TBitVector>)sortParameter.Catalog).ThenSort(sortResult, true, sortParameter.Ascending, sortDisableParallel);
             }
 
             if (query.SortPrimaryKeyAscending.HasValue)

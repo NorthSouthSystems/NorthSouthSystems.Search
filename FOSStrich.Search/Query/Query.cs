@@ -1,15 +1,15 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.BitVectors;
 using System.Diagnostics;
 
-public sealed class Query<TItem, TPrimaryKey>
+public sealed class Query<TBitVector, TItem, TPrimaryKey>
+    where TBitVector : IBitVector<TBitVector>
 {
-    internal Query(Engine<TItem, TPrimaryKey> engine)
-    {
+    internal Query(Engine<TBitVector, TItem, TPrimaryKey> engine) =>
         _engine = engine;
-    }
 
-    private readonly Engine<TItem, TPrimaryKey> _engine;
+    private readonly Engine<TBitVector, TItem, TPrimaryKey> _engine;
 
     private void ThrowIfEngineMismatch(ICatalogHandle catalog)
     {
@@ -22,7 +22,7 @@ public sealed class Query<TItem, TPrimaryKey>
     public IEnumerable<TPrimaryKey> AmongstPrimaryKeys => _amongstPrimaryKeys;
     private readonly List<TPrimaryKey> _amongstPrimaryKeys = new();
 
-    public Query<TItem, TPrimaryKey> Amongst(IEnumerable<TPrimaryKey> primaryKeys)
+    public Query<TBitVector, TItem, TPrimaryKey> Amongst(IEnumerable<TPrimaryKey> primaryKeys)
     {
         ThrowIfExecuted();
 
@@ -40,7 +40,7 @@ public sealed class Query<TItem, TPrimaryKey>
 
     public FilterClause FilterClause { get; private set; }
 
-    public Query<TItem, TPrimaryKey> Filter(FilterClause filterClause)
+    public Query<TBitVector, TItem, TPrimaryKey> Filter(FilterClause filterClause)
     {
         ThrowIfExecuted();
 
@@ -62,7 +62,7 @@ public sealed class Query<TItem, TPrimaryKey>
     public IEnumerable<ISortParameter> SortParameters => _sortParameters;
     private readonly List<ISortParameter> _sortParameters = new();
 
-    public Query<TItem, TPrimaryKey> Sort(params ISortParameter[] sortParameters)
+    public Query<TBitVector, TItem, TPrimaryKey> Sort(params ISortParameter[] sortParameters)
     {
         ThrowIfExecuted();
 
@@ -87,7 +87,7 @@ public sealed class Query<TItem, TPrimaryKey>
 
     public bool? SortPrimaryKeyAscending { get; private set; }
 
-    public Query<TItem, TPrimaryKey> SortPrimaryKey(bool ascending)
+    public Query<TBitVector, TItem, TPrimaryKey> SortPrimaryKey(bool ascending)
     {
         ThrowIfExecuted();
 
@@ -101,7 +101,7 @@ public sealed class Query<TItem, TPrimaryKey>
 
     public bool SortDisableParallel { get; private set; }
 
-    public Query<TItem, TPrimaryKey> WithSortOptions(bool sortDisableParallel = false)
+    public Query<TBitVector, TItem, TPrimaryKey> WithSortOptions(bool sortDisableParallel = false)
     {
         ThrowIfExecuted();
 
@@ -118,7 +118,7 @@ public sealed class Query<TItem, TPrimaryKey>
     internal IEnumerable<IFacetParameterInternal> FacetParametersInternal => _facetParameters;
     private readonly List<IFacetParameterInternal> _facetParameters = new();
 
-    public Query<TItem, TPrimaryKey> FacetAll()
+    public Query<TBitVector, TItem, TPrimaryKey> FacetAll()
     {
         var facetParameters = _engine.GetCatalogs()
             .Select(catalog => (IFacetParameter)catalog.CreateFacetParameter())
@@ -127,7 +127,7 @@ public sealed class Query<TItem, TPrimaryKey>
         return Facet(facetParameters);
     }
 
-    public Query<TItem, TPrimaryKey> Facet(params IFacetParameter[] facetParameters)
+    public Query<TBitVector, TItem, TPrimaryKey> Facet(params IFacetParameter[] facetParameters)
     {
         ThrowIfExecuted();
 
@@ -150,7 +150,7 @@ public sealed class Query<TItem, TPrimaryKey>
     public bool FacetDisableParallel { get; private set; }
     public bool FacetShortCircuitCounting { get; private set; }
 
-    public Query<TItem, TPrimaryKey> WithFacetOptions(bool facetDisableParallel = false, bool facetShortCircuitCounting = false)
+    public Query<TBitVector, TItem, TPrimaryKey> WithFacetOptions(bool facetDisableParallel = false, bool facetShortCircuitCounting = false)
     {
         ThrowIfExecuted();
 
@@ -211,13 +211,13 @@ public sealed class Query<TItem, TPrimaryKey>
     }
     private TimeSpan _resultElapsedTime;
 
-    public Query<TItem, TPrimaryKey> Execute(int skip, int take)
+    public Query<TBitVector, TItem, TPrimaryKey> Execute(int skip, int take)
     {
         ThrowIfExecuted();
 
         Executed = true;
 
-        Stopwatch watch = new Stopwatch();
+        var watch = new Stopwatch();
         watch.Start();
 
         int totalCount;

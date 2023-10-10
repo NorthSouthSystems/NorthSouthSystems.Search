@@ -1,14 +1,12 @@
-﻿namespace FOSStrich.Search;
-
-using FOSStrich.BitVectors;
+﻿namespace FOSStrich.BitVectors.PLWAH;
 
 public class VectorFactory : IBitVectorFactory<Vector>
 {
     public Vector Create(bool isCompressed) =>
-        new(VectorCompression.CompressedWithPackedPosition);
+        new(isCompressed ? VectorCompression.CompressedWithPackedPosition : VectorCompression.None);
 
     public Vector Create(bool isCompressed, Vector copy) =>
-        new(VectorCompression.CompressedWithPackedPosition, copy);
+        new(isCompressed ? VectorCompression.CompressedWithPackedPosition : VectorCompression.None, copy);
 
     public Vector CreateUncompressedUnion(params Vector[] union) =>
         Vector.OrOutOfPlace(union);

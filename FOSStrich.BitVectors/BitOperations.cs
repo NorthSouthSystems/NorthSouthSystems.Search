@@ -1,5 +1,5 @@
 ﻿#if NETSTANDARD2_0
-namespace FOSStrich.Search;
+namespace FOSStrich.BitVectors;
 
 /// <summary>
 /// Provides a method for computing the population (number of bits set to 1) of an

@@ -6,20 +6,20 @@ public abstract class EngineBenchmarksBase
 {
     private static readonly int[] _powersOfTen = new[] { 1, 10, 100, 1_000, 10_000, 100_000, 1_000_000 };
 
-    protected Engine<Post, int> ConstructEngine(VectorCompression compression)
+    protected Engine<FOSStrich.BitVectors.PLWAH.Vector, Post, int> ConstructEngine()
     {
-        Engine = new Engine<Post, int>(post => post.Id);
+        Engine = new(new FOSStrich.BitVectors.PLWAH.VectorFactory(), post => post.Id);
 
-        PostTypeCatalog = Engine.CreateCatalog(nameof(Post.PostTypeId), compression, post => post.PostTypeId);
-        CreationDateCatalog = Engine.CreateCatalog(nameof(Post.CreationDate), compression, post => YearMonth(post.CreationDate));
-        LastActivityDateCatalog = Engine.CreateCatalog(nameof(Post.LastActivityDate), compression, post => YearMonth(post.LastActivityDate));
-        ScoreCatalog = Engine.CreateCatalog(nameof(Post.Score), compression, post => post.Score);
-        ViewCountCatalog = Engine.CreateCatalog(nameof(Post.ViewCount), compression, post => OneSigFig(post.ViewCount));
-        OwnerUserIdCatalog = Engine.CreateCatalog(nameof(Post.OwnerUserId), compression, post => post.OwnerUserId);
-        TagsCatalog = Engine.CreateCatalog(nameof(Post.Tags), compression, post => post.Tags);
-        AnswerCountCatalog = Engine.CreateCatalog(nameof(Post.AnswerCount), compression, post => OneSigFig(post.AnswerCount));
-        CommentCountCatalog = Engine.CreateCatalog(nameof(Post.CommentCount), compression, post => OneSigFig(post.CommentCount));
-        FavoriteCountCatalog = Engine.CreateCatalog(nameof(Post.FavoriteCount), compression, post => OneSigFig(post.FavoriteCount));
+        PostTypeCatalog = Engine.CreateCatalog(nameof(Post.PostTypeId), post => post.PostTypeId);
+        CreationDateCatalog = Engine.CreateCatalog(nameof(Post.CreationDate), post => YearMonth(post.CreationDate));
+        LastActivityDateCatalog = Engine.CreateCatalog(nameof(Post.LastActivityDate), post => YearMonth(post.LastActivityDate));
+        ScoreCatalog = Engine.CreateCatalog(nameof(Post.Score), post => post.Score);
+        ViewCountCatalog = Engine.CreateCatalog(nameof(Post.ViewCount), post => OneSigFig(post.ViewCount));
+        OwnerUserIdCatalog = Engine.CreateCatalog(nameof(Post.OwnerUserId), post => post.OwnerUserId);
+        TagsCatalog = Engine.CreateCatalog(nameof(Post.Tags), post => post.Tags);
+        AnswerCountCatalog = Engine.CreateCatalog(nameof(Post.AnswerCount), post => OneSigFig(post.AnswerCount));
+        CommentCountCatalog = Engine.CreateCatalog(nameof(Post.CommentCount), post => OneSigFig(post.CommentCount));
+        FavoriteCountCatalog = Engine.CreateCatalog(nameof(Post.FavoriteCount), post => OneSigFig(post.FavoriteCount));
 
         return Engine;
 
@@ -37,7 +37,7 @@ public abstract class EngineBenchmarksBase
         }
     }
 
-    public Engine<Post, int> Engine { get; private set; }
+    public Engine<FOSStrich.BitVectors.PLWAH.Vector, Post, int> Engine { get; private set; }
 
     public ICatalogHandle<byte> PostTypeCatalog { get; private set; }
     public ICatalogHandle<DateTime> CreationDateCatalog { get; private set; }
