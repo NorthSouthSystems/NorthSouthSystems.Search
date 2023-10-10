@@ -1,5 +1,6 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.BitVectors;
 using System.Buffers;
 
 /// <summary>
@@ -9,7 +10,7 @@ using System.Buffers;
 /// The implementation REQUIRES that <c>_words[WordCount - 1].IsCompressed == false</c> at all times and only allows
 /// <c>Set</c>ting bits on that Word and forward. In code comments will refer to this as the LAW.
 /// </remarks>
-public sealed partial class Vector
+public sealed partial class Vector : IBitVector<Vector>
 {
     #region Construction
 
@@ -619,6 +620,28 @@ public sealed partial class Vector
             AndInPlaceNoneNone(this, vector);
         else
             AndInPlaceNoneCompressedWithPackedPosition(this, vector);
+    }
+
+    public Vector AndOutOfPlace(Vector vector, bool resultIsCompressed)
+    {
+        if (vector == null)
+            throw new ArgumentNullException(nameof(vector));
+
+        // DELETE ME : This code is temporary until a new project is created to delineate
+        // WAH vs. PLWAH (which will involve the deletion of the VectorCompression enum).
+
+        var resultCompression = VectorCompression.None;
+
+        if (resultIsCompressed)
+        {
+            var (_, moreCompression) = OrderByCompression(vector);
+
+            resultCompression = moreCompression.IsCompressed
+                ? moreCompression.Compression
+                : VectorCompression.CompressedWithPackedPosition;
+        }
+
+        return AndOutOfPlace(vector, resultCompression);
     }
 
     public Vector AndOutOfPlace(Vector vector, VectorCompression resultCompression)
