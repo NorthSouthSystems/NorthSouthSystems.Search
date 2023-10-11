@@ -1,4 +1,4 @@
-﻿namespace FOSStrich.Search;
+﻿namespace FOSStrich.BitVectors.PLWAH;
 
 internal static class VectorTestsRandom
 {
