@@ -1,7 +1,6 @@
 ﻿namespace FOSStrich.Search;
 
 using FOSStrich.StackExchange;
-using V = FOSStrich.BitVectors.PLWAH.Vector;
 
 [MemoryDiagnoser]
 public class EngineQueryBenchmarks : EngineBenchmarksBase
@@ -32,7 +31,7 @@ public class EngineQueryBenchmarks : EngineBenchmarksBase
     [Benchmark]
     public void Full() => Facet(Sort(Filter(Engine.CreateQuery()))).Execute(0, 100);
 
-    private Query<V, Post, int> Filter(Query<V, Post, int> query)
+    private Query<int> Filter(Query<int> query)
     {
         const int jonSkeetUserId = 22656;
 
@@ -40,10 +39,10 @@ public class EngineQueryBenchmarks : EngineBenchmarksBase
             && FilterParameter.Create(OwnerUserIdCatalog, jonSkeetUserId));
     }
 
-    private Query<V, Post, int> Sort(Query<V, Post, int> query) =>
+    private Query<int> Sort(Query<int> query) =>
         query.Sort(SortParameter.Create(CreationDateCatalog, false));
 
-    private Query<V, Post, int> Facet(Query<V, Post, int> query) =>
+    private Query<int> Facet(Query<int> query) =>
         query.Facet(FacetParameter.Create(PostTypeCatalog),
             FacetParameter.Create(CreationDateCatalog),
             FacetParameter.Create(LastActivityDateCatalog),
