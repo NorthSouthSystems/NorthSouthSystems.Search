@@ -250,7 +250,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogHandle<TKey>, IC
 
     #region Facet
 
-    IFacetParameterInternal ICatalogInEngine<TBitVector>.CreateFacetParameter() => new FacetParameter<TBitVector, TKey>(this);
+    IFacetParameterInternal ICatalogInEngine<TBitVector>.CreateFacetParameter() => new FacetParameter<TKey>(this);
 
     IFacet ICatalogInEngine<TBitVector>.Facet(TBitVector vector, bool disableParallel, bool shortCircuitCounting) => Facet(vector, disableParallel, shortCircuitCounting);
 

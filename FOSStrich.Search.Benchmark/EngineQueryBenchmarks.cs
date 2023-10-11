@@ -44,12 +44,12 @@ public class EngineQueryBenchmarks : EngineBenchmarksBase
         query.Sort(SortParameter.Create(CreationDateCatalog, false));
 
     private Query<V, Post, int> Facet(Query<V, Post, int> query) =>
-        query.Facet(FacetParameter.Create<V, byte>(PostTypeCatalog),
-            FacetParameter.Create<V, DateTime>(CreationDateCatalog),
-            FacetParameter.Create<V, DateTime>(LastActivityDateCatalog),
-            FacetParameter.Create<V, int>(ViewCountCatalog),
-            FacetParameter.Create<V, string>(TagsCatalog),
-            FacetParameter.Create<V, int>(AnswerCountCatalog),
-            FacetParameter.Create<V, int>(CommentCountCatalog),
-            FacetParameter.Create<V, int>(FavoriteCountCatalog));
+        query.Facet(FacetParameter.Create(PostTypeCatalog),
+            FacetParameter.Create(CreationDateCatalog),
+            FacetParameter.Create(LastActivityDateCatalog),
+            FacetParameter.Create(ViewCountCatalog),
+            FacetParameter.Create(TagsCatalog),
+            FacetParameter.Create(AnswerCountCatalog),
+            FacetParameter.Create(CommentCountCatalog),
+            FacetParameter.Create(FavoriteCountCatalog));
 }

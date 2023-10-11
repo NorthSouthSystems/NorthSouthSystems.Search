@@ -4,8 +4,7 @@ using FOSStrich.BitVectors;
 
 public static class FacetParameter
 {
-    public static FacetParameter<TBitVector, TKey> Create<TBitVector, TKey>(ICatalogHandle<TKey> catalog)
-            where TBitVector : IBitVector<TBitVector>
+    public static FacetParameter<TKey> Create<TKey>(ICatalogHandle<TKey> catalog)
             where TKey : IEquatable<TKey>, IComparable<TKey> =>
         new(catalog);
 
@@ -14,8 +13,7 @@ public static class FacetParameter
         ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFacetParameter());
 }
 
-public sealed class FacetParameter<TBitVector, TKey> : IFacetParameterInternal
-    where TBitVector : IBitVector<TBitVector>
+public sealed class FacetParameter<TKey> : IFacetParameterInternal
     where TKey : IEquatable<TKey>, IComparable<TKey>
 {
     internal FacetParameter(ICatalogHandle<TKey> catalog) =>
