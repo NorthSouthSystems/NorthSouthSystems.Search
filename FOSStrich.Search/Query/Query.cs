@@ -1,15 +1,13 @@
 ﻿namespace FOSStrich.Search;
 
-using FOSStrich.BitVectors;
 using System.Diagnostics;
 
-public sealed class Query<TBitVector, TItem, TPrimaryKey>
-    where TBitVector : IBitVector<TBitVector>
+public sealed class Query<TPrimaryKey>
 {
-    internal Query(Engine<TBitVector, TItem, TPrimaryKey> engine) =>
+    internal Query(IEngine<TPrimaryKey> engine) =>
         _engine = engine;
 
-    private readonly Engine<TBitVector, TItem, TPrimaryKey> _engine;
+    private readonly IEngine<TPrimaryKey> _engine;
 
     private void ThrowIfEngineMismatch(ICatalogHandle catalog)
     {
@@ -19,10 +17,10 @@ public sealed class Query<TBitVector, TItem, TPrimaryKey>
 
     #region Amongst
 
-    public IEnumerable<TPrimaryKey> AmongstPrimaryKeys => _amongstPrimaryKeys;
+    internal IEnumerable<TPrimaryKey> AmongstPrimaryKeys => _amongstPrimaryKeys;
     private readonly List<TPrimaryKey> _amongstPrimaryKeys = new();
 
-    public Query<TBitVector, TItem, TPrimaryKey> Amongst(IEnumerable<TPrimaryKey> primaryKeys)
+    public Query<TPrimaryKey> Amongst(IEnumerable<TPrimaryKey> primaryKeys)
     {
         ThrowIfExecuted();
 
@@ -38,9 +36,9 @@ public sealed class Query<TBitVector, TItem, TPrimaryKey>
 
     #region Filter
 
-    public FilterClause FilterClause { get; private set; }
+    internal FilterClause FilterClause { get; private set; }
 
-    public Query<TBitVector, TItem, TPrimaryKey> Filter(FilterClause filterClause)
+    public Query<TPrimaryKey> Filter(FilterClause filterClause)
     {
         ThrowIfExecuted();
 
@@ -59,10 +57,10 @@ public sealed class Query<TBitVector, TItem, TPrimaryKey>
 
     #region Sort
 
-    public IEnumerable<ISortParameter> SortParameters => _sortParameters;
+    internal IEnumerable<ISortParameter> SortParameters => _sortParameters;
     private readonly List<ISortParameter> _sortParameters = new();
 
-    public Query<TBitVector, TItem, TPrimaryKey> Sort(params ISortParameter[] sortParameters)
+    public Query<TPrimaryKey> Sort(params ISortParameter[] sortParameters)
     {
         ThrowIfExecuted();
 
@@ -85,9 +83,9 @@ public sealed class Query<TBitVector, TItem, TPrimaryKey>
         return this;
     }
 
-    public bool? SortPrimaryKeyAscending { get; private set; }
+    internal bool? SortPrimaryKeyAscending { get; private set; }
 
-    public Query<TBitVector, TItem, TPrimaryKey> SortPrimaryKey(bool ascending)
+    public Query<TPrimaryKey> SortPrimaryKey(bool ascending)
     {
         ThrowIfExecuted();
 
@@ -99,9 +97,9 @@ public sealed class Query<TBitVector, TItem, TPrimaryKey>
         return this;
     }
 
-    public bool SortDisableParallel { get; private set; }
+    internal bool SortDisableParallel { get; private set; }
 
-    public Query<TBitVector, TItem, TPrimaryKey> WithSortOptions(bool sortDisableParallel = false)
+    public Query<TPrimaryKey> WithSortOptions(bool sortDisableParallel = false)
     {
         ThrowIfExecuted();
 
@@ -114,11 +112,10 @@ public sealed class Query<TBitVector, TItem, TPrimaryKey>
 
     #region Facet
 
-    public IEnumerable<IFacetParameter> FacetParameters => _facetParameters;
     internal IEnumerable<IFacetParameterInternal> FacetParametersInternal => _facetParameters;
     private readonly List<IFacetParameterInternal> _facetParameters = new();
 
-    public Query<TBitVector, TItem, TPrimaryKey> FacetAll()
+    public Query<TPrimaryKey> FacetAll()
     {
         var facetParameters = _engine.GetCatalogs()
             .Select(catalog => (IFacetParameter)catalog.CreateFacetParameter())
@@ -127,7 +124,7 @@ public sealed class Query<TBitVector, TItem, TPrimaryKey>
         return Facet(facetParameters);
     }
 
-    public Query<TBitVector, TItem, TPrimaryKey> Facet(params IFacetParameter[] facetParameters)
+    public Query<TPrimaryKey> Facet(params IFacetParameter[] facetParameters)
     {
         ThrowIfExecuted();
 
@@ -147,10 +144,10 @@ public sealed class Query<TBitVector, TItem, TPrimaryKey>
         return this;
     }
 
-    public bool FacetDisableParallel { get; private set; }
-    public bool FacetShortCircuitCounting { get; private set; }
+    internal bool FacetDisableParallel { get; private set; }
+    internal bool FacetShortCircuitCounting { get; private set; }
 
-    public Query<TBitVector, TItem, TPrimaryKey> WithFacetOptions(bool facetDisableParallel = false, bool facetShortCircuitCounting = false)
+    public Query<TPrimaryKey> WithFacetOptions(bool facetDisableParallel = false, bool facetShortCircuitCounting = false)
     {
         ThrowIfExecuted();
 
@@ -172,46 +169,7 @@ public sealed class Query<TBitVector, TItem, TPrimaryKey>
             throw new NotSupportedException("Query has already been executed.");
     }
 
-    private void ThrowIfNotExecuted()
-    {
-        if (!Executed)
-            throw new NotSupportedException("Query has not yet been executed.");
-    }
-
-    public TPrimaryKey[] ResultPrimaryKeys
-    {
-        get
-        {
-            ThrowIfNotExecuted();
-
-            return _resultPrimaryKeys;
-        }
-    }
-    private TPrimaryKey[] _resultPrimaryKeys;
-
-    public int ResultTotalCount
-    {
-        get
-        {
-            ThrowIfNotExecuted();
-
-            return _resultTotalCount;
-        }
-    }
-    private int _resultTotalCount;
-
-    public TimeSpan ResultElapsedTime
-    {
-        get
-        {
-            ThrowIfNotExecuted();
-
-            return _resultElapsedTime;
-        }
-    }
-    private TimeSpan _resultElapsedTime;
-
-    public Query<TBitVector, TItem, TPrimaryKey> Execute(int skip, int take)
+    public QueryResult<TPrimaryKey> Execute(int skip, int take)
     {
         ThrowIfExecuted();
 
@@ -220,15 +178,26 @@ public sealed class Query<TBitVector, TItem, TPrimaryKey>
         var watch = new Stopwatch();
         watch.Start();
 
-        int totalCount;
-        _resultPrimaryKeys = _engine.ExecuteQuery(this, skip, take, out totalCount);
-        _resultTotalCount = totalCount;
+        var resultPrimaryKeys = _engine.ExecuteQuery(this, skip, take, out int totalCount);
 
         watch.Stop();
-        _resultElapsedTime = watch.Elapsed;
 
-        return this;
+        return new(resultPrimaryKeys, totalCount, watch.Elapsed);
     }
 
     #endregion
+}
+
+public class QueryResult<TPrimaryKey>
+{
+    internal QueryResult(TPrimaryKey[] primaryKeys, int totalCount, TimeSpan elapsed)
+    {
+        PrimaryKeys = primaryKeys;
+        TotalCount = totalCount;
+        Elapsed = elapsed;
+    }
+
+    public TPrimaryKey[] PrimaryKeys { get; }
+    public int TotalCount { get; }
+    public TimeSpan Elapsed { get; }
 }

@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
-public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine, IDisposable
+public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPrimaryKey>, IDisposable
     where TBitVector : IBitVector<TBitVector>
 {
     public Engine(IBitVectorFactory<TBitVector> bitVectorFactory, Func<TItem, TPrimaryKey> primaryKeyExtractor)
@@ -83,7 +83,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine, ID
 
     // NOTE : No locking is necessary for the following Catalog methods because they are only called from the Query class, and in order to CreateQuery,
     // _configuring is stopped which prevents the addition of Catalogs.
-    internal bool HasCatalog(ICatalogHandle catalog) => _catalogsPlusExtractors.Any(cpe => cpe.Catalog == catalog);
+    bool IEngine.HasCatalog(ICatalogHandle catalog) => _catalogsPlusExtractors.Any(cpe => cpe.Catalog == catalog);
 
     IEnumerable<ICatalogInEngine> IEngine.GetCatalogs() => GetCatalogs();
 
@@ -335,7 +335,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine, ID
 
     #region Query
 
-    public Query<TBitVector, TItem, TPrimaryKey> CreateQuery()
+    public Query<TPrimaryKey> CreateQuery()
     {
         if (_configuring)
         {
@@ -350,10 +350,10 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine, ID
             }
         }
 
-        return new Query<TBitVector, TItem, TPrimaryKey>(this);
+        return new(this);
     }
 
-    internal TPrimaryKey[] ExecuteQuery(Query<TBitVector, TItem, TPrimaryKey> query, int skip, int take, out int totalCount)
+    TPrimaryKey[] IEngine<TPrimaryKey>.ExecuteQuery(Query<TPrimaryKey> query, int skip, int take, out int totalCount)
     {
         try
         {
@@ -415,7 +415,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine, ID
         return result;
     }
 
-    private static void Filter(Query<TBitVector, TItem, TPrimaryKey> query, TBitVector result)
+    private static void Filter(Query<TPrimaryKey> query, TBitVector result)
     {
         // TODO : Support for nested boolean logic.
         Trace.Assert(query.FilterClause == null || query.FilterClause.Operation == BooleanOperation.And);
@@ -443,11 +443,11 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine, ID
         }
     }
 
-    private void Facet(Query<TBitVector, TItem, TPrimaryKey> query, TBitVector filterResult) =>
+    private void Facet(Query<TPrimaryKey> query, TBitVector filterResult) =>
         Parallel.ForEach(query.FacetParametersInternal, new ParallelOptions { MaxDegreeOfParallelism = query.FacetDisableParallel ? 1 : -1 },
             facetParameter => facetParameter.Facet = ((ICatalogInEngine<TBitVector>)facetParameter.Catalog).Facet(filterResult, query.FacetDisableParallel, query.FacetShortCircuitCounting));
 
-    private IEnumerable<int> Sort(Query<TBitVector, TItem, TPrimaryKey> query, int skipPlusTake, TBitVector filterResult, int totalCount)
+    private IEnumerable<int> Sort(Query<TPrimaryKey> query, int skipPlusTake, TBitVector filterResult, int totalCount)
     {
         var sortParameters = query.SortParameters.ToArray();
         int sortCount = sortParameters.Length + (query.SortPrimaryKeyAscending.HasValue ? 1 : 0);
@@ -487,8 +487,14 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine, ID
     #endregion
 }
 
+internal interface IEngine<TPrimaryKey> : IEngine
+{
+    TPrimaryKey[] ExecuteQuery(Query<TPrimaryKey> query, int skip, int take, out int totalCount);
+}
+
 internal interface IEngine
 {
+    bool HasCatalog(ICatalogHandle catalog);
     IEnumerable<ICatalogInEngine> GetCatalogs();
     ICatalogInEngine GetCatalog(string name);
 }
