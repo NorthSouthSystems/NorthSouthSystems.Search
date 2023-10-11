@@ -3,7 +3,7 @@
 using FOSStrich.BitVectors;
 using System.Collections;
 
-public sealed partial class Catalog<TBitVector, TKey> : ICatalogHandle<TKey>, ICatalogInEngine<TBitVector>
+public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVector>, ICatalogHandle<TKey>
     where TBitVector : IBitVector<TBitVector>
     where TKey : IEquatable<TKey>, IComparable<TKey>
 {
@@ -36,13 +36,13 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogHandle<TKey>, IC
 
     #region Optimize
 
-    void ICatalogInEngine<TBitVector>.OptimizeReadPhase(int[] bitPositionShifts)
+    void ICatalogInEngine.OptimizeReadPhase(int[] bitPositionShifts)
     {
         foreach (Entry entry in _keyToEntryMap.Values)
             entry.IsVectorOptimizedAlive = entry.Vector.OptimizeReadPhase(bitPositionShifts, out entry.VectorOptimized);
     }
 
-    void ICatalogInEngine<TBitVector>.OptimizeWritePhase()
+    void ICatalogInEngine.OptimizeWritePhase()
     {
         var deadKeys = new List<TKey>();
 
@@ -68,7 +68,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogHandle<TKey>, IC
 
     #region Set
 
-    void ICatalogInEngine<TBitVector>.Set(object key, int bitPosition, bool value)
+    void ICatalogInEngine.Set(object key, int bitPosition, bool value)
     {
         if (key is TKey)
             Set((TKey)key, bitPosition, value);
@@ -111,13 +111,13 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogHandle<TKey>, IC
 
     #region Filter
 
-    IFilterParameter ICatalogInEngine<TBitVector>.CreateFilterParameter(object exact) =>
+    IFilterParameter ICatalogInEngine.CreateFilterParameter(object exact) =>
         new FilterParameter<TKey>(this, ConvertToTKey(exact));
 
-    IFilterParameter ICatalogInEngine<TBitVector>.CreateFilterParameter(IEnumerable enumerable) =>
+    IFilterParameter ICatalogInEngine.CreateFilterParameter(IEnumerable enumerable) =>
         new FilterParameter<TKey>(this, enumerable.Cast<object>().Select(ConvertToTKey));
 
-    IFilterParameter ICatalogInEngine<TBitVector>.CreateFilterParameter(object rangeMin, object rangeMax) =>
+    IFilterParameter ICatalogInEngine.CreateFilterParameter(object rangeMin, object rangeMax) =>
         new FilterParameter<TKey>(this, ConvertToTKey(rangeMin), ConvertToTKey(rangeMax));
 
     private static TKey ConvertToTKey(object obj) => (TKey)Convert.ChangeType(obj, typeof(TKey));
@@ -197,7 +197,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogHandle<TKey>, IC
 
     #region Sort
 
-    ISortParameter ICatalogInEngine<TBitVector>.CreateSortParameter(bool ascending) => new SortParameter<TKey>(this, ascending);
+    ISortParameter ICatalogInEngine.CreateSortParameter(bool ascending) => new SortParameter<TKey>(this, ascending);
 
     CatalogSortResult<TBitVector> ICatalogInEngine<TBitVector>.Sort(TBitVector vector, bool value, bool ascending, bool disableParallel) =>
         Sort(vector, value, ascending, disableParallel);
@@ -250,7 +250,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogHandle<TKey>, IC
 
     #region Facet
 
-    IFacetParameterInternal ICatalogInEngine<TBitVector>.CreateFacetParameter() => new FacetParameter<TKey>(this);
+    IFacetParameterInternal ICatalogInEngine.CreateFacetParameter() => new FacetParameter<TKey>(this);
 
     IFacet ICatalogInEngine<TBitVector>.Facet(TBitVector vector, bool disableParallel, bool shortCircuitCounting) => Facet(vector, disableParallel, shortCircuitCounting);
 
@@ -274,8 +274,20 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogHandle<TKey>, IC
     #endregion
 }
 
-internal interface ICatalogInEngine<TBitVector> : ICatalogHandle
+internal interface ICatalogInEngine<TBitVector> : ICatalogInEngine
     where TBitVector : IBitVector<TBitVector>
+{
+    void FilterExact(TBitVector vector, object key);
+    void FilterEnumerable(TBitVector vector, IEnumerable keys);
+    void FilterRange(TBitVector vector, object keyMin, object keyMax);
+
+    CatalogSortResult<TBitVector> Sort(TBitVector vector, bool value, bool ascending, bool disableParallel);
+    CatalogSortResult<TBitVector> ThenSort(CatalogSortResult<TBitVector> sortResult, bool value, bool ascending, bool disableParallel);
+
+    IFacet Facet(TBitVector vector, bool disableParallel, bool shortCircuitCounting);
+}
+
+internal interface ICatalogInEngine : ICatalogHandle
 {
     void OptimizeReadPhase(int[] bitPositionShifts);
     void OptimizeWritePhase();
@@ -286,18 +298,9 @@ internal interface ICatalogInEngine<TBitVector> : ICatalogHandle
     IFilterParameter CreateFilterParameter(IEnumerable enumerable);
     IFilterParameter CreateFilterParameter(object rangeMin, object rangeMax);
 
-    void FilterExact(TBitVector vector, object key);
-    void FilterEnumerable(TBitVector vector, IEnumerable keys);
-    void FilterRange(TBitVector vector, object keyMin, object keyMax);
-
     ISortParameter CreateSortParameter(bool ascending);
 
-    CatalogSortResult<TBitVector> Sort(TBitVector vector, bool value, bool ascending, bool disableParallel);
-    CatalogSortResult<TBitVector> ThenSort(CatalogSortResult<TBitVector> sortResult, bool value, bool ascending, bool disableParallel);
-
     IFacetParameterInternal CreateFacetParameter();
-
-    IFacet Facet(TBitVector vector, bool disableParallel, bool shortCircuitCounting);
 }
 
 public interface ICatalogHandle<TKey> : ICatalogHandle { }

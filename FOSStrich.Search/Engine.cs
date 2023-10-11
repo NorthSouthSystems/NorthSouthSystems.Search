@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
-public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IDisposable
+public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine, IDisposable
     where TBitVector : IBitVector<TBitVector>
 {
     public Engine(IBitVectorFactory<TBitVector> bitVectorFactory, Func<TItem, TPrimaryKey> primaryKeyExtractor)
@@ -85,7 +85,11 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IDisposable
     // _configuring is stopped which prevents the addition of Catalogs.
     internal bool HasCatalog(ICatalogHandle catalog) => _catalogsPlusExtractors.Any(cpe => cpe.Catalog == catalog);
 
+    IEnumerable<ICatalogInEngine> IEngine.GetCatalogs() => GetCatalogs();
+
     internal IEnumerable<ICatalogInEngine<TBitVector>> GetCatalogs() => _catalogsPlusExtractors.Select(cpe => cpe.Catalog);
+
+    ICatalogInEngine IEngine.GetCatalog(string name) => GetCatalog(name);
 
     internal ICatalogInEngine<TBitVector> GetCatalog(string name) =>
         _catalogsPlusExtractors.Single(cpe => cpe.Catalog.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).Catalog;
@@ -481,4 +485,10 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IDisposable
             : bitPositions.OrderByDescending(bitPosition => _primaryKeys[bitPosition]);
 
     #endregion
+}
+
+internal interface IEngine
+{
+    IEnumerable<ICatalogInEngine> GetCatalogs();
+    ICatalogInEngine GetCatalog(string name);
 }

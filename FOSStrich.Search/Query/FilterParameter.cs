@@ -1,6 +1,5 @@
 ﻿namespace FOSStrich.Search;
 
-using FOSStrich.BitVectors;
 using System.Collections;
 
 public static class FilterParameter
@@ -17,17 +16,14 @@ public static class FilterParameter
             where TKey : IEquatable<TKey>, IComparable<TKey> =>
         new(catalog, rangeMin, rangeMax);
 
-    internal static IFilterParameter Create<TBitVector, TItem, TPrimaryKey>(Engine<TBitVector, TItem, TPrimaryKey> engine, string catalogName, object exact)
-            where TBitVector : IBitVector<TBitVector> =>
-        ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFilterParameter(exact));
+    internal static IFilterParameter Create(IEngine engine, string catalogName, object exact) =>
+        engine.GetCatalog(catalogName).CreateFilterParameter(exact);
 
-    internal static IFilterParameter Create<TBitVector, TItem, TPrimaryKey>(Engine<TBitVector, TItem, TPrimaryKey> engine, string catalogName, IEnumerable enumerable)
-            where TBitVector : IBitVector<TBitVector> =>
-        ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFilterParameter(enumerable));
+    internal static IFilterParameter Create(IEngine engine, string catalogName, IEnumerable enumerable) =>
+        engine.GetCatalog(catalogName).CreateFilterParameter(enumerable);
 
-    internal static IFilterParameter Create<TBitVector, TItem, TPrimaryKey>(Engine<TBitVector, TItem, TPrimaryKey> engine, string catalogName, object rangeMin, object rangeMax)
-            where TBitVector : IBitVector<TBitVector> =>
-        ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFilterParameter(rangeMin, rangeMax));
+    internal static IFilterParameter Create(IEngine engine, string catalogName, object rangeMin, object rangeMax) =>
+        engine.GetCatalog(catalogName).CreateFilterParameter(rangeMin, rangeMax);
 }
 
 public sealed class FilterParameter<TKey> : FilterClause, IFilterParameter

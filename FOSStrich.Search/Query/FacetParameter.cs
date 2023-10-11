@@ -1,16 +1,13 @@
 ﻿namespace FOSStrich.Search;
 
-using FOSStrich.BitVectors;
-
 public static class FacetParameter
 {
     public static FacetParameter<TKey> Create<TKey>(ICatalogHandle<TKey> catalog)
             where TKey : IEquatable<TKey>, IComparable<TKey> =>
         new(catalog);
 
-    internal static IFacetParameter Create<TBitVector, TItem, TPrimaryKey>(Engine<TBitVector, TItem, TPrimaryKey> engine, string catalogName)
-            where TBitVector : IBitVector<TBitVector> =>
-        ParameterHelper.CreateLooselyTyped(engine, catalogName, catalog => catalog.CreateFacetParameter());
+    internal static IFacetParameter Create(IEngine engine, string catalogName) =>
+        engine.GetCatalog(catalogName).CreateFacetParameter();
 }
 
 public sealed class FacetParameter<TKey> : IFacetParameterInternal
