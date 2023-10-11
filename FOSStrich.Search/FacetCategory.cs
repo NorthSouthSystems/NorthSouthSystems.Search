@@ -1,6 +1,6 @@
 ﻿namespace FOSStrich.Search;
 
-public struct FacetCategory<TKey> : IFacetCategory
+public readonly struct FacetCategory<TKey> : IFacetCategory
     where TKey : IEquatable<TKey>, IComparable<TKey>
 {
     internal FacetCategory(TKey key, int count)

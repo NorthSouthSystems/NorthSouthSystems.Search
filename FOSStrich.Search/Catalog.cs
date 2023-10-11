@@ -20,8 +20,8 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
     public string Name { get; }
     public bool IsOneToOne { get; }
 
-    private SortedSet<TKey> _keys = new();
-    private Dictionary<TKey, Entry> _keyToEntryMap = new();
+    private readonly SortedSet<TKey> _keys = new();
+    private readonly Dictionary<TKey, Entry> _keyToEntryMap = new();
 
     // TODO : Better OOP... right now this is just serving as a mutable Tuple which is probably
     // not the best design.
@@ -70,8 +70,8 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
 
     void ICatalogInEngine.Set(object key, int bitPosition, bool value)
     {
-        if (key is TKey)
-            Set((TKey)key, bitPosition, value);
+        if (key is TKey tkey)
+            Set(tkey, bitPosition, value);
         else
             Set((IEnumerable<TKey>)key, bitPosition, value);
     }
@@ -81,11 +81,8 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
         if (key == null)
             throw new ArgumentNullException(nameof(key));
 
-        Entry entry;
-
-        if (!_keyToEntryMap.TryGetValue(key, out entry))
+        if (!_keyToEntryMap.TryGetValue(key, out Entry entry))
         {
-            // TODO : This will use a VectorFactory pattern shortly.
             entry = new Entry(_bitVectorFactory.Create(true));
 
             _keys.Add(key);
@@ -164,11 +161,8 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
         if (keyMin != null && keyMax != null && keyMin.CompareTo(keyMax) > 0)
             throw new ArgumentOutOfRangeException(nameof(keyMin), "keyMin must be <= keyMax.");
 
-        if (keyMin == null)
-            keyMin = _keys.Min;
-
-        if (keyMax == null)
-            keyMax = _keys.Max;
+        keyMin ??= _keys.Min;
+        keyMax ??= _keys.Max;
 
         FilterImpl(vector, _keys.Count == 0 ? Array.Empty<TBitVector>() : _keys.GetViewBetween(keyMin, keyMax).Select(key => _keyToEntryMap[key].Vector));
     }
@@ -185,13 +179,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
             vector.AndInPlace(_bitVectorFactory.CreateUncompressedUnion(lookupsArray));
     }
 
-    private TBitVector Lookup(TKey key)
-    {
-        Entry entry;
-        _keyToEntryMap.TryGetValue(key, out entry);
-
-        return entry == null ? default : entry.Vector;
-    }
+    private TBitVector Lookup(TKey key) => _keyToEntryMap.TryGetValue(key, out Entry entry) ? entry.Vector : default;
 
     #endregion
 

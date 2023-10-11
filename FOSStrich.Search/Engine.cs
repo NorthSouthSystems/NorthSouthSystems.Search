@@ -224,7 +224,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
         _primaryKeyToActiveBitPositionMap.Add(primaryKey, bitPosition);
         _activeItems[bitPosition] = true;
 
-        foreach (CatalogPlusExtractor cpe in _catalogsPlusExtractors)
+        foreach (var cpe in _catalogsPlusExtractors)
             cpe.Catalog.Set(cpe.KeysOrKeyExtractor(item), bitPosition, true);
     }
 
@@ -279,7 +279,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
         _primaryKeyToActiveBitPositionMap[primaryKey] = toBitPosition;
         _activeItems[toBitPosition] = true;
 
-        foreach (CatalogPlusExtractor cpe in _catalogsPlusExtractors)
+        foreach (var cpe in _catalogsPlusExtractors)
             cpe.Catalog.Set(cpe.KeysOrKeyExtractor(item), toBitPosition, true);
     }
 
@@ -394,15 +394,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
             // QuickSort O(n log n).  However, we are already in an n sized loop so resizing  which
             // costs n each time could theoretically cost us O(n^2).
             foreach (int bitPosition in amongstPrimaryKeys
-                .Select(primaryKey =>
-                {
-                    int temp;
-
-                    if (_primaryKeyToActiveBitPositionMap.TryGetValue(primaryKey, out temp))
-                        return temp;
-                    else
-                        return -1;
-                })
+                .Select(primaryKey => _primaryKeyToActiveBitPositionMap.TryGetValue(primaryKey, out int temp) ? temp : -1)
                 .Where(position => position >= 0)
                 .OrderByDescending(position => position))
             {
@@ -443,7 +435,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
         }
     }
 
-    private void Facet(Query<TPrimaryKey> query, TBitVector filterResult) =>
+    private static void Facet(Query<TPrimaryKey> query, TBitVector filterResult) =>
         Parallel.ForEach(query.FacetParametersInternal, new ParallelOptions { MaxDegreeOfParallelism = query.FacetDisableParallel ? 1 : -1 },
             facetParameter => facetParameter.Facet = ((ICatalogInEngine<TBitVector>)facetParameter.Catalog).Facet(filterResult, query.FacetDisableParallel, query.FacetShortCircuitCounting));
 

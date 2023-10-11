@@ -20,16 +20,12 @@ public class FilterClause
 
     internal IEnumerable<IFilterParameter> AllFilterParameters() =>
         SubClauses.SelectMany(clause =>
-        {
-            var parameter = clause as IFilterParameter;
-
-            return parameter != null
+            clause is IFilterParameter parameter
                 ? new[] { parameter }
-                : clause.AllFilterParameters();
-        });
+                : clause.AllFilterParameters());
 
     // http://stackoverflow.com/questions/15439864/how-do-i-override-logical-and-operator
-    public static bool operator false(FilterClause clause) { return false; }
+    public static bool operator false(FilterClause clause) => false;
 
     public static FilterClause operator &(FilterClause leftClause, FilterClause rightClause)
     {
@@ -40,24 +36,23 @@ public class FilterClause
             throw new ArgumentNullException(nameof(rightClause));
 
         // Flatten when possible
-        switch (leftClause.Operation)
+        return leftClause.Operation switch
         {
-            case BooleanOperation.And:
-                return rightClause.Operation == BooleanOperation.And
-                    ? new FilterClause(BooleanOperation.And, leftClause.SubClauses.Concat(rightClause.SubClauses).ToArray())
-                    : new FilterClause(BooleanOperation.And, leftClause.SubClauses.Concat(new[] { rightClause }).ToArray());
+            BooleanOperation.And =>
+                rightClause.Operation == BooleanOperation.And
+                    ? new(BooleanOperation.And, leftClause.SubClauses.Concat(rightClause.SubClauses).ToArray())
+                    : new(BooleanOperation.And, leftClause.SubClauses.Concat(new[] { rightClause }).ToArray()),
 
-            case BooleanOperation.Or:
-                return rightClause.Operation == BooleanOperation.And
-                    ? new FilterClause(BooleanOperation.And, rightClause.SubClauses.Concat(new[] { leftClause }).ToArray())
-                    : new FilterClause(BooleanOperation.And, new[] { leftClause, rightClause });
+            BooleanOperation.Or =>
+                rightClause.Operation == BooleanOperation.And
+                    ? new(BooleanOperation.And, rightClause.SubClauses.Concat(new[] { leftClause }).ToArray())
+                    : new(BooleanOperation.And, new[] { leftClause, rightClause }),
 
-            default:
-                return new FilterClause(BooleanOperation.And, new[] { leftClause, rightClause });
-        }
+            _ => new(BooleanOperation.And, new[] { leftClause, rightClause })
+        };
     }
 
-    public static bool operator true(FilterClause clause) { return false; }
+    public static bool operator true(FilterClause clause) => false;
 
     public static FilterClause operator |(FilterClause leftClause, FilterClause rightClause)
     {
@@ -68,21 +63,20 @@ public class FilterClause
             throw new ArgumentNullException(nameof(rightClause));
 
         // Flatten when possible
-        switch (leftClause.Operation)
+        return leftClause.Operation switch
         {
-            case BooleanOperation.And:
-                return rightClause.Operation == BooleanOperation.Or
-                    ? new FilterClause(BooleanOperation.Or, rightClause.SubClauses.Concat(new[] { leftClause }).ToArray())
-                    : new FilterClause(BooleanOperation.Or, new[] { leftClause, rightClause });
+            BooleanOperation.And =>
+                rightClause.Operation == BooleanOperation.Or
+                    ? new(BooleanOperation.Or, rightClause.SubClauses.Concat(new[] { leftClause }).ToArray())
+                    : new(BooleanOperation.Or, new[] { leftClause, rightClause }),
 
-            case BooleanOperation.Or:
-                return rightClause.Operation == BooleanOperation.Or
-                    ? new FilterClause(BooleanOperation.Or, leftClause.SubClauses.Concat(rightClause.SubClauses).ToArray())
-                    : new FilterClause(BooleanOperation.Or, leftClause.SubClauses.Concat(new[] { rightClause }).ToArray());
+            BooleanOperation.Or =>
+                rightClause.Operation == BooleanOperation.Or
+                    ? new(BooleanOperation.Or, leftClause.SubClauses.Concat(rightClause.SubClauses).ToArray())
+                    : new(BooleanOperation.Or, leftClause.SubClauses.Concat(new[] { rightClause }).ToArray()),
 
-            default:
-                return new FilterClause(BooleanOperation.Or, new[] { leftClause, rightClause });
-        }
+            _ => new(BooleanOperation.Or, new[] { leftClause, rightClause })
+        };
     }
 
     // TODO : Optimize?
@@ -91,7 +85,7 @@ public class FilterClause
         if (clause == null)
             throw new ArgumentNullException(nameof(clause));
 
-        return new FilterClause(BooleanOperation.Not, new[] { clause });
+        return new(BooleanOperation.Not, new[] { clause });
     }
 }
 
