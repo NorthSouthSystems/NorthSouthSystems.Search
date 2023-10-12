@@ -1,28 +1,31 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.BitVectors;
+
 public class EngineTestsRandom
 {
     private static readonly int[] _randomSeeds = new[] { 18873, -76, 5992, 917773, -6320001 };
 
-    [Fact]
-    public void Full()
+    [Theory]
+    [ClassData(typeof(BitVectorFactories))]
+    public void Full<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
+        where TBitVector : IBitVector<TBitVector>
     {
         foreach (int randomSeed in _randomSeeds)
         {
             var random = new Random(randomSeed);
 
-            foreach (int size in Enumerable.Range(1, (Word.SIZE - 1) * 10 + 1))
+            foreach (int size in Enumerable.Range(1, bitVectorFactory.WordSize * 10))
             {
-                using var engine = new Engine<EngineItem, int>(item => item.Id);
+                using var engine = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 
-                var someIntCatalog = engine.CreateCatalog("SomeInt", SafetyAndCompression.RandomCompression(random), item => item.SomeInt);
-                var someDateTimeCatalog = engine.CreateCatalog("SomeDateTime", SafetyAndCompression.RandomCompression(random), item => item.SomeDateTime);
-                var someStringCatalog = engine.CreateCatalog("SomeString", SafetyAndCompression.RandomCompression(random), item => item.SomeString);
-                var someTagsCatalog = engine.CreateCatalog<string>("SomeTags", SafetyAndCompression.RandomCompression(random), item => item.SomeTags);
+                var someIntCatalog = engine.CreateCatalog("SomeInt", item => item.SomeInt);
+                var someDateTimeCatalog = engine.CreateCatalog("SomeDateTime", item => item.SomeDateTime);
+                var someStringCatalog = engine.CreateCatalog("SomeString", item => item.SomeString);
+                var someTagsCatalog = engine.CreateCatalog<string>("SomeTags", item => item.SomeTags);
 
-                int someIntMax, someDateTimeMax, someStringMax, someTagsMax, someTagsMaxCount;
-
-                var items = EngineItem.CreateItems(random, size, out someIntMax, out someDateTimeMax, out someStringMax, out someTagsMax, out someTagsMaxCount);
+                var items = EngineItem.CreateItems(random, size,
+                    out int someIntMax, out int someDateTimeMax, out int someStringMax, out int someTagsMax, out int someTagsMaxCount);
 
                 // OrderBy the lowest potential cardinality (max represents the potential cardinality) so that we increase our chances of having
                 // compressed 1's in a Catalog.
@@ -123,7 +126,7 @@ public class EngineTestsRandom
         }
     }
 
-    private static void ExecuteAndAssert(Random random, EngineItem[] items, Query<EngineItem, int> query)
+    private static void ExecuteAndAssert(Random random, EngineItem[] items, Query<int> query)
     {
         query = query
             .FacetAll()
@@ -132,7 +135,8 @@ public class EngineTestsRandom
         EngineAssert.ExecuteAndAssert(items, query, 0, items.Length);
     }
 
-    private static EngineItem[] Update(Engine<EngineItem, int> engine, EngineItem[] items, Random random)
+    private static EngineItem[] Update<TBitVector>(Engine<TBitVector, EngineItem, int> engine, EngineItem[] items, Random random)
+        where TBitVector : IBitVector<TBitVector>
     {
         var updateItems = items.OrderBy(item => item.GetHashCode())
             .Take(random.Next(items.Length))
@@ -150,7 +154,8 @@ public class EngineTestsRandom
             .ToArray();
     }
 
-    private static EngineItem[] RemoveReAdd(Engine<EngineItem, int> engine, EngineItem[] items, Random random)
+    private static EngineItem[] RemoveReAdd<TBitVector>(Engine<TBitVector, EngineItem, int> engine, EngineItem[] items, Random random)
+        where TBitVector : IBitVector<TBitVector>
     {
         var removeItemsAsc = items.OrderBy(item => item.GetHashCode())
             .Take(random.Next(items.Length / 2));

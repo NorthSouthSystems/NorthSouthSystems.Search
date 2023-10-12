@@ -4,9 +4,9 @@ using System.Collections;
 
 internal static class EngineAssert
 {
-    internal static void ExecuteAndAssert(IEnumerable<EngineItem> source, Query<EngineItem, int> query, int skip, int take)
+    internal static void ExecuteAndAssert(IEnumerable<EngineItem> source, Query<int> query, int skip, int take)
     {
-        query.Execute(skip, take);
+        var result = query.Execute(skip, take);
 
         var amongstPrimaryKeys = new HashSet<int>(query.AmongstPrimaryKeys);
 
@@ -20,8 +20,8 @@ internal static class EngineAssert
 
         EngineItem[] sourceResults = source.ToArray();
 
-        query.ResultTotalCount.Should().Be(sourceResults.Length);
-        query.ResultPrimaryKeys.Should().Equal(sourceResults.Skip(skip).Take(take).Select(item => item.Id).ToArray());
+        result.TotalCount.Should().Be(sourceResults.Length);
+        result.PrimaryKeys.Should().Equal(sourceResults.Skip(skip).Take(take).Select(item => item.Id).ToArray());
 
         foreach (var facetParam in query.FacetParametersInternal)
             AssertFacet(sourceResults, facetParam, query.FacetShortCircuitCounting);
@@ -29,54 +29,44 @@ internal static class EngineAssert
 
     #region Filter
 
-    private static IEnumerable<EngineItem> SourceFilter(IEnumerable<EngineItem> source, Query<EngineItem, int> query)
+    private static IEnumerable<EngineItem> SourceFilter(IEnumerable<EngineItem> source, Query<int> query)
     {
-        foreach (IFilterParameter param in query.FilterClause == null ? Enumerable.Empty<IFilterParameter>() : query.FilterClause.SubClauses.Cast<IFilterParameter>())
+        foreach (var param in
+            query.FilterClause == null
+                ? Enumerable.Empty<IFilterParameter>()
+                : query.FilterClause.SubClauses.Cast<IFilterParameter>())
         {
-            IFilterParameter closedParam = param;
+            var closedParam = param;
 
-            switch (param.Catalog.Name)
+            source = param.Catalog.Name switch
             {
-                case "SomeInt":
-                    source = source.Where(item => SourceFilter(item.SomeInt, closedParam));
-                    break;
-                case "SomeDateTime":
-                    source = source.Where(item => SourceFilter(item.SomeDateTime, closedParam));
-                    break;
-                case "SomeString":
-                    source = source.Where(item => SourceFilter(item.SomeString, closedParam));
-                    break;
-                case "SomeTags":
-                    source = source.Where(item => item.SomeTags.Any(tag => SourceFilter(tag, closedParam)));
-                    break;
-                default:
-                    throw new NotImplementedException(param.Catalog.Name);
-            }
+                "SomeInt" => source.Where(item => SourceFilter(item.SomeInt, closedParam)),
+                "SomeDateTime" => source.Where(item => SourceFilter(item.SomeDateTime, closedParam)),
+                "SomeString" => source.Where(item => SourceFilter(item.SomeString, closedParam)),
+                "SomeTags" => source.Where(item => item.SomeTags.Any(tag => SourceFilter(tag, closedParam))),
+
+                _ => throw new NotImplementedException(param.Catalog.Name)
+            };
         }
 
         return source;
     }
 
-    private static bool SourceFilter(object column, IFilterParameter param)
-    {
-        switch (param.ParameterType)
+    private static bool SourceFilter(object column, IFilterParameter param) =>
+        param.ParameterType switch
         {
-            case FilterParameterType.Exact:
-                return object.Equals(column, param.Exact);
-            case FilterParameterType.Enumerable:
-                return ((IEnumerable)param.Enumerable).Cast<object>().Any(obj => object.Equals(column, obj));
-            case FilterParameterType.Range:
-                return ((IComparable)column).CompareTo(param.RangeMin) >= 0 && ((IComparable)column).CompareTo(param.RangeMax) <= 0;
-            default:
-                throw new NotImplementedException();
-        }
-    }
+            FilterParameterType.Exact => object.Equals(column, param.Exact),
+            FilterParameterType.Enumerable => ((IEnumerable)param.Enumerable).Cast<object>().Any(obj => object.Equals(column, obj)),
+            FilterParameterType.Range => ((IComparable)column).CompareTo(param.RangeMin) >= 0 && ((IComparable)column).CompareTo(param.RangeMax) <= 0,
+
+            _ => throw new NotImplementedException()
+        };
 
     #endregion
 
     #region Sort
 
-    private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, Query<EngineItem, int> query)
+    private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, Query<int> query)
     {
         IOrderedEnumerable<EngineItem> sortedSource;
 
@@ -96,39 +86,27 @@ internal static class EngineAssert
             return query.SortPrimaryKeyAscending.Value ? source.OrderBy(item => item.Id) : source.OrderByDescending(item => item.Id);
     }
 
-    private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, ISortParameter param)
-    {
-        switch (param.Catalog.Name)
+    private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, ISortParameter param) =>
+        param.Catalog.Name switch
         {
-            case "SomeInt":
-                return param.Ascending ? source.OrderBy(item => item.SomeInt) : source.OrderByDescending(item => item.SomeInt);
-            case "SomeDateTime":
-                return param.Ascending ? source.OrderBy(item => item.SomeDateTime) : source.OrderByDescending(item => item.SomeDateTime);
-            case "SomeString":
-                return param.Ascending ? source.OrderBy(item => item.SomeString) : source.OrderByDescending(item => item.SomeString);
-            case "SomeTags":
-                return param.Ascending ? source.OrderBy(item => item.SomeTags.Min()) : source.OrderByDescending(item => item.SomeTags.Max());
-            default:
-                throw new NotImplementedException(param.Catalog.Name);
-        }
-    }
+            "SomeInt" => param.Ascending ? source.OrderBy(item => item.SomeInt) : source.OrderByDescending(item => item.SomeInt),
+            "SomeDateTime" => param.Ascending ? source.OrderBy(item => item.SomeDateTime) : source.OrderByDescending(item => item.SomeDateTime),
+            "SomeString" => param.Ascending ? source.OrderBy(item => item.SomeString) : source.OrderByDescending(item => item.SomeString),
+            "SomeTags" => param.Ascending ? source.OrderBy(item => item.SomeTags.Min()) : source.OrderByDescending(item => item.SomeTags.Max()),
 
-    private static IOrderedEnumerable<EngineItem> SourceSort(IOrderedEnumerable<EngineItem> source, ISortParameter param)
-    {
-        switch (param.Catalog.Name)
+            _ => throw new NotImplementedException(param.Catalog.Name)
+        };
+
+    private static IOrderedEnumerable<EngineItem> SourceSort(IOrderedEnumerable<EngineItem> source, ISortParameter param) =>
+        param.Catalog.Name switch
         {
-            case "SomeInt":
-                return param.Ascending ? source.ThenBy(item => item.SomeInt) : source.ThenByDescending(item => item.SomeInt);
-            case "SomeDateTime":
-                return param.Ascending ? source.ThenBy(item => item.SomeDateTime) : source.ThenByDescending(item => item.SomeDateTime);
-            case "SomeString":
-                return param.Ascending ? source.ThenBy(item => item.SomeString) : source.ThenByDescending(item => item.SomeString);
-            case "SomeTags":
-                return param.Ascending ? source.ThenBy(item => item.SomeTags.Min()) : source.ThenByDescending(item => item.SomeTags.Max());
-            default:
-                throw new NotImplementedException(param.Catalog.Name);
-        }
-    }
+            "SomeInt" => param.Ascending ? source.ThenBy(item => item.SomeInt) : source.ThenByDescending(item => item.SomeInt),
+            "SomeDateTime" => param.Ascending ? source.ThenBy(item => item.SomeDateTime) : source.ThenByDescending(item => item.SomeDateTime),
+            "SomeString" => param.Ascending ? source.ThenBy(item => item.SomeString) : source.ThenByDescending(item => item.SomeString),
+            "SomeTags" => param.Ascending ? source.ThenBy(item => item.SomeTags.Min()) : source.ThenByDescending(item => item.SomeTags.Max()),
+
+            _ => throw new NotImplementedException(param.Catalog.Name)
+        };
 
     #endregion
 

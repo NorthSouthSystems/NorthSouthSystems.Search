@@ -1,5 +1,7 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.BitVectors;
+
 public class EngineTests
 {
     private class SimpleItem
@@ -8,57 +10,60 @@ public class EngineTests
         public int SomeInt;
     }
 
-    [Fact]
-    public void AmongstPrimaryKeyOutOfRange() =>
-        SafetyAndCompression.RunAll(safetyAndCompression =>
-        {
-            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
+    [Theory]
+    [ClassData(typeof(BitVectorFactories))]
+    public void AmongstPrimaryKeyOutOfRange<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
+        where TBitVector : IBitVector<TBitVector>
+    {
+        using var engine1 = new Engine<TBitVector, SimpleItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", safetyAndCompression.Compression, item => item.SomeInt);
+        var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
-            engine1.Add(new SimpleItem { Id = 43, SomeInt = 0 });
+        engine1.Add(new SimpleItem { Id = 43, SomeInt = 0 });
 
-            var query = engine1.CreateQuery();
-            query.Amongst(new[] { 43, 44 });
+        var query = engine1.CreateQuery();
+        query.Amongst(new[] { 43, 44 });
 
-            query.Execute(0, 10);
+        var result = query.Execute(0, 10);
 
-            query.ResultTotalCount.Should().Be(1);
-            query.ResultPrimaryKeys.Length.Should().Be(1);
-            query.ResultPrimaryKeys[0].Should().Be(43);
-        });
+        result.TotalCount.Should().Be(1);
+        result.PrimaryKeys.Length.Should().Be(1);
+        result.PrimaryKeys[0].Should().Be(43);
+    }
 
-    [Fact]
-    public void Exceptions()
+    [Theory]
+    [ClassData(typeof(BitVectorFactories))]
+    public void Exceptions<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
+        where TBitVector : IBitVector<TBitVector>
     {
         Action act;
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
             engine1.Add(EngineItem.CreateItems(id => id, id => DateTime.Now, id => id.ToString(), id => Array.Empty<string>(), 1).Single());
 
-            var catalog2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+            var catalog2 = engine1.CreateCatalog("SomeString", item => item.SomeString);
         };
         act.Should().ThrowExactly<NotSupportedException>(because: "CreateCatalogNotInitializing");
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("Name", VectorCompression.None, item => item.SomeInt);
-            var catalog2 = engine1.CreateCatalog("Name", VectorCompression.None, item => item.SomeString);
+            var catalog1 = engine1.CreateCatalog("Name", item => item.SomeInt);
+            var catalog2 = engine1.CreateCatalog("Name", item => item.SomeString);
         };
         act.Should().ThrowExactly<ArgumentException>(because: "CreateCatalogDuplicateName");
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, SimpleItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
             engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
             engine1.Add(new SimpleItem { Id = 0, SomeInt = 1 });
@@ -67,18 +72,18 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, SimpleItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
             engine1.Add((SimpleItem[])null);
         };
         act.Should().ThrowExactly<ArgumentNullException>(because: "AddRangeNull");
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, SimpleItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
             engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
             engine1.Update(new SimpleItem { Id = 1, SomeInt = 1 });
@@ -87,18 +92,18 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, SimpleItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
             engine1.Update((SimpleItem[])null);
         };
         act.Should().ThrowExactly<ArgumentNullException>(because: "UpdateRangeNull");
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, SimpleItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
             engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
             engine1.Remove(new SimpleItem { Id = 1, SomeInt = 1 });
@@ -107,9 +112,9 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, SimpleItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
             engine1.Add(new SimpleItem { Id = 0, SomeInt = 0 });
             engine1.Remove(new SimpleItem { Id = 0, SomeInt = 0 });
@@ -119,9 +124,9 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<SimpleItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, SimpleItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
             engine1.Remove((SimpleItem[])null);
         };
         act.Should().ThrowExactly<ArgumentNullException>(because: "RemoveRangeNull");

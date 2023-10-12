@@ -1,19 +1,23 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.BitVectors;
+
 public class QueryTests
 {
-    [Fact]
-    public void Exceptions()
+    [Theory]
+    [ClassData(typeof(BitVectorFactories))]
+    public void Exceptions<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
+        where TBitVector : IBitVector<TBitVector>
     {
         Action act;
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
-            using var engine2 = new Engine<EngineItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine2 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-            var catalog2 = engine2.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
+            var catalog2 = engine2.CreateCatalog("SomeInt", item => item.SomeInt);
 
             engine1.CreateQuery().Filter(FilterParameter.Create(catalog2, 1));
         };
@@ -21,9 +25,9 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
             engine1.CreateQuery().Filter(FilterParameter.Create((ICatalogHandle<int>)null, 1));
         };
@@ -31,9 +35,9 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
             engine1.CreateQuery().Filter(FilterParameter.Create((ICatalogHandle<int>)null, new[] { 1, 2 }));
         };
@@ -41,9 +45,9 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
             engine1.CreateQuery().Filter(FilterParameter.Create((ICatalogHandle<int>)null, 1, 3));
         };
@@ -51,9 +55,9 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
             engine1.CreateQuery().Sort(SortParameter.Create((ICatalogHandle<int>)null, true));
         };
@@ -61,9 +65,9 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
             var query = engine1.CreateQuery()
                 .Filter(FilterParameter.Create(catalog1, 1))
@@ -74,9 +78,9 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
             var query = engine1.CreateQuery()
                 .Filter(FilterParameter.Create(catalog1, 1))
@@ -87,9 +91,9 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
             engine1.CreateQuery().Facet(FacetParameter.Create((ICatalogHandle<int>)null));
         };
@@ -97,9 +101,9 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-            var catalog2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
+            var catalog2 = engine1.CreateCatalog("SomeString", item => item.SomeString);
 
             var query = engine1.CreateQuery()
                 .Filter(FilterParameter.Create(catalog1, 1))
@@ -110,23 +114,25 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
-            var query = engine1.CreateQuery()
-                .Filter(FilterParameter.Create(catalog1, 1))
-                .Execute(0, 1)
+            var query = engine1.CreateQuery();
+
+            query.Filter(FilterParameter.Create(catalog1, 1))
                 .Execute(0, 1);
+
+            query.Execute(0, 1);
         };
         act.Should().ThrowExactly<NotSupportedException>(because: "QueryAlreadyExecuted");
 
         act = () =>
         {
-            using var engine1 = new Engine<EngineItem, int>(item => item.Id);
+            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 
-            var catalog1 = engine1.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
-            var catalog2 = engine1.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+            var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
+            var catalog2 = engine1.CreateCatalog("SomeString", item => item.SomeString);
 
             var query = engine1.CreateQuery()
                 .Filter(FilterParameter.Create(catalog1, 1))

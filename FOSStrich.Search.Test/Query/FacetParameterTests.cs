@@ -1,16 +1,20 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.BitVectors;
+
 public class FacetParameterTests
 {
-    [Fact]
-    public void Exceptions()
+    [Theory]
+    [ClassData(typeof(BitVectorFactories))]
+    public void Exceptions<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
+        where TBitVector : IBitVector<TBitVector>
     {
         Action act;
 
         act = () =>
         {
-            var engine = new Engine<EngineItem, int>(item => item.Id);
-            var someIntCatalog = engine.CreateCatalog("SomeInt", VectorCompression.None, item => item.SomeInt);
+            var engine = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            var someIntCatalog = engine.CreateCatalog("SomeInt", item => item.SomeInt);
 
             var someIntFacet = FacetParameter.Create(someIntCatalog);
 

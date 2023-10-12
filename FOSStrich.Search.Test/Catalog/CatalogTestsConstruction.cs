@@ -1,12 +1,15 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.BitVectors;
+
 public class CatalogTestsConstruction
 {
-    [Fact]
-    public void Public()
+    [Theory]
+    [ClassData(typeof(BitVectorFactories))]
+    public void Public<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
+        where TBitVector : IBitVector<TBitVector>
     {
-        var catalog = new Catalog<int>("SomeInt", true, VectorCompression.None);
+        var catalog = new Catalog<TBitVector, int>(bitVectorFactory, "SomeInt", true);
         catalog.Name.Should().Be("SomeInt");
-        catalog.Compression.Should().Be(VectorCompression.None);
     }
 }

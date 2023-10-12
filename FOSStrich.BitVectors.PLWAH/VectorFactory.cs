@@ -10,4 +10,6 @@ public class VectorFactory : IBitVectorFactory<Vector>
 
     public Vector CreateUncompressedUnion(params Vector[] union) =>
         Vector.OrOutOfPlace(union);
+
+    public int WordSize => Word.SIZE;
 }

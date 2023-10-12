@@ -1,16 +1,20 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.BitVectors;
+
 public class FilterParameterTests
 {
-    [Fact]
-    public void Exceptions()
+    [Theory]
+    [ClassData(typeof(BitVectorFactories))]
+    public void Exceptions<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
+        where TBitVector : IBitVector<TBitVector>
     {
         Action act;
 
         act = () =>
         {
-            var engine = new Engine<EngineItem, int>(item => item.Id);
-            var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+            var engine = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            var someStringCatalog = engine.CreateCatalog("SomeString", item => item.SomeString);
 
             var someStringParameter = FilterParameter.Create(someStringCatalog, null, "A");
             someStringParameter = FilterParameter.Create(someStringCatalog, "A", null);
@@ -19,8 +23,8 @@ public class FilterParameterTests
 
         act = () =>
         {
-            var engine = new Engine<EngineItem, int>(item => item.Id);
-            var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+            var engine = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            var someStringCatalog = engine.CreateCatalog("SomeString", item => item.SomeString);
 
             var someStringParameter = FilterParameter.Create(someStringCatalog, null, null);
         };
@@ -28,8 +32,8 @@ public class FilterParameterTests
 
         act = () =>
         {
-            var engine = new Engine<EngineItem, int>(item => item.Id);
-            var someStringCatalog = engine.CreateCatalog("SomeString", VectorCompression.None, item => item.SomeString);
+            var engine = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            var someStringCatalog = engine.CreateCatalog("SomeString", item => item.SomeString);
 
             var someStringParameter = FilterParameter.Create(someStringCatalog, "B", "A");
         };
