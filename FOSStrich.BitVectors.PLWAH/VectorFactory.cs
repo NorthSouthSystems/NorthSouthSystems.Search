@@ -1,4 +1,8 @@
-﻿namespace FOSStrich.BitVectors.PLWAH;
+﻿#if POSITIONLISTENABLED
+namespace FOSStrich.BitVectors.PLWAH;
+#else
+namespace FOSStrich.BitVectors.WAH;
+#endif
 
 public class VectorFactory : IBitVectorFactory<Vector>
 {
