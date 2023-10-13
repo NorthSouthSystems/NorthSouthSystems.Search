@@ -4,13 +4,17 @@ namespace FOSStrich.BitVectors.PLWAH;
 namespace FOSStrich.BitVectors.WAH;
 #endif
 
-public class VectorFactory : IBitVectorFactory<Vector>
+#if POSITIONLISTENABLED
+public class PLWAHVectorFactory : IBitVectorFactory<Vector>
+#else
+public class WAHVectorFactory : IBitVectorFactory<Vector>
+#endif
 {
     public Vector Create(bool isCompressed) =>
-        new(isCompressed ? VectorCompression.CompressedWithPackedPosition : VectorCompression.None);
+        new(isCompressed);
 
     public Vector Create(bool isCompressed, Vector copy) =>
-        new(isCompressed ? VectorCompression.CompressedWithPackedPosition : VectorCompression.None, copy);
+        new(isCompressed, copy);
 
     public Vector CreateUncompressedUnion(params Vector[] union) =>
         Vector.OrOutOfPlace(union);

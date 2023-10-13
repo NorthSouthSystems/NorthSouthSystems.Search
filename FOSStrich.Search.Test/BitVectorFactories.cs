@@ -4,14 +4,15 @@ using System.Collections;
 
 public class BitVectorFactories : IEnumerable<object[]>
 {
-    public IEnumerator<object[]> GetEnumerator() => BitVectorFactoriesWrapped.GetEnumerator();
-    IEnumerator IEnumerable.GetEnumerator() => BitVectorFactoriesWrapped.GetEnumerator();
-
-    private static IEnumerable<object[]> BitVectorFactoriesWrapped =>
-        _bitVectorFactories.Select(bvf => new object[] { bvf });
-
     private static readonly object[] _bitVectorFactories = new object[]
     {
-        new FOSStrich.BitVectors.PLWAH.VectorFactory()
+        new FOSStrich.BitVectors.PLWAH.PLWAHVectorFactory(),
+        new FOSStrich.BitVectors.WAH.WAHVectorFactory()
     };
+
+    private static readonly List<object[]> BitVectorFactoriesWrapped =
+        _bitVectorFactories.Select(bvf => new object[] { bvf }).ToList();
+
+    public IEnumerator<object[]> GetEnumerator() => BitVectorFactoriesWrapped.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => BitVectorFactoriesWrapped.GetEnumerator();
 }

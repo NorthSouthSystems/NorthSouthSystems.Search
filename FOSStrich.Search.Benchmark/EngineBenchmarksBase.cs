@@ -8,7 +8,7 @@ public abstract class EngineBenchmarksBase
 
     protected Engine<FOSStrich.BitVectors.PLWAH.Vector, Post, int> ConstructEngine()
     {
-        Engine = new(new FOSStrich.BitVectors.PLWAH.VectorFactory(), post => post.Id);
+        Engine = new(new FOSStrich.BitVectors.PLWAH.PLWAHVectorFactory(), post => post.Id);
 
         PostTypeCatalog = Engine.CreateCatalog(nameof(Post.PostTypeId), post => post.PostTypeId);
         CreationDateCatalog = Engine.CreateCatalog(nameof(Post.CreationDate), post => YearMonth(post.CreationDate));

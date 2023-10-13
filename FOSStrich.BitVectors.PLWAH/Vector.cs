@@ -5,6 +5,7 @@ namespace FOSStrich.BitVectors.WAH;
 #endif
 
 using System.Buffers;
+using System.Diagnostics;
 
 /// <summary>
 /// Word-aligned hybrid bit vector.
@@ -17,16 +18,15 @@ public sealed partial class Vector : IBitVector<Vector>
 {
     #region Construction
 
-    public Vector(VectorCompression compression)
-        : this(compression, null) { }
+    public Vector(bool isCompressed)
+        : this(isCompressed, null) { }
 
-    public Vector(VectorCompression compression, Vector vector)
-        : this(compression, vector, 0) { }
+    public Vector(bool isCompressed, Vector vector)
+        : this(isCompressed, vector, 0) { }
 
-    private Vector(VectorCompression compression, Vector vector, int wordsLengthHint)
+    private Vector(bool isCompressed, Vector vector, int wordsLengthHint)
     {
-        IsCompressed = (compression == VectorCompression.Compressed || compression == VectorCompression.CompressedWithPackedPosition);
-        IsPackedPositionEnabled = compression == VectorCompression.CompressedWithPackedPosition;
+        IsCompressed = isCompressed;
 
         if (vector == null)
         {
@@ -37,20 +37,11 @@ public sealed partial class Vector : IBitVector<Vector>
             return;
         }
 
-        // There are 9 possible "copy" combinations: VectorCompression x VectorCompression
-        // 1. Handle the binary copies first.
-        //      N,      N
-        //      C,      C
-        //      CWPP,   CWPP
-        // 2. Use an optimized decompression algorithm next.
-        //      N,      C
-        //      N,      CWPP
-        // 3. The remainder are more complicated compressions or decompressions. An optimization we can make is to use WordsGrow smartly.
-        //      C,      N
-        //      C,      CWPP (WordsGrow to vector._wordCountPhysical because that is the minimum size [occurs when CWPP contains no PackedWords])
-        //      CWPP,   N
-        //      CWPP,   C    (WordsGrow to vector._wordCountPhysical / 2 because that is the minimum size [occurs when every other Word in C is uncompressed and can be Packed])
-        if (Compression == vector.Compression)
+        // There are 4 possible "copy" combinations: IsCompressed x vector.IsCompressed
+        // 1. IsCompressed == vector.IsCompressed : Handle the binary copies first.
+        // 2. !IsCompressed (implicit vector.IsCompressed) : DecompressInPlace.
+        // 3. IsCompressed (implicit !vector.IsCompressed) : Compress.
+        if (IsCompressed == vector.IsCompressed)
         {
             WordsGrow(Math.Max(vector._wordCountPhysical, wordsLengthHint));
             _wordCountPhysical = vector._wordCountPhysical;
@@ -68,30 +59,10 @@ public sealed partial class Vector : IBitVector<Vector>
         }
         else
         {
-            int wordCountPhysical = 0;
-
-            if (!IsPackedPositionEnabled && vector.IsPackedPositionEnabled)
-                wordCountPhysical = vector._wordCountPhysical;
-            else if (IsPackedPositionEnabled && vector.IsCompressed)
-                wordCountPhysical = vector._wordCountPhysical / 2;
-
-            WordsGrow(Math.Max(wordCountPhysical, wordsLengthHint));
-            _wordCountPhysical = 1;
-            _wordCountLogical = 1;
-
-            // We must track vector's wordPositionLogical manually because SetWord is optimized to ignore 0's, thereby not increasing _wordCountLogical.
-            int wordPositionLogical = 0;
+            Trace.Assert(vector._wordCountPhysical == vector._wordCountLogical);
 
             for (int i = 0; i < vector._wordCountPhysical; i++)
-            {
-                Word word = vector._words[i];
-                SetWord(wordPositionLogical, word);
-
-                wordPositionLogical += word.IsCompressed ? word.FillCount : 1;
-
-                if (word.HasPackedWord)
-                    wordPositionLogical++;
-            }
+                SetWord(i, vector._words[i]);
         }
     }
 
@@ -103,7 +74,7 @@ public sealed partial class Vector : IBitVector<Vector>
 
     public bool OptimizeReadPhase(int[] bitPositionShifts, out Vector optimized)
     {
-        optimized = new Vector(Compression);
+        optimized = new Vector(IsCompressed);
 
         foreach (int bitPosition in GetBitPositions(true))
         {
@@ -120,13 +91,7 @@ public sealed partial class Vector : IBitVector<Vector>
 
     #region Words
 
-    public VectorCompression Compression =>
-        IsCompressed
-            ? (IsPackedPositionEnabled ? VectorCompression.CompressedWithPackedPosition : VectorCompression.Compressed)
-            : VectorCompression.None;
-
     public bool IsCompressed { get; }
-    public bool IsPackedPositionEnabled { get; }
 
     private Word[] _words;
     private int _wordCountPhysical;
@@ -212,14 +177,20 @@ public sealed partial class Vector : IBitVector<Vector>
         if (wordPositionLogical >= _wordCountLogical)
             return new Word(0);
 
+#if POSITIONLISTENABLED
         int wordPositionPhysical = WordPositionPhysical(wordPositionLogical, out bool isPacked);
+#else
+        int wordPositionPhysical = WordPositionPhysical(wordPositionLogical);
+#endif
         Word word = _words[wordPositionPhysical];
 
         if (word.IsCompressed)
         {
+#if POSITIONLISTENABLED
             if (isPacked)
                 return word.PackedWord;
             else
+#endif
                 return new Word((word.FillBit && word.FillCount > 0) ? Word.COMPRESSIBLEMASK : 0);
         }
         else
@@ -230,10 +201,14 @@ public sealed partial class Vector : IBitVector<Vector>
 
     private static int WordBitPosition(int bitPosition) => bitPosition % (Word.SIZE - 1);
 
+#if POSITIONLISTENABLED
     private int WordPositionPhysical(int wordPositionLogical, out bool isPacked)
     {
         isPacked = false;
-
+#else
+    private int WordPositionPhysical(int wordPositionLogical)
+    {
+#endif
         // PERF : Short circuits. When !IsCompressed wordPositionLogical === wordPositionPhysical, ALWAYS.
         // When it IsCompressed, we take advantage of the fact that if you are asking for the last logical word,
         // that word must reside on the last physical word.
@@ -247,7 +222,9 @@ public sealed partial class Vector : IBitVector<Vector>
         for (int i = 0; i < _wordCountPhysical; i++)
         {
             Word word = _words[i];
+#if POSITIONLISTENABLED
             isPacked = false;
+#endif
 
             if (word.IsCompressed)
             {
@@ -256,6 +233,7 @@ public sealed partial class Vector : IBitVector<Vector>
                 if (logical > wordPositionLogical)
                     return i;
 
+#if POSITIONLISTENABLED
                 if (word.HasPackedWord)
                 {
                     isPacked = true;
@@ -264,6 +242,7 @@ public sealed partial class Vector : IBitVector<Vector>
                     if (logical > wordPositionLogical)
                         return i;
                 }
+#endif
             }
             else
             {
@@ -289,16 +268,25 @@ public sealed partial class Vector : IBitVector<Vector>
         if (IsCompressed && wordPositionLogical < (_wordCountLogical - 1))
             throw new NotSupportedException("Writing is forward-only for a compressed Vector.");
 
-        bool isZero = word.Raw == 0u || (word.IsCompressed && !word.FillBit && !word.HasPackedWord);
+        bool isZero = word.Raw == 0u
+            || (word.IsCompressed
+                && !word.FillBit
+#if POSITIONLISTENABLED
+                && !word.HasPackedWord
+#endif
+                );
 
         if (isZero && ZeroFillCount(wordPositionLogical) > 0)
             return;
 
         ZeroFill(wordPositionLogical);
 
+#if POSITIONLISTENABLED
         // IsPacked can be safely ignored here because of the LAW.
-        bool isPacked;
-        int wordPositionPhysical = WordPositionPhysical(wordPositionLogical, out isPacked);
+        int wordPositionPhysical = WordPositionPhysical(wordPositionLogical, out _);
+#else
+        int wordPositionPhysical = WordPositionPhysical(wordPositionLogical);
+#endif
 
         if (isZero)
         {
@@ -320,6 +308,7 @@ public sealed partial class Vector : IBitVector<Vector>
                     for (int i = wordPositionPhysical; i < _wordCountPhysical; i++)
                         _words[i].Raw = 0x7FFFFFFF;
 
+#if POSITIONLISTENABLED
                 if (word.HasPackedWord)
                 {
                     WordsGrow(_wordCountPhysical + 1);
@@ -328,6 +317,7 @@ public sealed partial class Vector : IBitVector<Vector>
 
                     _words[_wordCountPhysical - 1] = word.PackedWord;
                 }
+#endif
             }
             else
             {
@@ -335,19 +325,15 @@ public sealed partial class Vector : IBitVector<Vector>
                 _words[wordPositionPhysical] = word;
                 _wordCountLogical += word.FillCount - 1;
 
+#if POSITIONLISTENABLED
                 if (word.HasPackedWord)
                     _wordCountLogical++;
+#endif
 
                 // Immediately restore the LAW.
                 WordsGrow(_wordCountPhysical + 1);
                 _wordCountPhysical++;
                 _wordCountLogical++;
-
-                if (word.HasPackedWord && !IsPackedPositionEnabled)
-                {
-                    _words[_wordCountPhysical - 1] = _words[_wordCountPhysical - 2].Unpack();
-                    _wordCountLogical--;
-                }
             }
         }
     }
@@ -368,8 +354,12 @@ public sealed partial class Vector : IBitVector<Vector>
 
         ZeroFill(wordPositionLogical);
 
+#if POSITIONLISTENABLED
         // IsPacked can be safely ignored here because of the LAW.
-        int wordPositionPhysical = WordPositionPhysical(wordPositionLogical, out bool isPacked);
+        int wordPositionPhysical = WordPositionPhysical(wordPositionLogical, out _);
+#else
+        int wordPositionPhysical = WordPositionPhysical(wordPositionLogical);
+#endif
         _words[wordPositionPhysical][wordBitPosition] = value;
     }
 
@@ -385,7 +375,9 @@ public sealed partial class Vector : IBitVector<Vector>
         {
             ZeroFillWhenCompressedAndSingleWord(wordPositionLogical);
             ZeroFillWhenCompressedAndTailIsCompressedAndCompressible(wordPositionLogical);
+#if POSITIONLISTENABLED
             ZeroFillWhenCompressedAndTailIsPackable(wordPositionLogical);
+#endif
             ZeroFillWhenCompressedAndTailIsZero(wordPositionLogical);
             ZeroFillWhenCompressedAndLargeFill(wordPositionLogical);
         }
@@ -414,7 +406,9 @@ public sealed partial class Vector : IBitVector<Vector>
 
         if (zeroFillCount > 0
             && _words[_wordCountPhysical - 2].IsCompressed
+#if POSITIONLISTENABLED
             && !_words[_wordCountPhysical - 2].HasPackedWord
+#endif
             && _words[_wordCountPhysical - 1].IsCompressible
             && _words[_wordCountPhysical - 2].FillBit == _words[_wordCountPhysical - 1].CompressibleFillBit)
         {
@@ -435,11 +429,9 @@ public sealed partial class Vector : IBitVector<Vector>
         }
     }
 
+#if POSITIONLISTENABLED
     private void ZeroFillWhenCompressedAndTailIsPackable(int wordPositionLogical)
     {
-        if (!IsPackedPositionEnabled)
-            return;
-
         int zeroFillCount = ZeroFillCount(wordPositionLogical);
 
         if (zeroFillCount > 0
@@ -453,6 +445,7 @@ public sealed partial class Vector : IBitVector<Vector>
             _words[_wordCountPhysical - 1].Raw = 0;
         }
     }
+#endif
 
     private void ZeroFillWhenCompressedAndTailIsZero(int wordPositionLogical)
     {
@@ -570,11 +563,13 @@ public sealed partial class Vector : IBitVector<Vector>
                 else
                     bitPositionOffset += word.FillCount * (Word.SIZE - 1);
 
+#if POSITIONLISTENABLED
                 if (word.HasPackedWord)
                 {
                     yield return word.PackedPosition + bitPositionOffset;
                     bitPositionOffset += (Word.SIZE - 1);
                 }
+#endif
             }
             else
             {
@@ -607,10 +602,7 @@ public sealed partial class Vector : IBitVector<Vector>
         _wordCountPhysical = vector._wordCountLogical;
         _wordCountLogical = vector._wordCountLogical;
 
-        if (!vector.IsPackedPositionEnabled)
-            DecompressInPlaceNoneCompressed(this, vector);
-        else
-            DecompressInPlaceNoneCompressedWithPackedPosition(this, vector);
+        DecompressInPlaceNoneCompressed(this, vector);
     }
 
     public void AndInPlace(Vector vector)
@@ -624,7 +616,7 @@ public sealed partial class Vector : IBitVector<Vector>
         if (!vector.IsCompressed)
             AndInPlaceNoneNone(this, vector);
         else
-            AndInPlaceNoneCompressedWithPackedPosition(this, vector);
+            AndInPlaceNoneCompressed(this, vector);
     }
 
     public Vector AndOutOfPlace(Vector vector, bool resultIsCompressed)
@@ -632,36 +624,14 @@ public sealed partial class Vector : IBitVector<Vector>
         if (vector == null)
             throw new ArgumentNullException(nameof(vector));
 
-        // DELETE ME : This code is temporary until a new project is created to delineate
-        // WAH vs. PLWAH (which will involve the deletion of the VectorCompression enum).
-
-        var resultCompression = VectorCompression.None;
-
-        if (resultIsCompressed)
-        {
-            var (_, moreCompression) = OrderByCompression(vector);
-
-            resultCompression = moreCompression.IsCompressed
-                ? moreCompression.Compression
-                : VectorCompression.CompressedWithPackedPosition;
-        }
-
-        return AndOutOfPlace(vector, resultCompression);
-    }
-
-    public Vector AndOutOfPlace(Vector vector, VectorCompression resultCompression)
-    {
-        if (vector == null)
-            throw new ArgumentNullException(nameof(vector));
-
         var (lessCompression, moreCompression) = OrderByCompression(vector);
 
         if (!moreCompression.IsCompressed)
-            return AndOutOfPlaceNoneNone(lessCompression, moreCompression, resultCompression);
+            return AndOutOfPlaceNoneNone(lessCompression, moreCompression, resultIsCompressed);
         else if (!lessCompression.IsCompressed)
-            return AndOutOfPlaceNoneCompressedWithPackedPosition(lessCompression, moreCompression, resultCompression);
+            return AndOutOfPlaceNoneCompressed(lessCompression, moreCompression, resultIsCompressed);
         else
-            return AndOutOfPlaceCompressedWithPackedPositionCompressedWithPackedPosition(lessCompression, moreCompression, resultCompression);
+            return AndOutOfPlaceCompressedCompressed(lessCompression, moreCompression, resultIsCompressed);
     }
 
     public int AndPopulation(Vector vector)
@@ -674,9 +644,9 @@ public sealed partial class Vector : IBitVector<Vector>
         if (!moreCompression.IsCompressed)
             return AndPopulationNoneNone(lessCompression, moreCompression);
         else if (!lessCompression.IsCompressed)
-            return AndPopulationNoneCompressedWithPackedPosition(lessCompression, moreCompression);
+            return AndPopulationNoneCompressed(lessCompression, moreCompression);
         else
-            return AndPopulationCompressedWithPackedPositionCompressedWithPackedPosition(lessCompression, moreCompression);
+            return AndPopulationCompressedCompressed(lessCompression, moreCompression);
     }
 
     public bool AndPopulationAny(Vector vector)
@@ -692,7 +662,7 @@ public sealed partial class Vector : IBitVector<Vector>
         if (!moreCompression.IsCompressed)
             return AndPopulationAnyNoneNone(lessCompression, moreCompression);
         else if (!lessCompression.IsCompressed)
-            return AndPopulationAnyNoneCompressedWithPackedPosition(lessCompression, moreCompression);
+            return AndPopulationAnyNoneCompressed(lessCompression, moreCompression);
         else
             throw new NotImplementedException("See above. This code will never execute.");
     }
@@ -712,11 +682,11 @@ public sealed partial class Vector : IBitVector<Vector>
         if (!vector.IsCompressed)
             OrInPlaceNoneNone(this, vector);
         else
-            OrInPlaceNoneCompressedWithPackedPosition(this, vector);
+            OrInPlaceNoneCompressed(this, vector);
     }
 
     private (Vector LessCompression, Vector MoreCompression) OrderByCompression(Vector vector) =>
-        Compression <= vector.Compression ? (this, vector) : (vector, this);
+        !IsCompressed ? (this, vector) : (vector, this);
 
     #endregion
 }

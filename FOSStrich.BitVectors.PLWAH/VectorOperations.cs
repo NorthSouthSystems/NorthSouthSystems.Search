@@ -36,49 +36,14 @@ public sealed partial class Vector
                 }
                 else
                     i += jWord.FillCount;
-            }
-            else
-            {
-                iWords[i].Raw = jWord.Raw;
-                i++;
-            }
 
-            j++;
-        }
-    }
-
-    private void DecompressInPlaceNoneCompressedWithPackedPosition(Vector iVector, Vector jVector)
-    {
-        int i = 0;
-        var iWords = iVector.GetWordsSpanPhysical();
-
-        int j = 0;
-        var jWords = jVector.GetWordsSpanPhysical();
-
-        while (j < jWords.Length)
-        {
-            Word jWord = jWords[j];
-
-            if (jWord.IsCompressed)
-            {
-                if (jWord.FillBit)
-                {
-                    int k = i + jWord.FillCount;
-
-                    while (i < k)
-                    {
-                        iWords[i].Raw = 0x7FFFFFFF;
-                        i++;
-                    }
-                }
-                else
-                    i += jWord.FillCount;
-
+#if POSITIONLISTENABLED
                 if (jWord.HasPackedWord)
                 {
                     iWords[i].Raw = jWord.PackedWord.Raw;
                     i++;
                 }
+#endif
             }
             else
             {
@@ -122,7 +87,7 @@ public sealed partial class Vector
         }
     }
 
-    private void AndInPlaceNoneCompressedWithPackedPosition(Vector iVector, Vector jVector)
+    private void AndInPlaceNoneCompressed(Vector iVector, Vector jVector)
     {
         int i = 0;
         var iWords = iVector.GetWordsSpanPhysical();
@@ -152,11 +117,13 @@ public sealed partial class Vector
                 else
                     i += jWord.FillCount;
 
+#if POSITIONLISTENABLED
                 if (jWord.HasPackedWord && i < iWords.Length)
                 {
                     iWords[i].Raw &= jWord.PackedWord.Raw;
                     i++;
                 }
+#endif
             }
             else
             {
@@ -184,9 +151,9 @@ public sealed partial class Vector
 
     #region And Out-of-Place
 
-    private Vector AndOutOfPlaceNoneNone(Vector iVector, Vector jVector, VectorCompression resultCompression)
+    private Vector AndOutOfPlaceNoneNone(Vector iVector, Vector jVector, bool resultIsCompressed)
     {
-        var result = new Vector(resultCompression);
+        var result = new Vector(resultIsCompressed);
 
         int i = 0;
         var iWords = iVector.GetWordsSpanPhysical();
@@ -208,9 +175,9 @@ public sealed partial class Vector
         return result;
     }
 
-    private Vector AndOutOfPlaceNoneCompressedWithPackedPosition(Vector iVector, Vector jVector, VectorCompression resultCompression)
+    private Vector AndOutOfPlaceNoneCompressed(Vector iVector, Vector jVector, bool resultIsCompressed)
     {
-        var result = new Vector(resultCompression);
+        var result = new Vector(resultIsCompressed);
 
         int i = 0;
         var iWords = iVector.GetWordsSpanPhysical();
@@ -237,6 +204,7 @@ public sealed partial class Vector
                 else
                     i += jWord.FillCount;
 
+#if POSITIONLISTENABLED
                 if (jWord.HasPackedWord && i < iWords.Length)
                 {
                     uint word = iWords[i].Raw & jWord.PackedWord.Raw;
@@ -246,6 +214,7 @@ public sealed partial class Vector
 
                     i++;
                 }
+#endif
             }
             else
             {
@@ -263,9 +232,9 @@ public sealed partial class Vector
         return result;
     }
 
-    private Vector AndOutOfPlaceCompressedWithPackedPositionCompressedWithPackedPosition(Vector iVector, Vector jVector, VectorCompression resultCompression)
+    private Vector AndOutOfPlaceCompressedCompressed(Vector iVector, Vector jVector, bool resultIsCompressed)
     {
-        var result = new Vector(resultCompression);
+        var result = new Vector(resultIsCompressed);
 
         int i = 0;
         var iWords = iVector.GetWordsSpanPhysical();
@@ -276,7 +245,9 @@ public sealed partial class Vector
         int jLogical = 0;
 
         Word jWord = jWords[j];
+#if POSITIONLISTENABLED
         bool jUsePackedWord = false;
+#endif
 
         while (i < iWords.Length)
         {
@@ -288,10 +259,20 @@ public sealed partial class Vector
                 {
                     while (jLogical < iLogical + iWord.FillCount)
                     {
+#if POSITIONLISTENABLED
                         if (jUsePackedWord || !jWord.IsCompressed)
+#else
+                        if (!jWord.IsCompressed)
+#endif
                         {
                             if (jLogical >= iLogical)
+                            {
+#if POSITIONLISTENABLED
                                 result.SetWord(jLogical, jUsePackedWord ? jWord.PackedWord : jWord);
+#else
+                                result.SetWord(jLogical, jWord);
+#endif
+                            }
 
                             jLogical++;
                         }
@@ -309,11 +290,13 @@ public sealed partial class Vector
                             {
                                 jLogical += jWord.FillCount;
 
+#if POSITIONLISTENABLED
                                 if (jWord.HasPackedWord)
                                 {
                                     jUsePackedWord = true;
                                     continue;
                                 }
+#endif
                             }
                             else
                                 break;
@@ -323,12 +306,15 @@ public sealed partial class Vector
                             return result;
 
                         jWord = jWords[j];
+#if POSITIONLISTENABLED
                         jUsePackedWord = false;
+#endif
                     }
                 }
 
                 iLogical += iWord.FillCount;
 
+#if POSITIONLISTENABLED
                 if (iWord.HasPackedWord)
                 {
                     while (jLogical <= iLogical)
@@ -369,16 +355,25 @@ public sealed partial class Vector
 
                     iLogical++;
                 }
+#endif
             }
             else
             {
                 while (jLogical <= iLogical)
                 {
+#if POSITIONLISTENABLED
                     if (jUsePackedWord || !jWord.IsCompressed)
+#else
+                    if (!jWord.IsCompressed)
+#endif
                     {
                         if (jLogical == iLogical)
                         {
+#if POSITIONLISTENABLED
                             uint word = iWord.Raw & (jUsePackedWord ? jWord.PackedWord.Raw : jWord.Raw);
+#else
+                            uint word = iWord.Raw & jWord.Raw;
+#endif
 
                             if (word > 0)
                                 result.SetWord(iLogical, new Word(word));
@@ -395,11 +390,13 @@ public sealed partial class Vector
                         {
                             jLogical += jWord.FillCount;
 
+#if POSITIONLISTENABLED
                             if (jWord.HasPackedWord)
                             {
                                 jUsePackedWord = true;
                                 continue;
                             }
+#endif
                         }
                         else
                             break;
@@ -409,7 +406,10 @@ public sealed partial class Vector
                         return result;
 
                     jWord = jWords[j];
+
+#if POSITIONLISTENABLED
                     jUsePackedWord = false;
+#endif
                 }
 
                 iLogical++;
@@ -449,7 +449,7 @@ public sealed partial class Vector
         return population;
     }
 
-    private int AndPopulationNoneCompressedWithPackedPosition(Vector iVector, Vector jVector)
+    private int AndPopulationNoneCompressed(Vector iVector, Vector jVector)
     {
         int population = 0;
 
@@ -481,6 +481,7 @@ public sealed partial class Vector
                 else
                     i += jWord.FillCount;
 
+#if POSITIONLISTENABLED
                 if (jWord.HasPackedWord && i < iWords.Length)
                 {
                     Word iWord = iWords[i];
@@ -490,6 +491,7 @@ public sealed partial class Vector
 
                     i++;
                 }
+#endif
             }
             else
             {
@@ -507,7 +509,7 @@ public sealed partial class Vector
         return population;
     }
 
-    private int AndPopulationCompressedWithPackedPositionCompressedWithPackedPosition(Vector iVector, Vector jVector)
+    private int AndPopulationCompressedCompressed(Vector iVector, Vector jVector)
     {
         int population = 0;
 
@@ -520,7 +522,9 @@ public sealed partial class Vector
         int jLogical = 0;
 
         Word jWord = jWords[j];
+#if POSITIONLISTENABLED
         bool jUsePackedWord = false;
+#endif
 
         while (i < iWords.Length)
         {
@@ -532,10 +536,20 @@ public sealed partial class Vector
                 {
                     while (jLogical < iLogical + iWord.FillCount)
                     {
+#if POSITIONLISTENABLED
                         if (jUsePackedWord || !jWord.IsCompressed)
+#else
+                        if (!jWord.IsCompressed)
+#endif
                         {
                             if (jLogical >= iLogical)
+                            {
+#if POSITIONLISTENABLED
                                 population += (jUsePackedWord ? jWord.PackedWord : jWord).Population;
+#else
+                                population += jWord.Population;
+#endif
+                            }
 
                             jLogical++;
                         }
@@ -553,11 +567,13 @@ public sealed partial class Vector
                             {
                                 jLogical += jWord.FillCount;
 
+#if POSITIONLISTENABLED
                                 if (jWord.HasPackedWord)
                                 {
                                     jUsePackedWord = true;
                                     continue;
                                 }
+#endif
                             }
                             else
                                 break;
@@ -567,12 +583,15 @@ public sealed partial class Vector
                             return population;
 
                         jWord = jWords[j];
+#if POSITIONLISTENABLED
                         jUsePackedWord = false;
+#endif
                     }
                 }
 
                 iLogical += iWord.FillCount;
 
+#if POSITIONLISTENABLED
                 if (iWord.HasPackedWord)
                 {
                     while (jLogical <= iLogical)
@@ -613,16 +632,25 @@ public sealed partial class Vector
 
                     iLogical++;
                 }
+#endif
             }
             else
             {
                 while (jLogical <= iLogical)
                 {
+#if POSITIONLISTENABLED
                     if (jUsePackedWord || !jWord.IsCompressed)
+#else
+                    if (!jWord.IsCompressed)
+#endif
                     {
                         if (jLogical == iLogical)
                         {
+#if POSITIONLISTENABLED
                             uint word = iWord.Raw & (jUsePackedWord ? jWord.PackedWord.Raw : jWord.Raw);
+#else
+                            uint word = iWord.Raw & jWord.Raw;
+#endif
 
                             if (word > 0)
                                 population += BitOperations.PopCount(word);
@@ -639,11 +667,13 @@ public sealed partial class Vector
                         {
                             jLogical += jWord.FillCount;
 
+#if POSITIONLISTENABLED
                             if (jWord.HasPackedWord)
                             {
                                 jUsePackedWord = true;
                                 continue;
                             }
+#endif
                         }
                         else
                             break;
@@ -653,7 +683,9 @@ public sealed partial class Vector
                         return population;
 
                     jWord = jWords[j];
+#if POSITIONLISTENABLED
                     jUsePackedWord = false;
+#endif
                 }
 
                 iLogical++;
@@ -691,7 +723,7 @@ public sealed partial class Vector
         return false;
     }
 
-    private bool AndPopulationAnyNoneCompressedWithPackedPosition(Vector iVector, Vector jVector)
+    private bool AndPopulationAnyNoneCompressed(Vector iVector, Vector jVector)
     {
         int i = 0;
         var iWords = iVector.GetWordsSpanPhysical();
@@ -723,6 +755,7 @@ public sealed partial class Vector
                 else
                     i += jWord.FillCount;
 
+#if POSITIONLISTENABLED
                 if (jWord.HasPackedWord && i < iWords.Length)
                 {
                     Word iWord = iWords[i];
@@ -732,6 +765,7 @@ public sealed partial class Vector
 
                     i++;
                 }
+#endif
             }
             else
             {
@@ -769,7 +803,7 @@ public sealed partial class Vector
         }
     }
 
-    private void OrInPlaceNoneCompressedWithPackedPosition(Vector iVector, Vector jVector)
+    private void OrInPlaceNoneCompressed(Vector iVector, Vector jVector)
     {
         int i = 0;
         var iWords = iVector.GetWordsSpanPhysical();
@@ -796,11 +830,13 @@ public sealed partial class Vector
                 else
                     i += jWord.FillCount;
 
+#if POSITIONLISTENABLED
                 if (jWord.HasPackedWord && i < iWords.Length)
                 {
                     iWords[i].Raw |= jWord.PackedWord.Raw;
                     i++;
                 }
+#endif
             }
             else
             {
@@ -826,7 +862,7 @@ public sealed partial class Vector
 
         int maxWordCountLogical = vectors.Max(v => v._wordCountLogical);
 
-        var vector = new Vector(VectorCompression.None, vectors[0], maxWordCountLogical);
+        var vector = new Vector(false, vectors[0], maxWordCountLogical);
 
         for (int i = 1; i < vectors.Length; i++)
             vector.OrInPlace(vectors[i]);

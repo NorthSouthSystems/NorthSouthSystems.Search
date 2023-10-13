@@ -148,6 +148,8 @@ internal struct Word
 
     #region Packing
 
+#if POSITIONLISTENABLED
+
     private const uint PACKEDPOSITIONMASK = 0x3E000000u;
 
     public bool HasPackedWord => IsCompressed && (Raw & PACKEDPOSITIONMASK) > 0u;
@@ -216,6 +218,8 @@ internal struct Word
         return packedWord;
     }
 
+#endif
+
     #endregion
 
     #region Population
@@ -234,8 +238,10 @@ internal struct Word
                 if (FillBit)
                     population = FillCount * (SIZE - 1);
 
+#if POSITIONLISTENABLED
                 if (HasPackedWord)
                     population++;
+#endif
 
                 return population;
             }
