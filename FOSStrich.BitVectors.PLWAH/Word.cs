@@ -40,7 +40,7 @@ internal struct Word
 
     public bool this[int position]
     {
-        get => (Raw & ComputeIndexerMask(position)) > 0u;
+        readonly get => (Raw & ComputeIndexerMask(position)) > 0u;
         set
         {
             uint mask = ComputeIndexerMask(position);
@@ -52,7 +52,7 @@ internal struct Word
         }
     }
 
-    private uint ComputeIndexerMask(int position)
+    private readonly uint ComputeIndexerMask(int position)
     {
         if (IsCompressed)
             throw new NotSupportedException("Not supported for compressed Words.");
@@ -66,7 +66,7 @@ internal struct Word
         return 1u << (30 - position);
     }
 
-    public bool[] Bits
+    public readonly bool[] Bits
     {
         get
         {
@@ -88,7 +88,7 @@ internal struct Word
         }
     }
 
-    public bool HasBitPositions(bool value)
+    public readonly bool HasBitPositions(bool value)
     {
         if (IsCompressed)
             throw new NotSupportedException("Not supported for compressed Words.");
@@ -96,7 +96,7 @@ internal struct Word
         return (value && Raw != 0u) || (!value && Raw != COMPRESSIBLEMASK);
     }
 
-    public int[] GetBitPositions(bool value)
+    public readonly int[] GetBitPositions(bool value)
     {
         if (IsCompressed)
             throw new NotSupportedException("Not supported for compressed Words.");
@@ -132,11 +132,11 @@ internal struct Word
     internal const uint FILLBITMASK = 0x40000000u;
     internal const uint FILLCOUNTMASK = 0x01FFFFFFu;
 
-    public bool IsCompressible => Raw == 0u || Raw == COMPRESSIBLEMASK;
-    public bool CompressibleFillBit => Raw != 0u;
-    public bool IsCompressed => Raw >= COMPRESSEDMASK;
-    public bool FillBit => (Raw & FILLBITMASK) > 0u;
-    public int FillCount => (int)(Raw & FILLCOUNTMASK);
+    public readonly bool IsCompressible => Raw == 0u || Raw == COMPRESSIBLEMASK;
+    public readonly bool CompressibleFillBit => Raw != 0u;
+    public readonly bool IsCompressed => Raw >= COMPRESSEDMASK;
+    public readonly bool FillBit => (Raw & FILLBITMASK) > 0u;
+    public readonly int FillCount => (int)(Raw & FILLCOUNTMASK);
 
     public void Compress()
     {
@@ -152,7 +152,7 @@ internal struct Word
 
     private const uint PACKEDPOSITIONMASK = 0x3E000000u;
 
-    public bool HasPackedWord => IsCompressed && (Raw & PACKEDPOSITIONMASK) > 0u;
+    public readonly bool HasPackedWord => IsCompressed && (Raw & PACKEDPOSITIONMASK) > 0u;
 
     /// <summary>
     /// Position is relative to the global bit position.  More specifically, it ignores the most significant bit which is
@@ -163,7 +163,7 @@ internal struct Word
     /// PACKEDPOSITIONMASK and subtract 1 to get the real PackedPosition. This function will then return -1 should a PackedWord
     /// not be present. This offset is reflected in the PackedWord property and also the Pack function.
     /// </summary>
-    public int PackedPosition
+    public readonly int PackedPosition
     {
         get
         {
@@ -174,7 +174,7 @@ internal struct Word
         }
     }
 
-    public Word PackedWord
+    public readonly Word PackedWord
     {
         get
         {
@@ -224,7 +224,7 @@ internal struct Word
 
     #region Population
 
-    public int Population
+    public readonly int Population
     {
         get
         {
@@ -252,5 +252,5 @@ internal struct Word
 
     #endregion
 
-    public override string ToString() => string.Format(CultureInfo.InvariantCulture, "0x{0:X}", Raw);
+    public override readonly string ToString() => string.Format(CultureInfo.InvariantCulture, "0x{0:X}", Raw);
 }
