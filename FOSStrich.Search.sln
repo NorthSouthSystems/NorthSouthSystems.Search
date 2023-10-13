@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{339096F8-0550-4650-93B9-CB1242C43092}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{339096F8-0550-4650-93B9-CB1242C43092}"
 	ProjectSection(SolutionItems) = preProject
 		CodeAnalysis.CustomDictionary.xml = CodeAnalysis.CustomDictionary.xml
 	EndProjectSection
@@ -23,6 +23,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FOSStrich.BitVectors.WAH", "FOSStrich.BitVectors.WAH\FOSStrich.BitVectors.WAH.csproj", "{1A142F66-4AC4-4516-943C-B429970D09AE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FOSStrich.BitVectors.PLWAH.Test", "FOSStrich.BitVectors.PLWAH.Test\FOSStrich.BitVectors.PLWAH.Test.csproj", "{F663C077-5562-4A69-9376-A91C0BACC7F6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BitVectors", "BitVectors", "{357E7510-49CF-4434-B79D-5F1EABAEEDB0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Search", "Search", "{BC2DCC21-7480-44C3-B490-A6C53176163D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +69,16 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD} = {BC2DCC21-7480-44C3-B490-A6C53176163D}
+		{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D} = {BC2DCC21-7480-44C3-B490-A6C53176163D}
+		{589DDA5E-2A77-4788-9686-31E93AF2839E} = {BC2DCC21-7480-44C3-B490-A6C53176163D}
+		{9AB2190B-4D53-4E05-9B71-27CE4FC02C9E} = {357E7510-49CF-4434-B79D-5F1EABAEEDB0}
+		{97653F52-76C3-492B-9C2A-217E080B2EA6} = {357E7510-49CF-4434-B79D-5F1EABAEEDB0}
+		{88742BA4-1E26-4A14-817F-CA0A92B367E0} = {357E7510-49CF-4434-B79D-5F1EABAEEDB0}
+		{1A142F66-4AC4-4516-943C-B429970D09AE} = {357E7510-49CF-4434-B79D-5F1EABAEEDB0}
+		{F663C077-5562-4A69-9376-A91C0BACC7F6} = {357E7510-49CF-4434-B79D-5F1EABAEEDB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C99FD4A7-7B39-455F-B9C5-98D7A83551EA}
