@@ -11,37 +11,35 @@ public class VectorTestsConstruction
         int[] fillCounts = new int[] { 0, 1, 2, 5, 10, 20, 30, 40, 50, 100, 200, 300, 400, 450, 460, 470, 480, 490, 495, 498, 499, 500 };
 
         var instructions =
-             from sourceCompression in (int[])Enum.GetValues(typeof(VectorCompression))
-             from resultCompression in (int[])Enum.GetValues(typeof(VectorCompression))
+             from sourceIsCompressed in new[] { false, true }
+             from resultIsCompressed in new[] { false, true }
              from fillMaxBitPosition in fillMaxBitPositions
              from fillCount in fillCounts
              where fillCount <= fillMaxBitPosition + 1
              select new
              {
-                 SourceCompression = (VectorCompression)sourceCompression,
-                 ResultCompression = (VectorCompression)resultCompression,
+                 SourceIsCompressed = sourceIsCompressed,
+                 ResultIsCompressed = resultIsCompressed,
                  FillMaxBitPosition = fillMaxBitPosition,
                  FillCount = fillCount
              };
 
         foreach (var instruction in instructions)
         {
-            var source = new Vector(instruction.SourceCompression);
-            source.Compression.Should().Be(instruction.SourceCompression);
+            var source = new Vector(instruction.SourceIsCompressed);
+            source.IsCompressed.Should().Be(instruction.SourceIsCompressed);
 
             int[] bitPositions = source.SetBitsRandom(instruction.FillMaxBitPosition, instruction.FillCount, true);
 
-            var result = new Vector(instruction.ResultCompression, source);
-            result.Compression.Should().Be(instruction.ResultCompression);
+            var result = new Vector(instruction.ResultIsCompressed, source);
+            result.IsCompressed.Should().Be(instruction.ResultIsCompressed);
 
             result.AssertBitPositions(bitPositions);
 
             var resultWords = (Word[])typeof(Vector).GetField("_words", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(result);
 
-            if (instruction.ResultCompression == VectorCompression.None)
+            if (!instruction.ResultIsCompressed)
                 resultWords.Any(word => word.IsCompressed).Should().BeFalse();
-            else if (instruction.ResultCompression == VectorCompression.Compressed)
-                resultWords.Any(word => word.HasPackedWord).Should().BeFalse();
 
             source.WordsClear();
             source.Population.Should().Be(0);

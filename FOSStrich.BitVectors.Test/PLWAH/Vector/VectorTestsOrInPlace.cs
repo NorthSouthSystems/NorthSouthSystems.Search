@@ -2,20 +2,21 @@
 
 public class VectorTestsOrInPlace
 {
-    [Fact]
-    public void OrInPlaceCompressedWithCompressedTrueInput() =>
-        SafetyAndCompression.RunAll(safetyAndCompression =>
-        {
-            var vector = new Vector(VectorCompression.None);
-            vector[100] = true;
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void OrInPlaceWithCompressibleTrueInput(bool isCompressed)
+    {
+        var vector = new Vector(false);
+        vector[100] = true;
 
-            Vector compressedTrue = new Vector(safetyAndCompression.Compression);
-            compressedTrue.SetBits(Enumerable.Range(0, 32).ToArray(), true);
+        var compressibleTrue = new Vector(isCompressed);
+        compressibleTrue.SetBits(Enumerable.Range(0, 32).ToArray(), true);
 
-            vector.OrInPlace(compressedTrue);
+        vector.OrInPlace(compressibleTrue);
 
-            vector.AssertBitPositions(Enumerable.Range(0, 32), new[] { 100 });
-        });
+        vector.AssertBitPositions(Enumerable.Range(0, 32), new[] { 100 });
+    }
 
     [Fact]
     public void Exceptions()
@@ -24,15 +25,15 @@ public class VectorTestsOrInPlace
 
         act = () =>
         {
-            var vector = new Vector(VectorCompression.None);
+            var vector = new Vector(false);
             vector.OrInPlace(null);
         };
         act.Should().ThrowExactly<ArgumentNullException>(because: "OrInPlaceArgumentNull");
 
         act = () =>
         {
-            var vector = new Vector(VectorCompression.Compressed);
-            var input = new Vector(VectorCompression.None);
+            var vector = new Vector(true);
+            var input = new Vector(false);
             vector.OrInPlace(input);
         };
         act.Should().ThrowExactly<NotSupportedException>(because: "OrInPlaceNotSupported");

@@ -59,6 +59,10 @@ public sealed partial class Vector : IBitVector<Vector>
         }
         else
         {
+            WordsGrow(wordsLengthHint);
+            _wordCountPhysical = 1;
+            _wordCountLogical = 1;
+
             Trace.Assert(vector._wordCountPhysical == vector._wordCountLogical);
 
             for (int i = 0; i < vector._wordCountPhysical; i++)
@@ -191,7 +195,7 @@ public sealed partial class Vector : IBitVector<Vector>
                 return word.PackedWord;
             else
 #endif
-                return new Word((word.FillBit && word.FillCount > 0) ? Word.COMPRESSIBLEMASK : 0);
+            return new Word((word.FillBit && word.FillCount > 0) ? Word.COMPRESSIBLEMASK : 0);
         }
         else
             return word;

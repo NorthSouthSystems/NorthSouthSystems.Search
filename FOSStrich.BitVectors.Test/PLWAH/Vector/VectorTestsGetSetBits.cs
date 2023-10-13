@@ -2,15 +2,16 @@
 
 public class VectorTestsGetSetBits
 {
-    [Fact]
-    public void Full() =>
-        SafetyAndCompression.RunAll(safetyAndCompression =>
-        {
-            var vector = new Vector(safetyAndCompression.Compression);
-            int[] bitPositions = vector.SetBitsRandom(999, 100, true);
-            vector[2000] = false;
-            vector.AssertBitPositions(bitPositions);
-        });
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Full(bool isCompressed)
+    {
+        var vector = new Vector(isCompressed);
+        int[] bitPositions = vector.SetBitsRandom(999, 100, true);
+        vector[2000] = false;
+        vector.AssertBitPositions(bitPositions);
+    }
 
     [Fact]
     public void Exceptions()
@@ -19,21 +20,21 @@ public class VectorTestsGetSetBits
 
         act = () =>
         {
-            var vector = new Vector(VectorCompression.None);
+            var vector = new Vector(false);
             vector[-1] = true;
         };
         act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "IndexArgumentOutOfRange1");
 
         act = () =>
         {
-            var vector = new Vector(VectorCompression.None);
+            var vector = new Vector(false);
             bool value = vector[-1];
         };
         act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "IndexArgumentOutOfRange2");
 
         act = () =>
         {
-            var vector = new Vector(VectorCompression.Compressed);
+            var vector = new Vector(true);
             vector[30] = true;
             vector[61] = true;
         };
@@ -41,7 +42,7 @@ public class VectorTestsGetSetBits
 
         act = () =>
         {
-            var vector = new Vector(VectorCompression.Compressed);
+            var vector = new Vector(true);
             vector[30] = true;
             vector[31] = true;
             vector[30] = true;
@@ -50,7 +51,7 @@ public class VectorTestsGetSetBits
 
         act = () =>
         {
-            var vector = new Vector(VectorCompression.Compressed);
+            var vector = new Vector(true);
             vector.Bits.ToArray();
         };
         act.Should().ThrowExactly<NotSupportedException>(because: "GetBitsCompressedNotSupported");
