@@ -1,14 +1,21 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.BitVectors;
 using FOSStrich.StackExchange;
 
 [MemoryDiagnoser]
-public class EngineQueryBenchmarks : EngineBenchmarksBase
+[GenericTypeArguments(typeof(FOSStrich.BitVectors.PLWAH.PLWAHVectorFactory), typeof(FOSStrich.BitVectors.PLWAH.Vector))]
+[GenericTypeArguments(typeof(FOSStrich.BitVectors.WAH.WAHVectorFactory), typeof(FOSStrich.BitVectors.WAH.Vector))]
+public class EngineQueryBenchmarks<TBitVectorFactory, TBitVector> : EngineBenchmarksBase<TBitVector>
+    where TBitVectorFactory : IBitVectorFactory<TBitVector>
+    where TBitVector : IBitVector<TBitVector>
 {
     [GlobalSetup]
     public void GlobalSetup()
     {
-        ConstructEngine();
+        var bitVectorFactory = Activator.CreateInstance<TBitVectorFactory>();
+
+        ConstructEngine(bitVectorFactory);
 
         var posts = new StackExchangeSiteSerializer(Program.StackExchangeDirectory, Program.StackExchangeSite)
             .DeserializeMemoryPack<Post>();

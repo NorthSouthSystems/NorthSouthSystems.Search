@@ -1,14 +1,16 @@
 ﻿namespace FOSStrich.Search;
 
+using FOSStrich.BitVectors;
 using FOSStrich.StackExchange;
 
-public abstract class EngineBenchmarksBase
+public abstract class EngineBenchmarksBase<TBitVector>
+    where TBitVector : IBitVector<TBitVector>
 {
     private static readonly int[] _powersOfTen = new[] { 1, 10, 100, 1_000, 10_000, 100_000, 1_000_000 };
 
-    protected Engine<FOSStrich.BitVectors.PLWAH.Vector, Post, int> ConstructEngine()
+    protected Engine<TBitVector, Post, int> ConstructEngine(IBitVectorFactory<TBitVector> bitVectorFactory)
     {
-        Engine = new(new FOSStrich.BitVectors.PLWAH.PLWAHVectorFactory(), post => post.Id);
+        Engine = new(bitVectorFactory, post => post.Id);
 
         PostTypeCatalog = Engine.CreateCatalog(nameof(Post.PostTypeId), post => post.PostTypeId);
         CreationDateCatalog = Engine.CreateCatalog(nameof(Post.CreationDate), post => YearMonth(post.CreationDate));
@@ -37,7 +39,7 @@ public abstract class EngineBenchmarksBase
         }
     }
 
-    public Engine<FOSStrich.BitVectors.PLWAH.Vector, Post, int> Engine { get; private set; }
+    public Engine<TBitVector, Post, int> Engine { get; private set; }
 
     public ICatalogHandle<byte> PostTypeCatalog { get; private set; }
     public ICatalogHandle<DateTime> CreationDateCatalog { get; private set; }
