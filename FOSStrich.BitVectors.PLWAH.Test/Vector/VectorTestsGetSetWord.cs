@@ -1,4 +1,8 @@
-﻿namespace FOSStrich.BitVectors.PLWAH;
+﻿#if POSITIONLISTENABLED
+namespace FOSStrich.BitVectors.PLWAH;
+#else
+namespace FOSStrich.BitVectors.WAH;
+#endif
 
 public class VectorTestsGetSetWord
 {
@@ -87,26 +91,38 @@ public class VectorTestsGetSetWord
         // Add a 1 and pack the tail
         vector.SetWord(4, new Word(1));
         vector.AssertWordLogicalValues(0, 0, 0, 1, 1, 0, 0, 0, 0, 0);
-        // TODO : vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 2 : 3, 5);
+#if POSITIONLISTENABLED
         vector.AssertWordCounts(2, 5);
+#else
+        vector.AssertWordCounts(3, 5);
+#endif
 
         // Add a 0 Word
         vector.SetWord(4, new Word(0));
         vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 0, 0, 0);
-        // TODO : vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 2 : 3, 5);
+#if POSITIONLISTENABLED
         vector.AssertWordCounts(2, 5);
+#else
+        vector.AssertWordCounts(3, 5);
+#endif
 
         // Add a 1 Word far away, forcing a compression
         vector.SetWord(7, new Word(1));
         vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 1, 0, 0);
-        // TODO : vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 3 : 4, 8);
+#if POSITIONLISTENABLED
         vector.AssertWordCounts(3, 8);
+#else
+        vector.AssertWordCounts(4, 8);
+#endif
 
         // Add a 1 Word two spaces away, forcing a pack and 2xZeroFill with overwrite
         vector.SetWord(9, new Word(1));
         vector.AssertWordLogicalValues(0, 0, 0, 1, 0, 0, 0, 1, 0, 1);
-        // TODO : vector.AssertWordCounts(vector.IsPackedPositionEnabled ? 4 : 6, 10);
+#if POSITIONLISTENABLED
         vector.AssertWordCounts(4, 10);
+#else
+        vector.AssertWordCounts(6, 10);
+#endif
     }
 
     [Fact]

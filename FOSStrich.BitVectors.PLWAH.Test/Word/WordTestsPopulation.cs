@@ -1,4 +1,8 @@
-﻿namespace FOSStrich.BitVectors.PLWAH;
+﻿#if POSITIONLISTENABLED
+namespace FOSStrich.BitVectors.PLWAH;
+#else
+namespace FOSStrich.BitVectors.WAH;
+#endif
 
 public class WordTestsPopulation
 {
@@ -55,6 +59,7 @@ public class WordTestsPopulation
         }
     }
 
+#if POSITIONLISTENABLED
     [Fact]
     public void Packed()
     {
@@ -68,4 +73,5 @@ public class WordTestsPopulation
         word.Pack(new Word(1));
         word.Population.Should().Be(Word.SIZE);
     }
+#endif
 }

@@ -1,4 +1,8 @@
-﻿namespace FOSStrich.BitVectors.PLWAH;
+﻿#if POSITIONLISTENABLED
+namespace FOSStrich.BitVectors.PLWAH;
+#else
+namespace FOSStrich.BitVectors.WAH;
+#endif
 
 public class WordTestsCompress
 {
@@ -60,6 +64,7 @@ public class WordTestsCompress
         }
     }
 
+#if POSITIONLISTENABLED
     [Fact]
     public void Pack()
     {
@@ -95,9 +100,11 @@ public class WordTestsCompress
         word.PackedPosition.Should().Be(0);
         word.PackedWord.Raw.Should().Be((uint)1 << 30);
     }
+#endif
 
+#if POSITIONLISTENABLED
     [Fact]
-    public void Exceptions()
+    public void PackExceptions()
     {
         Action act;
 
@@ -158,4 +165,5 @@ public class WordTestsCompress
         };
         act.Should().ThrowExactly<NotSupportedException>(because: "PackNotSupported4_2");
     }
+#endif
 }

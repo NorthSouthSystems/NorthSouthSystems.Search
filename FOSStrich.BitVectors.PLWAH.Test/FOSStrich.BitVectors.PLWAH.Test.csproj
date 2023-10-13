@@ -6,6 +6,7 @@
         <IsPackable>false</IsPackable>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <ImplicitUsings>disable</ImplicitUsings>
+        <DefineConstants>POSITIONLISTENABLED</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>

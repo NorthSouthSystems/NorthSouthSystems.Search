@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BitVectors", "BitVectors", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Search", "Search", "{BC2DCC21-7480-44C3-B490-A6C53176163D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FOSStrich.BitVectors.WAH.Test", "FOSStrich.BitVectors.WAH.Test\FOSStrich.BitVectors.WAH.Test.csproj", "{22EB7BFA-A118-4677-A0D5-6DA6856AD33C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,10 @@ Global
 		{F663C077-5562-4A69-9376-A91C0BACC7F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F663C077-5562-4A69-9376-A91C0BACC7F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F663C077-5562-4A69-9376-A91C0BACC7F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22EB7BFA-A118-4677-A0D5-6DA6856AD33C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22EB7BFA-A118-4677-A0D5-6DA6856AD33C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22EB7BFA-A118-4677-A0D5-6DA6856AD33C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22EB7BFA-A118-4677-A0D5-6DA6856AD33C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +85,7 @@ Global
 		{88742BA4-1E26-4A14-817F-CA0A92B367E0} = {357E7510-49CF-4434-B79D-5F1EABAEEDB0}
 		{1A142F66-4AC4-4516-943C-B429970D09AE} = {357E7510-49CF-4434-B79D-5F1EABAEEDB0}
 		{F663C077-5562-4A69-9376-A91C0BACC7F6} = {357E7510-49CF-4434-B79D-5F1EABAEEDB0}
+		{22EB7BFA-A118-4677-A0D5-6DA6856AD33C} = {357E7510-49CF-4434-B79D-5F1EABAEEDB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C99FD4A7-7B39-455F-B9C5-98D7A83551EA}
