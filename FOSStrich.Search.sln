@@ -22,6 +22,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FOSStrich.BitVectors.Test",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FOSStrich.BitVectors.WAH", "FOSStrich.BitVectors.WAH\FOSStrich.BitVectors.WAH.csproj", "{1A142F66-4AC4-4516-943C-B429970D09AE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FOSStrich.BitVectors.PLWAH.Test", "FOSStrich.BitVectors.PLWAH.Test\FOSStrich.BitVectors.PLWAH.Test.csproj", "{F663C077-5562-4A69-9376-A91C0BACC7F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{1A142F66-4AC4-4516-943C-B429970D09AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A142F66-4AC4-4516-943C-B429970D09AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A142F66-4AC4-4516-943C-B429970D09AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F663C077-5562-4A69-9376-A91C0BACC7F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F663C077-5562-4A69-9376-A91C0BACC7F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F663C077-5562-4A69-9376-A91C0BACC7F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F663C077-5562-4A69-9376-A91C0BACC7F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

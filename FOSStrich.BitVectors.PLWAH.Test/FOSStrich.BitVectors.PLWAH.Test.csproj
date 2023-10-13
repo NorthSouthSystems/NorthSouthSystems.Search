@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\FOSStrich.BitVectors\FOSStrich.BitVectors.csproj" />
+        <ProjectReference Include="..\FOSStrich.BitVectors.PLWAH\FOSStrich.BitVectors.PLWAH.csproj" />
     </ItemGroup>
 
     <ItemGroup>
