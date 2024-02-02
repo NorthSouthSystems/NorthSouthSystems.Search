@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <IsPackable>false</IsPackable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <ImplicitUsings>disable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.10" />
+        <PackageReference Include="NorthSouthSystems.StackExchange.Opinions" Version="1.3.8" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\NorthSouthSystems.BitVectors.PLWAH\NorthSouthSystems.BitVectors.PLWAH.csproj" />
+        <ProjectReference Include="..\NorthSouthSystems.BitVectors.WAH\NorthSouthSystems.BitVectors.WAH.csproj" />
+        <ProjectReference Include="..\NorthSouthSystems.Search\NorthSouthSystems.Search.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="System" />
+        <Using Include="System.Collections.Generic" />
+        <Using Include="System.Linq" />
+        <Using Include="BenchmarkDotNet.Attributes" />
+    </ItemGroup>
+
+</Project>
