@@ -5,7 +5,10 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{339096F8-0550-4650-93B9-CB1242C43092}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		CodeAnalysis.CustomDictionary.xml = CodeAnalysis.CustomDictionary.xml
+		LICENSE.md = LICENSE.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Search", "NorthSouthSystems.Search\NorthSouthSystems.Search.csproj", "{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}"
