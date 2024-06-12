@@ -5,6 +5,8 @@
         <LangVersion>latest</LangVersion>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <ImplicitUsings>disable</ImplicitUsings>
+        <!-- PLWAH is the source of WAH code (via conditional complilation) and a superset of functionality. -->
+        <SonarQubeExclude>true</SonarQubeExclude>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,10 +25,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH\Vector.cs" Link="Vector.cs" />
-      <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH\VectorFactory.cs" Link="VectorFactory.cs" />
-      <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH\VectorOperations.cs" Link="VectorOperations.cs" />
-      <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH\Word.cs" Link="Word.cs" />
+        <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH\Vector.cs" Link="Vector.cs" />
+        <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH\VectorFactory.cs" Link="VectorFactory.cs" />
+        <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH\VectorOperations.cs" Link="VectorOperations.cs" />
+        <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH\Word.cs" Link="Word.cs" />
     </ItemGroup>
 
     <ItemGroup>

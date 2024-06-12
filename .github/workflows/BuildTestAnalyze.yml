@@ -44,8 +44,11 @@ jobs:
 
               dotnet build --no-restore --configuration Release
 
+              # The WAH project links all of its code from the PLWAH project because PLWAH is a superset of functionality.
+              # We've excluded the WAH project from Sonar; however, we also cannot allow any WAH tests to run because they
+              # confuse Sonar's code coverage for PLWAH, likely due to the linked files.
               dotnet-coverage collect `
-                  "dotnet test --no-build --configuration Release --verbosity normal" `
+                  "dotnet test --no-build --configuration Release --verbosity normal --filter FullyQualifiedName!~NorthSouthSystems.BitVectors.WAH." `
                   -f xml -o "coverage.xml"
 
               dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
