@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{339096F8-0550-46
 		.github\workflows\BuildTestPackagePublish.yml = .github\workflows\BuildTestPackagePublish.yml
 		CodeAnalysis.CustomDictionary.xml = CodeAnalysis.CustomDictionary.xml
 		Directory.Build.props = Directory.Build.props
-		LICENSE.md = LICENSE.md
+		LICENSE = LICENSE
 		README.md = README.md
 		version.json = version.json
 	EndProjectSection

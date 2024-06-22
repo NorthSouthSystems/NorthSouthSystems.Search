@@ -7,6 +7,8 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <!-- PLWAH is the source of WAH code (via conditional complilation) and a superset of functionality. -->
         <SonarQubeExclude>true</SonarQubeExclude>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -39,6 +41,11 @@
         <Using Include="System" />
         <Using Include="System.Collections.Generic" />
         <Using Include="System.Linq" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\LICENSE" Pack="true" PackagePath="" />
+        <None Include="..\README.md" Pack="true" PackagePath="" />
     </ItemGroup>
 
 </Project>

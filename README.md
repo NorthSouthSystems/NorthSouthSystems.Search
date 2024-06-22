@@ -1,3 +1,5 @@
+# NorthSouthSystems.Search and NorthSouthSystems.BitVectors.*
+
 NorthSouthSystems.Search is a search framework built using compressed bit vectors whose implementations can be found and used independently in the NorthSouthSystems.BitVectors.* projects. The purpose of this search framework is to provide high performance in-memory searching of data using unknown combinations of indices. It is developed with .NET and written in C#. 
 
 The word aligned hybrid bit vector compression found in NorthSouthSystems.BitVectors.WAH and PLWAH was once protected by [United States Patent 6831575](https://patentcenter.uspto.gov/applications/10701655) "Word aligned bitmap compression method, data structure, and apparatus". That patent has expired as far as I can tell; however, I am not a lawyer: **USE AT YOUR OWN RISK**!
