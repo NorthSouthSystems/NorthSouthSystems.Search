@@ -1,22 +1,40 @@
-﻿#if POSITIONLISTENABLED
+﻿#if POSITIONLISTENABLED && WORDSIZE64
+namespace NorthSouthSystems.BitVectors.PLWAH64;
+#elif POSITIONLISTENABLED
 namespace NorthSouthSystems.BitVectors.PLWAH;
+#elif WORDSIZE64
+namespace NorthSouthSystems.BitVectors.WAH64;
 #else
 namespace NorthSouthSystems.BitVectors.WAH;
 #endif
 
-using System.Globalization;
 using System.Numerics;
+
+#if WORDSIZE64
+using WordRawType = ulong;
+#else
+using WordRawType = uint;
+#endif
 
 internal struct Word
 {
+#if WORDSIZE64
+    public const int SIZE = 64;
+#else
     public const int SIZE = 32;
+#endif
+
+    internal const WordRawType ZERO = 0;
+    internal const WordRawType ONE = 1;
+
+    public WordRawType Raw;
 
     #region Construction
 
-    public Word(uint raw)
+    public Word(WordRawType raw)
     {
         if (raw >= COMPRESSEDMASK)
-            throw new ArgumentOutOfRangeException(nameof(raw), raw, string.Format(CultureInfo.InvariantCulture, "Must be < COMPRESSEDMASK : 0x{0:X}.", COMPRESSEDMASK));
+            throw new ArgumentOutOfRangeException(nameof(raw), raw, FormattableString.Invariant($"Must be < COMPRESSEDMASK : 0x{COMPRESSEDMASK:X}."));
 
         Raw = raw;
     }
@@ -27,23 +45,23 @@ internal struct Word
             throw new ArgumentOutOfRangeException(nameof(fillCount), fillCount, "Must be >= 0.");
 
         if (fillCount > FILLCOUNTMASK)
-            throw new ArgumentOutOfRangeException(nameof(fillCount), fillCount, string.Format(CultureInfo.InvariantCulture, "Must be <= FILLCOUNTMASK : 0x{0:X}.", FILLCOUNTMASK));
+            throw new ArgumentOutOfRangeException(nameof(fillCount), fillCount, FormattableString.Invariant($"Must be <= FILLCOUNTMASK : 0x{FILLCOUNTMASK:X}."));
 
-        Raw = COMPRESSEDMASK | (fillBit ? FILLBITMASK : 0u) | (uint)fillCount;
+        Raw = COMPRESSEDMASK | (fillBit ? FILLBITMASK : ZERO) | (WordRawType)fillCount;
     }
 
     #endregion
 
-    public uint Raw;
-
     #region Indexers
+
+    internal const WordRawType FIRSTBITMASK = ONE << (SIZE - 2);
 
     public bool this[int position]
     {
-        readonly get => (Raw & ComputeIndexerMask(position)) > 0u;
+        readonly get => (Raw & ComputeIndexerMask(position)) > ZERO;
         set
         {
-            uint mask = ComputeIndexerMask(position);
+            WordRawType mask = ComputeIndexerMask(position);
 
             if (value)
                 Raw |= mask;
@@ -52,7 +70,7 @@ internal struct Word
         }
     }
 
-    private readonly uint ComputeIndexerMask(int position)
+    private readonly WordRawType ComputeIndexerMask(int position)
     {
         if (IsCompressed)
             throw new NotSupportedException("Not supported for compressed Words.");
@@ -61,9 +79,9 @@ internal struct Word
             throw new ArgumentOutOfRangeException(nameof(position), position, "Must be >= 0.");
 
         if (position >= SIZE - 1)
-            throw new ArgumentOutOfRangeException(nameof(position), position, string.Format(CultureInfo.InvariantCulture, "Must be < SIZE - 1 : {0}.", SIZE - 1));
+            throw new ArgumentOutOfRangeException(nameof(position), position, FormattableString.Invariant($"Must be < SIZE - 1 : {SIZE - 1}."));
 
-        return 1u << (30 - position);
+        return ONE << (SIZE - 2 - position);
     }
 
     public readonly bool[] Bits
@@ -76,11 +94,11 @@ internal struct Word
             bool[] bits = new bool[SIZE - 1];
             int current = 0;
 
-            uint mask = 0x40000000u;
+            WordRawType mask = FIRSTBITMASK;
 
             for (int i = 0; i < SIZE - 1; i++)
             {
-                bits[current++] = (Raw & mask) > 0;
+                bits[current++] = (Raw & mask) > ZERO;
                 mask >>= 1;
             }
 
@@ -93,7 +111,7 @@ internal struct Word
         if (IsCompressed)
             throw new NotSupportedException("Not supported for compressed Words.");
 
-        return (value && Raw != 0u) || (!value && Raw != COMPRESSIBLEMASK);
+        return (value && Raw != ZERO) || (!value && Raw != COMPRESSIBLEMASK);
     }
 
     public readonly int[] GetBitPositions(bool value)
@@ -101,18 +119,18 @@ internal struct Word
         if (IsCompressed)
             throw new NotSupportedException("Not supported for compressed Words.");
 
-        if ((value && Raw == 0u) || (!value && Raw == COMPRESSIBLEMASK))
+        if ((value && Raw == ZERO) || (!value && Raw == COMPRESSIBLEMASK))
             return _emptyBitPositions;
 
         int count = value ? Population : SIZE - 1 - Population;
         int[] bitPositions = new int[count];
         int current = 0;
 
-        uint mask = 0x40000000u;
+        WordRawType mask = FIRSTBITMASK;
 
         for (int i = 0; i < SIZE - 1; i++)
         {
-            if ((Raw & mask) > 0 == value)
+            if ((Raw & mask) > ZERO == value)
                 bitPositions[current++] = i;
 
             mask >>= 1;
@@ -121,27 +139,27 @@ internal struct Word
         return bitPositions;
     }
 
-    private static readonly int[] _emptyBitPositions = Array.Empty<int>();
+    private static readonly int[] _emptyBitPositions = [];
 
     #endregion
 
     #region Compression
 
-    internal const uint COMPRESSIBLEMASK = 0x7FFFFFFFu;
-    internal const uint COMPRESSEDMASK = 0x80000000u;
-    internal const uint FILLBITMASK = 0x40000000u;
-    internal const uint FILLCOUNTMASK = 0x01FFFFFFu;
+    internal const WordRawType COMPRESSIBLEMASK = WordRawType.MaxValue >> 1;
+    internal const WordRawType COMPRESSEDMASK = ONE << (SIZE - 1);
+    internal const WordRawType FILLBITMASK = ONE << (SIZE - 2);
+    internal const WordRawType FILLCOUNTMASK = WordRawType.MaxValue >> 7;
 
-    public readonly bool IsCompressible => Raw == 0u || Raw == COMPRESSIBLEMASK;
-    public readonly bool CompressibleFillBit => Raw != 0u;
+    public readonly bool IsCompressible => Raw == ZERO || Raw == COMPRESSIBLEMASK;
+    public readonly bool CompressibleFillBit => Raw != ZERO;
     public readonly bool IsCompressed => Raw >= COMPRESSEDMASK;
-    public readonly bool FillBit => (Raw & FILLBITMASK) > 0u;
+    public readonly bool FillBit => (Raw & FILLBITMASK) > ZERO;
     public readonly int FillCount => (int)(Raw & FILLCOUNTMASK);
 
     public void Compress()
     {
         if (IsCompressible)
-            Raw = CompressibleFillBit ? 0xC0000001u : 0x80000001u;
+            Raw = CompressibleFillBit ? (COMPRESSEDMASK + FILLBITMASK + 1) : (COMPRESSEDMASK + 1);
     }
 
     #endregion
@@ -150,9 +168,9 @@ internal struct Word
 
 #if POSITIONLISTENABLED
 
-    private const uint PACKEDPOSITIONMASK = 0x3E000000u;
+    internal const WordRawType PACKEDPOSITIONMASK = ((WordRawType)31) << (SIZE - 7);
 
-    public readonly bool HasPackedWord => IsCompressed && (Raw & PACKEDPOSITIONMASK) > 0u;
+    public readonly bool HasPackedWord => IsCompressed && (Raw & PACKEDPOSITIONMASK) > ZERO;
 
     /// <summary>
     /// Position is relative to the global bit position.  More specifically, it ignores the most significant bit which is
@@ -181,7 +199,7 @@ internal struct Word
             if (!HasPackedWord)
                 throw new NotSupportedException("Cannot retrieve the PackedWord for a Word that does not contain a Packed Word.");
 
-            return new Word(1u << (SIZE - 2 - PackedPosition));
+            return new Word(ONE << (SIZE - 2 - PackedPosition));
         }
     }
 
@@ -199,7 +217,7 @@ internal struct Word
         if (word.Population != 1)
             throw new NotSupportedException("Can only pack a Word with exactly 1 bit set (Population = 1).");
 
-        uint packedPosition = (uint)word.GetBitPositions(true)[0];
+        WordRawType packedPosition = (WordRawType)word.GetBitPositions(true)[0];
         Raw |= (packedPosition + 1) << (SIZE - 7);
     }
 
@@ -228,7 +246,7 @@ internal struct Word
     {
         get
         {
-            if (Raw == 0u)
+            if (Raw == ZERO)
                 return 0;
 
             if (IsCompressed)
@@ -246,11 +264,17 @@ internal struct Word
                 return population;
             }
             else
+            {
+#if WORDSIZE64
+                throw new NotSupportedException();
+#else
                 return BitOperations.PopCount(Raw);
+#endif
+            }
         }
     }
 
     #endregion
 
-    public override readonly string ToString() => string.Format(CultureInfo.InvariantCulture, "0x{0:X}", Raw);
+    public override readonly string ToString() => FormattableString.Invariant($"0x{Raw:X}");
 }
