@@ -11,12 +11,6 @@ namespace NorthSouthSystems.BitVectors.WAH;
 using System.Buffers;
 using System.Diagnostics;
 
-#if WORDSIZE64
-using WordRawType = ulong;
-#else
-using WordRawType = uint;
-#endif
-
 /// <summary>
 /// Word-aligned hybrid bit vector.
 /// </summary>

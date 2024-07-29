@@ -10,12 +10,6 @@ namespace NorthSouthSystems.BitVectors.WAH;
 
 using System.Numerics;
 
-#if WORDSIZE64
-using WordRawType = ulong;
-#else
-using WordRawType = uint;
-#endif
-
 public sealed partial class Vector
 {
     #region Decompress

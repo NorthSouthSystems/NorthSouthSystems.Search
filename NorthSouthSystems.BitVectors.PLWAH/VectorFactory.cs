@@ -9,14 +9,15 @@ namespace NorthSouthSystems.BitVectors.WAH;
 #endif
 
 #if POSITIONLISTENABLED && WORDSIZE64
-public class PLWAH64VectorFactory : IBitVectorFactory<Vector>
+public class PLWAH64VectorFactory
 #elif POSITIONLISTENABLED
-public class PLWAHVectorFactory : IBitVectorFactory<Vector>
+public class PLWAHVectorFactory
 #elif WORDSIZE64
-public class WAH64VectorFactory : IBitVectorFactory<Vector>
+public class WAH64VectorFactory
 #else
-public class WAHVectorFactory : IBitVectorFactory<Vector>
+public class WAHVectorFactory
 #endif
+     : IBitVectorFactory<Vector>
 {
     public Vector Create(bool isCompressed) =>
         new(isCompressed);

@@ -1,4 +1,10 @@
-﻿#if POSITIONLISTENABLED && WORDSIZE64
+﻿#if WORDSIZE64
+global using WordRawType = ulong;
+#else
+global using WordRawType = uint;
+#endif
+
+#if POSITIONLISTENABLED && WORDSIZE64
 namespace NorthSouthSystems.BitVectors.PLWAH64;
 #elif POSITIONLISTENABLED
 namespace NorthSouthSystems.BitVectors.PLWAH;
@@ -9,12 +15,6 @@ namespace NorthSouthSystems.BitVectors.WAH;
 #endif
 
 using System.Numerics;
-
-#if WORDSIZE64
-using WordRawType = ulong;
-#else
-using WordRawType = uint;
-#endif
 
 internal struct Word
 {
