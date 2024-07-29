@@ -1,11 +1,21 @@
-﻿#if POSITIONLISTENABLED
+﻿#if POSITIONLISTENABLED && WORDSIZE64
+namespace NorthSouthSystems.BitVectors.PLWAH64;
+#elif POSITIONLISTENABLED
 namespace NorthSouthSystems.BitVectors.PLWAH;
+#elif WORDSIZE64
+namespace NorthSouthSystems.BitVectors.WAH64;
 #else
 namespace NorthSouthSystems.BitVectors.WAH;
 #endif
 
 using System.Buffers;
 using System.Diagnostics;
+
+#if WORDSIZE64
+using WordRawType = ulong;
+#else
+using WordRawType = uint;
+#endif
 
 /// <summary>
 /// Word-aligned hybrid bit vector.
@@ -70,7 +80,7 @@ public sealed partial class Vector : IBitVector<Vector>
         }
     }
 
-    public bool IsUnused => _wordCountLogical == 1 && _words[0].Raw == 0u;
+    public bool IsUnused => _wordCountLogical == 1 && _words[0].Raw == Word.ZERO;
 
     #endregion
 
@@ -88,7 +98,7 @@ public sealed partial class Vector : IBitVector<Vector>
                 optimized[bitPosition - positionShift] = true;
         }
 
-        return optimized._wordCountLogical > 1 || optimized._words[0].Raw > 0;
+        return optimized._wordCountLogical > 1 || optimized._words[0].Raw > Word.ZERO;
     }
 
     #endregion
@@ -179,7 +189,7 @@ public sealed partial class Vector : IBitVector<Vector>
             throw new ArgumentOutOfRangeException(nameof(wordPositionLogical), wordPositionLogical, "Must be > 0.");
 
         if (wordPositionLogical >= _wordCountLogical)
-            return new Word(0);
+            return new Word(Word.ZERO);
 
 #if POSITIONLISTENABLED
         int wordPositionPhysical = WordPositionPhysical(wordPositionLogical, out bool isPacked);
@@ -195,7 +205,7 @@ public sealed partial class Vector : IBitVector<Vector>
                 return word.PackedWord;
             else
 #endif
-            return new Word((word.FillBit && word.FillCount > 0) ? Word.COMPRESSIBLEMASK : 0);
+                return new Word((word.FillBit && word.FillCount > 0) ? Word.COMPRESSIBLEMASK : Word.ZERO);
         }
         else
             return word;
@@ -272,7 +282,7 @@ public sealed partial class Vector : IBitVector<Vector>
         if (IsCompressed && wordPositionLogical < (_wordCountLogical - 1))
             throw new NotSupportedException("Writing is forward-only for a compressed Vector.");
 
-        bool isZero = word.Raw == 0u
+        bool isZero = word.Raw == Word.ZERO
             || (word.IsCompressed
                 && !word.FillBit
 #if POSITIONLISTENABLED
@@ -294,7 +304,7 @@ public sealed partial class Vector : IBitVector<Vector>
 
         if (isZero)
         {
-            _words[wordPositionPhysical].Raw = 0;
+            _words[wordPositionPhysical].Raw = Word.ZERO;
         }
         else if (!word.IsCompressed)
         {
@@ -310,7 +320,7 @@ public sealed partial class Vector : IBitVector<Vector>
 
                 if (word.FillBit)
                     for (int i = wordPositionPhysical; i < _wordCountPhysical; i++)
-                        _words[i].Raw = 0x7FFFFFFF;
+                        _words[i].Raw = Word.COMPRESSIBLEMASK;
 
 #if POSITIONLISTENABLED
                 if (word.HasPackedWord)
@@ -400,7 +410,7 @@ public sealed partial class Vector : IBitVector<Vector>
             _wordCountLogical++;
 
             _words[_wordCountPhysical - 2].Compress();
-            _words[_wordCountPhysical - 1].Raw = 0;
+            _words[_wordCountPhysical - 1].Raw = Word.ZERO;
         }
     }
 
@@ -421,14 +431,14 @@ public sealed partial class Vector : IBitVector<Vector>
                 _wordCountLogical++;
 
                 _words[_wordCountPhysical - 2].Raw++;
-                _words[_wordCountPhysical - 1].Raw = 0;
+                _words[_wordCountPhysical - 1].Raw = Word.ZERO;
             }
             else
             {
                 _wordCountLogical += zeroFillCount;
 
-                _words[_wordCountPhysical - 2].Raw += (uint)zeroFillCount;
-                _words[_wordCountPhysical - 1].Raw = 0;
+                _words[_wordCountPhysical - 2].Raw += (WordRawType)zeroFillCount;
+                _words[_wordCountPhysical - 1].Raw = Word.ZERO;
             }
         }
     }
@@ -446,7 +456,7 @@ public sealed partial class Vector : IBitVector<Vector>
             _wordCountLogical++;
 
             _words[_wordCountPhysical - 2].Pack(_words[_wordCountPhysical - 1]);
-            _words[_wordCountPhysical - 1].Raw = 0;
+            _words[_wordCountPhysical - 1].Raw = Word.ZERO;
         }
     }
 #endif
@@ -462,8 +472,8 @@ public sealed partial class Vector : IBitVector<Vector>
             _wordCountLogical += zeroFillCount;
 
             _words[_wordCountPhysical - 2].Compress();
-            _words[_wordCountPhysical - 2].Raw += (uint)(zeroFillCount - 1);
-            _words[_wordCountPhysical - 1].Raw = 0;
+            _words[_wordCountPhysical - 2].Raw += (WordRawType)(zeroFillCount - 1);
+            _words[_wordCountPhysical - 1].Raw = Word.ZERO;
         }
     }
 
@@ -480,8 +490,8 @@ public sealed partial class Vector : IBitVector<Vector>
             _wordCountLogical += zeroFillCount;
 
             _words[_wordCountPhysical - 2].Compress();
-            _words[_wordCountPhysical - 2].Raw += (uint)(zeroFillCount - 2);
-            _words[_wordCountPhysical - 1].Raw = 0;
+            _words[_wordCountPhysical - 2].Raw += (WordRawType)(zeroFillCount - 2);
+            _words[_wordCountPhysical - 1].Raw = Word.ZERO;
         }
     }
 

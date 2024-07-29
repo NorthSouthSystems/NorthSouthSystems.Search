@@ -1,10 +1,20 @@
-﻿#if POSITIONLISTENABLED
+﻿#if POSITIONLISTENABLED && WORDSIZE64
+namespace NorthSouthSystems.BitVectors.PLWAH64;
+#elif POSITIONLISTENABLED
 namespace NorthSouthSystems.BitVectors.PLWAH;
+#elif WORDSIZE64
+namespace NorthSouthSystems.BitVectors.WAH64;
 #else
 namespace NorthSouthSystems.BitVectors.WAH;
 #endif
 
 using System.Numerics;
+
+#if WORDSIZE64
+using WordRawType = ulong;
+#else
+using WordRawType = uint;
+#endif
 
 public sealed partial class Vector
 {
@@ -30,7 +40,7 @@ public sealed partial class Vector
 
                     while (i < k)
                     {
-                        iWords[i].Raw = 0x7FFFFFFF;
+                        iWords[i].Raw = Word.COMPRESSIBLEMASK;
                         i++;
                     }
                 }
@@ -81,7 +91,7 @@ public sealed partial class Vector
 
             while (i < iWords.Length)
             {
-                iWords[i].Raw = 0;
+                iWords[i].Raw = Word.ZERO;
                 i++;
             }
         }
@@ -110,7 +120,7 @@ public sealed partial class Vector
 
                     while (i < k)
                     {
-                        iWords[i].Raw = 0;
+                        iWords[i].Raw = Word.ZERO;
                         i++;
                     }
                 }
@@ -141,7 +151,7 @@ public sealed partial class Vector
 
             while (i < iWords.Length)
             {
-                iWords[i].Raw = 0;
+                iWords[i].Raw = Word.ZERO;
                 i++;
             }
         }
@@ -163,9 +173,9 @@ public sealed partial class Vector
 
         while (i < iWords.Length && j < jWords.Length)
         {
-            uint word = iWords[i].Raw & jWords[j].Raw;
+            WordRawType word = iWords[i].Raw & jWords[j].Raw;
 
-            if (word > 0)
+            if (word > Word.ZERO)
                 result.SetWord(i, new Word(word));
 
             i++;
@@ -207,9 +217,9 @@ public sealed partial class Vector
 #if POSITIONLISTENABLED
                 if (jWord.HasPackedWord && i < iWords.Length)
                 {
-                    uint word = iWords[i].Raw & jWord.PackedWord.Raw;
+                    WordRawType word = iWords[i].Raw & jWord.PackedWord.Raw;
 
-                    if (word > 0)
+                    if (word > Word.ZERO)
                         result.SetWord(i, new Word(word));
 
                     i++;
@@ -218,9 +228,9 @@ public sealed partial class Vector
             }
             else
             {
-                uint word = iWords[i].Raw & jWord.Raw;
+                WordRawType word = iWords[i].Raw & jWord.Raw;
 
-                if (word > 0)
+                if (word > Word.ZERO)
                     result.SetWord(i, new Word(word));
 
                 i++;
@@ -322,7 +332,7 @@ public sealed partial class Vector
                         if (jUsePackedWord || !jWord.IsCompressed)
                         {
                             if (jLogical == iLogical)
-                                if ((iWord.PackedWord.Raw & (jUsePackedWord ? jWord.PackedWord.Raw : jWord.Raw)) > 0)
+                                if ((iWord.PackedWord.Raw & (jUsePackedWord ? jWord.PackedWord.Raw : jWord.Raw)) > Word.ZERO)
                                     result.SetWord(iLogical, iWord.PackedWord);
 
                             jLogical++;
@@ -370,12 +380,12 @@ public sealed partial class Vector
                         if (jLogical == iLogical)
                         {
 #if POSITIONLISTENABLED
-                            uint word = iWord.Raw & (jUsePackedWord ? jWord.PackedWord.Raw : jWord.Raw);
+                            WordRawType word = iWord.Raw & (jUsePackedWord ? jWord.PackedWord.Raw : jWord.Raw);
 #else
-                            uint word = iWord.Raw & jWord.Raw;
+                            WordRawType word = iWord.Raw & jWord.Raw;
 #endif
 
-                            if (word > 0)
+                            if (word > Word.ZERO)
                                 result.SetWord(iLogical, new Word(word));
                         }
 
@@ -437,9 +447,9 @@ public sealed partial class Vector
 
         while (i < iWords.Length && j < jWords.Length)
         {
-            uint word = iWords[i].Raw & jWords[j].Raw;
+            WordRawType word = iWords[i].Raw & jWords[j].Raw;
 
-            if (word > 0)
+            if (word > Word.ZERO)
                 population += BitOperations.PopCount(word);
 
             i++;
@@ -486,7 +496,7 @@ public sealed partial class Vector
                 {
                     Word iWord = iWords[i];
 
-                    if (iWord.Raw > 0 && (iWord.Raw & jWord.PackedWord.Raw) > 0)
+                    if (iWord.Raw > Word.ZERO && (iWord.Raw & jWord.PackedWord.Raw) > Word.ZERO)
                         population++;
 
                     i++;
@@ -495,9 +505,9 @@ public sealed partial class Vector
             }
             else
             {
-                uint word = iWords[i].Raw & jWord.Raw;
+                WordRawType word = iWords[i].Raw & jWord.Raw;
 
-                if (word > 0)
+                if (word > Word.ZERO)
                     population += BitOperations.PopCount(word);
 
                 i++;
@@ -599,7 +609,7 @@ public sealed partial class Vector
                         if (jUsePackedWord || !jWord.IsCompressed)
                         {
                             if (jLogical == iLogical)
-                                if ((iWord.PackedWord.Raw & (jUsePackedWord ? jWord.PackedWord.Raw : jWord.Raw)) > 0)
+                                if ((iWord.PackedWord.Raw & (jUsePackedWord ? jWord.PackedWord.Raw : jWord.Raw)) > Word.ZERO)
                                     population++;
 
                             jLogical++;
@@ -647,12 +657,12 @@ public sealed partial class Vector
                         if (jLogical == iLogical)
                         {
 #if POSITIONLISTENABLED
-                            uint word = iWord.Raw & (jUsePackedWord ? jWord.PackedWord.Raw : jWord.Raw);
+                            WordRawType word = iWord.Raw & (jUsePackedWord ? jWord.PackedWord.Raw : jWord.Raw);
 #else
-                            uint word = iWord.Raw & jWord.Raw;
+                            WordRawType word = iWord.Raw & jWord.Raw;
 #endif
 
-                            if (word > 0)
+                            if (word > Word.ZERO)
                                 population += BitOperations.PopCount(word);
                         }
 
@@ -711,9 +721,9 @@ public sealed partial class Vector
 
         while (i < iWords.Length && j < jWords.Length)
         {
-            uint word = iWords[i].Raw & jWords[j].Raw;
+            WordRawType word = iWords[i].Raw & jWords[j].Raw;
 
-            if (word > 0)
+            if (word > Word.ZERO)
                 return true;
 
             i++;
@@ -746,7 +756,7 @@ public sealed partial class Vector
 
                     while (i < k)
                     {
-                        if (iWords[i].Raw > 0)
+                        if (iWords[i].Raw > Word.ZERO)
                             return true;
 
                         i++;
@@ -760,7 +770,7 @@ public sealed partial class Vector
                 {
                     Word iWord = iWords[i];
 
-                    if (iWord.Raw > 0 && (iWord.Raw & jWord.PackedWord.Raw) > 0)
+                    if (iWord.Raw > Word.ZERO && (iWord.Raw & jWord.PackedWord.Raw) > Word.ZERO)
                         return true;
 
                     i++;
@@ -769,9 +779,9 @@ public sealed partial class Vector
             }
             else
             {
-                uint word = iWords[i].Raw & jWord.Raw;
+                WordRawType word = iWords[i].Raw & jWord.Raw;
 
-                if (word > 0)
+                if (word > Word.ZERO)
                     return true;
 
                 i++;
@@ -823,7 +833,7 @@ public sealed partial class Vector
 
                     while (i < k)
                     {
-                        iWords[i].Raw = 0x7FFFFFFF;
+                        iWords[i].Raw = Word.COMPRESSIBLEMASK;
                         i++;
                     }
                 }
