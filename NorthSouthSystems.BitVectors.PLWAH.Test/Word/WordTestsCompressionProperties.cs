@@ -44,7 +44,7 @@ public class WordTestsCompressionProperties
     [Fact]
     public void IsCompressibleFalseFullCoverage()
     {
-        for (WordRawType i = Word.ONE; i < Word.COMPRESSIBLEMASK; i += WordExtensions.LARGEPRIMEORFULLCOVERAGE)
+        for (WordRawType i = Word.ONE; i < Word.COMPRESSIBLEMASK; i += WordExtensions.LARGEPRIME32ORFULLCOVERAGE64)
         {
             var word = new Word(i);
             word.IsCompressible.Should().BeFalse();
@@ -84,7 +84,7 @@ public class WordTestsCompressionProperties
     {
         foreach (bool fillBit in new bool[] { false, true })
         {
-            for (int i = 0; i < 0x02000000; i += (int)WordExtensions.LARGEPRIME)
+            for (int i = 0; i <= Word.FILLCOUNTMASK; i += (int)WordExtensions.LARGEPRIME32ORFULLCOVERAGE64)
             {
                 var word = new Word(fillBit, i);
                 word.Raw.Should().Be(Word.COMPRESSEDMASK + (fillBit ? Word.FILLBITMASK : Word.ZERO) + (WordRawType)i);

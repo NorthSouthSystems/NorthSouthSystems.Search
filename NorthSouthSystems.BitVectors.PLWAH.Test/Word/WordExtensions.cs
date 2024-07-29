@@ -16,8 +16,12 @@ namespace NorthSouthSystems.BitVectors.WAH;
 
 internal static class WordExtensions
 {
-    internal const uint LARGEPRIME = 9973u;
+    private const uint LARGEPRIME = 9973u;
 
-    internal const WordRawType LARGEPRIMEORFULLCOVERAGE
-        = LARGEPRIME * (WordRawType.MaxValue - uint.MaxValue + Word.ONE);
+    internal const WordRawType LARGEPRIME32ORFULLCOVERAGE64
+#if WORDSIZE64
+        = LARGEPRIME * uint.MaxValue;
+#else
+        = LARGEPRIME;
+#endif
 }

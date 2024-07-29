@@ -57,7 +57,7 @@ public class WordTestsPopulation
     {
         foreach (bool fillBit in new bool[] { false, true })
         {
-            for (int i = 0; i < Word.FILLCOUNTMASK + 1; i += (int)WordExtensions.LARGEPRIME)
+            for (int i = 0; i <= Word.FILLCOUNTMASK; i += (int)WordExtensions.LARGEPRIME32ORFULLCOVERAGE64)
             {
                 var word = new Word(fillBit, i);
                 word.Population.Should().Be(fillBit ? ((Word.SIZE - 1) * i) : 0, because: word.ToString());
