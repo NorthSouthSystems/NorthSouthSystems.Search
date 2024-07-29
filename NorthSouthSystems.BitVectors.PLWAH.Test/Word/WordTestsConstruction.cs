@@ -9,8 +9,8 @@ public class WordTestsConstruction
     [Fact]
     public void Bounds()
     {
-        var word = new Word(0);
-        word = new Word(Word.COMPRESSEDMASK - 1);
+        var word = new Word(Word.ZERO);
+        word = new Word(Word.COMPRESSEDMASK - Word.ONE);
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class WordTestsConstruction
         act = () => new Word(true, -1);
         act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "FillCountOutOfRange1");
 
-        act = () => new Word(true, 0x02000000);
+        act = () => new Word(true, (int)(Word.FILLCOUNTMASK + Word.ONE));
         act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "FillCountOutOfRange2");
     }
 }

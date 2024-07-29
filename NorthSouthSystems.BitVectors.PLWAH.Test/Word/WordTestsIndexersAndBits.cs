@@ -25,50 +25,44 @@ public class WordTestsIndexersAndBits
         }
     }
 
-    [Fact]
-    public void BitsSimple()
-    {
-        int[] bitPositions = new int[] { 0, 3, 8, 12, 19, 24, 30 };
-        BitsBase(bitPositions, true);
-        BitsBase(bitPositions, false);
-    }
+    private static readonly int[] BitPositions = new[] { 0, 3, 8, 12, 19, 24, 30, 31, 32, 33, 39, 45, 48, 55, 61, 62 }
+        .Where(i => i < Word.SIZE - 1)
+        .ToArray();
 
-    private void BitsBase(int[] bitPositions, bool value)
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    private void BitsSimple(bool value)
     {
         var word = new Word();
 
         for (int i = 0; i < Word.SIZE - 1; i++)
-            word[i] = bitPositions.Contains(i) ? value : !value;
+            word[i] = BitPositions.Contains(i) ? value : !value;
 
         bool[] bits = word.Bits;
 
-        bits.Count(bit => value ? bit : !bit).Should().Be(bitPositions.Length);
+        bits.Count(bit => value ? bit : !bit).Should().Be(BitPositions.Length);
 
         for (int i = 0; i < Word.SIZE - 1; i++)
-            (value ? bits[i] : !bits[i]).Should().Be(bitPositions.Contains(i));
+            (value ? bits[i] : !bits[i]).Should().Be(BitPositions.Contains(i));
     }
 
-    [Fact]
-    public void GetBitPositionsSimple()
-    {
-        int[] bitPositions = new int[] { 0, 3, 8, 12, 19, 24, 30 };
-        GetBitPositionsBase(bitPositions, true);
-        GetBitPositionsBase(bitPositions, false);
-    }
-
-    private void GetBitPositionsBase(int[] bitPositions, bool value)
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    private void GetBitPositionsSimple(bool value)
     {
         var word = new Word();
 
         for (int i = 0; i < Word.SIZE - 1; i++)
-            word[i] = bitPositions.Contains(i) ? value : !value;
+            word[i] = BitPositions.Contains(i) ? value : !value;
 
         int[] getBitPositions = word.GetBitPositions(value);
 
-        getBitPositions.Length.Should().Be(bitPositions.Length);
+        getBitPositions.Length.Should().Be(BitPositions.Length);
 
-        for (int i = 0; i < bitPositions.Length; i++)
-            getBitPositions[i].Should().Be(bitPositions[i]);
+        for (int i = 0; i < BitPositions.Length; i++)
+            getBitPositions[i].Should().Be(BitPositions[i]);
     }
 
     [Fact]
@@ -85,14 +79,14 @@ public class WordTestsIndexersAndBits
 
         act = () =>
         {
-            var word = new Word(0);
+            var word = new Word(Word.ZERO);
             bool bit = word[-1];
         };
         act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "ComputeIndexerMaskArgumentOutOfRange1");
 
         act = () =>
         {
-            var word = new Word(0);
+            var word = new Word(Word.ZERO);
             bool bit = word[Word.SIZE - 1];
         };
         act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "ComputeIndexerMaskArgumentOutOfRange2");
