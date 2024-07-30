@@ -24,6 +24,14 @@ internal struct Word
     public const int SIZE = 32;
 #endif
 
+#if POSITIONLISTENABLED && WORDSIZE64
+    private const int PACKEDPOSITIONSIZE = 6;
+#elif POSITIONLISTENABLED
+    private const int PACKEDPOSITIONSIZE = 5;
+#else
+    private const int PACKEDPOSITIONSIZE = 0;
+#endif
+
     internal const WordRawType ZERO = 0;
     internal const WordRawType ONE = 1;
 
@@ -54,7 +62,7 @@ internal struct Word
 
     #region Indexers
 
-    internal const WordRawType FIRSTBITMASK = ONE << (SIZE - 2);
+    internal const WordRawType FIRSTBITPOSITIONMASK = ONE << (SIZE - 2);
 
     public bool this[int position]
     {
@@ -81,7 +89,7 @@ internal struct Word
         if (position >= SIZE - 1)
             throw new ArgumentOutOfRangeException(nameof(position), position, FormattableString.Invariant($"Must be < SIZE - 1 : {SIZE - 1}."));
 
-        return ONE << (SIZE - 2 - position);
+        return FIRSTBITPOSITIONMASK >> position;
     }
 
     public readonly bool[] Bits
@@ -94,7 +102,7 @@ internal struct Word
             bool[] bits = new bool[SIZE - 1];
             int current = 0;
 
-            WordRawType mask = FIRSTBITMASK;
+            WordRawType mask = FIRSTBITPOSITIONMASK;
 
             for (int i = 0; i < SIZE - 1; i++)
             {
@@ -126,7 +134,7 @@ internal struct Word
         int[] bitPositions = new int[count];
         int current = 0;
 
-        WordRawType mask = FIRSTBITMASK;
+        WordRawType mask = FIRSTBITPOSITIONMASK;
 
         for (int i = 0; i < SIZE - 1; i++)
         {
@@ -148,7 +156,7 @@ internal struct Word
     internal const WordRawType COMPRESSIBLEMASK = WordRawType.MaxValue >> 1;
     internal const WordRawType COMPRESSEDMASK = ONE << (SIZE - 1);
     internal const WordRawType FILLBITMASK = ONE << (SIZE - 2);
-    internal const WordRawType FILLCOUNTMASK = WordRawType.MaxValue >> 7;
+    internal const WordRawType FILLCOUNTMASK = WordRawType.MaxValue >> (2 + PACKEDPOSITIONSIZE);
 
     public readonly bool IsCompressible => Raw == ZERO || Raw == COMPRESSIBLEMASK;
     public readonly bool CompressibleFillBit => Raw != ZERO;
@@ -168,7 +176,7 @@ internal struct Word
 
 #if POSITIONLISTENABLED
 
-    internal const WordRawType PACKEDPOSITIONMASK = ((WordRawType)31) << (SIZE - 7);
+    internal const WordRawType PACKEDPOSITIONMASK = ((WordRawType)(SIZE - 1)) << (SIZE - 2 - PACKEDPOSITIONSIZE);
 
     public readonly bool HasPackedWord => IsCompressed && (Raw & PACKEDPOSITIONMASK) > ZERO;
 
@@ -188,7 +196,7 @@ internal struct Word
             if (!HasPackedWord)
                 throw new NotSupportedException("Cannot retrieve the PackedPosition for a Word that does not contain a Packed Word.");
 
-            return (int)((Raw & PACKEDPOSITIONMASK) >> (SIZE - 7)) - 1;
+            return (int)((Raw & PACKEDPOSITIONMASK) >> (SIZE - 2 - PACKEDPOSITIONSIZE)) - 1;
         }
     }
 
@@ -218,7 +226,7 @@ internal struct Word
             throw new NotSupportedException("Can only pack a Word with exactly 1 bit set (Population = 1).");
 
         WordRawType packedPosition = (WordRawType)word.GetBitPositions(true)[0];
-        Raw |= (packedPosition + 1) << (SIZE - 7);
+        Raw |= (packedPosition + 1) << (SIZE - 2 - PACKEDPOSITIONSIZE);
     }
 
     internal Word Unpack()

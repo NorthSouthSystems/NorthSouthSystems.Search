@@ -38,7 +38,7 @@ public class WordTestsConstants
         Word.ZERO.Should().Be(0u);
         Word.ONE.Should().Be(1u);
 
-        Word.FIRSTBITMASK.Should().Be(0x4000_0000u);
+        Word.FIRSTBITPOSITIONMASK.Should().Be(0x4000_0000u);
 
         Word.COMPRESSIBLEMASK.Should().Be(0x7FFF_FFFFu);
         Word.COMPRESSEDMASK.Should().Be(0x8000_0000u);
