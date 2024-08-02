@@ -4,7 +4,7 @@ using NorthSouthSystems.BitVectors;
 
 public class EngineTestsRandom
 {
-    private static readonly int[] _randomSeeds = new[] { 18873, -76, 5992, 917773, -6320001 };
+    private static readonly int[] _randomSeeds = [18873, -76, 5992, 917773, -6320001];
 
     [Theory]
     [ClassData(typeof(BitVectorFactories))]

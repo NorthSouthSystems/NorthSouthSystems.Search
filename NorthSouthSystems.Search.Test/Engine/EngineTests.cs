@@ -22,7 +22,7 @@ public class EngineTests
         engine1.Add(new SimpleItem { Id = 43, SomeInt = 0 });
 
         var query = engine1.CreateQuery();
-        query.Amongst(new[] { 43, 44 });
+        query.Amongst([43, 44]);
 
         var result = query.Execute(0, 10);
 

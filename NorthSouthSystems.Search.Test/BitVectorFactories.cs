@@ -4,11 +4,11 @@ using System.Collections;
 
 public class BitVectorFactories : IEnumerable<object[]>
 {
-    private static readonly object[] _bitVectorFactories = new object[]
-    {
+    private static readonly object[] _bitVectorFactories =
+    [
         new NorthSouthSystems.BitVectors.PLWAH.PLWAHVectorFactory(),
         new NorthSouthSystems.BitVectors.WAH.WAHVectorFactory()
-    };
+    ];
 
     private static readonly List<object[]> BitVectorFactoriesWrapped =
         _bitVectorFactories.Select(bvf => new object[] { bvf }).ToList();

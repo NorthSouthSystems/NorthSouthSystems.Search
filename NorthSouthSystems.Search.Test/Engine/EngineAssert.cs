@@ -33,7 +33,7 @@ internal static class EngineAssert
     {
         foreach (var param in
             query.FilterClause == null
-                ? Enumerable.Empty<IFilterParameter>()
+                ? []
                 : query.FilterClause.SubClauses.Cast<IFilterParameter>())
         {
             var closedParam = param;

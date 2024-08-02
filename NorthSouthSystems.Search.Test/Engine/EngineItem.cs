@@ -10,15 +10,14 @@ internal class EngineItem
             int count) =>
         Enumerable.Range(0, count)
             .Select(id =>
-            {
-                EngineItem item = new EngineItem();
-                item.Id = id;
-                item.SomeInt = someIntGenerator(id);
-                item.SomeDateTime = someDateTimeGenerator(id);
-                item.SomeString = someStringGenerator(id);
-                item.SomeTags = someTagGenerator(id);
-                return item;
-            })
+                new EngineItem
+                {
+                    Id = id,
+                    SomeInt = someIntGenerator(id),
+                    SomeDateTime = someDateTimeGenerator(id),
+                    SomeString = someStringGenerator(id),
+                    SomeTags = someTagGenerator(id)
+                })
             .ToArray();
 
     internal static EngineItem[] CreateItems(Random random, int count,
