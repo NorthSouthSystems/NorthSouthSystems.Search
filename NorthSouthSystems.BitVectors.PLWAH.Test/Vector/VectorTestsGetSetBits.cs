@@ -1,5 +1,9 @@
-﻿#if POSITIONLISTENABLED
+﻿#if POSITIONLISTENABLED && WORDSIZE64
+namespace NorthSouthSystems.BitVectors.PLWAH64;
+#elif POSITIONLISTENABLED
 namespace NorthSouthSystems.BitVectors.PLWAH;
+#elif WORDSIZE64
+namespace NorthSouthSystems.BitVectors.WAH64;
 #else
 namespace NorthSouthSystems.BitVectors.WAH;
 #endif
@@ -59,5 +63,40 @@ public class VectorTestsGetSetBits
             vector.Bits.ToArray();
         };
         act.Should().ThrowExactly<NotSupportedException>(because: "GetBitsCompressedNotSupported");
+    }
+
+    [Fact]
+    public void ExceptionsFillCountOverflow()
+    {
+        Action act;
+
+#if POSITIONLISTENABLED
+        act = () =>
+        {
+            var vector = new Vector(true);
+
+            vector[(int)((Word.FILLCOUNTMASK + 1) * (Word.SIZE - 1)) - 1] = true;
+            vector.AssertWordCounts(2, (int)Word.FILLCOUNTMASK + 1);
+            vector.GetWordLogical((int)Word.FILLCOUNTMASK - 1).GetBitPositions(true).Should().Equal([]);
+            vector.GetWordLogical((int)Word.FILLCOUNTMASK).GetBitPositions(true).Should().Equal(30);
+        };
+        act.Should().NotThrow();
+
+        act = () =>
+        {
+            var vector = new Vector(true);
+
+            vector[(int)((Word.FILLCOUNTMASK + 1) * (Word.SIZE - 1))] = true;
+        };
+        act.Should().ThrowExactly<NotSupportedException>();
+#else
+        // CS0220 - The operation overflows at compile time in checked mode
+        /*
+        WordRawType bitPosition;
+        
+        act = () => bitPosition = (Word.FILLCOUNTMASK + 1) * (Word.SIZE - 1);
+        act.Should().ThrowExactly<OverflowException>();
+        */
+#endif
     }
 }

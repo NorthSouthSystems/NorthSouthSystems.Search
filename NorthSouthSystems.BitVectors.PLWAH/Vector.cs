@@ -199,7 +199,7 @@ public sealed partial class Vector : IBitVector<Vector>
                 return word.PackedWord;
             else
 #endif
-                return new Word((word.FillBit && word.FillCount > 0) ? Word.COMPRESSIBLEMASK : Word.ZERO);
+            return new Word((word.FillBit && word.FillCount > 0) ? Word.COMPRESSIBLEMASK : Word.ZERO);
         }
         else
             return word;
@@ -422,6 +422,10 @@ public sealed partial class Vector : IBitVector<Vector>
         {
             if (_words[_wordCountPhysical - 2].FillBit)
             {
+#if POSITIONLISTENABLED
+                ThrowIfFillCountOverflow(_words[_wordCountPhysical - 2].FillCount + 1);
+#endif
+
                 _wordCountLogical++;
 
                 _words[_wordCountPhysical - 2].Raw++;
@@ -429,6 +433,10 @@ public sealed partial class Vector : IBitVector<Vector>
             }
             else
             {
+#if POSITIONLISTENABLED
+                ThrowIfFillCountOverflow(_words[_wordCountPhysical - 2].FillCount + zeroFillCount);
+#endif
+
                 _wordCountLogical += zeroFillCount;
 
                 _words[_wordCountPhysical - 2].Raw += (WordRawType)zeroFillCount;
@@ -461,6 +469,10 @@ public sealed partial class Vector : IBitVector<Vector>
 
         if (zeroFillCount > 0 && _words[_wordCountPhysical - 1].Raw == 0)
         {
+#if POSITIONLISTENABLED
+            ThrowIfFillCountOverflow(zeroFillCount);
+#endif
+
             WordsGrow(_wordCountPhysical + 1);
             _wordCountPhysical++;
             _wordCountLogical += zeroFillCount;
@@ -477,6 +489,10 @@ public sealed partial class Vector : IBitVector<Vector>
 
         if (zeroFillCount > 1)
         {
+#if POSITIONLISTENABLED
+            ThrowIfFillCountOverflow(zeroFillCount - 1);
+#endif
+
             _words[_wordCountPhysical - 1].Compress();
 
             WordsGrow(_wordCountPhysical + 2);
@@ -503,6 +519,27 @@ public sealed partial class Vector : IBitVector<Vector>
             _wordCountLogical += zeroFillCount;
         }
     }
+
+#if POSITIONLISTENABLED
+    // Due to the bit size of Word.FillCount and its multiplicative nature, runtime FillCount overflow is only possible when
+    // POSITIONLISTENABLED because it reduces the bit size of FillCount by log2(Word.SIZE) (...and because the first 2 bits
+    // of Word are reserved for Compression tracking). Thus, the first bitPosition that could cause FillCount overflow for a
+    // 32-bit Word with POSITIONLISTENABLED is:
+    // (2^(32 - 2 - 5) + 1) * (2^5 - 1) = approx 1.04e9 = 1.04B.
+    //
+    // Furthermore, it is only practically possible for a 32-bit Word with POSITIONLISTENABLED to runtime FillCount overflow because
+    // a 64-bit Word with POSITIONLISTENABLED can still represent an astronomical first bitPosition FillCount overflow of:
+    // (2^(64 - 2 - 6) + 1) * (2^6 - 1) = approx 4.54e18. = 4.5B * 1B.
+    //
+    // Technically, we could avoid all overflows by splitting Words when reaching max FillCount; however, the effort is not worth
+    // the value. The Word constructor that takes a fillCount parameter and is used by VectorOperations would also need a completely
+    // different implementation for Word splitting that would require even more effort for little value.
+    private static void ThrowIfFillCountOverflow(int fillCount)
+    {
+        if (fillCount > Word.FILLCOUNTMASK)
+            throw new NotSupportedException("Word.FillCount overflow detected, and Word splitting is not supported.");
+    }
+#endif
 
     #endregion
 
