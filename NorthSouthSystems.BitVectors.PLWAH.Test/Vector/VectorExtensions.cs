@@ -1,5 +1,9 @@
-﻿#if POSITIONLISTENABLED
+﻿#if POSITIONLISTENABLED && WORDSIZE64
+namespace NorthSouthSystems.BitVectors.PLWAH64;
+#elif POSITIONLISTENABLED
 namespace NorthSouthSystems.BitVectors.PLWAH;
+#elif WORDSIZE64
+namespace NorthSouthSystems.BitVectors.WAH64;
 #else
 namespace NorthSouthSystems.BitVectors.WAH;
 #endif
@@ -32,7 +36,7 @@ internal static class VectorExtensions
             .OrderBy(bitPosition => bitPosition)
             .ToArray();
 
-        bool[] expectedBits = expectedBitPositions.Length == 0 ? Array.Empty<bool>() : new bool[expectedBitPositions.Max() + 1];
+        bool[] expectedBits = expectedBitPositions.Length == 0 ? [] : new bool[expectedBitPositions.Max() + 1];
 
         foreach (int expectedBitPosition in expectedBitPositions)
             expectedBits[expectedBitPosition] = true;
@@ -73,7 +77,7 @@ internal static class VectorExtensions
         return bitPositions;
     }
 
-    private static Random _random = new Random(4438);
+    private static readonly Random _random = new(4438);
 
     #endregion
 }

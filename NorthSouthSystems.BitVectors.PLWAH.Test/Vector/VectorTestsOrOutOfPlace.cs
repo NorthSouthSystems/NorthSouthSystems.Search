@@ -1,5 +1,9 @@
-﻿#if POSITIONLISTENABLED
+﻿#if POSITIONLISTENABLED && WORDSIZE64
+namespace NorthSouthSystems.BitVectors.PLWAH64;
+#elif POSITIONLISTENABLED
 namespace NorthSouthSystems.BitVectors.PLWAH;
+#elif WORDSIZE64
+namespace NorthSouthSystems.BitVectors.WAH64;
 #else
 namespace NorthSouthSystems.BitVectors.WAH;
 #endif
@@ -17,9 +21,9 @@ public class VectorTestsOrOutOfPlace
     [InlineData(true, true, true)]
     public void OrOutOfPlace(bool aIsCompressed, bool bIsCompressed, bool cIsCompressed)
     {
-        int[] bitPositionsA = new int[] { 0, 12, 16, 22, 34, 55, 110 };
-        int[] bitPositionsB = new int[] { 0, 11, 16, 23, 34, 54, 110, 120 };
-        int[] bitPositionsC = new int[] { 5, 10, 15, 20, 34, 53 };
+        int[] bitPositionsA = [0, 12, 16, 22, 34, 55, 110];
+        int[] bitPositionsB = [0, 11, 16, 23, 34, 54, 110, 120];
+        int[] bitPositionsC = [5, 10, 15, 20, 34, 53];
 
         var vectorA = new Vector(aIsCompressed);
         vectorA.SetBits(bitPositionsA, true);

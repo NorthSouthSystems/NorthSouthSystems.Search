@@ -68,13 +68,14 @@ public class VectorTestsGetSetBits
     [Fact]
     public void ExceptionsFillCountOverflow()
     {
+        // See comment above Vector.ThrowIfFillCountOverflow.
+
         Action act;
 
 #if POSITIONLISTENABLED
         act = () =>
         {
             var vector = new Vector(true);
-
             vector[(int)((Word.FILLCOUNTMASK + 1) * (Word.SIZE - 1)) - 1] = true;
             vector.AssertWordCounts(2, (int)Word.FILLCOUNTMASK + 1);
             vector.GetWordLogical((int)Word.FILLCOUNTMASK - 1).GetBitPositions(true).Should().Equal([]);
@@ -85,7 +86,6 @@ public class VectorTestsGetSetBits
         act = () =>
         {
             var vector = new Vector(true);
-
             vector[(int)((Word.FILLCOUNTMASK + 1) * (Word.SIZE - 1))] = true;
         };
         act.Should().ThrowExactly<NotSupportedException>();

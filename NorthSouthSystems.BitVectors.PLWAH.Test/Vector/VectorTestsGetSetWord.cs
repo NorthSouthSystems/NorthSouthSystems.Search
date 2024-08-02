@@ -1,5 +1,9 @@
-﻿#if POSITIONLISTENABLED
+﻿#if POSITIONLISTENABLED && WORDSIZE64
+namespace NorthSouthSystems.BitVectors.PLWAH64;
+#elif POSITIONLISTENABLED
 namespace NorthSouthSystems.BitVectors.PLWAH;
+#elif WORDSIZE64
+namespace NorthSouthSystems.BitVectors.WAH64;
 #else
 namespace NorthSouthSystems.BitVectors.WAH;
 #endif
@@ -140,7 +144,7 @@ public class VectorTestsGetSetWord
         act = () =>
         {
             var vector = new Vector(false);
-            vector.SetWord(-1, new Word(0x11111111));
+            vector.SetWord(-1, new Word(Word.ONE));
         };
         act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "SetWordArgumentOutOfRange");
 
@@ -148,7 +152,7 @@ public class VectorTestsGetSetWord
         {
             var vector = new Vector(true);
             vector[30] = true;
-            vector.SetWord(0, new Word(0x00000001u));
+            vector.SetWord(0, new Word(Word.ONE));
         };
         act.Should().NotThrow(because: "SetWordSupportedForwardOnly");
 
@@ -156,7 +160,7 @@ public class VectorTestsGetSetWord
         {
             var vector = new Vector(true);
             vector[31] = true;
-            vector.SetWord(0, new Word(0x00000001u));
+            vector.SetWord(0, new Word(Word.ONE));
         };
         act.Should().ThrowExactly<NotSupportedException>(because: "SetWordNotSupportedForwardOnly");
     }

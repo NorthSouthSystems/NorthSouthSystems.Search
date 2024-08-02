@@ -1,5 +1,9 @@
-﻿#if POSITIONLISTENABLED
+﻿#if POSITIONLISTENABLED && WORDSIZE64
+namespace NorthSouthSystems.BitVectors.PLWAH64;
+#elif POSITIONLISTENABLED
 namespace NorthSouthSystems.BitVectors.PLWAH;
+#elif WORDSIZE64
+namespace NorthSouthSystems.BitVectors.WAH64;
 #else
 namespace NorthSouthSystems.BitVectors.WAH;
 #endif
@@ -12,14 +16,14 @@ public class VectorTestsOrInPlace
     public void OrInPlaceWithCompressibleTrueInput(bool isCompressed)
     {
         var vector = new Vector(false);
-        vector[100] = true;
+        vector[Word.SIZE * 2] = true;
 
         var compressibleTrue = new Vector(isCompressed);
-        compressibleTrue.SetBits(Enumerable.Range(0, 32).ToArray(), true);
+        compressibleTrue.SetBits(Enumerable.Range(0, Word.SIZE).ToArray(), true);
 
         vector.OrInPlace(compressibleTrue);
 
-        vector.AssertBitPositions(Enumerable.Range(0, 32), new[] { 100 });
+        vector.AssertBitPositions(Enumerable.Range(0, Word.SIZE), [Word.SIZE * 2]);
     }
 
     [Fact]
