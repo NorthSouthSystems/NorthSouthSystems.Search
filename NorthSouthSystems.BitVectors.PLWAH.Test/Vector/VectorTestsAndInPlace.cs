@@ -13,8 +13,15 @@ public class VectorTestsAndInPlace
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void AndInPlaceRandom(bool isCompressed) =>
-        VectorTestsRandom.LogicInPlaceBase(22, (Word.SIZE - 1) * 10 + 1, isCompressed, (left, right) => left.AndInPlace(right), Enumerable.Intersect);
+    public void AndInPlaceRandom(bool isCompressed)
+    {
+        const int randomSeed = 22;
+
+        VectorTestsRandom.LogicInPlaceBase(randomSeed, (Word.SIZE - 1) * WordExtensions.WORDCOUNTFORRANDOMTESTS + 1,
+            isCompressed,
+            (left, right) => left.AndInPlace(right),
+            Enumerable.Intersect);
+    }
 
     [Fact]
     public void Exceptions()

@@ -43,17 +43,17 @@ public class VectorTestsGetSetBits
         act = () =>
         {
             var vector = new Vector(true);
-            vector[30] = true;
-            vector[61] = true;
+            vector[(Word.SIZE - 1) - 1] = true;
+            vector[((Word.SIZE - 1) * 2) - 1] = true;
         };
         act.Should().NotThrow(because: "SetBitSupportedForwardOnly");
 
         act = () =>
         {
             var vector = new Vector(true);
-            vector[30] = true;
-            vector[31] = true;
-            vector[30] = true;
+            vector[(Word.SIZE - 1) - 1] = true;
+            vector[(Word.SIZE - 1)] = true;
+            vector[(Word.SIZE - 1) - 1] = true;
         };
         act.Should().ThrowExactly<NotSupportedException>(because: "SetBitNotSupportedForwardOnly");
 

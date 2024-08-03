@@ -24,4 +24,11 @@ internal static class WordExtensions
 #else
         = LARGEPRIME;
 #endif
+
+    internal const int WORDCOUNTFORRANDOMTESTS
+#if WORDSIZE64
+        = 5;
+#else
+        = 10;
+#endif
 }

@@ -151,7 +151,7 @@ public class VectorTestsGetSetWord
         act = () =>
         {
             var vector = new Vector(true);
-            vector[30] = true;
+            vector[(Word.SIZE - 1) - 1] = true;
             vector.SetWord(0, new Word(Word.ONE));
         };
         act.Should().NotThrow(because: "SetWordSupportedForwardOnly");
@@ -159,7 +159,7 @@ public class VectorTestsGetSetWord
         act = () =>
         {
             var vector = new Vector(true);
-            vector[31] = true;
+            vector[Word.SIZE - 1] = true;
             vector.SetWord(0, new Word(Word.ONE));
         };
         act.Should().ThrowExactly<NotSupportedException>(because: "SetWordNotSupportedForwardOnly");

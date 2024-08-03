@@ -91,7 +91,7 @@ public class WordTestsCompress
         word.FillBit.Should().BeTrue();
         word.FillCount.Should().Be(1);
         word.HasPackedWord.Should().BeTrue();
-        word.PackedPosition.Should().Be(30);
+        word.PackedPosition.Should().Be((Word.SIZE - 1) - 1);
         word.PackedWord.Raw.Should().Be(Word.ONE);
 
         word = new Word(true, 1);

@@ -23,8 +23,9 @@ public class VectorTestsAndOutOfPlace
     {
         const int randomSeed = 22;
 
-        VectorTestsRandom.LogicOutOfPlaceBase(randomSeed, (Word.SIZE - 1) * 10 + 1,
+        VectorTestsRandom.LogicOutOfPlaceBase(randomSeed, (Word.SIZE - 1) * WordExtensions.WORDCOUNTFORRANDOMTESTS + 1,
             leftIsCompressed, rightIsCompressed,
-            (left, right) => left.AndOutOfPlace(right, resultIsCompressed), Enumerable.Intersect);
+            (left, right) => left.AndOutOfPlace(right, resultIsCompressed),
+            Enumerable.Intersect);
     }
 }
