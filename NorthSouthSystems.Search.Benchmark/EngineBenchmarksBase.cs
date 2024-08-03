@@ -6,7 +6,7 @@ using NorthSouthSystems.StackExchange;
 public abstract class EngineBenchmarksBase<TBitVector>
     where TBitVector : IBitVector<TBitVector>
 {
-    private static readonly int[] _powersOfTen = new[] { 1, 10, 100, 1_000, 10_000, 100_000, 1_000_000 };
+    private static readonly int[] _powersOfTen = [1, 10, 100, 1_000, 10_000, 100_000, 1_000_000];
 
     protected Engine<TBitVector, Post, int> ConstructEngine(IBitVectorFactory<TBitVector> bitVectorFactory)
     {

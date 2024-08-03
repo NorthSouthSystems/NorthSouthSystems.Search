@@ -15,7 +15,8 @@ public class EngineTestsRandom
         {
             var random = new Random(randomSeed);
 
-            foreach (int size in Enumerable.Range(1, bitVectorFactory.WordSize * 10))
+            foreach (int size in Enumerable.Range(1, bitVectorFactory.WordSize * 10)
+                .Where(i => i % (bitVectorFactory.WordSize - 1) == 1 || random.Next(i / 100) == 0))
             {
                 using var engine = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
 

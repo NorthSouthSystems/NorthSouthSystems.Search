@@ -5,7 +5,9 @@ using NorthSouthSystems.StackExchange;
 
 [MemoryDiagnoser]
 [GenericTypeArguments(typeof(NorthSouthSystems.BitVectors.PLWAH.PLWAHVectorFactory), typeof(NorthSouthSystems.BitVectors.PLWAH.Vector))]
+[GenericTypeArguments(typeof(NorthSouthSystems.BitVectors.PLWAH64.PLWAH64VectorFactory), typeof(NorthSouthSystems.BitVectors.PLWAH64.Vector))]
 [GenericTypeArguments(typeof(NorthSouthSystems.BitVectors.WAH.WAHVectorFactory), typeof(NorthSouthSystems.BitVectors.WAH.Vector))]
+[GenericTypeArguments(typeof(NorthSouthSystems.BitVectors.WAH64.WAH64VectorFactory), typeof(NorthSouthSystems.BitVectors.WAH64.Vector))]
 public class EngineAddBenchmarks<TBitVectorFactory, TBitVector> : EngineBenchmarksBase<TBitVector>
     where TBitVectorFactory : IBitVectorFactory<TBitVector>
     where TBitVector : IBitVector<TBitVector>
