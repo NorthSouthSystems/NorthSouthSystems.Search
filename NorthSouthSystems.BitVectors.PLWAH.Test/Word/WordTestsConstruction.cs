@@ -1,5 +1,9 @@
-﻿#if POSITIONLISTENABLED
+﻿#if POSITIONLISTENABLED && WORDSIZE64
+namespace NorthSouthSystems.BitVectors.PLWAH64;
+#elif POSITIONLISTENABLED
 namespace NorthSouthSystems.BitVectors.PLWAH;
+#elif WORDSIZE64
+namespace NorthSouthSystems.BitVectors.WAH64;
 #else
 namespace NorthSouthSystems.BitVectors.WAH;
 #endif
@@ -52,7 +56,9 @@ public class WordTestsConstruction
         act = () => new Word(true, -1);
         act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "FillCountOutOfRange1");
 
+#if !WORDSIZE64
         act = () => new Word(true, (int)(Word.FILLCOUNTMASK + Word.ONE));
         act.Should().ThrowExactly<ArgumentOutOfRangeException>(because: "FillCountOutOfRange2");
+#endif
     }
 }

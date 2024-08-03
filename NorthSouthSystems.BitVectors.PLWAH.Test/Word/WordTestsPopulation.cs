@@ -1,5 +1,9 @@
-﻿#if POSITIONLISTENABLED
+﻿#if POSITIONLISTENABLED && WORDSIZE64
+namespace NorthSouthSystems.BitVectors.PLWAH64;
+#elif POSITIONLISTENABLED
 namespace NorthSouthSystems.BitVectors.PLWAH;
+#elif WORDSIZE64
+namespace NorthSouthSystems.BitVectors.WAH64;
 #else
 namespace NorthSouthSystems.BitVectors.WAH;
 #endif
@@ -57,7 +61,8 @@ public class WordTestsPopulation
     {
         foreach (bool fillBit in new bool[] { false, true })
         {
-            for (int i = 0; i <= Word.FILLCOUNTMASK; i += (int)WordExtensions.LARGEPRIME32ORFULLCOVERAGE64)
+            // This is only "full coverage" (it's psuedo anyways) when !WORDSIZE64.
+            for (int i = 0; i <= (int)Math.Min(Word.FILLCOUNTMASK, int.MaxValue); i += WordExtensions.LARGEPRIME)
             {
                 var word = new Word(fillBit, i);
                 word.Population.Should().Be(fillBit ? ((Word.SIZE - 1) * i) : 0, because: word.ToString());

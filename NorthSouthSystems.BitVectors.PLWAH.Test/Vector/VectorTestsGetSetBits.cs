@@ -65,6 +65,7 @@ public class VectorTestsGetSetBits
         act.Should().ThrowExactly<NotSupportedException>(because: "GetBitsCompressedNotSupported");
     }
 
+#if !WORDSIZE64
     [Fact]
     public void ExceptionsFillCountOverflow()
     {
@@ -99,4 +100,5 @@ public class VectorTestsGetSetBits
         */
 #endif
     }
+#endif
 }

@@ -84,7 +84,8 @@ public class WordTestsCompressionProperties
     {
         foreach (bool fillBit in new bool[] { false, true })
         {
-            for (int i = 0; i <= Word.FILLCOUNTMASK; i += (int)WordExtensions.LARGEPRIME32ORFULLCOVERAGE64)
+            // This is only "full coverage" (it's psuedo anyways) when !WORDSIZE64.
+            for (int i = 0; i <= (int)Math.Min(Word.FILLCOUNTMASK, int.MaxValue); i += WordExtensions.LARGEPRIME)
             {
                 var word = new Word(fillBit, i);
                 word.Raw.Should().Be(Word.COMPRESSEDMASK + (fillBit ? Word.FILLBITMASK : Word.ZERO) + (WordRawType)i);
