@@ -536,7 +536,10 @@ public sealed partial class Vector : IBitVector<Vector>
     // different implementation for Word splitting that would require even more effort for little value.
     private static void ThrowIfFillCountOverflow(int fillCount)
     {
-        if (fillCount > Word.FILLCOUNTMASK)
+        if (fillCount < 0)
+            throw new ArgumentOutOfRangeException(nameof(fillCount), fillCount, "Must be >= 0.");
+
+        if ((WordRawType)fillCount > Word.FILLCOUNTMASK)
             throw new NotSupportedException("Word.FillCount overflow detected, and Word splitting is not supported.");
     }
 #endif
