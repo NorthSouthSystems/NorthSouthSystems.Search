@@ -272,13 +272,7 @@ internal struct Word
                 return population;
             }
             else
-            {
-#if WORDSIZE64
-                throw new NotSupportedException();
-#else
                 return BitOperations.PopCount(Raw);
-#endif
-            }
         }
     }
 

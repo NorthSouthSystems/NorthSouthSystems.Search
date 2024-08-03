@@ -7,13 +7,16 @@ namespace NorthSouthSystems.BitVectors;
 /// </summary>
 public static class BitOperations
 {
+    public static int PopCount(ulong word) =>
+          PopCount((uint)((word >> 32) & uint.MaxValue))
+        + PopCount((uint)(word & uint.MaxValue));
+
     /// <summary>
     /// Compute the number of bits set to 1 for an unsigned integer value.
     /// </summary>
     /// <remarks>
     /// Originally found at <a href="http://www.hackersdelight.org/HDcode/newCode/pop_arrayHS.c.txt">Hacker's Delight</a>.
     /// </remarks>
-    [CLSCompliant(false)]
     public static int PopCount(uint word)
     {
         word = word - ((word >> 1) & 0x55555555u);
