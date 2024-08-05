@@ -14,7 +14,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="NorthSouthSystems.BitVectors" Version="3.0.1-alpha" />
+        <PackageReference Include="NorthSouthSystems.BitVectors" Version="3.0.2-alpha" />
     </ItemGroup>
 
     <ItemGroup>
