@@ -12,14 +12,14 @@
 
     <ItemGroup>
         <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH" Version="3.0.1-alpha" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH64" Version="3.0.1-alpha" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.WAH" Version="3.0.1-alpha" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.WAH64" Version="3.0.1-alpha" />
         <PackageReference Include="NorthSouthSystems.StackExchange.Opinions" Version="2.1.4" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\NorthSouthSystems.BitVectors.PLWAH\NorthSouthSystems.BitVectors.PLWAH.csproj" />
-        <ProjectReference Include="..\NorthSouthSystems.BitVectors.PLWAH64\NorthSouthSystems.BitVectors.PLWAH64.csproj" />
-        <ProjectReference Include="..\NorthSouthSystems.BitVectors.WAH\NorthSouthSystems.BitVectors.WAH.csproj" />
-        <ProjectReference Include="..\NorthSouthSystems.BitVectors.WAH64\NorthSouthSystems.BitVectors.WAH64.csproj" />
         <ProjectReference Include="..\NorthSouthSystems.Search\NorthSouthSystems.Search.csproj" />
     </ItemGroup>
 
