@@ -11,7 +11,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
+        <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
         <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH" Version="3.0.2-alpha" />
         <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH64" Version="3.0.2-alpha" />
         <PackageReference Include="NorthSouthSystems.BitVectors.WAH" Version="3.0.2-alpha" />
