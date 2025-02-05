@@ -16,7 +16,7 @@
         <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH64" Version="3.0.2-alpha" />
         <PackageReference Include="NorthSouthSystems.BitVectors.WAH" Version="3.0.2-alpha" />
         <PackageReference Include="NorthSouthSystems.BitVectors.WAH64" Version="3.0.2-alpha" />
-        <PackageReference Include="NorthSouthSystems.StackExchange.Opinions" Version="2.1.4" />
+        <PackageReference Include="NorthSouthSystems.StackExchange.Opinions" Version="2.2.13" />
     </ItemGroup>
 
     <ItemGroup>
