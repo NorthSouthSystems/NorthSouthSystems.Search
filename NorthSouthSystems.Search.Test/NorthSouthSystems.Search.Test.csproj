@@ -11,7 +11,7 @@
 
     <ItemGroup>
         <PackageReference Include="FluentAssertions" Version="6.12.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
         <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH" Version="3.0.2-alpha" />
         <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH64" Version="3.0.2-alpha" />
         <PackageReference Include="NorthSouthSystems.BitVectors.WAH" Version="3.0.2-alpha" />
