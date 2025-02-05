@@ -12,10 +12,10 @@
     <ItemGroup>
         <PackageReference Include="FluentAssertions" Version="[7.1.0,8.0.0)" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH" Version="3.0.2-alpha" />
-        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH64" Version="3.0.2-alpha" />
-        <PackageReference Include="NorthSouthSystems.BitVectors.WAH" Version="3.0.2-alpha" />
-        <PackageReference Include="NorthSouthSystems.BitVectors.WAH64" Version="3.0.2-alpha" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH" Version="3.0.11-alpha" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH64" Version="3.0.11-alpha" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.WAH" Version="3.0.11-alpha" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.WAH64" Version="3.0.11-alpha" />
         <PackageReference Include="xunit" Version="2.9.3" />
         <PackageReference Include="xunit.runner.visualstudio" Version="3.0.1">
             <PrivateAssets>all</PrivateAssets>
