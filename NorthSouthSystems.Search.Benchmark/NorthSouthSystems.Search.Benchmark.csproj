@@ -1,33 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="1.1.5" />
+
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
-        <LangVersion>latest</LangVersion>
-        <IsPackable>false</IsPackable>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <ImplicitUsings>disable</ImplicitUsings>
-        <SonarQubeExclude>true</SonarQubeExclude>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
-        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH" Version="3.0.11-alpha" />
-        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH64" Version="3.0.11-alpha" />
-        <PackageReference Include="NorthSouthSystems.BitVectors.WAH" Version="3.0.11-alpha" />
-        <PackageReference Include="NorthSouthSystems.BitVectors.WAH64" Version="3.0.11-alpha" />
-        <PackageReference Include="NorthSouthSystems.StackExchange.Opinions" Version="2.2.13" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH" Version="3.0.20-alpha" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH64" Version="3.0.20-alpha" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.WAH" Version="3.0.20-alpha" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.WAH64" Version="3.0.20-alpha" />
+        <PackageReference Include="NorthSouthSystems.StackExchange.Opinions" Version="2.3.5" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\NorthSouthSystems.Search\NorthSouthSystems.Search.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Using Include="System" />
-        <Using Include="System.Collections.Generic" />
-        <Using Include="System.Linq" />
-        <Using Include="BenchmarkDotNet.Attributes" />
     </ItemGroup>
 
 </Project>
