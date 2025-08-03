@@ -1,0 +1,14 @@
+<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageVersion Include="NorthSouthSystems.BitVectors" Version="3.0.17-alpha" />
+        <PackageVersion Include="NorthSouthSystems.BitVectors.PLWAH" Version="3.0.20-alpha" />
+        <PackageVersion Include="NorthSouthSystems.BitVectors.PLWAH64" Version="3.0.20-alpha" />
+        <PackageVersion Include="NorthSouthSystems.BitVectors.WAH" Version="3.0.20-alpha" />
+        <PackageVersion Include="NorthSouthSystems.BitVectors.WAH64" Version="3.0.20-alpha" />
+        <PackageVersion Include="NorthSouthSystems.StackExchange.Opinions" Version="2.3.5" />
+    </ItemGroup>
+</Project>

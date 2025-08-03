@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="1.1.5" />
+    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="2.3.4" />
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NorthSouthSystems.BitVectors" Version="3.0.17-alpha" />
+        <PackageReference Include="NorthSouthSystems.BitVectors" />
     </ItemGroup>
 
 </Project>

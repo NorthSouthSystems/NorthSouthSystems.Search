@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="1.1.5" />
+    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="2.3.4" />
 
     <PropertyGroup>
         <TargetFrameworks>net48;net8.0</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH" Version="3.0.20-alpha" />
-        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH64" Version="3.0.20-alpha" />
-        <PackageReference Include="NorthSouthSystems.BitVectors.WAH" Version="3.0.20-alpha" />
-        <PackageReference Include="NorthSouthSystems.BitVectors.WAH64" Version="3.0.20-alpha" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.PLWAH64" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.WAH" />
+        <PackageReference Include="NorthSouthSystems.BitVectors.WAH64" />
     </ItemGroup>
 
     <ItemGroup>
