@@ -4,11 +4,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageVersion Include="NorthSouthSystems.BitVectors" Version="5.0.1-alpha" />
-        <PackageVersion Include="NorthSouthSystems.BitVectors.PLWAH" Version="5.0.1-alpha" />
-        <PackageVersion Include="NorthSouthSystems.BitVectors.PLWAH64" Version="5.0.1-alpha" />
-        <PackageVersion Include="NorthSouthSystems.BitVectors.WAH" Version="5.0.1-alpha" />
-        <PackageVersion Include="NorthSouthSystems.BitVectors.WAH64" Version="5.0.1-alpha" />
-        <PackageVersion Include="NorthSouthSystems.StackExchange.Opinions" Version="4.0.2" />
+        <PackageVersion Include="NorthSouthSystems.BitVectors" Version="6.0.1-alpha" />
+        <PackageVersion Include="NorthSouthSystems.BitVectors.PLWAH" Version="6.0.1-alpha" />
+        <PackageVersion Include="NorthSouthSystems.BitVectors.PLWAH64" Version="6.0.1-alpha" />
+        <PackageVersion Include="NorthSouthSystems.BitVectors.WAH" Version="6.0.1-alpha" />
+        <PackageVersion Include="NorthSouthSystems.BitVectors.WAH64" Version="6.0.1-alpha" />
+        <PackageVersion Include="NorthSouthSystems.StackExchange.Opinions" Version="5.0.2" />
     </ItemGroup>
 </Project>

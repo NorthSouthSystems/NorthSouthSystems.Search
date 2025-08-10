@@ -28,58 +28,52 @@
       },
       "NorthSouthSystems.BitVectors.PLWAH": {
         "type": "Direct",
-        "requested": "[5.0.1-alpha, )",
-        "resolved": "5.0.1-alpha",
-        "contentHash": "Xkvwt03ysDSmmmJjuKyqEb6Wg21t16Td7oz49eWHSngui+nJn3oQh/jt7033cCB1+eKqb2FXbEEbxkr1phtwCw==",
+        "requested": "[6.0.1-alpha, )",
+        "resolved": "6.0.1-alpha",
+        "contentHash": "hO2RZkeYp00162r9h9bpv4x2LZluWhT/FskygMqbA5xMxqamyCyTYWY42jjMorc41rsr9RGmWEFEeWBvsQGk+A==",
         "dependencies": {
-          "NorthSouthSystems.BitVectors": "5.0.1-alpha",
+          "NorthSouthSystems.BitVectors": "6.0.1-alpha",
           "System.Buffers": "4.6.1"
         }
       },
       "NorthSouthSystems.BitVectors.PLWAH64": {
         "type": "Direct",
-        "requested": "[5.0.1-alpha, )",
-        "resolved": "5.0.1-alpha",
-        "contentHash": "hmD20mIgTxWOhjpekLJc+Nc/uyMOz3Jvk81pEM3gY8ur7Kx6ILKZmSx6lIRnwBFigzOMpVM7hRFvzNYYIlPLAA==",
+        "requested": "[6.0.1-alpha, )",
+        "resolved": "6.0.1-alpha",
+        "contentHash": "KJrLiWlyE3Bs1FNxwqsPWSYU23zE6BQn7Qr9pmZk+RUfmFMZrnYcKskCXz7Xxmjgb0X1y6W+u7EJI9YfI8MXKQ==",
         "dependencies": {
-          "NorthSouthSystems.BitVectors": "5.0.1-alpha",
+          "NorthSouthSystems.BitVectors": "6.0.1-alpha",
           "System.Buffers": "4.6.1"
         }
       },
       "NorthSouthSystems.BitVectors.WAH": {
         "type": "Direct",
-        "requested": "[5.0.1-alpha, )",
-        "resolved": "5.0.1-alpha",
-        "contentHash": "GLYjr/yUxVaQrcgUWkMkghzv45knCXVbPNDynDYPO6jZllyLLcBORX8ZmHvFKI5lgr7l4+QEd283m8+8FeU5DA==",
+        "requested": "[6.0.1-alpha, )",
+        "resolved": "6.0.1-alpha",
+        "contentHash": "GiB0TKjqftLVJ9D4M1zpnpIBH7ilmQ7RJhNrojFO3gauilzf2Mf/D5QtjAadTbF5/rdLbulzIHzZcAHbLSlNNA==",
         "dependencies": {
-          "NorthSouthSystems.BitVectors": "5.0.1-alpha",
+          "NorthSouthSystems.BitVectors": "6.0.1-alpha",
           "System.Buffers": "4.6.1"
         }
       },
       "NorthSouthSystems.BitVectors.WAH64": {
         "type": "Direct",
-        "requested": "[5.0.1-alpha, )",
-        "resolved": "5.0.1-alpha",
-        "contentHash": "rW7ofWQJZplLbvntJLMgsvSN2/LZqQg1biijvW+mr8RbxUegrccM0xs5u2wgb/tAa+DWBgnekgz1Uf+HOTodaw==",
+        "requested": "[6.0.1-alpha, )",
+        "resolved": "6.0.1-alpha",
+        "contentHash": "x+k7MjInA8AYdF3GGIujuUqYvMDxzohHFvn5M1oYoms3aDduG0FWe1KgKde3V+FFD22MIaPWH9JvYyhBgxzl3w==",
         "dependencies": {
-          "NorthSouthSystems.BitVectors": "5.0.1-alpha",
+          "NorthSouthSystems.BitVectors": "6.0.1-alpha",
           "System.Buffers": "4.6.1"
         }
       },
-      "NorthSouthSystems.NET.Sdk": {
-        "type": "Direct",
-        "requested": "[3.1.4, )",
-        "resolved": "3.1.4",
-        "contentHash": "1C04D64jv6V1egj15dWLJTYXxyUJTXvx6lJYECPFU/fTjG4q35JAFlDDfgT5+PlXz2Lne1Y0kav8Protfy6bXw=="
-      },
       "NorthSouthSystems.StackExchange.Opinions": {
         "type": "Direct",
-        "requested": "[4.0.2, )",
-        "resolved": "4.0.2",
-        "contentHash": "W6xq/nNXUWY+AvVsFWTfw1OXg/+GaoRiO+ByTSO9fzsZhQMxIjEuPLzscxsczHj1UyxeQIUn4EhdXKC8LATNAg==",
+        "requested": "[5.0.2, )",
+        "resolved": "5.0.2",
+        "contentHash": "80IlZgcWF9wu4WchHZhGxNAf8HHa5rHt9BZ5CDMqeOm3p79+m+Lsby8lDwch1aGMFXBD1InMqHDboxeHnX0AcQ==",
         "dependencies": {
           "MemoryPack": "1.21.4",
-          "NorthSouthSystems.BCL.Opinions": "4.0.2",
+          "NorthSouthSystems.BCL.Opinions": "5.0.2",
           "morelinq": "4.4.0"
         }
       },
@@ -252,8 +246,8 @@
       },
       "NorthSouthSystems.BCL.Opinions": {
         "type": "Transitive",
-        "resolved": "4.0.2",
-        "contentHash": "C7zYQ8eO7fga6Sn3TjTCEAsAZtZzM0OLlPbize167OXtzGR8Tb5vmrV+0h1XXhe/58DRmQliQTou46FYEjfm2A=="
+        "resolved": "5.0.2",
+        "contentHash": "zypsivTamMXE6IjjYRRYw7D4yuW1gumUezonasYQ6u5UdEGubO5BXuKYnP18dNdRAeH1DwUfhKKcQs4QmuTzIQ=="
       },
       "Perfolizer": {
         "type": "Transitive",
@@ -328,14 +322,14 @@
       "northsouthsystems.search": {
         "type": "Project",
         "dependencies": {
-          "NorthSouthSystems.BitVectors": "[5.0.1-alpha, )"
+          "NorthSouthSystems.BitVectors": "[6.0.1-alpha, )"
         }
       },
       "NorthSouthSystems.BitVectors": {
         "type": "CentralTransitive",
-        "requested": "[5.0.1-alpha, )",
-        "resolved": "5.0.1-alpha",
-        "contentHash": "fRkxfvUE+1Eg+ci936PwKVxR9+ZU/T5m3y4xTrIHpR5UeZhqWCO5DR1wJvx+ISXtCheBePnVII1ybuZ9ly/s/Q=="
+        "requested": "[6.0.1-alpha, )",
+        "resolved": "6.0.1-alpha",
+        "contentHash": "xCtyKjZtrSSLLEs+UpNsSqSUF/N0Pb2ranuOgQfEszVJFHGalQXUcXWOJB0BZL9st61MhG5K8wdbB2YWzPkOSQ=="
       }
     }
   }
