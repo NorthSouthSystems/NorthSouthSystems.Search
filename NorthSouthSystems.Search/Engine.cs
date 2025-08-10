@@ -1,4 +1,5 @@
-﻿namespace NorthSouthSystems.Search;
+﻿#nullable disable
+namespace NorthSouthSystems.Search;
 
 using NorthSouthSystems.BitVectors;
 using System.Diagnostics;

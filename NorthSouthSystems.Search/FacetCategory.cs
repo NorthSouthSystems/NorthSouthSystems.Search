@@ -23,7 +23,7 @@ public readonly struct FacetCategory<TKey> : IFacetCategory
     public bool Equals(FacetCategory<TKey> other) =>
         Key.Equals(other.Key) && Count.Equals(other.Count);
 
-    public override bool Equals(object obj) =>
+    public override bool Equals(object? obj) =>
         obj != null && obj.GetType() == typeof(FacetCategory<TKey>) && Equals((FacetCategory<TKey>)obj);
 
     public static bool operator ==(FacetCategory<TKey> left, FacetCategory<TKey> right) => left.Equals(right);

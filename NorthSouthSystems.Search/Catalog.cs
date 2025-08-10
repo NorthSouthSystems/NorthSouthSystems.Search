@@ -30,7 +30,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
         internal Entry(TBitVector vector) => Vector = vector;
 
         internal TBitVector Vector;
-        internal TBitVector VectorOptimized;
+        internal TBitVector? VectorOptimized;
         internal bool IsVectorOptimizedAlive;
     }
 
@@ -49,7 +49,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
         foreach (var keyAndEntry in _keyToEntryMap)
         {
             if (keyAndEntry.Value.IsVectorOptimizedAlive)
-                keyAndEntry.Value.Vector = keyAndEntry.Value.VectorOptimized;
+                keyAndEntry.Value.Vector = keyAndEntry.Value.VectorOptimized!;
             else
                 deadKeys.Add(keyAndEntry.Key);
 
@@ -81,7 +81,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
         if (key == null)
             throw new ArgumentNullException(nameof(key));
 
-        if (!_keyToEntryMap.TryGetValue(key, out Entry entry))
+        if (!_keyToEntryMap.TryGetValue(key, out Entry? entry))
         {
             entry = new Entry(_bitVectorFactory.Create(true));
 
@@ -129,7 +129,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
         if (key == null)
             throw new ArgumentNullException(nameof(key));
 
-        FilterImpl(vector, new[] { Lookup(key) });
+        FilterImpl(vector, [Lookup(key)]);
     }
 
     void ICatalogInEngine<TBitVector>.FilterEnumerable(TBitVector vector, IEnumerable keys) => Filter(vector, (IEnumerable<TKey>)keys);
@@ -150,7 +150,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
 
     void ICatalogInEngine<TBitVector>.FilterRange(TBitVector vector, object keyMin, object keyMax) => Filter(vector, (TKey)keyMin, (TKey)keyMax);
 
-    public void Filter(TBitVector vector, TKey keyMin, TKey keyMax)
+    public void Filter(TBitVector vector, TKey? keyMin, TKey? keyMax)
     {
         if (vector == null)
             throw new ArgumentNullException(nameof(vector));
@@ -167,9 +167,9 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
         FilterImpl(vector, _keys.Count == 0 ? Array.Empty<TBitVector>() : _keys.GetViewBetween(keyMin, keyMax).Select(key => _keyToEntryMap[key].Vector));
     }
 
-    private void FilterImpl(TBitVector vector, IEnumerable<TBitVector> lookups)
+    private void FilterImpl(TBitVector vector, IEnumerable<TBitVector?> lookups)
     {
-        TBitVector[] lookupsArray = lookups.Where(lookup => lookup != null).ToArray();
+        TBitVector[] lookupsArray = lookups.Where(lookup => lookup != null).Select(lookup => lookup!).ToArray();
 
         if (lookupsArray.Length == 0)
             vector.Clear();
@@ -179,7 +179,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
             vector.AndInPlace(_bitVectorFactory.CreateUncompressedUnion(lookupsArray));
     }
 
-    private TBitVector Lookup(TKey key) => _keyToEntryMap.TryGetValue(key, out Entry entry) ? entry.Vector : default;
+    private TBitVector? Lookup(TKey key) => _keyToEntryMap.TryGetValue(key, out Entry? entry) ? entry.Vector : default;
 
     #endregion
 

@@ -36,7 +36,7 @@ public sealed class Query<TPrimaryKey>
 
     #region Filter
 
-    internal FilterClause FilterClause { get; private set; }
+    internal FilterClause? FilterClause { get; private set; }
 
     public Query<TPrimaryKey> Filter(FilterClause filterClause)
     {
@@ -45,7 +45,7 @@ public sealed class Query<TPrimaryKey>
         if (FilterClause != null)
             throw new NotSupportedException("Filter may only be called once.");
 
-        foreach (var filterParameter in (filterClause == null ? Enumerable.Empty<IFilterParameter>() : filterClause.AllFilterParameters()))
+        foreach (var filterParameter in (filterClause == null ? [] : filterClause.AllFilterParameters()))
             ThrowIfEngineMismatch(filterParameter.Catalog);
 
         FilterClause = filterClause;

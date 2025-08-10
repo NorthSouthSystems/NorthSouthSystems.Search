@@ -37,12 +37,12 @@ public sealed class FilterParameter<TKey> : FilterClause, IFilterParameter
         : this(catalog, FilterParameterType.Enumerable, enumerable: enumerable)
     { }
 
-    internal FilterParameter(ICatalogHandle<TKey> catalog, TKey rangeMin, TKey rangeMax)
+    internal FilterParameter(ICatalogHandle<TKey> catalog, TKey? rangeMin, TKey? rangeMax)
         : this(catalog, FilterParameterType.Range, rangeMin: rangeMin, rangeMax: rangeMax)
     { }
 
     private FilterParameter(ICatalogHandle<TKey> catalog, FilterParameterType parameterType,
-        TKey exact = default, IEnumerable<TKey> enumerable = null, TKey rangeMin = default, TKey rangeMax = default)
+        TKey? exact = default, IEnumerable<TKey>? enumerable = null, TKey? rangeMin = default, TKey? rangeMax = default)
     {
         if (parameterType == FilterParameterType.Range)
         {
@@ -63,17 +63,17 @@ public sealed class FilterParameter<TKey> : FilterClause, IFilterParameter
 
     public ICatalogHandle Catalog { get; }
     public FilterParameterType ParameterType { get; }
-    public TKey Exact { get; }
-    public IEnumerable<TKey> Enumerable { get; }
-    public TKey RangeMin { get; }
-    public TKey RangeMax { get; }
+    public TKey? Exact { get; }
+    public IEnumerable<TKey>? Enumerable { get; }
+    public TKey? RangeMin { get; }
+    public TKey? RangeMax { get; }
 
     #region IFilterParameter
 
-    object IFilterParameter.Exact => Exact;
-    IEnumerable IFilterParameter.Enumerable => Enumerable;
-    object IFilterParameter.RangeMin => RangeMin;
-    object IFilterParameter.RangeMax => RangeMax;
+    object? IFilterParameter.Exact => Exact;
+    IEnumerable? IFilterParameter.Enumerable => Enumerable;
+    object? IFilterParameter.RangeMin => RangeMin;
+    object? IFilterParameter.RangeMax => RangeMax;
 
     #endregion
 }
@@ -81,10 +81,10 @@ public sealed class FilterParameter<TKey> : FilterClause, IFilterParameter
 public interface IFilterParameter : IParameter
 {
     FilterParameterType ParameterType { get; }
-    object Exact { get; }
-    IEnumerable Enumerable { get; }
-    object RangeMin { get; }
-    object RangeMax { get; }
+    object? Exact { get; }
+    IEnumerable? Enumerable { get; }
+    object? RangeMin { get; }
+    object? RangeMax { get; }
 }
 
 public enum FilterParameterType

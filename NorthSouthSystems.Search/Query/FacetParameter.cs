@@ -25,7 +25,7 @@ public sealed class FacetParameter<TKey> : IFacetParameterInternal
             if (!_facetSet)
                 throw new NotSupportedException("Query must be executed before Facet is available.");
 
-            return _facet;
+            return _facet!;
         }
         private set
         {
@@ -34,7 +34,7 @@ public sealed class FacetParameter<TKey> : IFacetParameterInternal
         }
     }
 
-    private Facet<TKey> _facet;
+    private Facet<TKey>? _facet;
     private bool _facetSet = false;
 
     #region IFacetParameterInternal
