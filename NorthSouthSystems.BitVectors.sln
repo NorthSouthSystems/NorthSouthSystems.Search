@@ -18,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{339096F8-0550-46
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.BitVectors", "NorthSouthSystems.BitVectors\NorthSouthSystems.BitVectors.csproj", "{97653F52-76C3-492B-9C2A-217E080B2EA6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.BitVectors.Test", "NorthSouthSystems.BitVectors.Test\NorthSouthSystems.BitVectors.Test.csproj", "{88742BA4-1E26-4A14-817F-CA0A92B367E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.BitVectors.Tests", "NorthSouthSystems.BitVectors.Tests\NorthSouthSystems.BitVectors.Tests.csproj", "{88742BA4-1E26-4A14-817F-CA0A92B367E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
