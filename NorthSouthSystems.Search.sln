@@ -18,9 +18,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{339096F8-0550-46
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Search", "NorthSouthSystems.Search\NorthSouthSystems.Search.csproj", "{C7C9E27C-F8BC-4583-AF16-B01AD8A707FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Search.Test", "NorthSouthSystems.Search.Test\NorthSouthSystems.Search.Test.csproj", "{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Search.Tests", "NorthSouthSystems.Search.Tests\NorthSouthSystems.Search.Tests.csproj", "{38D35FE0-1FD0-40CF-9E0F-DDDB63EAA61D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Search.Benchmark", "NorthSouthSystems.Search.Benchmark\NorthSouthSystems.Search.Benchmark.csproj", "{589DDA5E-2A77-4788-9686-31E93AF2839E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Search.Benchmarks", "NorthSouthSystems.Search.Benchmarks\NorthSouthSystems.Search.Benchmarks.csproj", "{589DDA5E-2A77-4788-9686-31E93AF2839E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
