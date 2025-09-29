@@ -1,8 +1,6 @@
-﻿namespace NorthSouthSystems.Search;
+﻿using System.Collections;
 
-using System.Collections;
-
-public class BitVectorFactories : IEnumerable<object[]>
+public class T_BitVectorFactories : IEnumerable<object[]>
 {
     private static readonly object[] _bitVectorFactories =
     [

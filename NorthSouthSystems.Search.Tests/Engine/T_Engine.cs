@@ -1,8 +1,6 @@
-﻿namespace NorthSouthSystems.Search;
+﻿using NorthSouthSystems.BitVectors;
 
-using NorthSouthSystems.BitVectors;
-
-public class EngineTests
+public class T_Engine
 {
     private class SimpleItem
     {
@@ -11,7 +9,7 @@ public class EngineTests
     }
 
     [Theory]
-    [ClassData(typeof(BitVectorFactories))]
+    [ClassData(typeof(T_BitVectorFactories))]
     public void AmongstPrimaryKeyOutOfRange<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
         where TBitVector : IBitVector<TBitVector>
     {
@@ -32,7 +30,7 @@ public class EngineTests
     }
 
     [Theory]
-    [ClassData(typeof(BitVectorFactories))]
+    [ClassData(typeof(T_BitVectorFactories))]
     public void Exceptions<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
         where TBitVector : IBitVector<TBitVector>
     {
@@ -40,11 +38,11 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine1 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
-            engine1.Add(EngineItem.CreateItems(id => id, id => DateTime.Now, id => id.ToString(), id => Array.Empty<string>(), 1).Single());
+            engine1.Add(T_EngineItem.CreateItems(id => id, id => DateTime.Now, id => id.ToString(), id => Array.Empty<string>(), 1).Single());
 
             var catalog2 = engine1.CreateCatalog("SomeString", item => item.SomeString);
         };
@@ -52,7 +50,7 @@ public class EngineTests
 
         act = () =>
         {
-            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine1 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("Name", item => item.SomeInt);
             var catalog2 = engine1.CreateCatalog("Name", item => item.SomeString);

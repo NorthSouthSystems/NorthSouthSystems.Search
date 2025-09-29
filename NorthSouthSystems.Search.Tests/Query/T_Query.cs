@@ -1,11 +1,9 @@
-﻿namespace NorthSouthSystems.Search;
+﻿using NorthSouthSystems.BitVectors;
 
-using NorthSouthSystems.BitVectors;
-
-public class QueryTests
+public class T_Query
 {
     [Theory]
-    [ClassData(typeof(BitVectorFactories))]
+    [ClassData(typeof(T_BitVectorFactories))]
     public void Exceptions<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
         where TBitVector : IBitVector<TBitVector>
     {
@@ -13,8 +11,8 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
-            using var engine2 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine1 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine2 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
             var catalog2 = engine2.CreateCatalog("SomeInt", item => item.SomeInt);
@@ -25,7 +23,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine1 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
@@ -35,7 +33,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine1 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
@@ -45,7 +43,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine1 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
@@ -55,7 +53,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine1 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
@@ -65,7 +63,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine1 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
@@ -78,7 +76,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine1 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
@@ -91,7 +89,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine1 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
@@ -101,7 +99,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine1 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
             var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
             var catalog2 = engine1.CreateCatalog("SomeString", item => item.SomeString);
 
@@ -114,7 +112,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine1 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
 
@@ -129,7 +127,7 @@ public class QueryTests
 
         act = () =>
         {
-            using var engine1 = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            using var engine1 = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
 
             var catalog1 = engine1.CreateCatalog("SomeInt", item => item.SomeInt);
             var catalog2 = engine1.CreateCatalog("SomeString", item => item.SomeString);

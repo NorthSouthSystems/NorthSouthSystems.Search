@@ -1,8 +1,6 @@
-﻿namespace NorthSouthSystems.Search;
-
-internal class EngineItem
+﻿internal class T_EngineItem
 {
-    internal static EngineItem[] CreateItems(
+    internal static T_EngineItem[] CreateItems(
             Func<int, int> someIntGenerator,
             Func<int, DateTime> someDateTimeGenerator,
             Func<int, string> someStringGenerator,
@@ -10,7 +8,7 @@ internal class EngineItem
             int count) =>
         Enumerable.Range(0, count)
             .Select(id =>
-                new EngineItem
+                new T_EngineItem
                 {
                     Id = id,
                     SomeInt = someIntGenerator(id),
@@ -20,7 +18,7 @@ internal class EngineItem
                 })
             .ToArray();
 
-    internal static EngineItem[] CreateItems(Random random, int count,
+    internal static T_EngineItem[] CreateItems(Random random, int count,
         out int someIntMax, out int someDateTimeMax, out int someStringMax, out int someTagsMax, out int someTagsMaxCount)
     {
         // Cannot create closures around 'out' parameters.

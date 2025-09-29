@@ -1,8 +1,6 @@
-﻿namespace NorthSouthSystems.Search;
+﻿using NorthSouthSystems.BitVectors;
 
-using NorthSouthSystems.BitVectors;
-
-internal static class CatalogExtensions
+internal static class T_CatalogExtensionsForTests
 {
     internal static void Fill<TBitVector, TKey>(this Catalog<TBitVector, TKey> catalog, TKey key, int[] bitPositions, bool value)
         where TBitVector : IBitVector<TBitVector>

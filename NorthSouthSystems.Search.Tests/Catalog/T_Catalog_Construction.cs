@@ -1,11 +1,9 @@
-﻿namespace NorthSouthSystems.Search;
+﻿using NorthSouthSystems.BitVectors;
 
-using NorthSouthSystems.BitVectors;
-
-public class CatalogTestsConstruction
+public class T_Catalog_Construction
 {
     [Theory]
-    [ClassData(typeof(BitVectorFactories))]
+    [ClassData(typeof(T_BitVectorFactories))]
     public void Public<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
         where TBitVector : IBitVector<TBitVector>
     {

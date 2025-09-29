@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Search;
-
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 
 internal class Program
 {

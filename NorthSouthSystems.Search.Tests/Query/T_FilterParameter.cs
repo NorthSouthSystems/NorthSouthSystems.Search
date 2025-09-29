@@ -1,11 +1,9 @@
-﻿namespace NorthSouthSystems.Search;
+﻿using NorthSouthSystems.BitVectors;
 
-using NorthSouthSystems.BitVectors;
-
-public class FilterParameterTests
+public class T_FilterParameter
 {
     [Theory]
-    [ClassData(typeof(BitVectorFactories))]
+    [ClassData(typeof(T_BitVectorFactories))]
     public void Exceptions<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
         where TBitVector : IBitVector<TBitVector>
     {
@@ -13,7 +11,7 @@ public class FilterParameterTests
 
         act = () =>
         {
-            var engine = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            var engine = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
             var someStringCatalog = engine.CreateCatalog("SomeString", item => item.SomeString);
 
             var someStringParameter = FilterParameter.Create(someStringCatalog, null, "A");
@@ -23,7 +21,7 @@ public class FilterParameterTests
 
         act = () =>
         {
-            var engine = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            var engine = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
             var someStringCatalog = engine.CreateCatalog("SomeString", item => item.SomeString);
 
             var someStringParameter = FilterParameter.Create(someStringCatalog, null, null);
@@ -32,7 +30,7 @@ public class FilterParameterTests
 
         act = () =>
         {
-            var engine = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            var engine = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
             var someStringCatalog = engine.CreateCatalog("SomeString", item => item.SomeString);
 
             var someStringParameter = FilterParameter.Create(someStringCatalog, "B", "A");

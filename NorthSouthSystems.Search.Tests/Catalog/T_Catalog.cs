@@ -1,11 +1,9 @@
-﻿namespace NorthSouthSystems.Search;
+﻿using NorthSouthSystems.BitVectors;
 
-using NorthSouthSystems.BitVectors;
-
-public class CatalogTests
+public class T_Catalog
 {
     [Theory]
-    [ClassData(typeof(BitVectorFactories))]
+    [ClassData(typeof(T_BitVectorFactories))]
     public void SortBitPositions<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
         where TBitVector : IBitVector<TBitVector>
     {
@@ -40,7 +38,7 @@ public class CatalogTests
     }
 
     [Theory]
-    [ClassData(typeof(BitVectorFactories))]
+    [ClassData(typeof(T_BitVectorFactories))]
     public void Exceptions<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
         where TBitVector : IBitVector<TBitVector>
     {

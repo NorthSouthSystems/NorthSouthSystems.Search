@@ -1,9 +1,7 @@
-﻿namespace NorthSouthSystems.Search;
-
-using NorthSouthSystems.BitVectors;
+﻿using NorthSouthSystems.BitVectors;
 using NorthSouthSystems.StackExchange;
 
-public abstract class EngineBenchmarksBase<TBitVector>
+public abstract class B_EngineBase<TBitVector>
     where TBitVector : IBitVector<TBitVector>
 {
     private static readonly int[] _powersOfTen = [1, 10, 100, 1_000, 10_000, 100_000, 1_000_000];

@@ -1,11 +1,9 @@
-﻿namespace NorthSouthSystems.Search;
+﻿using NorthSouthSystems.BitVectors;
 
-using NorthSouthSystems.BitVectors;
-
-internal static class EngineExtensions
+internal static class T_EngineExtensionsForTests
 {
     internal static FilterParameter<int> CreateRandomFilterExactParameter<TBitVector>(
-            this Engine<TBitVector, EngineItem, int> engine, ICatalogHandle<int> catalog, Random random, int max)
+            this Engine<TBitVector, T_EngineItem, int> engine, ICatalogHandle<int> catalog, Random random, int max)
         where TBitVector : IBitVector<TBitVector>
     {
         int exact = random.Next(max);
@@ -16,7 +14,7 @@ internal static class EngineExtensions
     }
 
     internal static FilterParameter<int> CreateRandomFilterEnumerableParameter<TBitVector>(
-            this Engine<TBitVector, EngineItem, int> engine, ICatalogHandle<int> catalog, Random random, int max)
+            this Engine<TBitVector, T_EngineItem, int> engine, ICatalogHandle<int> catalog, Random random, int max)
         where TBitVector : IBitVector<TBitVector>
     {
         int[] enumerable = Enumerable.Range(0, random.Next(max))
@@ -30,7 +28,7 @@ internal static class EngineExtensions
     }
 
     internal static FilterParameter<int> CreateRandomFilterRangeParameter<TBitVector>(
-            this Engine<TBitVector, EngineItem, int> engine, ICatalogHandle<int> catalog, Random random, int max)
+            this Engine<TBitVector, T_EngineItem, int> engine, ICatalogHandle<int> catalog, Random random, int max)
         where TBitVector : IBitVector<TBitVector>
     {
         int val1 = random.Next(max);
@@ -48,7 +46,7 @@ internal static class EngineExtensions
     }
 
     internal static FilterParameter<DateTime> CreateRandomFilterExactParameter<TBitVector>(
-            this Engine<TBitVector, EngineItem, int> engine, ICatalogHandle<DateTime> catalog, Random random, int max)
+            this Engine<TBitVector, T_EngineItem, int> engine, ICatalogHandle<DateTime> catalog, Random random, int max)
         where TBitVector : IBitVector<TBitVector>
     {
         DateTime exact = new DateTime(2011, 1, 1).AddDays(random.Next(max));
@@ -59,7 +57,7 @@ internal static class EngineExtensions
     }
 
     internal static FilterParameter<DateTime> CreateRandomFilterEnumerableParameter<TBitVector>(
-            this Engine<TBitVector, EngineItem, int> engine, ICatalogHandle<DateTime> catalog, Random random, int max)
+            this Engine<TBitVector, T_EngineItem, int> engine, ICatalogHandle<DateTime> catalog, Random random, int max)
         where TBitVector : IBitVector<TBitVector>
     {
         DateTime[] enumerable = Enumerable.Range(0, random.Next(max))
@@ -74,7 +72,7 @@ internal static class EngineExtensions
     }
 
     internal static FilterParameter<DateTime> CreateRandomFilterRangeParameter<TBitVector>(
-            this Engine<TBitVector, EngineItem, int> engine, ICatalogHandle<DateTime> catalog, Random random, int max)
+            this Engine<TBitVector, T_EngineItem, int> engine, ICatalogHandle<DateTime> catalog, Random random, int max)
         where TBitVector : IBitVector<TBitVector>
     {
         int val1 = random.Next(max);
@@ -92,7 +90,7 @@ internal static class EngineExtensions
     }
 
     internal static FilterParameter<string> CreateRandomFilterExactParameter<TBitVector>(
-            this Engine<TBitVector, EngineItem, int> engine, ICatalogHandle<string> catalog, Random random, int max)
+            this Engine<TBitVector, T_EngineItem, int> engine, ICatalogHandle<string> catalog, Random random, int max)
          where TBitVector : IBitVector<TBitVector>
     {
         string exact = random.Next(max).ToString();
@@ -103,7 +101,7 @@ internal static class EngineExtensions
     }
 
     public static FilterParameter<string> CreateRandomFilterEnumerableParameter<TBitVector>(
-            this Engine<TBitVector, EngineItem, int> engine, ICatalogHandle<string> catalog, Random random, int max)
+            this Engine<TBitVector, T_EngineItem, int> engine, ICatalogHandle<string> catalog, Random random, int max)
         where TBitVector : IBitVector<TBitVector>
     {
         string[] enumerable = Enumerable.Range(0, random.Next(max))
@@ -118,7 +116,7 @@ internal static class EngineExtensions
     }
 
     internal static FilterParameter<string> CreateRandomFilterRangeParameter<TBitVector>(
-            this Engine<TBitVector, EngineItem, int> engine, ICatalogHandle<string> catalog, Random random, int max)
+            this Engine<TBitVector, T_EngineItem, int> engine, ICatalogHandle<string> catalog, Random random, int max)
         where TBitVector : IBitVector<TBitVector>
     {
         int val1 = random.Next(max);

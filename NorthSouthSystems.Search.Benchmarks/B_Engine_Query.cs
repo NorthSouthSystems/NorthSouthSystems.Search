@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Search;
-
-using NorthSouthSystems.BitVectors;
+﻿using NorthSouthSystems.BitVectors;
 using NorthSouthSystems.StackExchange;
 
 [MemoryDiagnoser]
@@ -8,7 +6,7 @@ using NorthSouthSystems.StackExchange;
 [GenericTypeArguments(typeof(NorthSouthSystems.BitVectors.PLWAH64.PLWAH64VectorFactory), typeof(NorthSouthSystems.BitVectors.PLWAH64.Vector))]
 [GenericTypeArguments(typeof(NorthSouthSystems.BitVectors.WAH.WAHVectorFactory), typeof(NorthSouthSystems.BitVectors.WAH.Vector))]
 [GenericTypeArguments(typeof(NorthSouthSystems.BitVectors.WAH64.WAH64VectorFactory), typeof(NorthSouthSystems.BitVectors.WAH64.Vector))]
-public class EngineQueryBenchmarks<TBitVectorFactory, TBitVector> : EngineBenchmarksBase<TBitVector>
+public class B_Engine_Query<TBitVectorFactory, TBitVector> : B_EngineBase<TBitVector>
     where TBitVectorFactory : IBitVectorFactory<TBitVector>
     where TBitVector : IBitVector<TBitVector>
 {

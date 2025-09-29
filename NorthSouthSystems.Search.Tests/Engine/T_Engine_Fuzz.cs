@@ -1,13 +1,11 @@
-﻿namespace NorthSouthSystems.Search;
+﻿using NorthSouthSystems.BitVectors;
 
-using NorthSouthSystems.BitVectors;
-
-public class EngineTestsRandom
+public class T_Engine_Fuzz
 {
     private static readonly int[] _randomSeeds = [18873, -76, 5992, 917773, -6320001];
 
     [Theory]
-    [ClassData(typeof(BitVectorFactories))]
+    [ClassData(typeof(T_BitVectorFactories))]
     public void Full<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
         where TBitVector : IBitVector<TBitVector>
     {
@@ -18,14 +16,14 @@ public class EngineTestsRandom
             foreach (int size in Enumerable.Range(1, bitVectorFactory.WordSize * 10)
                 .Where(i => i % (bitVectorFactory.WordSize - 1) == 1 || random.Next(i / 100) == 0))
             {
-                using var engine = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+                using var engine = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
 
                 var someIntCatalog = engine.CreateCatalog("SomeInt", item => item.SomeInt);
                 var someDateTimeCatalog = engine.CreateCatalog("SomeDateTime", item => item.SomeDateTime);
                 var someStringCatalog = engine.CreateCatalog("SomeString", item => item.SomeString);
                 var someTagsCatalog = engine.CreateCatalog<string>("SomeTags", item => item.SomeTags);
 
-                var items = EngineItem.CreateItems(random, size,
+                var items = T_EngineItem.CreateItems(random, size,
                     out int someIntMax, out int someDateTimeMax, out int someStringMax, out int someTagsMax, out int someTagsMaxCount);
 
                 // OrderBy the lowest potential cardinality (max represents the potential cardinality) so that we increase our chances of having
@@ -127,16 +125,16 @@ public class EngineTestsRandom
         }
     }
 
-    private static void ExecuteAndAssert(Random random, EngineItem[] items, Query<int> query)
+    private static void ExecuteAndAssert(Random random, T_EngineItem[] items, Query<int> query)
     {
         query = query
             .FacetAll()
             .WithFacetOptions(random.Next() % 2 == 0, random.Next() % 2 == 0);
 
-        EngineAssert.ExecuteAndAssert(items, query, 0, items.Length);
+        T_EngineAssert.ExecuteAndAssert(items, query, 0, items.Length);
     }
 
-    private static EngineItem[] Update<TBitVector>(Engine<TBitVector, EngineItem, int> engine, EngineItem[] items, Random random)
+    private static T_EngineItem[] Update<TBitVector>(Engine<TBitVector, T_EngineItem, int> engine, T_EngineItem[] items, Random random)
         where TBitVector : IBitVector<TBitVector>
     {
         var updateItems = items.OrderBy(item => item.GetHashCode())
@@ -155,7 +153,7 @@ public class EngineTestsRandom
             .ToArray();
     }
 
-    private static EngineItem[] RemoveReAdd<TBitVector>(Engine<TBitVector, EngineItem, int> engine, EngineItem[] items, Random random)
+    private static T_EngineItem[] RemoveReAdd<TBitVector>(Engine<TBitVector, T_EngineItem, int> engine, T_EngineItem[] items, Random random)
         where TBitVector : IBitVector<TBitVector>
     {
         var removeItemsAsc = items.OrderBy(item => item.GetHashCode())
@@ -168,7 +166,7 @@ public class EngineTestsRandom
             .Distinct()
             .ToArray();
 
-        var reAddItems = new HashSet<EngineItem>(removeItems.Where(_ => random.Next() % 2 == 0));
+        var reAddItems = new HashSet<T_EngineItem>(removeItems.Where(_ => random.Next() % 2 == 0));
 
         int rangeRemoveCount = random.Next(removeItems.Length);
 

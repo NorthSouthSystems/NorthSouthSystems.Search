@@ -1,10 +1,8 @@
-﻿namespace NorthSouthSystems.Search;
+﻿using System.Collections;
 
-using System.Collections;
-
-internal static class EngineAssert
+internal static class T_EngineAssert
 {
-    internal static void ExecuteAndAssert(IEnumerable<EngineItem> source, Query<int> query, int skip, int take)
+    internal static void ExecuteAndAssert(IEnumerable<T_EngineItem> source, Query<int> query, int skip, int take)
     {
         var result = query.Execute(skip, take);
 
@@ -18,7 +16,7 @@ internal static class EngineAssert
         if (query.SortParameters.Any() || query.SortPrimaryKeyAscending.HasValue)
             source = SourceSort(source, query);
 
-        EngineItem[] sourceResults = source.ToArray();
+        T_EngineItem[] sourceResults = source.ToArray();
 
         result.TotalCount.Should().Be(sourceResults.Length);
         result.PrimaryKeys.Should().Equal(sourceResults.Skip(skip).Take(take).Select(item => item.Id).ToArray());
@@ -29,7 +27,7 @@ internal static class EngineAssert
 
     #region Filter
 
-    private static IEnumerable<EngineItem> SourceFilter(IEnumerable<EngineItem> source, Query<int> query)
+    private static IEnumerable<T_EngineItem> SourceFilter(IEnumerable<T_EngineItem> source, Query<int> query)
     {
         foreach (var param in
             query.FilterClause == null
@@ -66,9 +64,9 @@ internal static class EngineAssert
 
     #region Sort
 
-    private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, Query<int> query)
+    private static IOrderedEnumerable<T_EngineItem> SourceSort(IEnumerable<T_EngineItem> source, Query<int> query)
     {
-        IOrderedEnumerable<EngineItem> sortedSource;
+        IOrderedEnumerable<T_EngineItem> sortedSource;
 
         if (query.SortParameters.Any())
         {
@@ -86,7 +84,7 @@ internal static class EngineAssert
             return query.SortPrimaryKeyAscending.Value ? source.OrderBy(item => item.Id) : source.OrderByDescending(item => item.Id);
     }
 
-    private static IOrderedEnumerable<EngineItem> SourceSort(IEnumerable<EngineItem> source, ISortParameter param) =>
+    private static IOrderedEnumerable<T_EngineItem> SourceSort(IEnumerable<T_EngineItem> source, ISortParameter param) =>
         param.Catalog.Name switch
         {
             "SomeInt" => param.Ascending ? source.OrderBy(item => item.SomeInt) : source.OrderByDescending(item => item.SomeInt),
@@ -97,7 +95,7 @@ internal static class EngineAssert
             _ => throw new NotImplementedException(param.Catalog.Name)
         };
 
-    private static IOrderedEnumerable<EngineItem> SourceSort(IOrderedEnumerable<EngineItem> source, ISortParameter param) =>
+    private static IOrderedEnumerable<T_EngineItem> SourceSort(IOrderedEnumerable<T_EngineItem> source, ISortParameter param) =>
         param.Catalog.Name switch
         {
             "SomeInt" => param.Ascending ? source.ThenBy(item => item.SomeInt) : source.ThenByDescending(item => item.SomeInt),
@@ -112,7 +110,7 @@ internal static class EngineAssert
 
     #region Facet
 
-    private static void AssertFacet(EngineItem[] sourceResults, IFacetParameterInternal param, bool shortCircuitCounting)
+    private static void AssertFacet(T_EngineItem[] sourceResults, IFacetParameterInternal param, bool shortCircuitCounting)
     {
         switch (param.Catalog.Name)
         {

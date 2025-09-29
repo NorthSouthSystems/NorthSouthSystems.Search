@@ -16,4 +16,9 @@
         <ProjectReference Include="..\NorthSouthSystems.Search\NorthSouthSystems.Search.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Using Include="NorthSouthSystems" />
+        <Using Include="NorthSouthSystems.Search" />
+    </ItemGroup>
+
 </Project>

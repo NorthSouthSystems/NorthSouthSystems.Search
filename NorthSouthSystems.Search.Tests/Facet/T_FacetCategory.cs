@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Search;
-
-public class FacetCategoryTests
+﻿public class T_FacetCategory
 {
     [Fact]
     public void EqualityAndHashing()

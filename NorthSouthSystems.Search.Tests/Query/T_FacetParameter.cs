@@ -1,11 +1,9 @@
-﻿namespace NorthSouthSystems.Search;
+﻿using NorthSouthSystems.BitVectors;
 
-using NorthSouthSystems.BitVectors;
-
-public class FacetParameterTests
+public class T_FacetParameter
 {
     [Theory]
-    [ClassData(typeof(BitVectorFactories))]
+    [ClassData(typeof(T_BitVectorFactories))]
     public void Exceptions<TBitVector>(IBitVectorFactory<TBitVector> bitVectorFactory)
         where TBitVector : IBitVector<TBitVector>
     {
@@ -13,7 +11,7 @@ public class FacetParameterTests
 
         act = () =>
         {
-            var engine = new Engine<TBitVector, EngineItem, int>(bitVectorFactory, item => item.Id);
+            var engine = new Engine<TBitVector, T_EngineItem, int>(bitVectorFactory, item => item.Id);
             var someIntCatalog = engine.CreateCatalog("SomeInt", item => item.SomeInt);
 
             var someIntFacet = FacetParameter.Create(someIntCatalog);
