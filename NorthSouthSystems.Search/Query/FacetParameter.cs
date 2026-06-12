@@ -35,7 +35,7 @@ public sealed class FacetParameter<TKey> : IFacetParameterInternal
     }
 
     private Facet<TKey>? _facet;
-    private bool _facetSet = false;
+    private bool _facetSet;
 
     #region IFacetParameterInternal
 

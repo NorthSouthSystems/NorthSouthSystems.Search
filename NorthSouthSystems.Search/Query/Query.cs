@@ -1,6 +1,7 @@
-﻿namespace NorthSouthSystems.Search;
-
+﻿using System.Collections.Immutable;
 using System.Diagnostics;
+
+namespace NorthSouthSystems.Search;
 
 public sealed class Query<TPrimaryKey>
 {
@@ -17,14 +18,14 @@ public sealed class Query<TPrimaryKey>
 
     #region Amongst
 
-    internal IEnumerable<TPrimaryKey> AmongstPrimaryKeys => _amongstPrimaryKeys;
+    internal IReadOnlyList<TPrimaryKey> AmongstPrimaryKeys => _amongstPrimaryKeys;
     private readonly List<TPrimaryKey> _amongstPrimaryKeys = new();
 
     public Query<TPrimaryKey> Amongst(IEnumerable<TPrimaryKey> primaryKeys)
     {
         ThrowIfExecuted();
 
-        if (_amongstPrimaryKeys.Any())
+        if (_amongstPrimaryKeys.Count > 0)
             throw new NotSupportedException("Amongst may only be called once.");
 
         _amongstPrimaryKeys.AddRange(primaryKeys ?? Enumerable.Empty<TPrimaryKey>());
@@ -64,13 +65,13 @@ public sealed class Query<TPrimaryKey>
     {
         ThrowIfExecuted();
 
-        if (_sortParameters.Any())
+        if (_sortParameters.Count > 0)
             throw new NotSupportedException("Sort may only be called once.");
 
         if (SortPrimaryKeyAscending.HasValue)
             throw new NotSupportedException("Sort must be called before SortPrimaryKey.");
 
-        foreach (var sortParameter in (sortParameters ?? Enumerable.Empty<ISortParameter>()).Where(p => p != null))
+        foreach (var sortParameter in (sortParameters ?? []).Where(p => p != null))
         {
             ThrowIfEngineMismatch(sortParameter.Catalog);
 
@@ -128,7 +129,7 @@ public sealed class Query<TPrimaryKey>
     {
         ThrowIfExecuted();
 
-        if (_facetParameters.Any())
+        if (_facetParameters.Count > 0)
             throw new NotSupportedException("Facet may only be called once.");
 
         foreach (var facetParameter in (facetParameters ?? Enumerable.Empty<IFacetParameter>()).Where(p => p != null))
@@ -190,14 +191,14 @@ public sealed class Query<TPrimaryKey>
 
 public class QueryResult<TPrimaryKey>
 {
-    internal QueryResult(TPrimaryKey[] primaryKeys, int totalCount, TimeSpan elapsed)
+    internal QueryResult(ImmutableArray<TPrimaryKey> primaryKeys, int totalCount, TimeSpan elapsed)
     {
         PrimaryKeys = primaryKeys;
         TotalCount = totalCount;
         Elapsed = elapsed;
     }
 
-    public TPrimaryKey[] PrimaryKeys { get; }
+    public ImmutableArray<TPrimaryKey> PrimaryKeys { get; }
     public int TotalCount { get; }
     public TimeSpan Elapsed { get; }
 }

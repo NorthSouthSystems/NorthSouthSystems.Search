@@ -2,6 +2,7 @@
 
 using NorthSouthSystems.BitVectors;
 using System.Collections;
+using System.Globalization;
 
 public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVector>, ICatalogHandle<TKey>
     where TBitVector : IBitVector<TBitVector>
@@ -94,8 +95,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
 
     public void Set(IEnumerable<TKey> keys, int bitPosition, bool value)
     {
-        if (keys == null)
-            throw new ArgumentNullException(nameof(keys));
+        ArgumentNullException.ThrowIfNull(keys);
 
         if (IsOneToOne)
             throw new NotSupportedException("One-to-one Catalogs must use Set(TKey key, ...) instead.");
@@ -117,7 +117,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
     IFilterParameter ICatalogInEngine.CreateFilterParameter(object rangeMin, object rangeMax) =>
         new FilterParameter<TKey>(this, ConvertToTKey(rangeMin), ConvertToTKey(rangeMax));
 
-    private static TKey ConvertToTKey(object obj) => (TKey)Convert.ChangeType(obj, typeof(TKey));
+    private static TKey ConvertToTKey(object obj) => (TKey)Convert.ChangeType(obj, typeof(TKey), CultureInfo.InvariantCulture);
 
     void ICatalogInEngine<TBitVector>.FilterExact(TBitVector vector, object key) => Filter(vector, (TKey)key);
 
@@ -139,8 +139,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
         if (vector == null)
             throw new ArgumentNullException(nameof(vector));
 
-        if (keys == null)
-            throw new ArgumentNullException(nameof(keys));
+        ArgumentNullException.ThrowIfNull(keys);
 
         if (keys.Any(key => key == null))
             throw new ArgumentNullException(nameof(keys), "All keys must be non-null.");
@@ -215,8 +214,7 @@ public sealed partial class Catalog<TBitVector, TKey> : ICatalogInEngine<TBitVec
 
     public CatalogSortResult<TBitVector> ThenSort(CatalogSortResult<TBitVector> sortResult, bool value, bool ascending, bool disableParallel)
     {
-        if (sortResult == null)
-            throw new ArgumentNullException(nameof(sortResult));
+        ArgumentNullException.ThrowIfNull(sortResult);
 
         // TODO : Scope value entirely? Is value = false a legitimate use-case?
         if (!value)

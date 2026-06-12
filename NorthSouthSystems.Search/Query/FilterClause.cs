@@ -27,13 +27,13 @@ public class FilterClause
     // http://stackoverflow.com/questions/15439864/how-do-i-override-logical-and-operator
     public static bool operator false(FilterClause clause) => false;
 
-    public static FilterClause operator &(FilterClause leftClause, FilterClause rightClause)
-    {
-        if (leftClause == null)
-            throw new ArgumentNullException(nameof(leftClause));
+    public static FilterClause operator &(FilterClause leftClause, FilterClause rightClause) =>
+        BitwiseAnd(leftClause, rightClause);
 
-        if (rightClause == null)
-            throw new ArgumentNullException(nameof(rightClause));
+    public static FilterClause BitwiseAnd(FilterClause leftClause, FilterClause rightClause)
+    {
+        ArgumentNullException.ThrowIfNull(leftClause);
+        ArgumentNullException.ThrowIfNull(rightClause);
 
         // Flatten when possible
         return leftClause.Operation switch
@@ -52,15 +52,17 @@ public class FilterClause
         };
     }
 
-    public static bool operator true(FilterClause clause) => false;
+    public static bool operator true(FilterClause clause) => IsTrue;
 
-    public static FilterClause operator |(FilterClause leftClause, FilterClause rightClause)
+    public static bool IsTrue => false;
+
+    public static FilterClause operator |(FilterClause leftClause, FilterClause rightClause) =>
+        BitwiseOr(leftClause, rightClause);
+
+    public static FilterClause BitwiseOr(FilterClause leftClause, FilterClause rightClause)
     {
-        if (leftClause == null)
-            throw new ArgumentNullException(nameof(leftClause));
-
-        if (rightClause == null)
-            throw new ArgumentNullException(nameof(rightClause));
+        ArgumentNullException.ThrowIfNull(leftClause);
+        ArgumentNullException.ThrowIfNull(rightClause);
 
         // Flatten when possible
         return leftClause.Operation switch
@@ -80,10 +82,12 @@ public class FilterClause
     }
 
     // TODO : Optimize?
-    public static FilterClause operator !(FilterClause clause)
+    public static FilterClause operator !(FilterClause clause) =>
+        LogicalNot(clause);
+
+    public static FilterClause LogicalNot(FilterClause clause)
     {
-        if (clause == null)
-            throw new ArgumentNullException(nameof(clause));
+        ArgumentNullException.ThrowIfNull(clause);
 
         return new(BooleanOperation.Not, new[] { clause });
     }

@@ -2,6 +2,7 @@
 namespace NorthSouthSystems.Search;
 
 using NorthSouthSystems.BitVectors;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
@@ -53,7 +54,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
             where TKey : IEquatable<TKey>, IComparable<TKey> =>
         CreateCatalogImpl<TKey>(name, false, item => (object)keysExtractor(item));
 
-    private ICatalogHandle<TKey> CreateCatalogImpl<TKey>(string name, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
+    private Catalog<TBitVector, TKey> CreateCatalogImpl<TKey>(string name, bool isOneToOne, Func<TItem, object> keyOrKeysExtractor)
         where TKey : IEquatable<TKey>, IComparable<TKey>
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -195,8 +196,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
 
     public void Add(IEnumerable<TItem> items)
     {
-        if (items == null)
-            throw new ArgumentNullException(nameof(items));
+        ArgumentNullException.ThrowIfNull(items);
 
         try
         {
@@ -249,8 +249,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
 
     public void Update(IEnumerable<TItem> items)
     {
-        if (items == null)
-            throw new ArgumentNullException(nameof(items));
+        ArgumentNullException.ThrowIfNull(items);
 
         try
         {
@@ -269,10 +268,9 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
     {
         TPrimaryKey primaryKey = _primaryKeyExtractor(item);
 
-        if (!_primaryKeyToActiveBitPositionMap.ContainsKey(primaryKey))
+        if (!_primaryKeyToActiveBitPositionMap.TryGetValue(primaryKey, out int fromBitPosition))
             throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "No item exists in this Engine with the primary key : {0}.", primaryKey));
 
-        int fromBitPosition = _primaryKeyToActiveBitPositionMap[primaryKey];
         _activeItems[fromBitPosition] = false;
 
         int toBitPosition = _primaryKeys.Count;
@@ -304,8 +302,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
 
     public void Remove(IEnumerable<TItem> items)
     {
-        if (items == null)
-            throw new ArgumentNullException(nameof(items));
+        ArgumentNullException.ThrowIfNull(items);
 
         try
         {
@@ -324,11 +321,9 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
     {
         TPrimaryKey primaryKey = _primaryKeyExtractor(item);
 
-        if (!_primaryKeyToActiveBitPositionMap.ContainsKey(primaryKey))
+        if (!_primaryKeyToActiveBitPositionMap.Remove(primaryKey, out int bitPosition))
             throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "No item exists in this Engine with the primary key : {0}.", primaryKey));
 
-        int bitPosition = _primaryKeyToActiveBitPositionMap[primaryKey];
-        _primaryKeyToActiveBitPositionMap.Remove(primaryKey);
         _activeItems[bitPosition] = false;
     }
 
@@ -354,7 +349,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
         return new(this);
     }
 
-    TPrimaryKey[] IEngine<TPrimaryKey>.ExecuteQuery(Query<TPrimaryKey> query, int skip, int take, out int totalCount)
+    ImmutableArray<TPrimaryKey> IEngine<TPrimaryKey>.ExecuteQuery(Query<TPrimaryKey> query, int skip, int take, out int totalCount)
     {
         try
         {
@@ -368,12 +363,14 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
             Facet(query, result);
 
             // Distinct is required because of Catalogs created from multi-key columns: e.g. think post/blog tags
-            return Sort(query, skip + take, result, totalCount)
-                .Distinct()
-                .Skip(skip)
-                .Take(take)
-                .Select(bitPosition => _primaryKeys[bitPosition])
-                .ToArray();
+            return
+            [
+                ..Sort(query, skip + take, result, totalCount)
+                    .Distinct()
+                    .Skip(skip)
+                    .Take(take)
+                    .Select(bitPosition => _primaryKeys[bitPosition])
+            ];
         }
         finally
         {
@@ -381,11 +378,11 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
         }
     }
 
-    private TBitVector InitializeResult(IEnumerable<TPrimaryKey> amongstPrimaryKeys)
+    private TBitVector InitializeResult(IReadOnlyList<TPrimaryKey> amongstPrimaryKeys)
     {
         TBitVector result;
 
-        if (amongstPrimaryKeys.Any())
+        if (amongstPrimaryKeys.Count > 0)
         {
             result = _bitVectorFactory.Create(false);
 
@@ -395,7 +392,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
             // QuickSort O(n log n).  However, we are already in an n sized loop so resizing  which
             // costs n each time could theoretically cost us O(n^2).
             foreach (int bitPosition in amongstPrimaryKeys
-                .Select(primaryKey => _primaryKeyToActiveBitPositionMap.TryGetValue(primaryKey, out int temp) ? temp : -1)
+                .Select(primaryKey => _primaryKeyToActiveBitPositionMap.GetValueOrDefault(primaryKey, -1))
                 .Where(position => position >= 0)
                 .OrderByDescending(position => position))
             {
@@ -445,7 +442,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
         var sortParameters = query.SortParameters.ToArray();
         int sortCount = sortParameters.Length + (query.SortPrimaryKeyAscending.HasValue ? 1 : 0);
 
-        if (sortParameters.Any())
+        if (sortParameters.Length > 0)
         {
             CatalogSortResult<TBitVector> sortResult = null;
 
@@ -482,7 +479,7 @@ public sealed partial class Engine<TBitVector, TItem, TPrimaryKey> : IEngine<TPr
 
 internal interface IEngine<TPrimaryKey> : IEngine
 {
-    TPrimaryKey[] ExecuteQuery(Query<TPrimaryKey> query, int skip, int take, out int totalCount);
+    ImmutableArray<TPrimaryKey> ExecuteQuery(Query<TPrimaryKey> query, int skip, int take, out int totalCount);
 }
 
 internal interface IEngine
