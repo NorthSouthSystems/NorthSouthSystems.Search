@@ -14,11 +14,8 @@
         "resolved": "3.9.50",
         "contentHash": "HtOgGF6jZ+WYbXnCUCYPT8Y2d6mIJo9ozjK/FINTRsXdm4Zgv9GehUMa7EFoGQkqrMcDJNOIDwCmENnvXg4UbA=="
       },
-      "NorthSouthSystems.BitVectors": {
-        "type": "Direct",
-        "requested": "[6.0.1-alpha, )",
-        "resolved": "6.0.1-alpha",
-        "contentHash": "xCtyKjZtrSSLLEs+UpNsSqSUF/N0Pb2ranuOgQfEszVJFHGalQXUcXWOJB0BZL9st61MhG5K8wdbB2YWzPkOSQ=="
+      "northsouthsystems.bitvectors": {
+        "type": "Project"
       }
     }
   }

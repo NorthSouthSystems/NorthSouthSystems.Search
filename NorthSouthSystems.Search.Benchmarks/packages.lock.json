@@ -248,17 +248,14 @@
         "resolved": "4.7.0",
         "contentHash": "VybpaOQQhqE6siHppMktjfGBw1GCwvCqiufqmP8F1nj7fTUNtW35LOEt3UZTEsECfo+ELAl/9o9nJx3U91i7vA=="
       },
+      "northsouthsystems.bitvectors": {
+        "type": "Project"
+      },
       "northsouthsystems.search": {
         "type": "Project",
         "dependencies": {
-          "NorthSouthSystems.BitVectors": "[6.0.1-alpha, )"
+          "NorthSouthSystems.BitVectors": "[1.0.0, )"
         }
-      },
-      "NorthSouthSystems.BitVectors": {
-        "type": "CentralTransitive",
-        "requested": "[6.0.1-alpha, )",
-        "resolved": "6.0.1-alpha",
-        "contentHash": "xCtyKjZtrSSLLEs+UpNsSqSUF/N0Pb2ranuOgQfEszVJFHGalQXUcXWOJB0BZL9st61MhG5K8wdbB2YWzPkOSQ=="
       }
     }
   }

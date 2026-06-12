@@ -10,6 +10,8 @@
     <File Path="nuget.config" />
     <File Path="version.json" />
   </Folder>
+  <Project Path="NorthSouthSystems.BitVectors.Tests/NorthSouthSystems.BitVectors.Tests.csproj" />
+  <Project Path="NorthSouthSystems.BitVectors/NorthSouthSystems.BitVectors.csproj" />
   <Project Path="NorthSouthSystems.Search.Benchmarks/NorthSouthSystems.Search.Benchmarks.csproj" />
   <Project Path="NorthSouthSystems.Search.Tests/NorthSouthSystems.Search.Tests.csproj" />
   <Project Path="NorthSouthSystems.Search/NorthSouthSystems.Search.csproj" />

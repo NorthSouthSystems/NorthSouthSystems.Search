@@ -5,7 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageVersion Include="NorthSouthSystems.BitVectors" Version="6.0.1-alpha" />
         <PackageVersion Include="NorthSouthSystems.BitVectors.PLWAH" Version="6.0.1-alpha" />
         <PackageVersion Include="NorthSouthSystems.BitVectors.PLWAH64" Version="6.0.1-alpha" />
         <PackageVersion Include="NorthSouthSystems.BitVectors.WAH" Version="6.0.1-alpha" />
