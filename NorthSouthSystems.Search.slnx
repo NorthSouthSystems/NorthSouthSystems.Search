@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/_/">
+    <File Path=".github/workflows/BuildTestAnalyze.yml" />
+    <File Path=".github/workflows/BuildTestPackagePublish.yml" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="Icon.png" />
+    <File Path="LICENSE" />
+    <File Path="nuget.config" />
+    <File Path="README.md" />
+    <File Path="version.json" />
+  </Folder>
+  <Project Path="NorthSouthSystems.Search.Benchmarks/NorthSouthSystems.Search.Benchmarks.csproj" />
+  <Project Path="NorthSouthSystems.Search.Tests/NorthSouthSystems.Search.Tests.csproj" />
+  <Project Path="NorthSouthSystems.Search/NorthSouthSystems.Search.csproj" />
+</Solution>
