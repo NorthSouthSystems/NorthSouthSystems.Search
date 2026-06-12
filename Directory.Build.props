@@ -1,6 +1,6 @@
 <Project>
 
-    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="8.0.2" />
+    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="9.0.1" />
 
     <PropertyGroup>
         <NuGetLockFilePath>packages.lock.json</NuGetLockFilePath>
