@@ -8,7 +8,6 @@
     <File Path="Icon.png" />
     <File Path="LICENSE" />
     <File Path="nuget.config" />
-    <File Path="README.md" />
     <File Path="version.json" />
   </Folder>
   <Project Path="NorthSouthSystems.Search.Benchmarks/NorthSouthSystems.Search.Benchmarks.csproj" />
