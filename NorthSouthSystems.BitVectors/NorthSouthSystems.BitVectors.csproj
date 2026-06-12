@@ -1,8 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
         <Description>This .NET library provides helper classes to other NorthSouthSystems.BitVectors.* projects and also provides interfaces so that those projects can be used by NorthSouthSystems.Search.</Description>
+        <!-- TODO: CS1573 - Fully document all params for documented methods. -->
+        <!-- TODO: CS1591 - Fully document all publicly visible members. -->
+        <NoWarn>CS1573,CS1591</NoWarn>
     </PropertyGroup>
 
 </Project>
