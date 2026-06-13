@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <DefineConstants>POSITIONLISTENABLED;WORDSIZE64</DefineConstants>
+        <!-- PLWAH is the source of PLWAH64 code (via conditional complilation) with identical functionality. -->
+        <SonarQubeExclude>true</SonarQubeExclude>
+        <Description>These .NET libraries contain compressed bit vector data structures using the "Word Aligned Hybrid" scheme and its "Position List" variant.</Description>
+        <!-- TODO: CS1573 - Fully document all params for documented methods. -->
+        <!-- TODO: CS1591 - Fully document all publicly visible members. -->
+        <NoWarn>CS1573,CS1591</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="NorthSouthSystems.BitVectors" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH\Vector.cs" Link="Vector.cs" />
+        <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH\VectorFactory.cs" Link="VectorFactory.cs" />
+        <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH\VectorOperations.cs" Link="VectorOperations.cs" />
+        <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH\Word.cs" Link="Word.cs" />
+    </ItemGroup>
+
+</Project>

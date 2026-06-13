@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "dependencies": {
+    "net10.0": {
+      "Microsoft.CodeAnalysis.NetAnalyzers": {
+        "type": "Direct",
+        "requested": "[10.0.300, )",
+        "resolved": "10.0.300",
+        "contentHash": "WsPMVkfrmoZ0qKSasuVtYaxnd/MvqPOz7ZXld5NzyF8/kwwtPGjtmEKp4xDHG+pj4QqETpSVfkmKa0UFu/n1GQ=="
+      },
+      "Nerdbank.GitVersioning": {
+        "type": "Direct",
+        "requested": "[3.9.50, )",
+        "resolved": "3.9.50",
+        "contentHash": "HtOgGF6jZ+WYbXnCUCYPT8Y2d6mIJo9ozjK/FINTRsXdm4Zgv9GehUMa7EFoGQkqrMcDJNOIDwCmENnvXg4UbA=="
+      },
+      "NorthSouthSystems.BitVectors": {
+        "type": "Direct",
+        "requested": "[6.0.1-alpha, )",
+        "resolved": "6.0.1-alpha",
+        "contentHash": "xCtyKjZtrSSLLEs+UpNsSqSUF/N0Pb2ranuOgQfEszVJFHGalQXUcXWOJB0BZL9st61MhG5K8wdbB2YWzPkOSQ=="
+      }
+    }
+  }
+}
