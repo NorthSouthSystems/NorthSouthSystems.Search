@@ -25,8 +25,8 @@ public class WAHVectorFactory
     public Vector Create(bool isCompressed, Vector copy) =>
         new(isCompressed, copy);
 
-    public Vector CreateUncompressedUnion(params Vector[] union) =>
-        Vector.OrOutOfPlace(union);
+    public Vector CreateUncompressedUnion(params Vector[] bitVectors) =>
+        Vector.OrOutOfPlace(bitVectors);
 
     public int WordSize => Word.SIZE;
 }

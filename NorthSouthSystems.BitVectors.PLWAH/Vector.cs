@@ -83,6 +83,8 @@ public sealed partial class Vector : IBitVector<Vector>
 
     public bool OptimizeReadPhase(int[] bitPositionShifts, out Vector optimized)
     {
+        ArgumentNullException.ThrowIfNull(bitPositionShifts);
+
         optimized = new Vector(IsCompressed);
 
         foreach (int bitPosition in GetBitPositions(true))
@@ -639,8 +641,7 @@ public sealed partial class Vector : IBitVector<Vector>
 
     public void DecompressInPlace(Vector vector)
     {
-        if (vector == null)
-            throw new ArgumentNullException(nameof(vector));
+        ArgumentNullException.ThrowIfNull(vector);
 
         if (IsCompressed)
             throw new NotSupportedException("Not supported for a compressed Vector.");
@@ -657,8 +658,7 @@ public sealed partial class Vector : IBitVector<Vector>
 
     public void AndInPlace(Vector vector)
     {
-        if (vector == null)
-            throw new ArgumentNullException(nameof(vector));
+        ArgumentNullException.ThrowIfNull(vector);
 
         if (IsCompressed)
             throw new NotSupportedException("Not supported for a compressed Vector.");
@@ -671,8 +671,7 @@ public sealed partial class Vector : IBitVector<Vector>
 
     public Vector AndOutOfPlace(Vector vector, bool resultIsCompressed)
     {
-        if (vector == null)
-            throw new ArgumentNullException(nameof(vector));
+        ArgumentNullException.ThrowIfNull(vector);
 
         var (lessCompression, moreCompression) = OrderByCompression(vector);
 
@@ -686,8 +685,7 @@ public sealed partial class Vector : IBitVector<Vector>
 
     public int AndPopulation(Vector vector)
     {
-        if (vector == null)
-            throw new ArgumentNullException(nameof(vector));
+        ArgumentNullException.ThrowIfNull(vector);
 
         var (lessCompression, moreCompression) = OrderByCompression(vector);
 
@@ -701,8 +699,7 @@ public sealed partial class Vector : IBitVector<Vector>
 
     public bool AndPopulationAny(Vector vector)
     {
-        if (vector == null)
-            throw new ArgumentNullException(nameof(vector));
+        ArgumentNullException.ThrowIfNull(vector);
 
         if (IsCompressed && vector.IsCompressed)
             throw new NotImplementedException("Not implemented for two compressed Vector.");
@@ -719,8 +716,7 @@ public sealed partial class Vector : IBitVector<Vector>
 
     public void OrInPlace(Vector vector)
     {
-        if (vector == null)
-            throw new ArgumentNullException(nameof(vector));
+        ArgumentNullException.ThrowIfNull(vector);
 
         if (IsCompressed)
             throw new NotSupportedException("Not supported for a compressed Vector.");

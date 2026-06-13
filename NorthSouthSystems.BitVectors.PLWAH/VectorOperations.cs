@@ -14,7 +14,7 @@ public sealed partial class Vector
 {
     #region Decompress
 
-    private void DecompressInPlaceNoneCompressed(Vector iVector, Vector jVector)
+    private static void DecompressInPlaceNoneCompressed(Vector iVector, Vector jVector)
     {
         int i = 0;
         var iWords = iVector.GetWordsSpanPhysical();
@@ -63,7 +63,7 @@ public sealed partial class Vector
 
     #region And In-Place
 
-    private void AndInPlaceNoneNone(Vector iVector, Vector jVector)
+    private static void AndInPlaceNoneNone(Vector iVector, Vector jVector)
     {
         int i = 0;
         var iWords = iVector.GetWordsSpanPhysical();
@@ -91,7 +91,7 @@ public sealed partial class Vector
         }
     }
 
-    private void AndInPlaceNoneCompressed(Vector iVector, Vector jVector)
+    private static void AndInPlaceNoneCompressed(Vector iVector, Vector jVector)
     {
         int i = 0;
         var iWords = iVector.GetWordsSpanPhysical();
@@ -155,7 +155,7 @@ public sealed partial class Vector
 
     #region And Out-of-Place
 
-    private Vector AndOutOfPlaceNoneNone(Vector iVector, Vector jVector, bool resultIsCompressed)
+    private static Vector AndOutOfPlaceNoneNone(Vector iVector, Vector jVector, bool resultIsCompressed)
     {
         var result = new Vector(resultIsCompressed);
 
@@ -179,7 +179,7 @@ public sealed partial class Vector
         return result;
     }
 
-    private Vector AndOutOfPlaceNoneCompressed(Vector iVector, Vector jVector, bool resultIsCompressed)
+    private static Vector AndOutOfPlaceNoneCompressed(Vector iVector, Vector jVector, bool resultIsCompressed)
     {
         var result = new Vector(resultIsCompressed);
 
@@ -236,7 +236,7 @@ public sealed partial class Vector
         return result;
     }
 
-    private Vector AndOutOfPlaceCompressedCompressed(Vector iVector, Vector jVector, bool resultIsCompressed)
+    private static Vector AndOutOfPlaceCompressedCompressed(Vector iVector, Vector jVector, bool resultIsCompressed)
     {
         var result = new Vector(resultIsCompressed);
 
@@ -429,7 +429,7 @@ public sealed partial class Vector
 
     #region AndPopulation
 
-    private int AndPopulationNoneNone(Vector iVector, Vector jVector)
+    private static int AndPopulationNoneNone(Vector iVector, Vector jVector)
     {
         int population = 0;
 
@@ -453,7 +453,7 @@ public sealed partial class Vector
         return population;
     }
 
-    private int AndPopulationNoneCompressed(Vector iVector, Vector jVector)
+    private static int AndPopulationNoneCompressed(Vector iVector, Vector jVector)
     {
         int population = 0;
 
@@ -513,7 +513,7 @@ public sealed partial class Vector
         return population;
     }
 
-    private int AndPopulationCompressedCompressed(Vector iVector, Vector jVector)
+    private static int AndPopulationCompressedCompressed(Vector iVector, Vector jVector)
     {
         int population = 0;
 
@@ -705,7 +705,7 @@ public sealed partial class Vector
 
     #region AndPopulationAny
 
-    private bool AndPopulationAnyNoneNone(Vector iVector, Vector jVector)
+    private static bool AndPopulationAnyNoneNone(Vector iVector, Vector jVector)
     {
         int i = 0;
         var iWords = iVector.GetWordsSpanPhysical();
@@ -727,7 +727,7 @@ public sealed partial class Vector
         return false;
     }
 
-    private bool AndPopulationAnyNoneCompressed(Vector iVector, Vector jVector)
+    private static bool AndPopulationAnyNoneCompressed(Vector iVector, Vector jVector)
     {
         int i = 0;
         var iWords = iVector.GetWordsSpanPhysical();
@@ -791,7 +791,7 @@ public sealed partial class Vector
 
     #region Or In-Place
 
-    private void OrInPlaceNoneNone(Vector iVector, Vector jVector)
+    private static void OrInPlaceNoneNone(Vector iVector, Vector jVector)
     {
         int i = 0;
         var iWords = iVector.GetWordsSpanPhysical();
@@ -807,7 +807,7 @@ public sealed partial class Vector
         }
     }
 
-    private void OrInPlaceNoneCompressed(Vector iVector, Vector jVector)
+    private static void OrInPlaceNoneCompressed(Vector iVector, Vector jVector)
     {
         int i = 0;
         var iWords = iVector.GetWordsSpanPhysical();
