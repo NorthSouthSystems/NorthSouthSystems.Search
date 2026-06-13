@@ -175,17 +175,14 @@
           "xunit.v3.runner.common": "[3.2.2]"
         }
       },
+      "northsouthsystems.bitvectors": {
+        "type": "Project"
+      },
       "northsouthsystems.bitvectors.wah64": {
         "type": "Project",
         "dependencies": {
-          "NorthSouthSystems.BitVectors": "[6.0.1-alpha, )"
+          "NorthSouthSystems.BitVectors": "[1.0.0, )"
         }
-      },
-      "NorthSouthSystems.BitVectors": {
-        "type": "CentralTransitive",
-        "requested": "[6.0.1-alpha, )",
-        "resolved": "6.0.1-alpha",
-        "contentHash": "xCtyKjZtrSSLLEs+UpNsSqSUF/N0Pb2ranuOgQfEszVJFHGalQXUcXWOJB0BZL9st61MhG5K8wdbB2YWzPkOSQ=="
       }
     }
   }

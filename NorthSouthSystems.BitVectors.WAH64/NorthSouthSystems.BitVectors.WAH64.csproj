@@ -11,7 +11,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NorthSouthSystems.BitVectors" />
+        <ProjectReference Include="..\NorthSouthSystems.BitVectors\NorthSouthSystems.BitVectors.csproj" />
     </ItemGroup>
 
     <ItemGroup>

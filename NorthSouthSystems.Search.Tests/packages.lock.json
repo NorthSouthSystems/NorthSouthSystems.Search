@@ -24,42 +24,6 @@
         "resolved": "3.9.50",
         "contentHash": "HtOgGF6jZ+WYbXnCUCYPT8Y2d6mIJo9ozjK/FINTRsXdm4Zgv9GehUMa7EFoGQkqrMcDJNOIDwCmENnvXg4UbA=="
       },
-      "NorthSouthSystems.BitVectors.PLWAH": {
-        "type": "Direct",
-        "requested": "[6.0.1-alpha, )",
-        "resolved": "6.0.1-alpha",
-        "contentHash": "hO2RZkeYp00162r9h9bpv4x2LZluWhT/FskygMqbA5xMxqamyCyTYWY42jjMorc41rsr9RGmWEFEeWBvsQGk+A==",
-        "dependencies": {
-          "NorthSouthSystems.BitVectors": "6.0.1-alpha"
-        }
-      },
-      "NorthSouthSystems.BitVectors.PLWAH64": {
-        "type": "Direct",
-        "requested": "[6.0.1-alpha, )",
-        "resolved": "6.0.1-alpha",
-        "contentHash": "KJrLiWlyE3Bs1FNxwqsPWSYU23zE6BQn7Qr9pmZk+RUfmFMZrnYcKskCXz7Xxmjgb0X1y6W+u7EJI9YfI8MXKQ==",
-        "dependencies": {
-          "NorthSouthSystems.BitVectors": "6.0.1-alpha"
-        }
-      },
-      "NorthSouthSystems.BitVectors.WAH": {
-        "type": "Direct",
-        "requested": "[6.0.1-alpha, )",
-        "resolved": "6.0.1-alpha",
-        "contentHash": "GiB0TKjqftLVJ9D4M1zpnpIBH7ilmQ7RJhNrojFO3gauilzf2Mf/D5QtjAadTbF5/rdLbulzIHzZcAHbLSlNNA==",
-        "dependencies": {
-          "NorthSouthSystems.BitVectors": "6.0.1-alpha"
-        }
-      },
-      "NorthSouthSystems.BitVectors.WAH64": {
-        "type": "Direct",
-        "requested": "[6.0.1-alpha, )",
-        "resolved": "6.0.1-alpha",
-        "contentHash": "x+k7MjInA8AYdF3GGIujuUqYvMDxzohHFvn5M1oYoms3aDduG0FWe1KgKde3V+FFD22MIaPWH9JvYyhBgxzl3w==",
-        "dependencies": {
-          "NorthSouthSystems.BitVectors": "6.0.1-alpha"
-        }
-      },
       "xunit.runner.visualstudio": {
         "type": "Direct",
         "requested": "[3.1.5, )",
@@ -213,6 +177,30 @@
       },
       "northsouthsystems.bitvectors": {
         "type": "Project"
+      },
+      "northsouthsystems.bitvectors.plwah": {
+        "type": "Project",
+        "dependencies": {
+          "NorthSouthSystems.BitVectors": "[1.0.0, )"
+        }
+      },
+      "northsouthsystems.bitvectors.plwah64": {
+        "type": "Project",
+        "dependencies": {
+          "NorthSouthSystems.BitVectors": "[1.0.0, )"
+        }
+      },
+      "northsouthsystems.bitvectors.wah": {
+        "type": "Project",
+        "dependencies": {
+          "NorthSouthSystems.BitVectors": "[1.0.0, )"
+        }
+      },
+      "northsouthsystems.bitvectors.wah64": {
+        "type": "Project",
+        "dependencies": {
+          "NorthSouthSystems.BitVectors": "[1.0.0, )"
+        }
       },
       "northsouthsystems.search": {
         "type": "Project",
