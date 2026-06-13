@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
         <!-- PLWAH is the source of WAH code (via conditional complilation) and a superset of functionality. -->
         <SonarQubeExclude>true</SonarQubeExclude>
         <Description>These .NET libraries contain compressed bit vector data structures using the "Word Aligned Hybrid" scheme and its "Position List" variant.</Description>
@@ -9,7 +8,6 @@
 
     <ItemGroup>
         <PackageReference Include="NorthSouthSystems.BitVectors" />
-        <PackageReference Include="System.Buffers" />
     </ItemGroup>
 
     <ItemGroup>

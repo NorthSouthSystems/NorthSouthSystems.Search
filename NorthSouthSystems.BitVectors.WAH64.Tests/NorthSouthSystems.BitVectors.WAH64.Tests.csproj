@@ -4,10 +4,6 @@
         <DefineConstants>WORDSIZE64</DefineConstants>
     </PropertyGroup>
 
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-    </PropertyGroup>
-
     <ItemGroup>
         <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH.Tests\Vector\T_Vector_AndInPlace.cs" Link="Vector\T_Vector_AndInPlace.cs" />
         <Compile Include="..\NorthSouthSystems.BitVectors.PLWAH.Tests\Vector\T_Vector_AndOutOfPlace.cs" Link="Vector\T_Vector_AndOutOfPlace.cs" />

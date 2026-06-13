@@ -1,7 +1,7 @@
 {
   "version": 2,
   "dependencies": {
-    "net8.0": {
+    "net10.0": {
       "Microsoft.CodeAnalysis.NetAnalyzers": {
         "type": "Direct",
         "requested": "[10.0.300, )",
@@ -19,12 +19,6 @@
         "requested": "[6.0.1-alpha, )",
         "resolved": "6.0.1-alpha",
         "contentHash": "xCtyKjZtrSSLLEs+UpNsSqSUF/N0Pb2ranuOgQfEszVJFHGalQXUcXWOJB0BZL9st61MhG5K8wdbB2YWzPkOSQ=="
-      },
-      "System.Buffers": {
-        "type": "Direct",
-        "requested": "[4.6.1, )",
-        "resolved": "4.6.1",
-        "contentHash": "N8GXpmiLMtljq7gwvyS+1QvKT/W2J8sNAvx+HVg4NGmsG/H+2k/y9QI23auLJRterrzCiDH+IWAw4V/GPwsMlw=="
       }
     }
   }

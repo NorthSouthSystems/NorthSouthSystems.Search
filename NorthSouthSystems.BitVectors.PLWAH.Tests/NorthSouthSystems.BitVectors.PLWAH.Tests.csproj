@@ -4,10 +4,6 @@
         <DefineConstants>POSITIONLISTENABLED</DefineConstants>
     </PropertyGroup>
 
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-    </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\NorthSouthSystems.BitVectors.PLWAH\NorthSouthSystems.BitVectors.PLWAH.csproj" />
     </ItemGroup>

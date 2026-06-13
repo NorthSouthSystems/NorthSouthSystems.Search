@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
         <DefineConstants>POSITIONLISTENABLED;WORDSIZE64</DefineConstants>
         <!-- PLWAH is the source of PLWAH64 code (via conditional complilation) with identical functionality. -->
         <SonarQubeExclude>true</SonarQubeExclude>
@@ -10,7 +9,6 @@
 
     <ItemGroup>
         <PackageReference Include="NorthSouthSystems.BitVectors" />
-        <PackageReference Include="System.Buffers" />
     </ItemGroup>
 
     <ItemGroup>

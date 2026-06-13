@@ -1,14 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
         <DefineConstants>POSITIONLISTENABLED</DefineConstants>
         <Description>These .NET libraries contain compressed bit vector data structures using the "Word Aligned Hybrid" scheme and its "Position List" variant.</Description>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="NorthSouthSystems.BitVectors" />
-        <PackageReference Include="System.Buffers" />
     </ItemGroup>
 
 </Project>
